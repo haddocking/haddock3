@@ -28,7 +28,6 @@ For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#caprieval-module>`_
 """
 
-
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
@@ -44,7 +43,7 @@ from haddock.libs.libcapri import (
     capri_cluster_analysis,
     extract_data_from_capri_class,
     extract_models_best_references,
-    )
+)
 from haddock.modules.analysis.caprieval.capri import dump_weights
 
 
@@ -76,7 +75,6 @@ class HaddockModule(BaseHaddockModule):
             if isinstance(model, list):
                 return True
         return False
-
 
     def get_reference(self, models: list[PDBFile]) -> list[Path]:
         """Manage to obtain the reference structure to be used downstream.
@@ -132,7 +130,7 @@ class HaddockModule(BaseHaddockModule):
             references = [
                 Path(martinize(ref_aa, self.path.resolve().parent, False))
                 for ref_aa in self.get_reference(models)
-                ]
+            ]
         else:
             references = self.get_reference(models)
 
@@ -147,9 +145,8 @@ class HaddockModule(BaseHaddockModule):
             # `CAPRI` class is expecting a single model
             if isinstance(model_to_be_evaluated, list):
                 raise ValueError(
-                    "CAPRI module cannot handle a list "
-                    "of `model_to_be_evaluated`"
-                    )
+                    "CAPRI module cannot handle a list of `model_to_be_evaluated`"
+                )
             # Loop over references
             for ref_id, reference in enumerate(references, start=1):
                 jobs.append(
@@ -160,7 +157,7 @@ class HaddockModule(BaseHaddockModule):
                         reference=reference,
                         params=self.params,
                         ref_id=ref_id,
-                        ff=ff
+                        ff=ff,
                     )
                 )
 
@@ -168,7 +165,7 @@ class HaddockModule(BaseHaddockModule):
             tasks=jobs,
             ncores=self.params["ncores"],
             max_cpus=self.params["max_cpus"],
-            )
+        )
         engine.run()
 
         jobs = engine.results

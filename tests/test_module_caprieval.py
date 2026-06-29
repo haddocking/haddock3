@@ -385,7 +385,7 @@ def test_protprot_allatoms(protprot_allatm_caprimodule):
     protprot_allatm_caprimodule.calc_ilrmsd()
     # process checks
     assert np.isclose(protprot_allatm_caprimodule.lrmsd, 21.10, atol=0.01)
-    
+
 
 def test_protprot_all_cg(protprot_caprimodule_cg):
     """Test protein-protein i-rmsd calculation."""
@@ -421,7 +421,9 @@ def test_protprot_bb_vs_all_atoms_cg(
     assert protprot_allatm_caprimodule_cg.allatoms is True
     assert protprot_caprimodule_cg.atoms != protprot_allatm_caprimodule_cg.atoms
     only_bb_atoms = [a for atn in protprot_caprimodule_cg.atoms.values() for a in atn]
-    all_atoms = [a for atn in protprot_allatm_caprimodule_cg.atoms.values() for a in atn]
+    all_atoms = [
+        a for atn in protprot_allatm_caprimodule_cg.atoms.values() for a in atn
+    ]
     # Check length
     assert len(only_bb_atoms) < len(all_atoms)
     # Make sure all bb are also included in all atoms
@@ -439,6 +441,7 @@ def test_protprot_allatoms_cg(protprot_allatm_caprimodule_cg):
     protprot_allatm_caprimodule_cg.calc_ilrmsd()
     # process checks
     assert np.isclose(protprot_allatm_caprimodule_cg.lrmsd, 21.00, atol=0.01)
+
 
 def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
     """Test protein-protein i-rmsd calculation."""
@@ -649,6 +652,7 @@ def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
     for ch in expected_interface.keys():
         assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
+
 def test_identify_protprotinterface_cg(protprot_caprimodule_cg, protprot_input_list_cg):
     """Test the interface identification."""
     protprot_complex = protprot_input_list_cg[0]
@@ -657,12 +661,13 @@ def test_identify_protprotinterface_cg(protprot_caprimodule_cg, protprot_input_l
         protprot_complex, cutoff=7.0, ff="martini2"
     )
     expected_interface = {
-        'A': [37, 38, 39, 40, 43, 45, 71, 75, 90, 94, 96, 132],
-        'B': [11, 12, 15, 16, 17, 47, 48, 51, 52, 53, 54, 56]
+        "A": [37, 38, 39, 40, 43, 45, 71, 75, 90, 94, 96, 132],
+        "B": [11, 12, 15, 16, 17, 47, 48, 51, 52, 53, 54, 56],
     }
 
     for ch in expected_interface.keys():
         assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
+
 
 def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
     """Test the interface identification."""
@@ -679,6 +684,7 @@ def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
     for ch in expected_interface.keys():
         assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
+
 def test_identify_protdnainterface_cg(protdna_caprimodule_cg, protdna_input_list_cg):
     """Test the interface identification."""
     protdna_complex = protdna_input_list_cg[0]
@@ -687,12 +693,13 @@ def test_identify_protdnainterface_cg(protdna_caprimodule_cg, protdna_input_list
         protdna_complex, cutoff=7.0, ff="martini2"
     )
     expected_interface = {
-        'A': [29, 44, 30, 39, 32, 28, 43, 10, 40, 26, 16, 41, 27, 33, 42, 18, 17, 38],
-        'B': [4, 31, 32, 30, 34, 3, 6, 33, 7, 5, 2, 35],
+        "A": [29, 44, 30, 39, 32, 28, 43, 10, 40, 26, 16, 41, 27, 33, 42, 18, 17, 38],
+        "B": [4, 31, 32, 30, 34, 3, 6, 33, 7, 5, 2, 35],
     }
 
     for ch in expected_interface.keys():
         assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
+
 
 def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
     """Test the interface identification."""
@@ -1077,7 +1084,6 @@ def test_capri_run(mocker, monkeypatch):
             side_effect=lambda: setattr(capri, "rmsd", rand_global_rmsd),
         )
 
-
         capri.run()
 
         # The only logic to be tested is if the methods are called
@@ -1220,7 +1226,7 @@ def test_extract_data_from_capri_class_multiple_refs(mocker, monkeypatch):
             file_name=str(uuid.uuid4()),
             score=random_score,
             unw_energies={"energy": random_energy},
-            )
+        )
         # Loop over references
         nb_refs = 3
         for ref_index in range(1, nb_refs + 1):
@@ -1241,8 +1247,8 @@ def test_extract_data_from_capri_class_multiple_refs(mocker, monkeypatch):
                     "lrmsd": True,
                     "irmsd": True,
                     "global_rmsd": True,
-                    },
-                )
+                },
+            )
             # Update object shared attributes
             c.model = random_model
             c.model.clt_id = random_clt_id
@@ -1309,7 +1315,7 @@ def test_capri_object_sorting_methods(mocker):
             },
         )
         for i in range(5)
-        ]
+    ]
 
     # No performances computed, input order
     sorted_objects = sorted(capri_objects)
@@ -1323,7 +1329,7 @@ def test_capri_object_sorting_methods(mocker):
         "irmsd": [7, 2, 3, 1, 7],
         "ilrmsd": [7, 2, 3, 1, 7],
         "rmsd": [7, 2, 3, 1, 7],
-        }
+    }
     # Set the performance values for all capri objects
     for perf_key, perfs in performances.items():
         for i, capri_object in enumerate(capri_objects):

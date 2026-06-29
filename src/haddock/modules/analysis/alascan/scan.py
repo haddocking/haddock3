@@ -1,4 +1,5 @@
 """alascan module."""
+
 import os
 import io
 import shutil
@@ -19,67 +20,70 @@ from haddock.libs.libplots import make_alascan_plot
 from haddock.libs.libcapri import CAPRI
 from haddock.clis import cli_score
 
-ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']
+ATOMS_TO_BE_MUTATED = ["C", "N", "CA", "O", "CB"]
 
-RES_CODES = dict([
-    ("CYS", "C"),
-    ("ASP", "D"),
-    ("SER", "S"),
-    ("GLN", "Q"),
-    ("LYS", "K"),
-    ("ILE", "I"),
-    ("PRO", "P"),
-    ("THR", "T"),
-    ("PHE", "F"),
-    ("ASN", "N"),
-    ("GLY", "G"),
-    ("HIS", "H"),
-    ("LEU", "L"),
-    ("ARG", "R"),
-    ("TRP", "W"),
-    ("ALA", "A"),
-    ("VAL", "V"),
-    ("GLU", "E"),
-    ("TYR", "Y"),
-    ("MET", "M"),
-    ("ALY", "K"),
-    ("ASH", "D"),
-    ("CFE", "C"),
-    ("CSP", "C"),
-    ("CYC", "C"),
-    ("CYF", "C"),
-    ("CYM", "C"),
-    ("DDZ", "A"),
-    ("GLH", "E"),
-    ("HLY", "P"),
-    ("HY3", "P"),
-    ("HYP", "P"),
-    ("M3L", "K"),
-    ("MLY", "K"),
-    ("MLZ", "K"),
-    ("MSE", "M"),
-    ("NEP", "H"),
-    ("PNS", "S"),
-    ("PTR", "Y"),
-    ("SEP", "S"),
-    ("TOP", "T"),
-    ("TYP", "Y"),
-    ("TYS", "Y"),
-    ("CIR", "R"),
-    ])
+RES_CODES = dict(
+    [
+        ("CYS", "C"),
+        ("ASP", "D"),
+        ("SER", "S"),
+        ("GLN", "Q"),
+        ("LYS", "K"),
+        ("ILE", "I"),
+        ("PRO", "P"),
+        ("THR", "T"),
+        ("PHE", "F"),
+        ("ASN", "N"),
+        ("GLY", "G"),
+        ("HIS", "H"),
+        ("LEU", "L"),
+        ("ARG", "R"),
+        ("TRP", "W"),
+        ("ALA", "A"),
+        ("VAL", "V"),
+        ("GLU", "E"),
+        ("TYR", "Y"),
+        ("MET", "M"),
+        ("ALY", "K"),
+        ("ASH", "D"),
+        ("CFE", "C"),
+        ("CSP", "C"),
+        ("CYC", "C"),
+        ("CYF", "C"),
+        ("CYM", "C"),
+        ("DDZ", "A"),
+        ("GLH", "E"),
+        ("HLY", "P"),
+        ("HY3", "P"),
+        ("HYP", "P"),
+        ("M3L", "K"),
+        ("MLY", "K"),
+        ("MLZ", "K"),
+        ("MSE", "M"),
+        ("NEP", "H"),
+        ("PNS", "S"),
+        ("PTR", "Y"),
+        ("SEP", "S"),
+        ("TOP", "T"),
+        ("TYP", "Y"),
+        ("TYS", "Y"),
+        ("CIR", "R"),
+    ]
+)
 
 
 @dataclass
 class MutationResult:
     """Result from a single mutation."""
+
     model_id: str
     chain: str
     resid: int
     ori_resname: str
     target_resname: str
     # components of "mutant_scores": score, vdw, elec, desolv, bsa
-    mutant_scores: Tuple[float, float, float, float, float]  
-    delta_scores: Tuple[float, float, float, float, float]   
+    mutant_scores: Tuple[float, float, float, float, float]
+    delta_scores: Tuple[float, float, float, float, float]
     success: bool
     error_msg: Optional[str] = None
 
@@ -87,18 +91,18 @@ class MutationResult:
 def mutate(pdb_f, target_chain, target_resid, mut_resname):
     """
     Mutate a residue in a PDB file into a different residue.
-    
+
     Parameters
     ----------
     pdb_f : str
         Path to the pdb file.
-    
+
     target_chain : str
         Chain of the residue to be mutated.
-    
+
     target_resid : int
         Residue number of the residue to be mutated.
-    
+
     mut_resname : str
         Residue name of the residue to be mutated.
 
@@ -128,20 +132,19 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
         mut_id = f"{RES_CODES[resname]}{target_resid}{RES_CODES[mut_resname]}"
     except KeyError:
         raise KeyError(f"Could not mutate {resname} into {mut_resname}.")
-    mut_pdb_fname = Path(
-        pdb_f.name.replace(".pdb", f"-{target_chain}_{mut_id}.pdb"))
+    mut_pdb_fname = Path(pdb_f.name.replace(".pdb", f"-{target_chain}_{mut_id}.pdb"))
     with open(mut_pdb_fname, "w") as fh:
         fh.write("".join(mut_pdb_l))
     return mut_pdb_fname
 
 
 def get_score_string(
-        pdb_f: str,
-        run_dir: str,
-        outputpdb: bool = False,
-        ligand_param_fname: Union[Path, str] = "",
-        ligand_top_fname: Union[Path, str] = "",
-        ) -> List[str]:
+    pdb_f: str,
+    run_dir: str,
+    outputpdb: bool = False,
+    ligand_param_fname: Union[Path, str] = "",
+    ligand_top_fname: Union[Path, str] = "",
+) -> List[str]:
     """Get score output from cli_score.main.
 
     Parameters
@@ -157,7 +160,7 @@ def get_score_string(
         Path to additional parameter file used by CNS.
     ligand_top_fname : Union[Path, str]
         Path to additional topology file used by CNS.
-    
+
     Returns
     -------
     out : list[str]
@@ -172,18 +175,18 @@ def get_score_string(
             outputpdb=outputpdb,
             ligand_param_fname=ligand_param_fname,
             ligand_top_fname=ligand_top_fname,
-            )
+        )
     out = stdout.getvalue().split(os.linesep)
     return out
 
 
 def calc_score(
-        pdb_f: str,
-        run_dir: str,
-        outputpdb: bool = False,
-        ligand_param_fname: Union[Path, str] = "",
-        ligand_top_fname: Union[Path, str] = "",
-        ) -> Tuple[float, float, float, float, float]:
+    pdb_f: str,
+    run_dir: str,
+    outputpdb: bool = False,
+    ligand_param_fname: Union[Path, str] = "",
+    ligand_top_fname: Union[Path, str] = "",
+) -> Tuple[float, float, float, float, float]:
     """Calculate the score of a model.
 
     Parameters
@@ -213,7 +216,7 @@ def calc_score(
     desolv : float
         Desolvation energy.
     bsa : float
-        Buried surface area.   
+        Buried surface area.
 
     Raises
     ------
@@ -221,11 +224,12 @@ def calc_score(
         Error when the file could not be located.
     """
     scores_strings = get_score_string(
-        pdb_f, run_dir,
+        pdb_f,
+        run_dir,
         outputpdb=outputpdb,
         ligand_param_fname=ligand_param_fname,
         ligand_top_fname=ligand_top_fname,
-        )
+    )
     # Loop over lines to search for the score and components
     for ln in scores_strings:
         if ln.startswith("> HADDOCK-score (emscoring)"):
@@ -243,17 +247,17 @@ def calc_score(
     return score, vdw, elec, desolv, bsa
 
 
-def add_zscores(df_scan_clt, column='delta_score'):
+def add_zscores(df_scan_clt, column="delta_score"):
     """Add z-scores to the dataframe.
 
     Parameters
     ----------
     df_scan : pandas.DataFrame
         Dataframe with the scan results for the model.
-    
+
     colunm : str
         Column to calculate the z-score.
-    
+
     Returns
     -------
     df_scan : pandas.DataFrame
@@ -262,23 +266,24 @@ def add_zscores(df_scan_clt, column='delta_score'):
     mean_delta = np.mean(df_scan_clt[column])
     std_delta = np.std(df_scan_clt[column])
     if std_delta > 0.0:
-        df_scan_clt['z_score'] = (df_scan_clt[column] - mean_delta) / std_delta
+        df_scan_clt["z_score"] = (df_scan_clt[column] - mean_delta) / std_delta
     else:
-        df_scan_clt['z_score'] = 0.0
+        df_scan_clt["z_score"] = 0.0
     return df_scan_clt
 
 
-class ClusterOutputer():
+class ClusterOutputer:
     """Manage the generation of alascan outputs for cluster-based analysis."""
+
     def __init__(
-            self,
-            cluster_scan_data: Dict[str, Dict[str, Union[float, int]]],
-            clt_id: str,
-            clt_population: int,
-            scan_residue: str = "ALA",
-            generate_plot: bool = False,
-            offline: bool = False,
-            ):
+        self,
+        cluster_scan_data: Dict[str, Dict[str, Union[float, int]]],
+        clt_id: str,
+        clt_population: int,
+        scan_residue: str = "ALA",
+        generate_plot: bool = False,
+        offline: bool = False,
+    ):
         """Initialization function
 
         Parameters
@@ -307,7 +312,7 @@ class ClusterOutputer():
         """Wrtie cluster alascan output to scan_clt_X.tsv file,
         including average and stdard deviation data per residue
         and optionally save cluster alascan plots (if generate_plot == True)
-        
+
         Return
         ------
         scan_clt_filename : str
@@ -322,41 +327,50 @@ class ClusterOutputer():
             resid = int(ident.split("-")[1])
             resname = ident.split("-")[2]
             # Compute averages and stddev and hold data.
-            clt_data.append([
-                chain,
-                resid,
-                resname,
-                ident,
-                np.mean(clt_res_dt['delta_score']),
-                np.std(clt_res_dt['delta_score']),
-                np.mean(clt_res_dt['delta_vdw']),
-                np.std(clt_res_dt['delta_vdw']),
-                np.mean(clt_res_dt['delta_elec']),
-                np.std(clt_res_dt['delta_elec']),
-                np.mean(clt_res_dt['delta_desolv']),
-                np.std(clt_res_dt['delta_desolv']),
-                np.mean(clt_res_dt['delta_bsa']),
-                np.std(clt_res_dt['delta_bsa']),
-                clt_res_dt['frac_pr'] / self.clt_population,
-                ])
+            clt_data.append(
+                [
+                    chain,
+                    resid,
+                    resname,
+                    ident,
+                    np.mean(clt_res_dt["delta_score"]),
+                    np.std(clt_res_dt["delta_score"]),
+                    np.mean(clt_res_dt["delta_vdw"]),
+                    np.std(clt_res_dt["delta_vdw"]),
+                    np.mean(clt_res_dt["delta_elec"]),
+                    np.std(clt_res_dt["delta_elec"]),
+                    np.mean(clt_res_dt["delta_desolv"]),
+                    np.std(clt_res_dt["delta_desolv"]),
+                    np.mean(clt_res_dt["delta_bsa"]),
+                    np.std(clt_res_dt["delta_bsa"]),
+                    clt_res_dt["frac_pr"] / self.clt_population,
+                ]
+            )
         df_cols = [
-            'chain', 'resid', 'resname', 'full_resname',
-            'delta_score', 'delta_score_std', 'delta_vdw', 'delta_vdw_std',
-            'delta_elec', 'delta_elec_std', 'delta_desolv', 'delta_desolv_std',
-            'delta_bsa', 'delta_bsa_std', 'frac_pres',
-            ]
+            "chain",
+            "resid",
+            "resname",
+            "full_resname",
+            "delta_score",
+            "delta_score_std",
+            "delta_vdw",
+            "delta_vdw_std",
+            "delta_elec",
+            "delta_elec_std",
+            "delta_desolv",
+            "delta_desolv_std",
+            "delta_bsa",
+            "delta_bsa_std",
+            "frac_pres",
+        ]
         df_scan_clt = pd.DataFrame(clt_data, columns=df_cols)
         # adding clt-based Z score
-        df_scan_clt = add_zscores(df_scan_clt, 'delta_score')
+        df_scan_clt = add_zscores(df_scan_clt, "delta_score")
         # Sort rows
-        df_scan_clt.sort_values(by=['chain', 'resid'], inplace=True)
+        df_scan_clt.sort_values(by=["chain", "resid"], inplace=True)
         # Generate output CSV data
         csv_data = io.StringIO()
-        df_scan_clt.to_csv(
-            csv_data,
-            index=False,
-            float_format='%.2f',
-            sep="\t")
+        df_scan_clt.to_csv(csv_data, index=False, float_format="%.2f", sep="\t")
         csv_data.seek(0)
         # Define output csv filepath
         scan_clt_filename = f"scan_clt_{self.clt_id}.tsv"
@@ -364,14 +378,18 @@ class ClusterOutputer():
         with open(scan_clt_filename, "w") as fout:
             # add comment to the file
             fout.write(f"{'#' * 80}{os.linesep}")
-            fout.write(f"# `alascan` cluster results for cluster {self.clt_id}{os.linesep}")  # noqa E501
+            fout.write(
+                f"# `alascan` cluster results for cluster {self.clt_id}{os.linesep}"
+            )  # noqa E501
             fout.write(f"# reported values are the average for the cluster{os.linesep}")  # noqa E501
             fout.write(f"#{os.linesep}")
-            fout.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
+            fout.write(
+                f"# z_score is calculated with respect to the mean values of all residues{os.linesep}"
+            )  # noqa E501
             fout.write(f"{'#' * 80}{os.linesep}")
             # Write csv data content
             fout.write(csv_data.read())
-        
+
         # Generate plot
         self.gen_alascan_plot(df_scan_clt)
 
@@ -396,22 +414,22 @@ class ClusterOutputer():
                 self.clt_id,
                 self.scanned_residue,
                 offline=self.offline,
-                )
+            )
         except Exception as e:
             log.warning(
-                "Could not create interactive plot. The following error"
-                f" occurred {e}"
-                )
+                f"Could not create interactive plot. The following error occurred {e}"
+            )
 
 
-class AddDeltaBFactor():
+class AddDeltaBFactor:
     """Add delta score in bfactor column of a PDB."""
+
     def __init__(
-            self,
-            model: PDBFile,
-            path: Path,
-            model_results: List[MutationResult],
-            ):
+        self,
+        model: PDBFile,
+        path: Path,
+        model_results: List[MutationResult],
+    ):
         """Initialisation function
 
         Parameters
@@ -440,15 +458,15 @@ class AddDeltaBFactor():
         self.model.rel_path = Path("..", Path(self.path).name, output_fname)
         self.model.path = str(Path(".").resolve())
         return self.model
-    
+
     def write_delta_score_to_pdb(self, output_path: Path) -> Path:
         """Add delta scores as b-factors in PDB file.
-        
+
         Parameters
         ----------
         output_path : Path
             Path to the pdb file.
-        
+
         Returns
         -------
         output_path : Path
@@ -477,8 +495,8 @@ class AddDeltaBFactor():
 
     def reorder_results(self) -> None:
         """Perform initial data manuputation to simply downstream access.
-        
-        Organise mutation results into dictionary, with chain-resid keys 
+
+        Organise mutation results into dictionary, with chain-resid keys
         and values delta score (e.g.: {"A-115": 5}),
         and determine min and max score within the model to normalize data.
         """
@@ -500,7 +518,7 @@ class AddDeltaBFactor():
         else:
             self.min_score = -1
             self.max_score = 1
-    
+
     def normalize_score(self, score: float) -> float:
         """Normalise the input score based on observed scores for this model
 
@@ -527,19 +545,19 @@ class AddDeltaBFactor():
 def write_scan_out(results: List[MutationResult], model_id: str) -> None:
     """
     Save mutation results per model to tsv file.
-    
+
     Parameters
     ----------
     results : List[MutationResult]
         List of mutation results from scanning (comes from MutationResult)
     model_id : str
         Identifier for the model used in filename.
-        
+
     Returns
     -------
     None
         Function saves results to file `scan_{model_id}.tsv`.
-        
+
     Notes
     -----
     If results list is empty, no file is created.
@@ -555,29 +573,54 @@ def write_scan_out(results: List[MutationResult], model_id: str) -> None:
         if result.success:
             m_score, m_vdw, m_elec, m_des, m_bsa = result.mutant_scores
             d_score, d_vdw, d_elec, d_des, d_bsa = result.delta_scores
-            
-            scan_data.append([
-                result.chain, result.resid, result.ori_resname, 
-                result.target_resname, m_score, m_vdw, m_elec, m_des, m_bsa,
-                d_score, d_vdw, d_elec, d_des, d_bsa
-            ])
-            
+
+            scan_data.append(
+                [
+                    result.chain,
+                    result.resid,
+                    result.ori_resname,
+                    result.target_resname,
+                    m_score,
+                    m_vdw,
+                    m_elec,
+                    m_des,
+                    m_bsa,
+                    d_score,
+                    d_vdw,
+                    d_elec,
+                    d_des,
+                    d_bsa,
+                ]
+            )
+
             # Get native score from first result (mutant + delta = native)
             if native_score is None:
                 native_score = result.mutant_scores[0] + result.delta_scores[0]
-    
+
     if scan_data:
-        df_columns = ['chain', 'res', 'ori_resname', 'end_resname',
-                     'score', 'vdw', 'elec', 'desolv', 'bsa',
-                     'delta_score', 'delta_vdw', 'delta_elec',
-                     'delta_desolv', 'delta_bsa']
-        
+        df_columns = [
+            "chain",
+            "res",
+            "ori_resname",
+            "end_resname",
+            "score",
+            "vdw",
+            "elec",
+            "desolv",
+            "bsa",
+            "delta_score",
+            "delta_vdw",
+            "delta_elec",
+            "delta_desolv",
+            "delta_bsa",
+        ]
+
         df_scan = pd.DataFrame(scan_data, columns=df_columns)
         # Compute z-scores
-        df_scan = add_zscores(df_scan, 'delta_score')
-        
+        df_scan = add_zscores(df_scan, "delta_score")
+
         # Sort by chain id, then by residue id
-        df_scan.sort_values(by=['chain', 'res'], inplace=True)
+        df_scan.sort_values(by=["chain", "res"], inplace=True)
 
         # Get csv data as string
         csv_io = io.StringIO()
@@ -592,19 +635,17 @@ def write_scan_out(results: List[MutationResult], model_id: str) -> None:
             fout.write(f"#{os.linesep}")
             fout.write(f"# native score = {native_score}{os.linesep}")
             fout.write(f"#{os.linesep}")
-            fout.write(f"# z_score is calculated with respect to the other residues{os.linesep}")
+            fout.write(
+                f"# z_score is calculated with respect to the other residues{os.linesep}"
+            )
             fout.write(f"{'#' * 80}{os.linesep}")
             # Write csv content
             fout.write(csv_io.read())
 
 
 def group_scan_by_cluster(
-        models: List[PDBFile],
-        results_by_model: Dict[str, MutationResult]
-        ) -> Tuple[
-            Dict[str, Dict[str, Dict[str, Union[float, int]]]],
-            Dict[str, int]
-            ]:
+    models: List[PDBFile], results_by_model: Dict[str, MutationResult]
+) -> Tuple[Dict[str, Dict[str, Dict[str, Union[float, int]]]], Dict[str, int]]:
     """Group models alascan data per cluster.
 
     Parameters
@@ -659,7 +700,7 @@ def group_scan_by_cluster(
                     "delta_desolv": [],
                     "delta_bsa": [],
                     "frac_pr": 0,
-                    }
+                }
             # Add data
             delta_scores = mut_result.delta_scores
             clt_scan[cl_id][ident]["delta_score"].append(delta_scores[0])
@@ -677,28 +718,28 @@ class InterfaceScanner:
     """
 
     def __init__(
-        self, 
-        model: Union[str, Path, Any], 
-        mutation_res: str = "ALA", 
-        params: Optional[Dict[str, Any]] = None, 
-        library_mode: bool = True
-    ) -> None:    
+        self,
+        model: Union[str, Path, Any],
+        mutation_res: str = "ALA",
+        params: Optional[Dict[str, Any]] = None,
+        library_mode: bool = True,
+    ) -> None:
         """
         Initialize InterfaceScanner for a single model.
-        
+
         Parameters
         ----------
         model : str, Path, or model object
-            HADDOCK model object (if library_mode = False) or 
+            HADDOCK model object (if library_mode = False) or
             Path to PDB file (if library mode = True)
         mutation_res : str
             Target residue for mutation (default: "ALA")
         params : dict, optional
-            Additional parameters for interface detection 
+            Additional parameters for interface detection
             (list on top of alascan/__inint__.py)
         library_mode : bool
-            If True, execute mutations sequentially inside InterfaceScanner.run() 
-            If False, just prepare jobs - execution will be taken care of in init.py 
+            If True, execute mutations sequentially inside InterfaceScanner.run()
+            If False, just prepare jobs - execution will be taken care of in init.py
             of alascan module by haddock Engine
         """
         self.model = model
@@ -709,10 +750,10 @@ class InterfaceScanner:
         self.ligand_param_fname = self.params.get("ligand_param_fname", "")
         self.ligand_top_fname = self.params.get("ligand_top_fname", "")
         self.filter_resdic = {
-            key[-1]: value for key, value
-            in self.params.items()
+            key[-1]: value
+            for key, value in self.params.items()
             if key.startswith("resdic")
-            }
+        }
         if isinstance(model, PDBFile):
             self.model_path = model.rel_path
             self.model_id = model.file_name.removesuffix(".pdb")
@@ -720,7 +761,7 @@ class InterfaceScanner:
             # for library mode
             self.model_path = Path(model)
             self.model_id = self.model_path.stem
-      
+
     def run(self):
         """
         Get interface residues and create mutation jobs.
@@ -741,21 +782,21 @@ class InterfaceScanner:
                     outputpdb=False,
                     ligand_param_fname=self.ligand_param_fname,
                     ligand_top_fname=self.ligand_top_fname,
-                    )
+                )
             finally:
                 if os.path.exists(sc_dir):
                     shutil.rmtree(sc_dir)
-            
+
             # Load coordinates
             atoms = get_atoms(self.model_path)
             coords, _chain_ranges = load_coords(
                 self.model_path,
                 atoms,
                 add_resname=True,
-                )
-            
-            # Determine target residues: get interface, then apply user filers, if given 
-            # Get all interface residues        
+            )
+
+            # Determine target residues: get interface, then apply user filers, if given
+            # Get all interface residues
             cutoff = self.params.get("int_cutoff", 5.0)
             interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
 
@@ -763,12 +804,16 @@ class InterfaceScanner:
             user_chains = self.params.get("chains", [])
 
             # if user defined target residues, check they are in the interface
-            if self.filter_resdic != {'_': []}:
+            if self.filter_resdic != {"_": []}:
                 filtered_interface = {}
                 for chain in self.filter_resdic:
                     if chain in interface:
                         # Search for the intersection of user queried residues and interface residues
-                        user_res_valid = list(set(self.filter_resdic[chain]).intersection(set(interface[chain])))
+                        user_res_valid = list(
+                            set(self.filter_resdic[chain]).intersection(
+                                set(interface[chain])
+                            )
+                        )
                         # If at least one residue must be analyzed, add it to residues to be scanned
                         if user_res_valid:
                             filtered_interface[chain] = user_res_valid
@@ -780,7 +825,7 @@ class InterfaceScanner:
                     chain: res
                     for chain, res in interface.items()
                     if chain in user_chains
-                    }
+                }
 
             # get all atoms of the model to verifiy residue type down the line
             resname_dict = {}
@@ -789,7 +834,7 @@ class InterfaceScanner:
                 if key not in resname_dict:
                     resname_dict[key] = resname
 
-            # Create mutation 
+            # Create mutation
             output_mutants = self.params.get("output_mutants", False)
             for chain in interface:
                 for res in interface[chain]:
@@ -811,34 +856,34 @@ class InterfaceScanner:
                             ligand_top_fname=self.ligand_top_fname,
                         )
                         self.point_mutations_jobs.append(job)
-    
+
             # Execute jobs if in library mode
             if self.library_mode:
                 log.info(
                     f"Executing {len(self.point_mutations_jobs)} "
                     f"mutations for {self.model_id}"
-                    )
+                )
                 results = []
                 total = len(self.point_mutations_jobs)
-                
+
                 for i, job in enumerate(self.point_mutations_jobs, 1):
                     log.info(
                         f"Processing mutation {i}/{total}: "
                         f"{job.chain}:{job.resid} {job.ori_resname}"
                         f"->{job.target_resname}"
-                        )
+                    )
                     result = job.run()
                     results.append(result)
                     if result.success:
                         log.info(f"Delta score: {result.delta_scores[0]:.2f}")
                     else:
                         log.warning(f"Failed: {result.error_msg}")
-                
+
                 write_scan_out(results, self.model_id)
             else:
                 # return point_mutations_jobs back to alascan/__init__.py
                 return self.point_mutations_jobs
-                
+
         except Exception as e:
             log.error(f"Failed to scan model {self.model_id}: {e}")
             raise
@@ -846,22 +891,23 @@ class InterfaceScanner:
 
 class ModelPointMutation:
     """Executes a single point mutation."""
+
     def __init__(
-        self, 
-        model_path: Path, 
-        model_id: str, 
-        chain: str, 
-        resid: int, 
+        self,
+        model_path: Path,
+        model_id: str,
+        chain: str,
+        resid: int,
         ori_resname: str,
-        target_resname: str, 
-        native_scores: Tuple[float, float, float, float, float], 
+        target_resname: str,
+        native_scores: Tuple[float, float, float, float, float],
         output_mutants: bool = False,
         ligand_param_fname: Union[Path, str] = "",
         ligand_top_fname: Union[Path, str] = "",
     ) -> None:
         """
         Initialize a single point mutation job.
-        
+
         Parameters
         ----------
         model_path : Path
@@ -899,15 +945,17 @@ class ModelPointMutation:
     def run(self):
         """Execute the point mutation."""
         mutation_id = f"{self.model_id}_{self.chain}{self.resid}{self.target_resname}"
-        
+
         try:
             # Setup working directory
             sc_dir = f"haddock3-score-{mutation_id}"
             os.makedirs(sc_dir, exist_ok=True)
-            
+
             # Perform point mutation on pdb file
-            mut_pdb = mutate(self.model_path, self.chain, self.resid, self.target_resname)
-            
+            mut_pdb = mutate(
+                self.model_path, self.chain, self.resid, self.target_resname
+            )
+
             # Calculate mutant scores
             mutant_scores = calc_score(
                 mut_pdb,
@@ -915,13 +963,18 @@ class ModelPointMutation:
                 outputpdb=self.output_mutants,
                 ligand_param_fname=self.ligand_param_fname,
                 ligand_top_fname=self.ligand_top_fname,
-                )
-            
+            )
+
             # Calculate deltas (native - mutant)
             n_score, n_vdw, n_elec, n_des, n_bsa = self.native_scores
             m_score, m_vdw, m_elec, m_des, m_bsa = mutant_scores
-            delta_scores = (n_score - m_score, n_vdw - m_vdw, n_elec - m_elec, 
-                          n_des - m_des, n_bsa - m_bsa)
+            delta_scores = (
+                n_score - m_score,
+                n_vdw - m_vdw,
+                n_elec - m_elec,
+                n_des - m_des,
+                n_bsa - m_bsa,
+            )
 
             # Handle output files
             em_mut_pdb = Path(f"{mut_pdb.stem}_hs.pdb")
@@ -938,17 +991,27 @@ class ModelPointMutation:
             # clean up scoring dir
             if os.path.exists(sc_dir):
                 shutil.rmtree(sc_dir)
-            
+
             return MutationResult(
-                model_id=self.model_id, chain=self.chain, resid=self.resid,
-                ori_resname=self.ori_resname, target_resname=self.target_resname,
-                mutant_scores=mutant_scores, delta_scores=delta_scores, success=True
+                model_id=self.model_id,
+                chain=self.chain,
+                resid=self.resid,
+                ori_resname=self.ori_resname,
+                target_resname=self.target_resname,
+                mutant_scores=mutant_scores,
+                delta_scores=delta_scores,
+                success=True,
             )
-            
+
         except Exception as e:
             return MutationResult(
-                model_id=self.model_id, chain=self.chain, resid=self.resid,
-                ori_resname=self.ori_resname, target_resname=self.target_resname,
-                mutant_scores=(0, 0, 0, 0, 0), delta_scores=(0, 0, 0, 0, 0),
-                success=False, error_msg=str(e)
+                model_id=self.model_id,
+                chain=self.chain,
+                resid=self.resid,
+                ori_resname=self.ori_resname,
+                target_resname=self.target_resname,
+                mutant_scores=(0, 0, 0, 0, 0),
+                delta_scores=(0, 0, 0, 0, 0),
+                success=False,
+                error_msg=str(e),
             )

@@ -122,8 +122,20 @@ def normalize_config(text, ncores):
     return text
 
 
+def run_finished_ok(run_dir):
+    """Return True if run_dir/log contains 'Finished at' but no 'ERROR' line."""
+    log_file = run_dir / "log"
+    if not log_file.exists():
+        return False
+    text = log_file.read_text()
+    return "Finished at" in text and " ERROR] " not in text
+
+
 def run_cfg(folder, cfg, ncores):
-    """Remove any previous run directory and execute `haddock3 <cfg>`.
+    """Run `haddock3 <cfg>`, skipping if the run directory already finished cleanly.
+
+    A run is considered finished when its log contains 'Finished at' and no
+    ERROR lines. Crashed or missing runs are always re-executed.
 
     A temporary copy of the config is used with `mode = "local"` and
     `ncores = <ncores>` enforced, so that rigidbody and gdock runs are
@@ -131,12 +143,16 @@ def run_cfg(folder, cfg, ncores):
     """
     cfg_path = folder / cfg
     run_dir = folder / run_dir_of(cfg_path)
+    log_file = run_dir / "log"
+
+    if run_finished_ok(run_dir):
+        print(f">>> [{folder.name}] skipping {cfg} (already finished: {run_dir.name})")
+        return
 
     text = normalize_config(cfg_path.read_text(), ncores)
     tmp_cfg = folder / f".tmp_{cfg}"
     tmp_cfg.write_text(text)
 
-    log_file = run_dir / "log"
     print(
         f">>> [{folder.name}] running {cfg} (run_dir={run_dir.name}, ncores={ncores}, "
         f"log={log_file.relative_to(folder)})"
@@ -163,8 +179,11 @@ def last_caprieval_dir(run_dir):
     return candidates[-1] if candidates else None
 
 
+_SHOW_FIELDS = {"score", "dockq"}
+
+
 def print_top_cluster(folder, cfg, label):
-    """Print the cluster_rank=1 row of capri_clt.tsv from the last caprieval step."""
+    """Print score and dockq for the top cluster from the last caprieval step."""
     run_dir = folder / run_dir_of(folder / cfg)
     capri_dir = last_caprieval_dir(run_dir)
 
@@ -189,7 +208,8 @@ def print_top_cluster(folder, cfg, label):
     header = lines[header_idx].split("\t")
     values = lines[header_idx + 1].split("\t")
     for key, value in zip(header, values):
-        print(f"  {key}: {value}")
+        if key in _SHOW_FIELDS:
+            print(f"  {key}: {value}")
 
 
 def compare_pair(folder, rigid_cfg, gdock_cfg, name):

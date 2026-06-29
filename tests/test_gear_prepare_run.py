@@ -311,6 +311,9 @@ def test_value_type_error(defaultparam, inputvalue):
         ({"min": 0, "max": 1000}, -0),
         ({"choices": ["ok", "fine"]}, "fine"),
         ({"choices": ["super"]}, "super"),
+        ({"minchars": 3, "maxchars": 10}, "abcd"),  # string within length bounds
+        ({"minchars": 0, "maxchars": 5}, ""),  # empty string at lower bound
+        ({"minitems": 1, "maxitems": 3}, ["a", "b"]),  # list within item bounds
     ],
 )
 def test_accepted_value_range(defaultparam, inputvalue):
@@ -329,6 +332,12 @@ def test_accepted_value_range(defaultparam, inputvalue):
         ({"min": 0.1, "max": 1.0, "default": 0.5}, -0.1),
         ({"choices": ["not", "good"], "default": "good"}, ["not", "good"]),
         ({"choices": ["super"], "default": "super"}, "wrong"),
+        # string shorter than minchars (regression: used to raise KeyError)
+        ({"minchars": 3, "maxchars": 10}, "ab"),
+        # string longer than maxchars
+        ({"minchars": 3, "maxchars": 10}, "a" * 20),
+        # list outside item bounds
+        ({"minitems": 1, "maxitems": 2}, ["a", "b", "c"]),
     ],
 )
 def test_value_range_error(defaultparam, inputvalue):

@@ -109,7 +109,7 @@ class BaseCNSModule(BaseHaddockModule):
         _cns_exec = self.params["cns_exec"] or global_cns_exec
         new_cns = Path(".", Path(_cns_exec).name)
         if not new_cns.exists():
-            self.params["cns_exec"] = shutil.copyfile(_cns_exec, new_cns)
+            shutil.copyfile(_cns_exec, new_cns)
             shutil.copystat(_cns_exec, new_cns)
             self.params["cns_exec"] = Path("..", Path(_cns_exec).name)
 

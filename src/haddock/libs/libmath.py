@@ -24,4 +24,4 @@ class RandomNumberGenerator:
 
     def randint(self, lower_limit: int = 0, upper_limit: int = 9) -> int:
         """Generate a random integer."""
-        return int(self() * (upper_limit + 1)) + lower_limit
+        return lower_limit + int(self() * (upper_limit - lower_limit + 1))

@@ -9,14 +9,14 @@ caller can trigger it). Style and test-coverage gaps are excluded.
 
 | # | Finding | Verified | Severity | Status |
 |---|---------|----------|----------|--------|
-| 1 | `randint` overshoots upper bound | yes | low | live, fix worthwhile |
-| 3 | wrong dict key in string validation | yes | medium | live, fix worthwhile |
+| 1 | `randint` overshoots upper bound | yes | low | **FIXED** |
+| 3 | wrong dict key in string validation | yes | medium | **FIXED** |
 | 5 | malformed CNS block for list PSF | yes | low | latent |
 | 2 | `open(None)` on missing `error_file` | yes | low | latent |
 | 8 | `split_tasks([])` raises `ValueError` | yes | low | latent |
-| 9 | double assignment to `cns_exec` | yes | trivial | cosmetic |
-| 10 | vestigial `self.len` | yes | trivial | cosmetic |
-| 11 | step-name underscore assumption | yes | trivial | fragile, safe today |
+| 9 | double assignment to `cns_exec` | yes | trivial | **FIXED** |
+| 10 | vestigial `self.len` | yes | trivial | **FIXED** |
+| 11 | step-name underscore assumption | yes | trivial | **FIXED** |
 | 4 | unhelpful (not crashing) error msg | partial | trivial | mischaracterized |
 | 7 | rigidbody sampling truncation | partial | trivial | mostly by-design |
 | 6 | `lru_cache` on mutable dict | no | — | not a live bug |
@@ -24,7 +24,7 @@ caller can trigger it). Style and test-coverage gaps are excluded.
 
 ---
 
-## 1. [OPEN — fix worthwhile] `randint` overshoots the upper bound
+## 1. [FIXED] `randint` overshoots the upper bound
 
 **File:** `src/haddock/libs/libmath.py:27`
 
@@ -52,7 +52,7 @@ correctness, not urgency.
 
 ---
 
-## 3. [OPEN — fix worthwhile] Wrong dict key in string-length validation
+## 3. [FIXED] Wrong dict key in string-length validation
 
 **File:** `src/haddock/gear/prepare_run.py:752`
 
@@ -139,7 +139,7 @@ An empty task list makes `n == 0`, and `range(0, 0, 0)` raises
 
 ---
 
-## 9. [COSMETIC] Double assignment to `self.params["cns_exec"]`
+## 9. [FIXED] Double assignment to `self.params["cns_exec"]`
 
 **File:** `src/haddock/modules/base_cns_module.py:112-114`
 
@@ -153,7 +153,7 @@ The first assignment is dead. Harmless; clarity only.
 
 ---
 
-## 10. [COSMETIC] Vestigial `self.len`
+## 10. [FIXED] Vestigial `self.len`
 
 **File:** `src/haddock/libs/libontology.py:115`
 
@@ -166,7 +166,7 @@ tree — written on every `PDBFile`, never read. Dead code.
 
 ---
 
-## 11. [COSMETIC] Step-folder parsing assumes no underscore in module names
+## 11. [FIXED] Step-folder parsing assumes no underscore in module names
 
 **File:** `src/haddock/modules/analysis/caprieval/capri.py:69`
 

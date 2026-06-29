@@ -112,7 +112,6 @@ class PDBFile(Persistent):
         self.aa_topology: Optional[Union[List[TopologyFile], TopologyFile]] = aa_topology
         self.cgtoaa_tbl: Optional[Union[List[str], str]] = cgtoaa_tbl
         self.shape: Optional[Union[List[bool], bool]] = shape
-        self.len = score
 
     def __lt__(self, other: "PDBFile") -> bool:
         return self.score < other.score

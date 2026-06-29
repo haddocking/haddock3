@@ -749,7 +749,7 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
     # Case for strings
     elif "minchars" in param.keys() and "maxchars" in param.keys():
         if (nbchars := len(val)) < param["minchars"] or nbchars > param["maxchars"]:
-            _desc = "under" if nbchars < param["minitems"] else "exceeding"
+            _desc = "under" if nbchars < param["minchars"] else "exceeding"
             return (
                 f'Number of items found in "{val}" is {_desc} the '
                 "permitted limit. It should range from "

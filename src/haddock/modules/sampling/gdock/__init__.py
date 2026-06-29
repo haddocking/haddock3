@@ -1,5 +1,6 @@
 """gdock integration sampling module."""
 
+import time
 from pathlib import Path
 
 from haddock import log
@@ -107,10 +108,13 @@ class HaddockModule(BaseHaddockModule):
                 seed=self.params["seed"],
                 sampling=sampling_factor,
             )
+            t0 = time.monotonic()
             gdock_wrapper.run()
+            elapsed = time.monotonic() - t0
             log.info(
                 f"gdock run {idx}: generations_run={gdock_wrapper.result['generationsRun']}"
                 f" converged_early={gdock_wrapper.converged_early}"
+                f" elapsed={elapsed:.1f}s"
             )
             models = gdock_wrapper.save_models(".", prefix=f"gdock_{idx}")
 

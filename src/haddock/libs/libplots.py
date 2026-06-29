@@ -849,6 +849,7 @@ def create_other_cluster(
     other_structs_df = structs_df[structs_df['cluster_ranking'] >= max_clusters].copy()
     # drop other clusters from structs_df
     structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters].copy()
+    other_structs_df['cluster_id'] = other_structs_df['cluster_id'].astype(object)
     other_structs_df.loc[:,'cluster_id'] = 'Other'
     other_structs_df.loc[:,'cluster_ranking'] = max_clusters
     inner_rank = other_structs_df['caprieval_rank'].rank(method='first').astype(int)  # noqa : E501
@@ -919,6 +920,10 @@ def clt_table_handler(
             structs_df['model'] = structs_df['model'].replace(
                 to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True,
             )
+        # ss_file is in NN_caprieval/ while report is in
+        # analysis/NN_caprieval_analysis/
+        # need to correct model paths by prepending ../
+        structs_df['model'] = "../" + structs_df['model']
     else:
         # ss_file is in NN_caprieval/ while report is in
         # analysis/NN_caprieval_analysis/

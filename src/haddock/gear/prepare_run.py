@@ -61,11 +61,11 @@ from haddock.gear.restart_run import preprocess_restart_from
 from haddock.gear.validations import (
     v_rundir,
     validate_defaults_yaml,
-    )
+)
 from haddock.gear.yaml2cfg import (
     read_from_yaml_config,
     find_incompatible_parameters,
-    )
+)
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
 from haddock.libs.libio import make_writeable_recursive, extract_files_flat
@@ -132,9 +132,7 @@ TYPES_MAPPER = {
         PosixPath,
         EmptyPath,
     ),
-    "dict": (
-        dict,
-    )
+    "dict": (dict,),
 }
 
 
@@ -300,7 +298,7 @@ def setup_run(
     validate_parameters_are_not_incompatible(
         general_params,
         incompatible_defaults_params,
-        )
+    )
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -336,7 +334,7 @@ def setup_run(
 
         log.info(
             "Uncompressing previous output files for folders: "
-            f'{", ".join(step_folders)}'
+            f"{', '.join(step_folders)}"
         )
         # unpack the possible compressed and archived files
         _step_folders = (Path(general_params[RUNDIR], p) for p in step_folders)
@@ -449,7 +447,7 @@ def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
     # Initiate files data
     infofile = {
         "raw_input": (
-            "An untouched copy of the raw input file, " "as provided by the user."
+            "An untouched copy of the raw input file, as provided by the user."
         ),
         "cleaned_input": (
             "Pre-parsed input file where (eventually) "
@@ -494,8 +492,8 @@ def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
     readmepath = Path(confpaths, "README.txt")
     with open(readmepath, "w") as f:
         f.write(
-            f"{'#'*80}\n# Information about configuration "
-            f"files present in the same directory #\n{'#'*80}\n"
+            f"{'#' * 80}\n# Information about configuration "
+            f"files present in the same directory #\n{'#' * 80}\n"
         )
         for confname in list_save_conf:
             if confname not in added_files.keys():
@@ -568,17 +566,16 @@ def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
         # Check for parameter incompatibilities
         module_incompatibilities = find_incompatible_parameters(
             gen_defaults_module_param_path(module_name)
-            )
+        )
         try:
             validate_parameters_are_not_incompatible(
                 args,
                 module_incompatibilities,
-                )
+            )
         except ValueError as e:
             raise ConfigurationError(
-                f"An issue was discovered in module [{module_name}]: "
-                f"{e.args[0]}"
-                )
+                f"An issue was discovered in module [{module_name}]: {e.args[0]}"
+            )
 
         if module_name in modules_using_resdic:
             confirm_resdic_chainid_length(args)
@@ -708,7 +705,7 @@ def validate_param_type(param: dict, val: Any) -> Optional[str]:
         return (
             f'Wrong provided type "{query_type}" with value "{val}". '
             f'It should be of type "{param["type"]}" '
-            f'(e.g: {param["default"]})'
+            f"(e.g: {param['default']})"
         )
 
 
@@ -735,7 +732,7 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
         if val < param["min"] or val > param["max"]:
             return (
                 f'Value "{val}" is not in the allowed boundaries '
-                f'ranging from {param["min"]} to {param["max"]}'
+                f"ranging from {param['min']} to {param['max']}"
             )
     # Case for lists
     elif "minitems" in param.keys() and "maxitems" in param.keys():
@@ -744,7 +741,7 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
             return (
                 f'Number of items found in "{val}" is {_desc} the '
                 "permitted limit. It should range from "
-                f'{param["minitems"]} to {param["maxitems"]}'
+                f"{param['minitems']} to {param['maxitems']}"
             )
     # Case for strings
     elif "minchars" in param.keys() and "maxchars" in param.keys():
@@ -753,7 +750,7 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
             return (
                 f'Number of items found in "{val}" is {_desc} the '
                 "permitted limit. It should range from "
-                f'{param["minchars"]} to {param["maxchars"]}'
+                f"{param['minchars']} to {param['maxchars']}"
             )
 
 
@@ -783,7 +780,11 @@ def validate_ncs_params(params: dict) -> None:
     except KeyError:
         return None
     # At this stage, ncs_on == True
-    base_ncs_param_names = ("ncs_sta", "ncs_end", "ncs_seg", )
+    base_ncs_param_names = (
+        "ncs_sta",
+        "ncs_end",
+        "ncs_seg",
+    )
     # Read and group ncs parameters together
     groupped_ncs: dict[int, dict[str, dict[int, Union[int, str]]]] = {}
     for paramname, value in params.items():
@@ -793,7 +794,7 @@ def validate_ncs_params(params: dict) -> None:
             first_or_second = int(paramname[7])
             x = int(paramname[-1])
             # Point param type ("sta", "end", or "seg")
-            param_type = paramname.split('_')[1][:-1]
+            param_type = paramname.split("_")[1][:-1]
             # Point/Create holding dict(s)
             ncs_group = groupped_ncs.setdefault(x, {})
             ncs_type = ncs_group.setdefault(param_type, {})
@@ -812,13 +813,16 @@ def validate_ncs_params(params: dict) -> None:
                 msg = f"Not two values set of `ncs_{paramtype}Y_{x}"
                 error_list.append(msg)
                 continue
-            if paramtype in ("sta", "end", ):
+            if paramtype in (
+                "sta",
+                "end",
+            ):
                 # Check they are not similar (wrong!)
                 if not len(set(two_values)) == 1:
                     msg = (
                         f"Values set of `ncs_{paramtype}Y_{x} must be equal: "
                         f"we parsed `{two_values[0]}` and `{two_values[1]}`"
-                        )
+                    )
                     error_list.append(msg)
             else:  # paramtype == "seg"
                 # Check they are similar (wrong!)
@@ -827,7 +831,7 @@ def validate_ncs_params(params: dict) -> None:
                         f"Chain/Segment IDs for `ncs_{paramtype}Y_{x} must be "
                         f"different: we parsed `{two_values[0]}` and"
                         f" `{two_values[1]}`"
-                        )
+                    )
                     error_list.append(msg)
 
     # Validate value of `numncs`
@@ -835,19 +839,19 @@ def validate_ncs_params(params: dict) -> None:
     # Case when number of definition do not match
     if params["nncs"] != len(ncs_suffixes):
         msg = (
-            f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
+            f"Number of NCS restraints (`nncs = {params['nncs']}`) "
             " do not match with the number of defined NCS restraints "
             f"({len(ncs_suffixes)})"
-            )
+        )
         error_list.append(msg)
     else:
         # Case when numbers do not match
         if max(ncs_suffixes) != params["nncs"]:
             msg = (
-                f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
+                f"Number of NCS restraints (`nncs = {params['nncs']}`) "
                 " do not match with the number of defined NCS restraints "
                 f"({', '.join([str(s) for s in ncs_suffixes])})"
-                )
+            )
             error_list.append(msg)
 
     # Here we fall into the error case
@@ -857,7 +861,7 @@ def validate_ncs_params(params: dict) -> None:
             "Some errors were discovered in the NCS restraints definition:"
             f"{os.linesep}"
             f"{os.linesep.join(error_list)}"
-            )
+        )
         # Raise error
         raise ConfigurationError(_msg)
     return None
@@ -1063,9 +1067,7 @@ def inject_in_modules(modules_params: ParamMap, key: Any, value: Any) -> None:
     """Inject a parameter in each module."""
     for params in modules_params.values():
         if key in params:
-            raise ValueError(
-                f"key {key!r} already in module parameters. Can't inject."
-            )
+            raise ValueError(f"key {key!r} already in module parameters. Can't inject.")
         params[key] = value
 
 
@@ -1093,9 +1095,9 @@ def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
 
 
 def validate_parameters_are_not_incompatible(
-        params: ParamMap,
-        incompatible_params: ParamMap,
-        ) -> None:
+    params: ParamMap,
+    incompatible_params: ParamMap,
+) -> None:
     """
     Validate parameters are not incompatible.
 
@@ -1118,14 +1120,17 @@ def validate_parameters_are_not_incompatible(
                 continue
             active_incompatibilities = incompatibilities[params[limiting_param]]
             # Check each incompatibility for the limiting parameter
-            for incompatible_param, incompatible_value in active_incompatibilities.items():
+            for (
+                incompatible_param,
+                incompatible_value,
+            ) in active_incompatibilities.items():
                 # Check if the incompatible parameter is present and has the incompatible value
                 if params.get(incompatible_param) == incompatible_value:
                     raise ValueError(
                         f"Parameter `{limiting_param}` with value "
                         f"`{params[limiting_param]}` is incompatible with "
                         f"`{incompatible_param}={incompatible_value}`."
-                        )
+                    )
 
 
 def validate_parameters_are_not_misspelled(
@@ -1212,14 +1217,14 @@ def _get_expandable(
     news_t1, counts_t1 = read_single_idx_groups_user_config(
         user_config,
         get_single_index_groups(defaults),
-        )
+    )
     allowed_params.update(news_t1)
     all_counts.update(counts_t1)
     # Read multiple indexed groups (terminating by `_X_Y`)
     news_t2, counts_t2 = read_multiple_idx_groups_user_config(
         user_config,
         get_multiple_index_groups(defaults),
-        )
+    )
     allowed_params.update(news_t2)
     all_counts.update(counts_t2)
 
@@ -1227,14 +1232,14 @@ def _get_expandable(
         news_t3 = read_simplest_expandable(
             user_config,
             type_simplest_ep[get_module_name(module_name)],
-            )
+        )
         allowed_params.update(news_t3)
     # Read molecule paramters (starting by `mol_`)
     _ = read_mol_parameters(
         user_config,
         get_mol_parameters(defaults),
         max_mols=max_mols,
-        )
+    )
     allowed_params.update(_)
 
     # Add counted parameters to hidden user parameters
@@ -1386,9 +1391,7 @@ def fuzzy_match(
     for user_word in transform_to_list(user_input):
         best: tuple[float, Any] = (-1, "")
         for possibility in possibilities:
-            distance = difflib.SequenceMatcher(
-                a=user_word, b=possibility
-            ).ratio()  # noqa: E501
+            distance = difflib.SequenceMatcher(a=user_word, b=possibility).ratio()  # noqa: E501
             if distance > best[0]:
                 best = (distance, possibility)
         results.append((user_word, best[1]))

@@ -1,4 +1,5 @@
 """Mathematical functions."""
+
 import random
 
 
@@ -16,9 +17,7 @@ class RandomNumberGenerator:
         self.random = random.Random()
         self.random.seed(self.seed)
 
-    def __call__(self,
-                 lower_limit: float = 0.,
-                 upper_limit: float = 1.) -> float:
+    def __call__(self, lower_limit: float = 0.0, upper_limit: float = 1.0) -> float:
         """Generate a random number between range."""
         return self.random.uniform(lower_limit, upper_limit)
 

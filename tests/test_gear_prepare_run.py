@@ -425,7 +425,7 @@ def test_validate_parameters_are_not_incompatible():
     params = {
         "limiting_parameter": True,
         "incompatible_parameter": "incompatible_value",
-        }
+    }
     # Define an incompatible parameter
     # when limiting_parameter has value `True`,
     # `incompatible_parameter` cannot adopt `incompatible_value`
@@ -441,7 +441,7 @@ def test_validate_parameters_are_not_incompatible():
         validate_parameters_are_not_incompatible(
             params,
             incompatible_params,
-            )
+        )
 
     # Test 2 - successfully pass
     incompatible_params = {
@@ -451,9 +451,7 @@ def test_validate_parameters_are_not_incompatible():
             }
         }
     }
-    no_return = validate_parameters_are_not_incompatible(
-        params, incompatible_params
-        )
+    no_return = validate_parameters_are_not_incompatible(params, incompatible_params)
     assert no_return is None
 
 
@@ -500,7 +498,11 @@ def test_validate_ncs_params_wrong_count(proper_ncs_params):
 def test_validate_ncs_params_wrong_suffix_value(proper_ncs_params):
     """Test NCS param error when missmatch with number of ncs defined."""
     # Set max suffix to `3` while only two defined
-    for basekey in ("sta", "end", "seg", ):
+    for basekey in (
+        "sta",
+        "end",
+        "seg",
+    ):
         for i in range(1, 3):
             # Build keys
             k2 = f"ncs_{basekey}{i}_2"

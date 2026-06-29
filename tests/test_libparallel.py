@@ -44,8 +44,8 @@ class FileTask:
     def run(self):
         Path(self.input_file).touch()
 
-class TaskWithException:
 
+class TaskWithException:
     def __init__(self):
         pass
 

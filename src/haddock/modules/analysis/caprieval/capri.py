@@ -28,7 +28,7 @@ from haddock.core.typing import (
     ParamDict,
     ParamMap,
     Union,
-    )
+)
 from haddock.gear.config import load as read_config
 from haddock.libs.libalign import (
     ALIGNError,
@@ -40,7 +40,7 @@ from haddock.libs.libalign import (
     kabsch,
     load_coords,
     make_range,
-    )
+)
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
 from haddock.modules import get_module_steps_folders
@@ -187,7 +187,7 @@ class CAPRI:
         reference: PDBPath,
         params: ParamMap,
         ref_id: int = 1,
-        ff: str = "aa"
+        ff: str = "aa",
     ) -> None:
         """
         Initialize the class.
@@ -253,7 +253,7 @@ class CAPRI:
             cutoff,
             self.ff,
             keep_hetatm=self.keep_hetatm,
-            )
+        )
 
         if len(ref_interface_resdic) == 0:
             log.warning("No reference interface found")
@@ -311,7 +311,7 @@ class CAPRI:
             self.reference,
             self.atoms,
             keep_hetatm=self.keep_hetatm,
-            )
+        )
         try:
             mod_coord_dic, _ = load_coords(
                 self.model,
@@ -422,7 +422,7 @@ class CAPRI:
             cutoff,
             self.ff,
             keep_hetatm=self.keep_hetatm,
-            )
+        )
 
         # Load interface coordinates
         ref_int_coord_dic, _ = load_coords(
@@ -532,7 +532,7 @@ class CAPRI:
             cutoff,
             ff=self.ff,
             keep_hetatm=self.keep_hetatm,
-            )
+        )
 
         if len(ref_contacts) != 0:
             try:
@@ -559,7 +559,7 @@ class CAPRI:
             self.reference,
             self.atoms,
             keep_hetatm=self.keep_hetatm,
-            )
+        )
         # Load model atomic coordinates
         try:
             model_coord_dic, _ = load_coords(
@@ -663,44 +663,32 @@ class CAPRI:
         return copy.deepcopy(self)
 
     def __eq__(self, other):
-        if self.params["dockq"] and \
-                not (isnan(self.dockq) or isnan(other.dockq)):
+        if self.params["dockq"] and not (isnan(self.dockq) or isnan(other.dockq)):
             return self.dockq == other.dockq
-        elif self.params["fnat"] and \
-                not (isnan(self.fnat) or isnan(other.fnat)):
+        elif self.params["fnat"] and not (isnan(self.fnat) or isnan(other.fnat)):
             return self.fnat == other.fnat
-        elif self.params["ilrmsd"] and \
-                not (isnan(self.ilrmsd) or isnan(other.ilrmsd)):
+        elif self.params["ilrmsd"] and not (isnan(self.ilrmsd) or isnan(other.ilrmsd)):
             return self.ilrmsd == other.ilrmsd
-        elif self.params["lrmsd"] and \
-                not (isnan(self.lrmsd) or isnan(other.lrmsd)):
+        elif self.params["lrmsd"] and not (isnan(self.lrmsd) or isnan(other.lrmsd)):
             return self.lrmsd == other.lrmsd
-        elif self.params["irmsd"] and \
-                not (isnan(self.irmsd) or isnan(other.irmsd)):
+        elif self.params["irmsd"] and not (isnan(self.irmsd) or isnan(other.irmsd)):
             return self.irmsd == other.irmsd
-        elif self.params["global_rmsd"] and \
-                not (isnan(self.rmsd) or isnan(other.rmsd)):
+        elif self.params["global_rmsd"] and not (isnan(self.rmsd) or isnan(other.rmsd)):
             return self.rmsd == other.rmsd
         return True
 
     def __lt__(self, other):
-        if self.params["dockq"] and \
-                not (isnan(self.dockq) or isnan(other.dockq)):
+        if self.params["dockq"] and not (isnan(self.dockq) or isnan(other.dockq)):
             return self.dockq > other.dockq
-        elif self.params["fnat"] and \
-                not (isnan(self.fnat) or isnan(other.fnat)):
+        elif self.params["fnat"] and not (isnan(self.fnat) or isnan(other.fnat)):
             return self.fnat > other.fnat
-        elif self.params["ilrmsd"] and \
-                not (isnan(self.ilrmsd) or isnan(other.ilrmsd)):
+        elif self.params["ilrmsd"] and not (isnan(self.ilrmsd) or isnan(other.ilrmsd)):
             return self.ilrmsd < other.ilrmsd
-        elif self.params["lrmsd"] and \
-                not (isnan(self.lrmsd) or isnan(other.lrmsd)):
+        elif self.params["lrmsd"] and not (isnan(self.lrmsd) or isnan(other.lrmsd)):
             return self.lrmsd < other.lrmsd
-        elif self.params["irmsd"] and \
-                not (isnan(self.irmsd) or isnan(other.irmsd)):
+        elif self.params["irmsd"] and not (isnan(self.irmsd) or isnan(other.irmsd)):
             return self.irmsd < other.irmsd
-        elif self.params["global_rmsd"] and \
-                not (isnan(self.rmsd) or isnan(other.rmsd)):
+        elif self.params["global_rmsd"] and not (isnan(self.rmsd) or isnan(other.rmsd)):
             return self.rmsd < other.rmsd
         return False
 
@@ -1080,13 +1068,13 @@ def capri_cluster_analysis(
         " a cluster than" + os.linesep
     )
     info_header += (
-        "#    clt_threshold, thus these values were under " "evaluated." + os.linesep
+        "#    clt_threshold, thus these values were under evaluated." + os.linesep
     )
     info_header += (
         "#   You might need to tweak the value of clt_threshold or change"
         " some parameters" + os.linesep
     )
-    info_header += "#    in `clustfcc` depending on your " "analysis." + os.linesep
+    info_header += "#    in `clustfcc` depending on your analysis." + os.linesep
     info_header += "#" + os.linesep
     info_header += "#" * 40
 

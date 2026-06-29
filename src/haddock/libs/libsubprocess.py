@@ -11,7 +11,7 @@ from haddock.core.exceptions import (
     CNSRunningError,
     JobRunningError,
     KnownCNSError,
-    )
+)
 from haddock.core.typing import Any, FilePath, Optional, ParamDict
 from haddock.gear.known_cns_errors import KNOWN_ERRORS as KNOWN_CNS_ERRORS
 from haddock.libs.libio import gzip_files
@@ -171,8 +171,7 @@ class CNSJob:
 
         if not os.access(cns_exec_path, mode=os.X_OK):
             raise ValueError(
-                f"{str(cns_exec_path)!r} binary file not found, "
-                "or is not executable."
+                f"{str(cns_exec_path)!r} binary file not found, or is not executable."
             )
 
         self._cns_exec = cns_exec_path

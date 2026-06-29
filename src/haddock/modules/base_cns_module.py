@@ -1,4 +1,5 @@
 """Functionalities related to CNS modules."""
+
 import os
 import shutil
 import tarfile
@@ -20,8 +21,9 @@ class BaseCNSModule(BaseHaddockModule):
     Contains additional functionalities excusive for CNS modules.
     """
 
-    def __init__(self, order: int, path: Path, initial_params: FilePath,
-                 cns_script: FilePath) -> None:
+    def __init__(
+        self, order: int, path: Path, initial_params: FilePath, cns_script: FilePath
+    ) -> None:
         """
         Instantitate CNSModule.
 
@@ -39,7 +41,7 @@ class BaseCNSModule(BaseHaddockModule):
 
     def run(self, **params: Any) -> None:
         """Execute the module."""
-        log.info(f'Running [{self.name}] module')
+        log.info(f"Running [{self.name}] module")
 
         self.update_params(**params)
 
@@ -49,18 +51,18 @@ class BaseCNSModule(BaseHaddockModule):
                 self._params,
                 self._num_of_input_molecules,
                 self._original_params,
-                )
+            )
 
         self.add_parent_to_paths()
         self.envvars = self.default_envvars()
 
-        if self.params['self_contained']:
+        if self.params["self_contained"]:
             self.make_self_contained()
 
         with working_directory(self.path):
             self._run()
 
-        log.info(f'Module [{self.name}] finished.')
+        log.info(f"Module [{self.name}] finished.")
 
     def default_envvars(self) -> dict[str, str]:
         """Return default env vars updated to `envvars` (if given)."""
@@ -68,7 +70,7 @@ class BaseCNSModule(BaseHaddockModule):
             "MODULE": str(self.cns_folder_path),
             "MODDIR": ".",
             "TOPPAR": str(self.toppar_path),
-            }
+        }
 
         return default_envvars
 
@@ -82,7 +84,7 @@ class BaseCNSModule(BaseHaddockModule):
             "export MODULE=cns",
             "export MODDIR=.",
             "export TOPPAR=../toppar",
-            )
+        )
 
         fstr = os.linesep.join(lines)
         Path(self.path, filename).write_text(fstr)
@@ -97,7 +99,7 @@ class BaseCNSModule(BaseHaddockModule):
         self.cns_protocol_path = Path(
             self.cns_folder_path,
             self.cns_protocol_path.name,
-            )
+        )
 
         if not Path(self.toppar_path.name).exists():
             shutil.copytree(self.toppar_path, self.toppar_path.name)
@@ -114,10 +116,10 @@ class BaseCNSModule(BaseHaddockModule):
             self.params["cns_exec"] = Path("..", Path(_cns_exec).name)
 
     def get_ambig_fnames(
-            self, prev_ambig_fnames: list[Union[None, FilePath]]
-            ) -> Union[list[FilePath], None]:
+        self, prev_ambig_fnames: list[Union[None, FilePath]]
+    ) -> Union[list[FilePath], None]:
         """Get the correct ambiguous restraint names.
-        
+
         Parameters
         ----------
         prev_ambig_fnames : list
@@ -164,7 +166,7 @@ class BaseCNSModule(BaseHaddockModule):
                     raise Exception(
                         "'previous_ambig' option selected but no available "
                         "restraint information in models"
-                        )
+                    )
                 self.log("Using previously defined restraints")
                 ambig_fnames = prev_ambig_fnames.copy()
         return ambig_fnames

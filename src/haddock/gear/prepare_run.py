@@ -1064,7 +1064,7 @@ def inject_in_modules(modules_params: ParamMap, key: Any, value: Any) -> None:
     for params in modules_params.values():
         if key in params:
             raise ValueError(
-                "key {key!r} already in {module!r} parameters. " "Can't inject."
+                f"key {key!r} already in module parameters. Can't inject."
             )
         params[key] = value
 

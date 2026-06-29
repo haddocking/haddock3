@@ -119,6 +119,11 @@ def test_split_tasks():
     assert result == [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
 
 
+def test_split_tasks_empty():
+    # An empty list must not raise (range(0, 0, 0) ValueError); yields nothing.
+    assert list(split_tasks([], 3)) == []
+
+
 def test_get_index_list():
 
     nmodels = 10

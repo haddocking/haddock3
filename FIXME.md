@@ -12,12 +12,12 @@ caller can trigger it). Style and test-coverage gaps are excluded.
 | 1 | `randint` overshoots upper bound | yes | low | **FIXED** |
 | 3 | wrong dict key in string validation | yes | medium | **FIXED** |
 | 5 | malformed CNS block for list PSF | yes | low | latent |
-| 2 | `open(None)` on missing `error_file` | yes | low | latent |
-| 8 | `split_tasks([])` raises `ValueError` | yes | low | latent |
+| 2 | `open(None)` on missing `error_file` | yes | low | **FIXED** |
+| 8 | `split_tasks([])` raises `ValueError` | yes | low | **FIXED** |
 | 9 | double assignment to `cns_exec` | yes | trivial | **FIXED** |
 | 10 | vestigial `self.len` | yes | trivial | **FIXED** |
 | 11 | step-name underscore assumption | yes | trivial | **FIXED** |
-| 4 | unhelpful (not crashing) error msg | partial | trivial | mischaracterized |
+| 4 | unhelpful (not crashing) error msg | partial | trivial | **FIXED** |
 | 7 | rigidbody sampling truncation | partial | trivial | mostly by-design |
 | 6 | `lru_cache` on mutable dict | no | — | not a live bug |
 | 12 | missing energy term → 0 | n/a | — | dropped, by design |
@@ -102,7 +102,7 @@ commented-out `isinstance` check confirms this is an unfinished refactor.
 
 ---
 
-## 2. [LATENT] `open(None, ...)` when `error_file` is omitted
+## 2. [FIXED] `open(None, ...)` when `error_file` is omitted
 
 **File:** `src/haddock/libs/libsubprocess.py:249`
 
@@ -113,15 +113,18 @@ with open(self.error_file, "wb+") as errf:   # TypeError if error_file is None
 `error_file` defaults to `None`. On a CNS error this would raise `TypeError`
 instead of a useful diagnostic.
 
-**Status:** Latent. Every `CNSJob` construction in the codebase passes
-`err_fname` as the third positional argument, so `error_file` is never `None`
-in practice. Severity downgraded from the original HIGH.
+**Status:** Latent in practice — every `CNSJob` construction in the codebase
+passes `err_fname` as the third positional argument, so `error_file` is never
+`None` today. Severity was downgraded from the original HIGH.
 
-**Fix (defensive):** Guard with `if self.error_file is not None:` before opening.
+**Fixed:** guarded the `.err` write/compress with `if self.error_file is not
+None:`. The subsequent `raise CNSRunningError(error)` is now reached regardless,
+so a future caller that omits `error_file` gets the real CNS diagnostic instead
+of a `TypeError` from `open(None, ...)`.
 
 ---
 
-## 8. [LATENT] `split_tasks([])` raises `ValueError`
+## 8. [FIXED] `split_tasks([])` raises `ValueError`
 
 **File:** `src/haddock/libs/libparallel.py:21`
 
@@ -132,10 +135,11 @@ n = math.ceil(len(lst) / n)   # 0 when lst is empty → range(0, 0, 0)
 An empty task list makes `n == 0`, and `range(0, 0, 0)` raises
 `ValueError: range() arg 3 must not be zero`.
 
-**Status:** Latent. Modules always submit at least one job.
+**Status:** Latent in practice — modules always submit at least one job.
 
-**Fix:** Add `if not lst: return` at the top. Note `split_tasks` is a
-**generator**, so use a bare `return`, not `return []`.
+**Fixed:** added an early `if not lst: return` guard at the top. Since
+`split_tasks` is a **generator**, the bare `return` correctly yields nothing
+(rather than `return []`).
 
 ---
 
@@ -179,7 +183,7 @@ name contains an underscore. Safe today (no such module), fragile for the future
 
 ---
 
-## 4. [MISCHARACTERIZED] Unhelpful `inject_in_modules` error message
+## 4. [FIXED] Unhelpful `inject_in_modules` error message
 
 **File:** `src/haddock/gear/prepare_run.py:1066-1068`
 
@@ -191,10 +195,12 @@ raise ValueError(
 
 The original report claimed this raises `NameError`. It does **not** — the
 string is not an f-string, so `{key!r}`/`{module!r}` are printed literally and
-`module` is never evaluated. The only real defect is an uninformative message
-on a rarely-hit error path.
+`module` is never evaluated. Two real defects remained, though: the placeholders
+were never interpolated, and `module` is not even a variable in this scope (the
+loop binds `params`), so it could never have rendered usefully.
 
-**Fix:** `raise ValueError(f"key {key!r} already in module parameters. Can't inject.")`
+**Fixed:** turned the message into an f-string and dropped the bogus `module`
+reference: `raise ValueError(f"key {key!r} already in module parameters. Can't inject.")`
 
 ---
 

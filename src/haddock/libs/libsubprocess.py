@@ -245,12 +245,14 @@ class CNSJob:
 
         # If undetected error or detect an error in the STDOUT
         if error or self.contains_cns_stdout_error(out):
-            # Write .err file
-            with open(self.error_file, "wb+") as errf:
-                errf.write(out)
-            # Compress it
-            if compress_err:
-                gzip_files(self.error_file, remove_original=True)
+            # Write .err file (only if an error file was provided, otherwise
+            # the diagnostic raise below would be masked by a TypeError)
+            if self.error_file is not None:
+                with open(self.error_file, "wb+") as errf:
+                    errf.write(out)
+                # Compress it
+                if compress_err:
+                    gzip_files(self.error_file, remove_original=True)
             if error:
                 raise CNSRunningError(error)
 

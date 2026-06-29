@@ -112,8 +112,9 @@ class HaddockModule(BaseHaddockModule):
             gdock_wrapper.run()
             elapsed = time.monotonic() - t0
             log.info(
-                f"gdock run {idx}: generations_run={gdock_wrapper.result['generationsRun']}"
-                f" converged_early={gdock_wrapper.converged_early}"
+                f"gdock run {idx}: {receptor.file_name} + {ligand.file_name}"
+                f" generations={gdock_wrapper.result['generationsRun']}"
+                f" models={len(gdock_wrapper.result['models'])}"
                 f" elapsed={elapsed:.1f}s"
             )
             models = gdock_wrapper.save_models(".", prefix=f"gdock_{idx}")

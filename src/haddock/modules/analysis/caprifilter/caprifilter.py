@@ -153,7 +153,9 @@ def write_caprifilter(
     filter_summary = ", ".join(filter_parts) if filter_parts else "none"
 
     def fmt(v):
-        return "nan" if (v is None or (isinstance(v, float) and isnan(v))) else f"{v:.3f}"
+        return (
+            "nan" if (v is None or (isinstance(v, float) and isnan(v))) else f"{v:.3f}"
+        )
 
     with open(fname, "w") as fh:
         fh.write(
@@ -171,8 +173,7 @@ def write_caprifilter(
                 for m in metrics
             ]
             fh.write(
-                "\t".join([str(model.rel_path), score_str] + metric_strs)
-                + os.linesep
+                "\t".join([str(model.rel_path), score_str] + metric_strs) + os.linesep
             )
 
 
@@ -217,7 +218,9 @@ def write_caprifilter_full(
     filter_summary = ", ".join(filter_parts) if filter_parts else "none"
 
     def fmt(v):
-        return "nan" if (v is None or (isinstance(v, float) and isnan(v))) else f"{v:.3f}"
+        return (
+            "nan" if (v is None or (isinstance(v, float) and isnan(v))) else f"{v:.3f}"
+        )
 
     with open(fname, "w") as fh:
         fh.write(

@@ -207,9 +207,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Log NaN counts per filtered metric
         for metric in filter_by:
-            n_nan = sum(
-                1 for vals in metrics_data.values() if isnan(vals[metric])
-            )
+            n_nan = sum(1 for vals in metrics_data.values() if isnan(vals[metric]))
             if n_nan:
                 self.log(
                     f"{100 * n_nan / len(models):6.2f}% of models had NaN {metric} "
@@ -217,8 +215,7 @@ class HaddockModule(BaseHaddockModule):
                 )
 
         if not metrics_data or all(
-            all(isnan(v) for v in vals.values())
-            for vals in metrics_data.values()
+            all(isnan(v) for v in vals.values()) for vals in metrics_data.values()
         ):
             self.finish_with_error(
                 "[caprifilter] All models have NaN metrics, i.e. alignment failed for every model."
@@ -236,8 +233,7 @@ class HaddockModule(BaseHaddockModule):
 
         pct_filtered = (1 - len(kept) / len(models)) * 100
         specs_str = ", ".join(
-            f"{m} filter_out={fo} cutoff={c:.3f}"
-            for m, (c, fo) in filter_specs.items()
+            f"{m} filter_out={fo} cutoff={c:.3f}" for m, (c, fo) in filter_specs.items()
         )
         self.log(
             f"Filters: [{specs_str}] — "
@@ -259,7 +255,7 @@ class HaddockModule(BaseHaddockModule):
                 kept=kept,
                 filter_specs=filter_specs,
             )
-        
+
         # Send models to the next step, no operation is done on them
         self.output_models = kept  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
         self.export_io_models()

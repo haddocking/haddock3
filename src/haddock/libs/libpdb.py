@@ -515,18 +515,19 @@ def check_combination_chains(combination: list[PDBFile]) -> list[str]:
 def check_mol_shape(input_mol: Path) -> bool:
     """
     Checks if molecules provided is a shape or not.
-    
+
     Args:
         input_pdb (PDBFile): input PDB to check if shape.
-    
+
     Returns:
         bool: True if shape, False if not.
     """
     shape: bool = False
-    with open(input_mol, 'rt') as input_file_mol:
-        if any('SHA SHA ' in line for line in input_file_mol):
+    with open(input_mol, "rt") as input_file_mol:
+        if any("SHA SHA " in line for line in input_file_mol):
             shape = True
     return shape
+
 
 def handle_input_reference(reference: Path) -> list[Path]:
     """Validate the reference file by returning only one model.
@@ -572,7 +573,7 @@ def handle_input_reference(reference: Path) -> list[Path]:
     haddock_log.info(
         f"Multiple structures ({nb_models}) found in reference file. "
         "Using all conformations as reference."
-        )
+    )
     # Split models
     with open(reference, "r") as ref_in:
         split_model(ref_in, "reference_model")
@@ -580,9 +581,9 @@ def handle_input_reference(reference: Path) -> list[Path]:
     references = sorted(
         list(Path(".").glob("reference_model_*.pdb")),
         key=lambda k: int(k.stem.split("_")[-1]),
-        )
+    )
     assert len(references) == nb_models, (
-            "Issue while splitting references conformation: "
-            f"{nb_models} detected, {len(references)} generated"
-        )
+        "Issue while splitting references conformation: "
+        f"{nb_models} detected, {len(references)} generated"
+    )
     return references

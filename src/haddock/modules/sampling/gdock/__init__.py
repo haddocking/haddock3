@@ -82,8 +82,6 @@ class HaddockModule(BaseHaddockModule):
             crossdock=self.params["crossdock"]
         )
 
-        sampling_factor = max(1, self.params["sampling"] // len(models_to_dock))
-
         log.info(f"ncores={self.params['ncores']} sampling={self.params['sampling']}")
 
         expected: list[PDBFile] = []
@@ -106,7 +104,7 @@ class HaddockModule(BaseHaddockModule):
                 number_of_individuals=self.params["number_of_individuals"],
                 ncores=self.params["ncores"],
                 seed=self.params["seed"],
-                sampling=sampling_factor,
+                sampling=self.params["sampling"],
             )
             t0 = time.monotonic()
             gdock_wrapper.run()

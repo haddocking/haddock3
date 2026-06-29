@@ -94,17 +94,18 @@ def test_cgtoaa_backmapping_restraints_are_read(tmp_path):
     cgtoaa.params["debug"] = True
     cgtoaa.run()
 
-    # check TBL was read
+    # Check output was generated
     output_pdb = cgtoaa_dir / "cgtoaa_1.pdb"
     assert output_pdb.exists(), "cgtoaa produced no output PDB"
 
+    # check output was generated, this is conditional to `debug=True`
     output_gz = cgtoaa_dir / "cgtoaa_1.out.gz"
     assert output_gz.exists(), "cgtoaa produced no CNS output"
 
+    # check TBL was read
     with gzip.open(output_gz, "rt") as fh:
         cns_output = fh.read()
 
     assert _MARKER in cns_output, (
-        "Marker comment not found in CNS output — "
-        "backmapping restraints were NOT read (Issue #1592 regression)"
+        "Marker comment not found in CNS output, backmapping restraints were NOT read"
     )

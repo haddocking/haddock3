@@ -4,27 +4,42 @@ name: ci
 on:
   pull_request:
     branches: [main]
-    paths:
-      # python files
-      - src/**
-      - tests/**
-      - integration_tests/**
-      - end-to-end_tests/**
-      # project relevant
-      - pyproject.toml
-      - setup.py
-      # docs
-      - docs/**
-      # docker image
-      - Dockerfile
-      # this ci definition
-      - .github/workflows/ci.yml
   workflow_dispatch: ~
   schedule:
     - cron: "0 */6 * * *" # every 6 hours
 
 jobs:
+  # Detect which file categories changed so downstream jobs can filter themselves.
+  # On non-PR events (schedule, workflow_dispatch) all outputs are forced to true.
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    outputs:
+      python: ${{ github.event_name != 'pull_request' || steps.filter.outputs.python_any_changed == 'true' }}
+      docker: ${{ github.event_name != 'pull_request' || steps.filter.outputs.docker_any_changed == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
+        id: filter
+        with:
+          files_yaml: |
+            python:
+              - src/**
+              - tests/**
+              - integration_tests/**
+              - end-to-end_tests/**
+              - docs/**
+              - pyproject.toml
+              - setup.py
+            docker:
+              - Dockerfile
+
   format:
+    needs: [changes]
+    if: needs.changes.outputs.python == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,7 +48,7 @@ jobs:
 
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
-      - uses: tj-actions/changed-files@v47
+      - uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
         id: changed-files
         with:
           files: |
@@ -45,7 +60,8 @@ jobs:
 
   # Full suite on Linux + Python 3.14: unit tests, coverage, integration, e2e, docs.
   test-linux-py314:
-    needs: [format]
+    needs: [changes, format]
+    if: needs.changes.outputs.python == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -97,7 +113,8 @@ jobs:
 
   # Run the remaining OSxPython combinations in parallel
   test-matrix:
-    needs: [format]
+    needs: [changes, format]
+    if: needs.changes.outputs.python == 'true'
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -148,7 +165,8 @@ jobs:
 
   # Verify the Docker image still builds successfully (image is not pushed)
   docker-build:
-    needs: [format]
+    needs: [changes]
+    if: needs.changes.outputs.docker == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read

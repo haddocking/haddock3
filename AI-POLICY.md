@@ -20,7 +20,7 @@ If AI substantially shaped any of that kind of work, disclose this in the PR and
 
 - Read the diff.
 - Understand every line.
-- Be ready to defend your changes in review.
+- Be ready to explain and/or discuss proposed changes in review.
 
 A reviewer might ask questions about your code, if you can't answer it because the AI wrote that part and you do not understand why, the PR might be closed.
 

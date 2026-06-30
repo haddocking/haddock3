@@ -124,7 +124,6 @@ def test_pdbfile_init_empty():
     assert pdbfile.clt_id is None
     assert pdbfile.clt_rank is None
     assert pdbfile.clt_model_rank is None
-    assert math.isnan(pdbfile.len)
     assert pdbfile.unw_energies is None
     assert pdbfile.seed is None
     assert pdbfile.ligand_top_fname is None
@@ -161,7 +160,6 @@ def test_pdbfile_init():
     assert pdbfile.clt_id is None
     assert pdbfile.clt_rank is None
     assert pdbfile.clt_model_rank is None
-    assert pdbfile.len == score
     assert pdbfile.unw_energies is None
     assert pdbfile.ligand_top_fname is None
     assert pdbfile.ligand_param_fname is None
@@ -201,7 +199,6 @@ def test_pdbfile_init_with_ligand_files():
     assert pdbfile.clt_id is None
     assert pdbfile.clt_rank is None
     assert pdbfile.clt_model_rank is None
-    assert pdbfile.len == score
     assert pdbfile.unw_energies is None
     assert pdbfile.ligand_top_fname == ligand_top_fname
     assert pdbfile.ligand_param_fname == ligand_param_fname

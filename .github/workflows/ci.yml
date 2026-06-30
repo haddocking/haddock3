@@ -86,7 +86,7 @@ jobs:
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: install haddock3 with extra dependencies
-        run: uv pip install --system -e '.[mpi,dev,docs,notebooks]'
+        run: uv sync --extra mpi --extra dev --extra docs --extra notebooks
 
       - name: run unit tests
         run: uv run pytest -v --random-order tests/ --cov --cov-report=
@@ -158,7 +158,7 @@ jobs:
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: install haddock3 with extra dependencies
-        run: uv pip install --system -e '.[mpi,dev,docs,notebooks]'
+        run: uv sync --extra mpi --extra dev --extra docs --extra notebooks
 
       - name: run unit tests
         run: uv run pytest -v --random-order tests/

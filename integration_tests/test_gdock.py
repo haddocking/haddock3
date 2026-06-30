@@ -18,7 +18,7 @@ class MockPreviousIO:
     def __init__(self, path):
         self.path = path
 
-    def retrieve_models(self, individualize=False):
+    def retrieve_models(self, individualize=False, crossdock=False):
         src = GOLDEN_DATA / "protprot_complex_1.pdb"
         dst = Path(self.path, src.name)
         shutil.copy(src, dst)

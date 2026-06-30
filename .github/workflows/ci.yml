@@ -36,6 +36,9 @@ jobs:
               - setup.py
             docker:
               - Dockerfile
+              - src/**
+              - pyproject.toml
+              - setup.py
 
   format:
     needs: [changes]

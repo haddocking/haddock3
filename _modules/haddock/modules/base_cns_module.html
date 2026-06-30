@@ -81,6 +81,7 @@
              
   <h1>Source code for haddock.modules.base_cns_module</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functionalities related to CNS modules.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tarfile</span>
@@ -104,8 +105,9 @@
 <span class="sd">    Contains additional functionalities excusive for CNS modules.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-                 <span class="n">cns_script</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">cns_script</span><span class="p">:</span> <span class="n">FilePath</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantitate CNSModule.</span>
 
@@ -125,7 +127,7 @@
 <a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the module.&quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Running [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] module&#39;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] module&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
@@ -135,18 +137,18 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_num_of_input_molecules</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_original_params</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_parent_to_paths</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">envvars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_envvars</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;self_contained&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;self_contained&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">make_self_contained</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="n">working_directory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Module [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] finished.&#39;</span><span class="p">)</span></div>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Module [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] finished.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BaseCNSModule.default_envvars">
@@ -157,7 +159,7 @@
             <span class="s2">&quot;MODULE&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cns_folder_path</span><span class="p">),</span>
             <span class="s2">&quot;MODDIR&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
             <span class="s2">&quot;TOPPAR&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">),</span>
-            <span class="p">}</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">default_envvars</span></div>
 
@@ -174,7 +176,7 @@
             <span class="s2">&quot;export MODULE=cns&quot;</span><span class="p">,</span>
             <span class="s2">&quot;export MODDIR=.&quot;</span><span class="p">,</span>
             <span class="s2">&quot;export TOPPAR=../toppar&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="n">fstr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
         <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">fstr</span><span class="p">)</span>
@@ -192,7 +194,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cns_protocol_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cns_folder_path</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cns_protocol_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -204,7 +206,7 @@
         <span class="n">_cns_exec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cns_exec&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">global_cns_exec</span>
         <span class="n">new_cns</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">_cns_exec</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">new_cns</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cns_exec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">_cns_exec</span><span class="p">,</span> <span class="n">new_cns</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">_cns_exec</span><span class="p">,</span> <span class="n">new_cns</span><span class="p">)</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">copystat</span><span class="p">(</span><span class="n">_cns_exec</span><span class="p">,</span> <span class="n">new_cns</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cns_exec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">_cns_exec</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
 
@@ -212,10 +214,10 @@
 <div class="viewcode-block" id="BaseCNSModule.get_ambig_fnames">
 <a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.get_ambig_fnames">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_ambig_fnames</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">prev_ambig_fnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">]]</span>
-            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">FilePath</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">prev_ambig_fnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">FilePath</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the correct ambiguous restraint names.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        prev_ambig_fnames : list</span>
@@ -262,7 +264,7 @@
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                         <span class="s2">&quot;&#39;previous_ambig&#39; option selected but no available &quot;</span>
                         <span class="s2">&quot;restraint information in models&quot;</span>
-                        <span class="p">)</span>
+                    <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Using previously defined restraints&quot;</span><span class="p">)</span>
                 <span class="n">ambig_fnames</span> <span class="o">=</span> <span class="n">prev_ambig_fnames</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ambig_fnames</span></div>

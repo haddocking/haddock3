@@ -30,8 +30,18 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
-      - run: uvx ruff format --check .
+
+      - uses: tj-actions/changed-files@v47
+        id: changed-files
+        with:
+          files: |
+            **/*.py
+
+      - name: check formatting on changed files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: uvx ruff format --check --diff ${{ steps.changed-files.outputs.all_changed_files }}
 
   # Full suite on Linux + Python 3.14: unit tests, coverage, integration, e2e, docs.
   test-linux-py314:

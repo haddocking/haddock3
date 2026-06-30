@@ -264,10 +264,13 @@ def test_split_ensemble_non_sequential_model_numbers(tmp_path, monkeypatch, atom
     assert [r.name for r in result] == ["non_sequential_1.pdb", "non_sequential_2.pdb"]
     assert all(r.stat().st_size > 0 for r in result)
 
+
 # test handle_input_reference for capri
 
 # Minimal ATOM line shared across fixtures
-_ATOM_LINE = "ATOM      1  CA  ALA A   1       1.000   2.000   3.000  1.00  0.00           C"
+_ATOM_LINE = (
+    "ATOM      1  CA  ALA A   1       1.000   2.000   3.000  1.00  0.00           C"
+)
 
 
 def test_handle_single_model_reference(tmp_path):
@@ -288,7 +291,10 @@ def test_handle_ensemble_reference(tmp_path, monkeypatch):
     )
     result = handle_input_reference(ref)
     assert len(result) == 2
-    assert [p.name for p in result] == ["reference_model_1.pdb", "reference_model_2.pdb"]
+    assert [p.name for p in result] == [
+        "reference_model_1.pdb",
+        "reference_model_2.pdb",
+    ]
     assert all(p.exists() for p in result)
 
 

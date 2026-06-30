@@ -46,6 +46,7 @@ def fixture_protprot_input_list():
 
         yield [pdb_obj_1, pdb_obj_2]
 
+
 @pytest.fixture(name="protprot_input_list_cg")
 def fixture_protprot_input_list_cg():
     """Prot-prot input."""

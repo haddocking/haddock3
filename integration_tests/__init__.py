@@ -22,6 +22,8 @@ has_cns = pytest.mark.skipif(
 tests_path = Path(__file__).resolve().parents[0]
 GOLDEN_DATA = Path(tests_path, "golden_data")
 
+EXAMPLE_DIR = Path(__file__).resolve().parent.parent / "examples"
+
 try:
     import mpi4py
 

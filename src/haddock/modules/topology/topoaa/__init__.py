@@ -19,8 +19,22 @@ Note that for non-standard bio-molecules
 and carbohydrates ... see `detailed list of supported molecules
 <https://wenmr.science.uu.nl/haddock2.4/library>`_),
 such as small-molecules, parameters and topology must be obtained and provided
-by the user, as there is currently no built-in solution to generate
-them on the fly.
+by the user, using `ligand_param_fname` and `ligand_top_fname` parameters.
+If you do not have them, they can be generated on-the-fly by setting
+the `autotoppar` parameter to `true`.
+
+To define specific parameters for a given molecule (charge of terminis,
+histidine protonations, peptide cyclisation, ...), you should re-define
+a quasi topoaa module and specify the molecule index, right after
+the ``[topoaa]`` module. e.g.:
+
+``
+[topoaa]
+[topoaa.mol1]
+``
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module>`_
 """
 
 import operator
@@ -206,6 +220,9 @@ class HaddockModule(BaseCNSModule):
         # Pool of jobs to be executed by the CNS engine
         jobs: list[CNSJob] = []
 
+        # Dictionary to store ligand files for each model
+        model_ligand_files: dict[str, tuple[Path, Path]] = {}
+
         models_dic: dict[int, list[Path]] = {}
         ens_dic: dict[int, dict[int, str]] = {}
         origi_ens_dic: dict[int, dict[int, str]] = {}
@@ -289,15 +306,26 @@ class HaddockModule(BaseCNSModule):
                             "ligand_top_fname": top_path,
                             "ligand_param_fname": par_path,
                         }
-                        # Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules
-                        #  this means that if these were NOT defined in other modules, they will take the
-                        #  values defined here
-                        self._output_params["ligand_top_fname"] = top_path
-                        self._output_params["ligand_param_fname"] = par_path
+
+                        # Store ligand files for this specific model
+                        model_ligand_files[model.stem] = (top_path, par_path)
+
+                        # Only set global output params if this is a single model (not ensemble)
+                        # For ensembles, we'll store the files per-model in the PDBFile objects
+
+                        # NOTE: In CNS input generation, PDBFile ligand files take precedence over global params,
+                        # so this ensures backward compatibility, but may be removed in the future
+                        if len(splited_models) == 1:
+                            # Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules
+                            #  this means that if these were NOT defined in other modules, they will take the
+                            #  values defined here
+                            self._output_params["ligand_top_fname"] = top_path
+                            self._output_params["ligand_param_fname"] = par_path
 
                         libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
                     else:
                         self.log("No unknown atoms found")
+                        libpdb.sanitize(model, overwrite=True)
                         _params = self.params
                 else:
                     libpdb.sanitize(model, overwrite=True)
@@ -376,11 +404,22 @@ class HaddockModule(BaseCNSModule):
                         )
 
                 topology = TopologyFile(processed_topology, path=".")
+
+                # Get ligand files for this model if they exist
+                ligand_top_fname = None
+                ligand_param_fname = None
+                if model.stem in model_ligand_files:
+                    ligand_top_fname, ligand_param_fname = model_ligand_files[
+                        model.stem
+                    ]
+
                 pdb = PDBFile(
                     file_name=processed_pdb,
                     topology=topology,
                     path=".",
                     md5=md5_hash,
+                    ligand_top_fname=ligand_top_fname,
+                    ligand_param_fname=ligand_param_fname,
                 )
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb

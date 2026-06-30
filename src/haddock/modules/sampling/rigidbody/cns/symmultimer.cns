@@ -11,8 +11,9 @@
 ! ***********************************************************************
 !
 
-if ($Data.flags.sym eq true) then
 
+if ($Data.flags.sym eq true) then
+   
     noe class symm end
 
     ! Define C2 symmetry restraints for symmetrical multimers
@@ -662,6 +663,11 @@ if ($Data.flags.sym eq true) then
 
     end loop c6symloop
 
+    fileexist $symtbl_fname end
+
+    if ($result eq true) then
+        noe @@$symtbl_fname end
+    end if
 
     noe
         potential  symm symmetry

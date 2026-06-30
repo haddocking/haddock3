@@ -1,7 +1,34 @@
 # Changelog
 
+- 2026-06-29: Fixed the cgtoaa reading to cg-to-aa restraints - Issue #1592
+- 2026-06-26: Corrected net charge for O1-methylated NAM - Issue #1586
+- 2026-06-18: Added support for O1-methylated NAG - Issue #1579
+- 2026-06-18: Added support for O-glycosylated serine - Issue #1577
+- 2026-06-14: Dropped support for Python 3.9, minimum required version is now 3.10
+- 2026-06-11: Cosmetic fix in support of custom symmetry restraints - Issue #1563
+- 2026-06-07: Avoid potential double cyclic bonds in ACE-CYS cyclisation - Issue #1564
+- 2026-06-04: Added support for glucosamine (GCS) - Issue $1559
+- 2026-05-02: Fixed autoflex issue with solvent - Issue #1551
+- 2026-05-01: Allows for CG-based scoring workflows - Issues #1546, #1547, #1548
+- 2026-04-30: Fixes ligand ensemble topo/param files - Issue #1540
+- 2026-04-24: Exposing distance cutoff for ACE-CYS cyclisation - Issue #1535
+- 2026-04-23: Merging the coarse-graining branch into the main branch.
+- 2026-04-13: Fixed issue with shape in cgtoa module and added shape docking example
+- 2026-04-16: Added control of hydrogen building in topoaa - Issue #1522
+- 2026-04-15: Implemented separate control of separation and randome rotations of molecules - Issue #1491
+- 2026-04-15: Solve bug related to workflow restarting without analysis folder - Issue #1518
+- 2026-04-14: Increase max number of timesteps in openmm module - BioExcel forum 6072
+- 2026-04-12: Add possibility to run MD (mdref, mdscoring) without solvent - Issue #1512
+- 2026-04-10: Corrected the definition of ion restraints in flexref - Issue #1510
+- 2026-04-10: Removing analysis modules downstream when restarting - Issue #1495
+- 2026-04-08: Improved docstring in modules
+- 2026-04-08: Increased NOE restraints array size in scoring modules - Issue #1501
+- 2026-03-30: Added nucleosome-PCR1 CG docking example
+- 2026-03-09: Automated type casting for optional argument seed in haddock3-restraints random_removal - Issue #1485
+- 2026-02-28: Switched to ilRMSD clustering from protein-ligand examples - Issue #1481
 - 2026-02-24: Implement automated toppar generation for unknown atoms with PRODRG
 - 2026-02-20: Add fallback routine to use `Scheduler` if the GRID is not available
+- 2025-12-19: Implemented support for custom symmetry restaints - Issue #1465
 - 2025-12-15: Added missing NGA glycan parameters - Issue #1462
 - 2025-11-25: Simplify the use of multiple ambig archives
 - 2025-11-19: Corrected CNS verbosity settings - Issue #1446

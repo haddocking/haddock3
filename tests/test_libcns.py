@@ -71,7 +71,6 @@ def test_empty_vars_False(value):
 def pdbfile():
     """Create a temporary file."""
     with tempfile.NamedTemporaryFile() as pdb_f, tempfile.NamedTemporaryFile() as top_f:
-
         pdb = PDBFile(
             file_name=pdb_f.name,
             path=Path(pdb_f.name).parent,
@@ -190,3 +189,42 @@ def test_prepare_expected_pdb(pdbfile):
     assert output_pdb.file_name == f"_{model_number}.pdb"
     assert output_pdb.topology is not None
     assert output_pdb.topology.file_name == pdbfile.topology.file_name
+
+
+def test_prepare_cns_input_with_ligand_files():
+    """Test CNS input generation with per-model ligand files."""
+    with tempfile.NamedTemporaryFile() as pdb_f, tempfile.NamedTemporaryFile() as top_f:
+        # Create PDBFile with ligand files
+        pdb = PDBFile(
+            file_name=pdb_f.name,
+            path=Path(pdb_f.name).parent,
+            topology=Persistent(
+                file_name=top_f.name,
+                path=Path(top_f.name).parent,
+                file_type=Format.TOPOLOGY,
+            ),
+            ligand_top_fname="ligand.top",
+            ligand_param_fname="ligand.param",
+        )
+        pdb.seed = 42
+
+        model_number = 1
+        cns_input = prepare_cns_input(
+            model_number=model_number,
+            input_element=pdb,
+            step_path=Path("."),
+            recipe_str="",
+            defaults={},
+            identifier="",
+            ambig_fname="",
+            native_segid=False,
+            default_params_path=None,
+            debug=False,
+            seed=pdb.seed,
+        )
+
+        # Check that ligand files are included in the CNS input
+        assert "ligand.top" in cns_input
+        assert "ligand.param" in cns_input
+        assert 'eval ($ligand_top_fname="ligand.top")' in cns_input
+        assert 'eval ($ligand_param_fname="ligand.param")' in cns_input

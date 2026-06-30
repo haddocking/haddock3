@@ -24,23 +24,22 @@ def generate_default_header(
     path: Optional[FilePath] = None,
 ) -> tuple[str, str, str, str, str, str]:
     """Generate CNS default header."""
-    # TODO: Remove the `type: ignore` comments
     if path is not None:
-        axis = load_axis(**cns_paths.get_axis(path))  # type: ignore
+        axis = load_axis(**cns_paths.get_axis(path))
         link = load_link(Path(path, cns_paths.LINK_FILE))
         scatter = load_scatter(Path(path, cns_paths.SCATTER_LIB))
-        tensor = load_tensor(**cns_paths.get_tensors(path))  # type: ignore
+        tensor = load_tensor(**cns_paths.get_tensors(path))
         trans_vec = load_trans_vectors(
-            **cns_paths.get_translation_vectors(path)  # type: ignore
-        )  # noqa: E501
+            **cns_paths.get_translation_vectors(path)
+        )
         water_box = load_boxtyp20(cns_paths.get_water_box(path)["boxtyp20"])
 
     else:
-        axis = load_axis(**cns_paths.axis)  # type: ignore
+        axis = load_axis(**cns_paths.axis)
         link = load_link(cns_paths.link_file)
         scatter = load_scatter(cns_paths.scatter_lib)
-        tensor = load_tensor(**cns_paths.tensors)  # type: ignore
-        trans_vec = load_trans_vectors(**cns_paths.translation_vectors)  # type: ignore
+        tensor = load_tensor(**cns_paths.tensors)
+        trans_vec = load_trans_vectors(**cns_paths.translation_vectors)
         water_box = load_boxtyp20(cns_paths.water_box["boxtyp20"])
 
     return (
@@ -54,11 +53,11 @@ def generate_default_header(
 
 
 def find_desired_linkfiles(
-        charged_nter: bool = False,
-        charged_cter: bool = False,
-        phosphate_5: bool = False,
-        path: Optional[FilePath] = None,
-        ) -> dict[str, Path]:
+    charged_nter: bool = False,
+    charged_cter: bool = False,
+    phosphate_5: bool = False,
+    path: Optional[FilePath] = None,
+) -> dict[str, Path]:
     """Find appropriate link files to use depending on terminis states.
 
     Parameters
@@ -87,13 +86,13 @@ def find_desired_linkfiles(
     elif not charged_nter and charged_cter:
         prot_link_key = "NH,COO-"
     elif charged_nter and not charged_cter:
-        prot_link_key= "NH3+,CO"
+        prot_link_key = "NH3+,CO"
     elif not charged_nter and not charged_cter:
         prot_link_key = "NH,CO"
     # Point to corresponding file
     linkfiles["prot_link_infile"] = cns_paths.PROTEIN_LINK_FILES[prot_link_key]
 
-    # Logic to find linkfile for dna
+    # Logic to find linkfile for DNA/RNA
     nucl_link_key = "5'Phosphate" if phosphate_5 else "5'OH"
     # Point to corresponding file
     linkfiles["nucl_link_infile"] = cns_paths.NUCL_LINK_FILES[nucl_link_key]
@@ -169,10 +168,7 @@ def load_workflow_params(
     param_header: str
         The string with the CNS parameters defined.
     """
-    non_empty_parameters = (
-        (k, v) for k, v in params.items()
-        if filter_empty_vars(v)
-        )
+    non_empty_parameters = ((k, v) for k, v in params.items() if filter_empty_vars(v))
 
     # types besides the ones in the if-statements should not enter this loop
     for param, v in non_empty_parameters:
@@ -218,12 +214,8 @@ def load_link(mol_link: Path) -> str:
     )
 
 
-load_axis = partial(
-    load_workflow_params, param_header=f"{linesep}! Axis{linesep}"
-)  # noqa: E501
-load_tensor = partial(
-    load_workflow_params, param_header=f"{linesep}! Tensors{linesep}"
-)  # noqa: E501
+load_axis = partial(load_workflow_params, param_header=f"{linesep}! Axis{linesep}")  # noqa: E501
+load_tensor = partial(load_workflow_params, param_header=f"{linesep}! Tensors{linesep}")  # noqa: E501
 prepare_output = partial(
     load_workflow_params, param_header=f"{linesep}! Output structure{linesep}"
 )  # noqa: E501
@@ -253,7 +245,10 @@ def load_boxtyp20(waterbox_param: Path) -> str:
 
 
 # This is used by docking
-def prepare_multiple_input(pdb_input_list: list[str], psf_input_list: list[str]) -> str:
+def prepare_multiple_input(
+    pdb_input_list: list[str], 
+    psf_input_list: list[str]
+) -> str:
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
@@ -318,6 +313,78 @@ def prepare_single_input(
     return input_str
 
 
+def _add_cg_backmapping_arguments(
+        input_element: Union[PDBFile, list[PDBFile]],
+        ) -> str:
+    """Build CG backmapping CNS arguments string.
+
+    Args:
+        input_element (Union[PDBFile, list[PDBFile]]):
+            Input structure.
+
+    Raises:
+        ValueError: All atom topology not found.
+        ValueError: CG-to-AA restraints not found.
+
+    Returns:
+        input_str: str
+            String of arguments understood by CNS.
+    """
+    aa_psf_list: list[Path] = []
+    cgtoaa_tbl_list: list[Path] = []
+    input_str: str = ""
+    # Structure composed of multiple entries
+    if isinstance(input_element.aa_topology, (list, tuple,)):
+        for psf in input_element.aa_topology:
+            if psf is None:
+                raise ValueError(
+                    f"All-Atom Topology not found {input_element.rel_path}. "
+                    "Conversion to all-atom requires a topology generated "
+                    "with [topoaa] and [topocg]."
+                    )
+            else:
+                aa_psf_list.append(psf.rel_path.as_posix())
+        for i, tbl in enumerate(input_element.cgtoaa_tbl):
+            if tbl is None and not input_element.shape[i]:
+                raise ValueError(
+                    f"Coarse-Crain to All-Atom restraint file not found "
+                    f"{input_element.rel_path}. Conversion to all-atom "
+                    "requires a restraint file generated with [topocg]."
+                    )
+            elif not input_element.shape[i]:
+                cgtoaa_tbl_list.append(tbl.as_posix())
+    # Structure composed of only one entry
+    else:
+        pdb = input_element
+        shape = libpdb.check_mol_shape(pdb.rel_path)
+        if pdb.aa_topology is None:
+            raise ValueError(
+                f"All-Atom Topology not found {input_element.rel_path}."
+                "Conversion to all-atom requires a topology generated with"
+                " [topoaa] and [topocg]."
+                )
+        aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
+        if pdb.cgtoaa_tbl is None and not shape:
+            raise ValueError(
+                "Coarse-Crain to All-Atom restraint file not found for"
+                f" entry: {input_element.rel_path}. Conversion to all-atom"
+                " requires a restraint file generated with [topocg]."
+                )
+        cgtoaa_tbl_list.append(pdb.cgtoaa_tbl.as_posix())
+
+    # Loop over all the files that need to be added
+    for ind, (aa_psf, cg2aa_tbl) in enumerate(zip(aa_psf_list, cgtoaa_tbl_list), start=1):
+        # eval line for psf
+        input_str += write_eval_line(f"input_aa_psf_filename_{ind}", aa_psf)
+        # eval line for pdb
+        input_str += write_eval_line(
+            f"input_aa_pdb_filename_{ind}", f"{aa_psf[:-4]}.pdb"
+            )
+        # eval line for tbl
+        input_str += write_eval_line(f"input_cgtbl_filename_{ind}", cg2aa_tbl)
+    return input_str
+
+
 def prepare_cns_input(
     model_number: int,
     input_element: Union[PDBFile, list[PDBFile]],
@@ -327,6 +394,7 @@ def prepare_cns_input(
     identifier: str,
     ambig_fname: FilePath = "",
     native_segid: bool = False,
+    cgtoaa: bool = False,
     default_params_path: Optional[Path] = None,
     debug: Optional[bool] = False,
     seed: Optional[int] = None,
@@ -346,8 +414,19 @@ def prepare_cns_input(
     default_params = load_workflow_params(**defaults)
     default_params += write_eval_line("ambig_fname", ambig_fname)
 
+    # Check if any PDBFile has ligand files and override global parameters
+    # This is important for ensembles with autotoppar where each model has different ligand files
+    pdb_files = transform_to_list(input_element)
+    for pdb in pdb_files:
+        if hasattr(pdb, "ligand_top_fname") and pdb.ligand_top_fname:
+            default_params += write_eval_line("ligand_top_fname", pdb.ligand_top_fname)
+        if hasattr(pdb, "ligand_param_fname") and pdb.ligand_param_fname:
+            default_params += write_eval_line(
+                "ligand_param_fname", pdb.ligand_param_fname
+            )
+
     # write the PDBs
-    pdb_list = [pdb.rel_path for pdb in transform_to_list(input_element)]
+    pdb_list = [pdb.rel_path for pdb in pdb_files]
 
     # write the PSFs
     psf_list: list[Path] = []
@@ -382,8 +461,12 @@ def prepare_cns_input(
         psf_input_list=[str(p) for p in psf_list],
     )
 
-    output_pdb_filename = f"{identifier}_{model_number}.pdb"
+    # Add the CG-to-AA backmapping CNS arguments
+    if cgtoaa:
+        input_str += _add_cg_backmapping_arguments(input_element)
 
+    # Setup output filename
+    output_pdb_filename = f"{identifier}_{model_number}.pdb"
     output = f"{linesep}! Output structure{linesep}"
     output += write_eval_line("output_pdb_filename", output_pdb_filename)
 
@@ -409,19 +492,21 @@ def prepare_cns_input(
 
     output += write_eval_line("count", model_number)
 
+    # Set pseudo-random seed
     if seed is None:
         seed = RND.randint(100, 99999)
-
     seed_str = write_eval_line("seed", seed)
 
+    # Combine all input parts
     inp = default_params + input_str + seed_str + output + segid_str + recipe_str
 
-    if not debug:
-        return inp
-    else:
+    if debug:
+        # In debug mode we return a file (allowing to debug)
         inp_file = Path(f"{identifier}_{model_number}.inp")
         inp_file.write_text(inp)
         return inp_file
+    # Return input string
+    return inp
 
 
 def prepare_expected_pdb(
@@ -431,11 +516,30 @@ def prepare_expected_pdb(
     identifier: str,
 ) -> PDBFile:
     """Prepare a PDBobject."""
+    # Build filepath
     expected_pdb_fname = Path(path, f"{identifier}_{model_nb}.pdb")
+    # Initiate a PDBFile object
     pdb = PDBFile(expected_pdb_fname, path=path)
-    if isinstance(model_obj, tuple):
+    # Multiple models as input
+    if isinstance(model_obj, (tuple, list, set)):
         pdb.topology = [p.topology for p in model_obj]
+        pdb.aa_topology = [p.aa_topology for p in model_obj]
+        pdb.cgtoaa_tbl = [p.cgtoaa_tbl for p in model_obj]
+        pdb.shape = [p.shape for p in model_obj]
+        # Search for Topology/Parameters among the input models
+        # to pass it to the about-to-become complex
+        for m in model_obj:
+            if m.ligand_param_fname and m.ligand_top_fname:
+                pdb.ligand_param_fname = m.ligand_param_fname
+                pdb.ligand_top_fname = m.ligand_top_fname
+    # Single model / complex
     else:
         pdb.topology = model_obj.topology
         pdb.seed = model_obj.seed
+        pdb.aa_topology = model_obj.aa_topology
+        pdb.cgtoaa_tbl = model_obj.cgtoaa_tbl
+        pdb.restr_fname = model_obj.restr_fname
+        pdb.shape = model_obj.shape
+        pdb.ligand_param_fname = model_obj.ligand_param_fname
+        pdb.ligand_top_fname = model_obj.ligand_top_fname
     return pdb

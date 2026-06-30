@@ -104,10 +104,6 @@ define(
 {+ choice: true false +}
 {===>} hydrogen_flag=true;
 
-{* which hydrogens to build *}
-{+ choice: "all" "unknown" +}
-{===>} hydrogen_build="all";
-
 {* selection of atoms other than hydrogens for which coordinates
    will be generated *}
 {* to generate coordinates for all unknown atoms use: (not(known)) *}
@@ -426,6 +422,17 @@ $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
 end loop disu
 
 
+! check first for covalently-linked Acetylated Nter to CYS
+! if detected cyclicpept will be set to false to avoid
+! potentially adding an additional cyclic peptide bond
+
+if ($cyclicpept eq TRUE ) then
+
+    inline @MODULE:coval-ace-cys.cns
+
+end if
+
+
 ! check for cyclid peptidic bonds
 
 if ($cyclicpept eq TRUE ) then
@@ -518,13 +525,10 @@ end if ! check for cyclic peptide
 inline @MODULE:covalheme.cns
 
 
-! check for covalently-linked Acetylated Nter to CYS
-
-inline @MODULE:coval-ace-cys.cns
+! check for FE1 bonds in iron cluster
 
 evaluate ($ironclus=0)
- 
-! check for FE1 bonds in iron cluster
+
 for $id1 in id ( resname CFE and name SG ) loop fes1
 
     show (segid) (id $id1)

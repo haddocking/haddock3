@@ -23,6 +23,9 @@ The following files are generated:
 
 - **capri_ss.tsv**: a table with the CAPRI metrics for each model.
 - **capri_clt.tsv**: a table with the CAPRI metrics for each cluster of models (if clustering information is available).
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#caprieval-module>`_
 """
 
 
@@ -40,6 +43,7 @@ from haddock.modules.analysis.caprieval.capri import (
     extract_data_from_capri_class,
     extract_models_best_references,
     )
+from haddock.libs.libaa2cg import martinize
 from pdbtools.pdb_wc import run as pdb_wc
 from pdbtools.pdb_splitmodel import run as pdb_splitmodel
 
@@ -72,6 +76,36 @@ class HaddockModule(BaseHaddockModule):
             if isinstance(model, list):
                 return True
         return False
+
+    @staticmethod
+    def find_ff(models: list[PDBFile]) -> str:
+        """Finds the force-field information (all-atom or martini) from the topology 
+        associated to the first model.
+
+        The assumption is that the force-fields will be identical between models.
+        
+        Parameters
+        -----------
+        models : list[PDBFile]
+            List of models where to find the topology
+        
+        Return
+        -------
+        ff : str
+            The force-field used in those models.
+        """
+        try:
+            ff = Path(models[0].topology[0].rel_path).stem.split("_")[-1]
+        except TypeError:
+            try:
+                ff = Path(models[0].topology.rel_path).stem.split("_")[-1]
+            except AttributeError:
+                ff = "aa"
+        # In case of issue, fall back to all-atom
+        if "martini" not in ff:
+            ff = "aa"
+
+        return ff
 
     def handle_input_reference(self, reference: Path) -> list[Path]:
         """Validate the reference file by returning only one model.
@@ -181,8 +215,16 @@ class HaddockModule(BaseHaddockModule):
         # dump previously used weights
         dump_weights(self.order)
 
+        # Find force-field
+        ff = self.find_ff(models)
         # Get reference file
-        references = self.get_reference(models)
+        if ff == "martini2":
+            references = [
+                Path(martinize(ref_aa, self.path.resolve().parent, False))
+                for ref_aa in self.get_reference(models)
+                ]
+        else:
+            references = self.get_reference(models)
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
@@ -208,6 +250,7 @@ class HaddockModule(BaseHaddockModule):
                         reference=reference,
                         params=self.params,
                         ref_id=ref_id,
+                        ff=ff
                     )
                 )
 
@@ -256,7 +299,6 @@ class HaddockModule(BaseHaddockModule):
                 add_reference_id=True,
             )
 
-        # Send models to the next step,
-        #  no operation is done on them
+        # Send models to the next step,  no operation is done on them
         self.output_models = models  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
         self.export_io_models()

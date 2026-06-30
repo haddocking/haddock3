@@ -22,7 +22,8 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
-evaluate ($saprotocol.randorien=$randorien)
+evaluate ($saprotocol.randrot=$randrot)
+evaluate ($saprotocol.separate=$separate)
 evaluate ($saprotocol.tadhigh_t=$temp_high)
 evaluate ($saprotocol.t1_init=$temp_cool1_init)
 evaluate ($saprotocol.t2_init=$temp_cool2_init)
@@ -134,6 +135,7 @@ evaluate ($data.nc6sym = $nc6sym)
 evaluate ($Data.flags.dihed =$dihedflag)
 evaluate ($Data.flags.elec =$elecflag)
 evaluate ($Data.epsilon =$epsilon)
+evaluate ($Data.epsilon_cg =$epsilon_cg)
 evaluate ($Data.dielec  =$dielec)
 
 !Interaction matrix:
@@ -180,9 +182,8 @@ parameter
     angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
 end
 
-{* Check for the presence of ions and add distance restraints / covalent bond == *}
+{* Check for the presence of ions and add covalent bond *}
 
-@MODULE:restrain-ions.cns
 @MODULE:covalions.cns
 
 
@@ -194,6 +195,9 @@ igroup
     interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
                  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
     interaction  (resn SHA) (not resn SHA) weight * 0 end
+    ! turn off vdw interaction of CG charged beads with all other particles
+    interaction  (name SCD1) (all) weight vdw 0.0 end
+    interaction  (name SCD2) (all) weight vdw 0.0 end
 end
 
 flag include bond angle impr vdw end
@@ -210,11 +214,28 @@ if ($Data.flags.elec eq true) then
     else
         parameter nbonds eps=$Data.epsilon cdie end end
     end if
-    parameter nbonds ? end end
 else
     evaluate ($elec=0.0)
     flag exclude elec end
 end if
+
+! check for the presence of a CG model
+! and adapt non-bonded parameters
+do (store4 = 0) (all)
+do (store4 = 1) (name BB or name BB#)
+show sum (store4) (all)
+if ($result > 0) then
+    parameter
+        nbonds
+            nbxmod=5 atom cdie shift
+            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon_cg e14fac=0.4 inhibit 0.25
+            wmin=0.5 tolerance 0.5
+        end
+    end
+    evaluate ($coarse = TRUE)
+end if
+
+parameter nbonds ? end end
 
 do (fbeta=$Saprotocol.fbeta) (all)
 do (mass=$Saprotocol.mass) (all)
@@ -228,8 +249,10 @@ if ($select gt 0) then
 end if
 
 ! random placement of molecules
-if ($SaProtocol.randorien eq true) then
+if ($SaProtocol.separate eq true) then
     @MODULE:separate.cns
+end if
+if ($SaProtocol.randrot eq true) then
     @MODULE:random_rotations.cns
 end if
 
@@ -312,6 +335,9 @@ end if
 if ($Data.ssdihed eq "alphabeta" ) then
     inline @MODULE:protein-ss-restraints-alpha-beta.cns
 end if
+
+{* Check for the presence of ions and add distance restraints *}
+@MODULE:restrain-ions.cns
 
 
 {* Check first for failed structures =========================================== *}

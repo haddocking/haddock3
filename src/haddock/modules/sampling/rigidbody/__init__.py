@@ -27,6 +27,9 @@ unambiguous distance restraints, the solutions of the minimisation will converge
 much better and the sampling can be limited. In *ab-initio* mode, however, very
 diverse solutions will be obtained and the sampling should be increased to make
 sure to sample enough the possible interaction space.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/sampling.html#rigidbody-module>`_
 """
 
 from pathlib import Path
@@ -34,7 +37,7 @@ from pathlib import Path
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath, Optional, Sequence, Union
 from haddock.gear.haddockmodel import HaddockModel
-from haddock.libs.libcns import prepare_cns_input
+from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import GenericTask
 from haddock.libs.libpdb import check_combination_chains
@@ -55,7 +58,7 @@ class HaddockModule(BaseCNSModule):
     def __init__(
         self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
     ) -> None:
-        cns_script = Path(RECIPE_PATH, "cns", "rigidbody.cns")
+        cns_script = Path(RECIPE_PATH, "cns", f"{self.name}.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
@@ -69,21 +72,22 @@ class HaddockModule(BaseCNSModule):
             tuple[list[PDBFile], Union[Path, str], Union[str, None], int]
         ],
     ) -> list[CNSJob]:
-        jobs = []
-        for idx, e in enumerate(inp_list, start=1):
-            combination, inp_input, ambig_fname, seed = e
+        jobs: list[CNSJob] = []
+        for idx, job_entries in enumerate(inp_list, start=1):
+            combination, cns_input, ambig_fname, seed = job_entries
 
-            log_fname = f"rigidbody_{idx}.out"
-            err_fname = f"rigidbody_{idx}.cnserr"
-            output_pdb_fname = f"rigidbody_{idx}.pdb"
+            log_fname = f"{self.name}_{idx}.out"
+            err_fname = f"{self.name}_{idx}.cnserr"
 
             # Create a model for the expected output
-            model = PDBFile(output_pdb_fname, path=".", restr_fname=ambig_fname)
-            model.topology = [e.topology for e in combination]
-            model.seed = seed  # type: ignore
+            model = prepare_expected_pdb(combination, idx, ".", self.name)
+            # Set additional attributes
+            model.restr_fname=str(ambig_fname)
+            model.seed = seed
+
             self.output_models.append(model)
 
-            job = CNSJob(inp_input, log_fname, err_fname, envvars=self.envvars)
+            job = CNSJob(cns_input, log_fname, err_fname, envvars=self.envvars)
             jobs.append(job)
         return jobs
 
@@ -110,7 +114,7 @@ class HaddockModule(BaseCNSModule):
                     self.path,
                     self.recipe_str,
                     self.params,
-                    "rigidbody",
+                    self.name,
                     ambig_fname=ambig_fname,
                     default_params_path=self.toppar_path,
                     native_segid=True,
@@ -130,8 +134,8 @@ class HaddockModule(BaseCNSModule):
     ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None], int]]:
         prepare_tasks = []
         _l = []
-        idx = 1
-        for combination in models_to_dock:
+        idx: int = 1
+        for ci, combination in enumerate(models_to_dock):
             check_combination_chains(combination)
             for _ in range(sampling_factor):
                 ambig_fname = (
@@ -147,7 +151,7 @@ class HaddockModule(BaseCNSModule):
                     step_path=self.path,
                     recipe_str=self.recipe_str,
                     defaults=self.params,
-                    identifier="rigidbody",
+                    identifier=self.name,
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     default_params_path=self.toppar_path,
@@ -185,13 +189,13 @@ class HaddockModule(BaseCNSModule):
         if not any(all_restraints):
             # Terminate docking
             self.finish_with_error(
-                "No restraints found for [rigidbody] module. "
+                f"No restraints found for [{self.name}] module. "
                 "For targeted docking, supply CNS-valid restraints file(s) "
                 "using 'ambig_fname' and/or 'unambig_fname' and/or "
                 "'hbond_fname' parameter(s). "
                 "For ab-initio docking, set 'cmrest' or 'ranair' "
                 "parameters to true."
-                )
+            )
 
     def _run(self) -> None:
         """Execute module."""
@@ -216,36 +220,39 @@ class HaddockModule(BaseCNSModule):
                 "Sampling is smaller than the number"
                 " of model combinations "
                 f"#model_combinations={len(models_to_dock)},"
-                f' sampling={self.params["sampling"]}.'
+                f" sampling={self.params['sampling']}."
             )
 
         # get all the different ambig files
-        prev_ambig_fnames = [None for model in range(self.params["sampling"])]
-        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)  # type: ignore
+        prev_ambig_fnames = [None for _model in range(self.params["sampling"])]
+        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
         # if no files are found, we will stick to self.params["ambig_fname"]
         if diff_ambig_fnames:
             n_diffs = len(diff_ambig_fnames)
             ambig_fnames = [
                 diff_ambig_fnames[n % n_diffs] for n in range(self.params["sampling"])
-            ]  # noqa: E501
+            ]
         else:
             ambig_fnames = None
 
         self.restraints_guardrail(ambig_fnames)
 
-        self.output_models: list[PDBFile] = []
-        self.log("Preparing jobs...")
+        self.log("Preparing CNS jobs...")
         if self.params["mode"] != "local":
             # Note: `batch` and (pseudo)-`mpi` mode uses files to communicate and cannot extract the information from the task object.
             cns_input = self.prepare_cns_input_sequential(
-                models_to_dock, sampling_factor, ambig_fnames  # type: ignore
+                models_to_dock,
+                sampling_factor,
+                ambig_fnames,  # type: ignore
             )
-
         else:
             cns_input = self.prepare_cns_input_parallel(
-                models_to_dock, sampling_factor, ambig_fnames  # type: ignore
+                models_to_dock,
+                sampling_factor,
+                ambig_fnames,  # type: ignore
             )
 
+        self.output_models: list[PDBFile] = []
         jobs = self.make_cns_jobs(cns_input)
 
         # Run CNS Jobs
@@ -258,14 +265,14 @@ class HaddockModule(BaseCNSModule):
         # Get the weights according to CNS parameters
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
-
+        # Loop over models
         for model in self.output_models:
             if model.is_present():
-                # Score the model
+                # Obtain the model scores
                 haddock_model = HaddockModel(model.file_name)
-                model.unw_energies = haddock_model.energies
-
                 haddock_score = haddock_model.calc_haddock_score(**weights)
+                # Set the attributes
+                model.unw_energies = haddock_model.energies
                 model.score = haddock_score
 
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

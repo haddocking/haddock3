@@ -1,0 +1,321 @@
+! print_coorheader.cns
+!    Generate the coordinate header (REMARKS)
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+if ($Data.flags.dihed eq false) then evaluate ($dihe = 0) end if
+if ($Data.flags.sani  eq false) then evaluate ($sani = 0) end if
+if ($Data.flags.xrdc  eq false) then evaluate ($xrdc = 0) end if
+if ($Data.flags.xpcs  eq false) then evaluate ($xpcs = 0) end if
+if ($Data.flags.dani  eq false) then evaluate ($dani = 0) end if
+if ($Data.flags.vean  eq false) then evaluate ($vean = 0) end if
+if ($Data.flags.cdih  eq false) then evaluate ($cdih = 0) end if
+if ($Data.flags.noe   eq false) then evaluate ($noe  = 0) end if
+if ($Data.flags.rg    eq false) then evaluate ($coll = 0) end if
+if ($Data.flags.zres  eq false) then evaluate ($zhar = 0) end if
+if ($Data.flags.em    eq false) then evaluate ($lcc  = 0) end if
+
+evaluate($enerall=$etot)
+evaluate($bondall=$bond)
+evaluate($anglall=$angl)
+evaluate($imprall=$impr)
+evaluate($diheall=$dihe)
+evaluate($vdwall=$vdw)
+evaluate($elecall=$elec)
+evaluate($noeall=$noe)
+evaluate($rgall=$coll)
+evaluate($zresall=$zhar)
+evaluate($cdihall=$cdih)
+evaluate($coupall=0)
+evaluate($saniall=$sani+$xrdc)
+evaluate($veanall=$vean)
+evaluate($xpcsall=$xpcs)
+evaluate($daniall=$dani)
+
+if ($Data.flags.sym eq true) then
+    evaluate ($result=0)
+    evaluate ($violations=0)
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+end if
+
+if ($Data.randremoval eq false) then
+    evaluate ($violations_test_noe= 0)
+    evaluate ($rms_test_noe = 0)
+    evaluate ($npart = 0)
+end if
+
+evaluate ($result=0)
+evaluate ($violations=0)
+print threshold=5. cdih
+evaluate ($rms_cdih=$result)
+evaluate ($violations_cdih=$violations)
+evaluate ($result=0)
+print thres=0.05 bonds
+evaluate ($rms_bonds=$result)
+evaluate ($result=0)
+print thres=5. angles
+evaluate ($rms_angles=$result)
+evaluate ($result=0)
+print thres=5. impropers
+evaluate ($rms_impropers=$result)
+evaluate ($result=0)
+print thres=30. dihedrals
+evaluate ($rms_dihedrals=$result)
+evaluate ($result=0)
+evaluate ($violations=0)
+evaluate ($rms_coup = 0)
+evaluate ($violations_coup = 0)
+
+evaluate( $rms_sani = 0)
+evaluate( $violations_sani = 0)
+if ($Data.flags.sani  eq TRUE) then
+    sani print threshold = 0.20 class rd* end
+    evaluate( $rms_sani = $result)
+    evaluate( $violations_sani = $violations)
+end if
+
+evaluate( $rms_xrdc = 0)
+evaluate( $violations_xrdc = 0)
+if ($Data.flags.xrdc  eq TRUE) then
+    xrdc print threshold = 0.2 class xr* end
+    evaluate( $rms_xrdc = $result)
+    evaluate( $violations_xrdc = $violations)
+end if
+
+evaluate( $violations_sani = $violations_sani + $violations_xrdc)
+evaluate( $rms_sani = $rms_sani + $rms_xrdc)
+
+evaluate( $rms_xpcs = 0)
+evaluate( $violations_xpcs = 0)
+if ($Data.flags.xpcs  eq TRUE) then
+    xpcs print threshold = 0.2 class pc* end
+    evaluate( $rms_xpcs = $result)
+    evaluate( $violations_xpcs = $violations)
+end if
+
+evaluate( $rms_vean = 0)
+evaluate( $violations_vean = 0)
+if ($Data.flags.vean  eq TRUE) then
+    vean print threshold = 5.00 class ve* end
+    evaluate( $rms_vean = $result)
+    evaluate( $violations_vean = $violations)
+end if
+
+evaluate( $rms_dani = 0)
+evaluate( $violations_dani = 0)
+if ($Data.flags.dani  eq TRUE) then
+    dani print threshold = 0.20 class da* end
+    evaluate( $rms_dani = $result)
+    evaluate( $violations_dani = $violations)
+end if
+
+{====>} {* define ASA-based solvation parameters *}
+inline @MODULE:def_solv_param.cns
+
+{====>} {* buried surface area and desolvation*}
+evaluate ($nchain1 = 0)
+evaluate ($saafree = 0)
+evaluate ($esolfree = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+    evaluate ($nchain1 = $nchain1 + 1)
+    {====>} {* buried surface area and desolvation*}
+    do (rmsd = 0) (all)
+    surface mode=access accu=0.075 rh2o=1.4 sele=(segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA)) end
+    show sum (rmsd) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+    evaluate ($saafree = $saafree + $result)
+    do (store2 = rmsd * store1) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+    show sum (store2) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+    evaluate ($esolfree = $esolfree + $result)
+end loop nloop1
+
+do (rmsd = 0) (all)
+do (store2 = 0) (all)
+surface mode=access accu=0.075 rh2o=1.4 sele=(not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA)) end
+show sum (rmsd) (not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA))
+evaluate ($satot = $result)
+do (store2 = rmsd * store1) (not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+show sum (store2) (not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+evaluate ($esolcplx = $result)
+evaluate ($saburied = $saafree - $satot)
+if ($saburied < 0) then
+    evaluate ($saburied = -999999)
+end if
+
+evaluate ($edesolv = $esolcplx - $esolfree)
+
+evaluate ($dhbinding = $edesolv + $eintcplx - $eintfree + $elecall + $vdwall)
+
+evaluate ($nshape = 0)
+evaluate ($ncount = 0)
+while ($ncount < $data.ncomponents) loop shape
+    evaluate ($ncount = $ncount + 1)
+    if ($mol_shape_$ncount eq true) then
+        evaluate ($nshape = $nshape + 1)
+    end if
+end loop shape
+
+evaluate ($nonshape = $Data.ncomponents - $nshape)
+  
+if ($nonshape = 1) then
+    evaluate ($saburied = 0)
+    evaluate ($edesolv = 0)
+    evaluate ($dhbinding = 0)
+    evaluate ($eintfree = $eintcplx)
+end if
+
+if ($Data.flags.sym eq true) then
+    evaluate ($enerall = $enerall + $esym)
+end if
+if ($Data.flags.ncs eq true) then
+    evaluate ($enerall = $enerall + $ncs)
+end if
+
+evaluate ($procwat = false)
+if ($refine.keepwater eq true) then
+    evaluate ($procwat = true)
+end if  
+
+if ($procwat eq true) then
+    ident (store3) (not all)
+    flag exclude * include vdw elec  end
+
+    eval($nchain1 = 0)
+
+    while ($nchain1 < $data.ncomponents) loop nloop1
+        eval($nchain1 = $nchain1 + 1)
+
+        igroup
+            interaction (segid $prot_segid_$nchain1) ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3) weight * 1.0 end
+            interaction (not segid $prot_segid_$nchain1) (resn WAT or resn HOH or resn TIP* or resn DMS) weight * 0.0 end
+            interaction (segid $prot_segid_$nchain1) (not ((resn WAT or resn HOH or resn TIP* or resn DMS) and store3)) weight * 0.0 end
+        end
+        energy end
+        evaluate ($ener_water_$nchain1 = $ener)
+        evaluate ($enerall = $enerall + $ener)
+        evaluate ($vdw_water_$nchain1 = $vdw)
+        evaluate ($elec_water_$nchain1 = $elec)
+
+    end loop nloop1
+    if ($data.ncomponents > 1) then
+        eval($nchain1 = $data.ncomponents)
+        while ($nchain1 < $data.ncomponents) loop nloop1
+            eval($nchain1 = $nchain1 + 1)
+            evaluate ($ener_water_$nchain1 = 0.0)
+            evaluate ($vdw_water_$nchain1 = 0.0)
+            evaluate ($elec_water_$nchain1 = 0.0)
+        end loop nloop1
+    end if
+
+    eval($nchain1 = 0)
+
+    igroup
+        while ($nchain1 < $data.ncomponents) loop nloop2
+            eval($nchain1 = $nchain1 + 1)
+            interaction (segid $prot_segid_$nchain1) (all) weight * 0.0 end
+        end loop nloop2
+        interaction ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3)
+                    ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3)  weight * 1.0 end
+        interaction (store3) (store3)  weight * 0.0 end
+        interaction (resn SHA) (not resn SHA)  weight * 0.0 end
+        interaction (resn SHA) (resn SHA)  weight * 0.0 end
+    end
+    energy end
+    evaluate ($ener_water_water = $ener)
+    evaluate ($enerall = $enerall + $ener)
+    evaluate ($vdw_water_water = $vdw)
+    evaluate ($elec_water_water = $elec)
+else
+    eval($nchain1 = 0)
+
+    while ($nchain1 < $data.ncomponents ) loop nloop1
+        eval($nchain1 = $nchain1 + 1)
+        evaluate ($ener_water_$nchain1 = 0.0)
+        evaluate ($vdw_water_$nchain1 = 0.0)
+        evaluate ($elec_water_$nchain1 = 0.0)
+    end loop nloop1
+    evaluate ($ener_water_water = 0.0)
+    evaluate ($vdw_water_water = 0.0)
+    evaluate ($elec_water_water = 0.0)
+end if
+
+! calculate the HADDOCK score
+evaluate ($hscore = $w_vdw  * $vdwall)
+evaluate ($hscore = $hscore + $w_elec * $elecall)
+evaluate ($hscore = $hscore + $w_air  * $noeall)
+evaluate ($hscore = $hscore + $w_rg   * $rgall)
+evaluate ($hscore = $hscore + $w_cdih * $cdihall)
+evaluate ($hscore = $hscore + $w_sani * $saniall)
+evaluate ($hscore = $hscore + $w_xpcs * $xpcsall)
+evaluate ($hscore = $hscore + $w_dani * $daniall)
+evaluate ($hscore = $hscore + $w_vean * $veanall)
+evaluate ($hscore = $hscore + $w_sym  * $esym)
+evaluate ($hscore = $hscore + $w_bsa  * $saburied)
+evaluate ($hscore = $hscore + $w_desolv * $edesolv)
+evaluate ($hscore = $hscore + $w_lcc * $lcc)
+
+set message=on echo=on end
+set remarks=reset end
+set remarks=accumulate end
+remarks ===============================================================
+remarks HADDOCK stats for $output_pdb_filename
+remarks ===============================================================
+remarks HADDOCK score: $hscore
+remarks ===============================================================
+
+!list input molecules
+evaluate ($nmol=1)
+while ($nmol <=$data.ncomponents) loop mol
+    if ( $exist_input_pdb_filename_$nmol = true) then
+        remarks initial structure $nmol - $input_pdb_filename_$nmol
+    end if
+    evaluate ($nmol = $nmol + 1)
+end loop mol
+
+remarks ===============================================================
+remarks            total,bonds,angles,improper,dihe,vdw,elec,air,cdih,coup,rdcs,vean,dani,xpcs,rg
+remarks energies: $enerall, $bondall, $anglall, $imprall, $diheall, $vdwall, $elecall, $noeall, $cdihall, $coupall, $saniall, $veanall, $daniall, $xpcsall, $rgall
+remarks ===============================================================
+remarks            bonds,angles,impropers,dihe,air,cdih,coup,rdcs,vean,dani,xpcs
+remarks rms-dev.: $rms_bonds,$rms_angles,$rms_impropers,$rms_dihedrals,$rms_noe,$rms_cdih,$rms_coup, $rms_sani, $rms_vean, $rms_dani, $rms_xpcs
+remarks ===============================================================
+remarks               air,cdih,coup,rdcs,vean,dani,xpcs
+remarks               >0.3,>5,>1,>0,>5,>0.2,>0.2
+remarks violations.: $violations_noe, $violations_cdih, $violations_coup, $violations_sani, $violations_vean, $violations_dani, $violations_xpcs
+remarks ===============================================================
+remarks                        CVpartition#,violations,rms
+remarks AIRs cross-validation: $npart, $violations_test_noe, $rms_test_noe
+remarks ===============================================================
+remarks NCS energy: $ncs
+remarks ===============================================================
+remarks Symmetry energy: $esym
+remarks ===============================================================
+remarks Membrane restraining energy: $zresall
+remarks ===============================================================
+remarks Local cross-correlation: $lcc[f7.4]
+remarks ===============================================================
+remarks Desolvation energy: $edesolv
+remarks Internal energy free molecules: $eintfree
+remarks Internal energy complex: $eintcplx
+remarks Binding energy: $dhbinding
+remarks ===============================================================
+remarks buried surface area: $saburied
+remarks ===============================================================
+set remark accumulate end
+evaluate($ncount = 0)
+while ($ncount < $data.ncomponents) loop waterremark
+    evaluate ($ncount = $ncount +1)
+    remarks water - chain_$ncount: $ener_water_$ncount $vdw_water_$ncount $elec_water_$ncount
+end loop waterremark
+remarks ===============================================================
+remarks water - water: $ener_water_water $vdw_water_water $elec_water_water
+remarks ===============================================================

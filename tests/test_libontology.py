@@ -73,7 +73,6 @@ def io_data() -> dict:
 @pytest.fixture
 def io_json_file(io_data) -> Generator[Path, None, None]:
     with tempfile.NamedTemporaryFile(mode="w+") as f:
-
         json.dump(io_data, f)
 
         f.seek(0)
@@ -99,7 +98,6 @@ def test_persistent_init():
 
 def test_persistent_is_present():
     with tempfile.NamedTemporaryFile() as f:
-
         p = Persistent(file_name=f.name, file_type=Format.PDB, path=Path(f.name).parent)
 
         is_present = p.is_present()
@@ -129,6 +127,8 @@ def test_pdbfile_init_empty():
     assert math.isnan(pdbfile.len)
     assert pdbfile.unw_energies is None
     assert pdbfile.seed is None
+    assert pdbfile.ligand_top_fname is None
+    assert pdbfile.ligand_param_fname is None
 
 
 def test_pdbfile_init():
@@ -163,6 +163,48 @@ def test_pdbfile_init():
     assert pdbfile.clt_model_rank is None
     assert pdbfile.len == score
     assert pdbfile.unw_energies is None
+    assert pdbfile.ligand_top_fname is None
+    assert pdbfile.ligand_param_fname is None
+
+
+def test_pdbfile_init_with_ligand_files():
+    target_path = Path(".")
+    file_name = Path("/some/path/test")
+    topology = "some_topology"
+    score = 10.0
+    md5 = "some_md5"
+    restr_fname = "some_restraint_file.tbl"
+    ligand_top_fname = "ligand.top"
+    ligand_param_fname = "ligand.param"
+
+    pdbfile = PDBFile(
+        file_name=file_name,
+        topology=topology,
+        path=target_path,
+        score=score,
+        md5=md5,
+        restr_fname=restr_fname,
+        ligand_top_fname=ligand_top_fname,
+        ligand_param_fname=ligand_param_fname,
+    )
+
+    assert pdbfile.file_name == file_name.name
+    assert pdbfile.file_type == Format.PDB
+    assert pdbfile.path == str(target_path.resolve())
+    assert pdbfile.full_name == str(target_path / file_name.name)
+    assert pdbfile.rel_path == Path("..", Path(target_path).name, file_name)
+    assert pdbfile.md5 == md5
+    assert pdbfile.restr_fname == restr_fname
+    assert pdbfile.topology == topology
+    assert pdbfile.score == score
+    assert pdbfile.ori_name is None
+    assert pdbfile.clt_id is None
+    assert pdbfile.clt_rank is None
+    assert pdbfile.clt_model_rank is None
+    assert pdbfile.len == score
+    assert pdbfile.unw_energies is None
+    assert pdbfile.ligand_top_fname == ligand_top_fname
+    assert pdbfile.ligand_param_fname == ligand_param_fname
 
 
 def test_rmsdfile_init():

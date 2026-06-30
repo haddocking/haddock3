@@ -24,7 +24,8 @@ end if
 !==================================================================!
 
 evaluate ($saprotocol.crossdock=$crossdock)
-evaluate ($saprotocol.randorien=$randorien)
+evaluate ($saprotocol.randrot=$randrot)
+evaluate ($saprotocol.separate=$separate)
 evaluate ($saprotocol.rigidtrans=$rigidtrans)
 evaluate ($saprotocol.ntrials=$ntrials)
 evaluate ($saprotocol.inter_rigid=$inter_rigid)
@@ -105,6 +106,7 @@ evaluate ($data.ksurf=$ksurf)
 !Electrostatics:
 evaluate ($Data.flags.elec =$elecflag)
 evaluate ($Data.epsilon =$epsilon)
+evaluate ($Data.epsilon_cg =$epsilon_cg)
 evaluate ($Data.dielec  =$dielec)
 
 
@@ -236,12 +238,29 @@ if ($Data.flags.elec eq true) then
     else
         parameter nbonds eps=$Data.epsilon cdie shift end end
     end if
-    parameter nbonds ? end end
 else
     evaluate ($elec=0.0)
     flag exclude elec end
 end if
 
+! check for the presence of a CG model
+! and adapt non-bonded parameters
+do (store4 = 0) (all)
+do (store4 = 1) (name BB or name BB#)
+show sum (store4) (all)
+if ($result > 0) then
+    parameter
+        nbonds
+            nbxmod=5 atom cdie shift
+            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon_cg e14fac=0.4 inhibit 0.25
+            wmin=0.5 tolerance 0.5
+        end
+    end
+end if
+
+parameter nbonds ? end end
+
+! no dihedral angle restraints as the molecule are rigid
 flag excl cdih end
 
 if ($Data.ranair eq true) then
@@ -312,8 +331,10 @@ while ($nrig < $SaProtocol.ntrials) loop trials
     end if
 
     ! random placement of molecules
-    if ($SaProtocol.randorien eq true) then
+    if ($SaProtocol.separate eq true) then
         @MODULE:separate.cns
+    end if
+    if ($SaProtocol.randrot eq true) then
         @MODULE:random_rotations.cns
     end if
 
@@ -342,7 +363,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
         evaluate ($imini = $imini + 1)
         eval ($ministeps = 500 * nint ($data.ncomponents/6 + 1))
-        if ($SaProtocol.randorien eq true) then
+        if ($SaProtocol.separate eq true) then
             flag excl vdw elec end
         end if
         eval ($nchain1 = 0)

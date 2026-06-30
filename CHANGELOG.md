@@ -1,11 +1,8 @@
 # Changelog
 
-<<<<<<< gdock
 - 2026-06-xx: Re-add `gdock` as a sampling module
-=======
 - 2026-06-29: Fixed the cgtoaa reading to cg-to-aa restraints - Issue #1592
 - 2026-06-26: Corrected net charge for O1-methylated NAM - Issue #1586
->>>>>>> main
 - 2026-06-18: Added support for O1-methylated NAG - Issue #1579
 - 2026-06-18: Added support for O-glycosylated serine - Issue #1577
 - 2026-06-14: Dropped support for Python 3.9, minimum required version is now 3.10

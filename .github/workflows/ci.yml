@@ -2,24 +2,39 @@
 name: ci
 
 on:
-  push:
+  pull_request:
     branches: [main]
     paths:
-      - src/*
-      - tests/*
-      - integration_tests/*
-      - docs/*
+      # python files
+      - src/**
+      - tests/**
+      - integration_tests/**
+      - end-to-end_tests/**
+      # project relevant
       - pyproject.toml
       - setup.py
+      # docs
+      - docs/**
+      # docker image
       - Dockerfile
-  pull_request:
+      # this ci definition
+      - .github/workflows/ci.yml
   workflow_dispatch: ~
   schedule:
     - cron: "0 */6 * * *" # every 6 hours
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: uvx ruff format --check .
+
   # Full suite on Linux + Python 3.14: unit tests, coverage, integration, e2e, docs.
   test-linux-py314:
+    needs: [format]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -39,40 +54,37 @@ jobs:
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
       - name: install haddock3 with extra dependencies
-        run: pip install -e '.[mpi,dev,docs,notebooks]'
+        run: uv pip install --system -e '.[mpi,dev,docs,notebooks]'
 
       - name: run unit tests
-        run: >-
-          pytest -v --random-order tests/
-          --cov --cov-report=
+        run: uv run pytest -v --random-order tests/ --cov --cov-report=
 
       - name: generate coverage report
         run: |
-          coverage report
-          coverage xml
+          uv run coverage report
+          uv run coverage xml
 
-      - uses: codacy/codacy-coverage-reporter-action@v1
+      - uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1
         if: github.event.pull_request.head.repo.full_name == github.repository
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml
 
       - name: run integration tests
-        run: >-
-          pytest -v --random-order integration_tests/
+        run: uv run pytest -v --random-order integration_tests/
 
       - name: run end to end tests
-        run: >-
-          pytest -v --random-order --no-cov end-to-end_tests/
+        run: uv run pytest -v --random-order --no-cov end-to-end_tests/
 
       - name: check if docs are buildable
         continue-on-error: true
         run: |
-          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
-          sphinx-build docs haddock3-docs
+          uv run sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+          uv run sphinx-build docs haddock3-docs
 
   # Run the remaining OSxPython combinations in parallel
   test-matrix:
+    needs: [format]
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -108,22 +120,20 @@ jobs:
 
       - name: install system dependencies (macOS)
         if: runner.os == 'macOS'
-        run: |
-          brew install open-mpi
+        run: brew install open-mpi
 
       - name: install haddock3 with extra dependencies
-        run: pip install -e '.[mpi,dev,docs,notebooks]'
+        run: uv pip install --system -e '.[mpi,dev,docs,notebooks]'
 
       - name: run unit tests
-        run: >-
-          pytest -v --random-order tests/
+        run: uv run pytest -v --random-order tests/
 
       - name: run integration tests
-        run: >-
-          pytest -v --random-order integration_tests/
+        run: uv run pytest -v --random-order integration_tests/
 
   # Verify the Docker image still builds successfully (image is not pushed)
   docker-build:
+    needs: [format]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -131,10 +141,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: build docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5
         with:
           context: .
           push: false

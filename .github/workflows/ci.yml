@@ -30,6 +30,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       - run: uvx ruff format --check .
 
   # Full suite on Linux + Python 3.14: unit tests, coverage, integration, e2e, docs.
@@ -52,6 +53,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
+
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: install haddock3 with extra dependencies
         run: uv pip install --system -e '.[mpi,dev,docs,notebooks]'
@@ -121,6 +124,8 @@ jobs:
       - name: install system dependencies (macOS)
         if: runner.os == 'macOS'
         run: brew install open-mpi
+
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: install haddock3 with extra dependencies
         run: uv pip install --system -e '.[mpi,dev,docs,notebooks]'

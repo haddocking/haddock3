@@ -44,13 +44,13 @@ from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
     get_analysis_exec_mode,
-    )
+)
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSDJob,
     XYZWriter,
     XYZWriterJob,
     rmsd_dispatcher,
-    )
+)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -110,11 +110,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
-        # Get the models generated in previous step
-        if type(self.previous_io) == iter:
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
-
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models(individualize=True)
 
@@ -212,7 +207,7 @@ class HaddockModule(BaseHaddockModule):
 
         if not_found:
             # Not all distances were calculated, cannot create the full matrix
-            self.finish_with_error("Several files were not generated:" f" {not_found}")
+            self.finish_with_error(f"Several files were not generated: {not_found}")
 
         # Post-processing : single file
         final_output_name = "rmsd.matrix"

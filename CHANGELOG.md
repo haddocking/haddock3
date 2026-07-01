@@ -1,6 +1,9 @@
 # Changelog
 
+- 2026-07-01: Removed unused guard for “previous module produced iterable” - Issue #1604
+- 2026-06-30: Added caprifilter module, moved shared capri calculation to libcapri - Issue #1550
 - 2026-06-29: Added supprot 1-O-methyl-2-N-Acetyl-alpha-D-glucopyranose (NAA) - Issue #1593
+- 2026-06-29: Fixed the cgtoaa reading to cg-to-aa restraints - Issue #1592
 - 2026-06-26: Corrected net charge for O1-methylated NAM - Issue #1586
 - 2026-06-18: Added support for O1-methylated NAG - Issue #1579
 - 2026-06-18: Added support for O-glycosylated serine - Issue #1577

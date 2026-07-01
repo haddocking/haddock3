@@ -93,6 +93,7 @@
 <span class="sd">For more details about this module, please `refer to the haddock3 user manual</span>
 <span class="sd">&lt;https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#seletop-module&gt;`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
@@ -112,12 +113,14 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-                 <span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-                 <span class="n">init_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
-                 <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">init_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">init_params</span><span class="p">)</span>
 
 <div class="viewcode-block" id="HaddockModule.confirm_installation">
@@ -131,28 +134,24 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
         <span class="c1"># Get the models generated in previous step</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="p">)</span> <span class="o">==</span> <span class="nb">iter</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="s1">&#39;[seletop] This module cannot come after one&#39;</span>
-                                   <span class="s1">&#39; that produced an iterable&#39;</span><span class="p">)</span>
-
         <span class="n">models_to_select</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">p</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">output</span>
-            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">Format</span><span class="o">.</span><span class="n">PDB</span>
-            <span class="p">]</span>
+            <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">output</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">Format</span><span class="o">.</span><span class="n">PDB</span>
+        <span class="p">]</span>
 
         <span class="c1"># sort the models based on their score</span>
         <span class="n">models_to_select</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models_to_select</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;select&#39;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">((</span>
-                <span class="s1">&#39;Number of models to be selected is larger&#39;</span>
-                <span class="s1">&#39; than generated models, selecting ALL&#39;</span><span class="p">),</span>
-                <span class="n">level</span><span class="o">=</span><span class="s1">&#39;warning&#39;</span><span class="p">,</span>
-                <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models_to_select</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;select&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;Number of models to be selected is larger&quot;</span>
+                    <span class="s2">&quot; than generated models, selecting ALL&quot;</span>
+                <span class="p">),</span>
+                <span class="n">level</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># select the models based on the parameter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_select</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;select&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_select</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;select&quot;</span><span class="p">]]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">()</span></div>
 
 </pre></div>

@@ -110,7 +110,7 @@ class HaddockModule(BaseHaddockModule):
         """Execute module."""
         # Get the models generated in previous step
         if isinstance(self.previous_io, Iterator):
-        #if type(self.previous_io) == iter:
+            # if type(self.previous_io) == iter:
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
 

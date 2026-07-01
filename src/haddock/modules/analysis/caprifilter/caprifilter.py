@@ -100,6 +100,7 @@ def filter_models(
     Returns
     -------
     kept, filtered_out : tuple[list[PDBFile], list[PDBFile]]
+        'filtered_out' is not used in the caprifilter module, it is kept for tests.
     """
     kept: list[PDBFile] = []
     filtered_out: list[PDBFile] = []

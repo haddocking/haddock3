@@ -34,7 +34,7 @@ from math import isnan
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import FilePath, Union
+from haddock.core.typing import FilePath, Iterator, Union
 from haddock.libs.libaa2cg import martinize
 from haddock.libs.libcapri import (
     CAPRI,
@@ -87,7 +87,7 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
-        if type(self.previous_io) == iter:
+        if isinstance(self.previous_io, Iterator):
             self.finish_with_error(
                 "[caprifilter] cannot come after a module that produced an iterable."
             )
@@ -144,10 +144,6 @@ class HaddockModule(BaseHaddockModule):
         # Create one CAPRI job per (model, reference) pair
         jobs: list[CAPRI] = []
         for i, model in enumerate(models, start=1):
-            if isinstance(model, list):
-                raise ValueError(
-                    "[caprifilter] cannot handle a list of models per job."
-                )
             for ref_id, ref in enumerate(references, start=1):
                 jobs.append(
                     CAPRI(
@@ -203,7 +199,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Collect metrics and apply all filters
         metrics_data = collect_metrics(best_ref_jobs)
-        kept, filtered_out = filter_models(metrics_data, filter_specs)
+        kept, _ = filter_models(metrics_data, filter_specs)
 
         # Log NaN counts per filtered metric
         for metric in filter_by:

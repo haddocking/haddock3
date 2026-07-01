@@ -45,19 +45,19 @@ dependencies = [
   'pandas==2.*',
   'prodigy-prot==2.3.0',
   'prodigy-lig==1.1.4',
-  'plotly==6.6.0',
+  'plotly==6.8.0',
   'freesasa>=2.2.1',
   'psutil>=7.2.2',
 ]
 
 [project.optional-dependencies]
 dev = [
-  "coverage==7.10.7",
-  "pytest==8.4.2",
+  "coverage==7.14.3",
+  "pytest==9.1.1",
   "pytest-cov==7.1.0",
-  "hypothesis==6.141.1",
+  "hypothesis==6.155.7",
   "pytest-mock==3.15.1",
-  "fastapi==0.128.8",
+  "fastapi==0.138.2",
   "httpx==0.28.1",
   "kaleido==1.3.0",
   "pytest-random-order==1.2.0",

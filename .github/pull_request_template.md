@@ -1,20 +1,22 @@
- You are about to submit a new Pull Request. Before continuing make sure you read the [contributing guidelines](CONTRIBUTING.md).
+> Before submitting, read the [contributing guidelines](CONTRIBUTING.md) and the [AI policy](AI-POLICY.md).
+
+## What does this PR do and why?
+<!-- Please explain what you did in this PR -->
+
+## How was this tested?
+<!-- Explain how the changes were verified -->
+
+## AI assistance
+<!-- Did AI tools play a meaningful role in this PR? If so, note what they helped with and how you verified the output. Leave blank if not applicable. -->
 
 ## Checklist
 
-- [ ] Tests added for the new code
-- [ ] Documentation added for the code changes
-- [ ] Modifications / enhancements are reflected on the [haddock3 user-manual](https://github.com/haddocking/haddock3-user-manual)
-- [ ] `CHANGELOG.md` is updated to incorporate new changes
-- [ ] Does not break licensing
-- [ ] Does not add any dependencies, if it does please add a thorough explanation
+- [ ] Tests cover the new and/or changed code
+- [ ] Documentation updated if needed (also in the [haddock3 user-manual](https://github.com/haddocking/haddock3-user-manual)
+- [ ] `CHANGELOG.md` updated for user-facing changes
 
-## Summary of the Pull Request  
-<!-- Describe what changes were made to the code, what was added, removed, etc. -->
+## Related issues
+<!-- Link any relevant GitHub issues or user-manual PRs -->
 
-## Related Issue
-<!-- If this PR is related to an issue, please link it here -->
-<!-- If this PR is related to the haddock3 user manual, please link the PR here -->
-
-## Additional Info
-<!-- Any additional information that might be helpful, if applicable -->
+## Notes for reviewers
+<!-- Anything that needs special attention, known limitations, or follow-up work -->

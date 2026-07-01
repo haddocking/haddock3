@@ -14,7 +14,7 @@ For more details about this module, please `refer to the haddock3 user manual
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import Any, Iterator, FilePath
+from haddock.core.typing import Any, FilePath
 from haddock.libs.libontology import Format, PDBFile
 from haddock.modules import BaseHaddockModule
 
@@ -46,11 +46,6 @@ class HaddockModule(BaseHaddockModule):
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        if isinstance(self.previous_io, Iterator):
-            self.finish_with_error(
-                "[seletop] This module cannot come after one that produced an iterable"
-            )
-
         models_to_select: list[PDBFile] = [
             p for p in self.previous_io.output if p.file_type == Format.PDB
         ]

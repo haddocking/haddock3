@@ -20,7 +20,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import Any, Iterator, FilePath, SupportsRunT
+from haddock.core.typing import Any, FilePath, SupportsRunT
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
@@ -65,9 +65,6 @@ class HaddockModule(BaseHaddockModule):
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        if isinstance(self.previous_io, Iterator):
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
         models = []
         try:
             models = self.previous_io.retrieve_models(individualize=True)

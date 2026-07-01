@@ -25,7 +25,6 @@ from pathlib import Path
 import numpy as np
 
 from haddock import RMSD_path, log
-from haddock.core.typing import Iterator
 from haddock.core.defaults import FAST_RMSDMATRIX_EXEC, MODULE_DEFAULT_YAML
 from haddock.libs.libalign import (
     check_chains,
@@ -141,11 +140,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
-        # Get the models generated in previous step
-        if isinstance(self.previous_io, Iterator):
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
-
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models(individualize=True)
 

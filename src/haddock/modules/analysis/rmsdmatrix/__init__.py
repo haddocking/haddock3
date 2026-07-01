@@ -35,7 +35,7 @@ from pathlib import Path
 
 from haddock import RMSD_path, log
 from haddock.core.defaults import FAST_RMSDMATRIX_EXEC, MODULE_DEFAULT_YAML
-from haddock.core.typing import Any, Iterator, AtomsDict, FilePath
+from haddock.core.typing import Any, AtomsDict, FilePath
 from haddock.libs.libalign import check_common_atoms, rearrange_xyz_files
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import get_index_list
@@ -110,11 +110,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
-        # Get the models generated in previous step
-        if isinstance(self.previous_io, Iterator):
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
-
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models(individualize=True)
 

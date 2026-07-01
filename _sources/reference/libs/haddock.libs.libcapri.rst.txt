@@ -1,0 +1,7 @@
+haddock.libs.libcapri module
+============================
+
+.. automodule:: haddock.libs.libcapri
+   :members:
+   :undoc-members:
+   :show-inheritance:

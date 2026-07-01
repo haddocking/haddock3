@@ -60,6 +60,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="haddock.libs.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="haddock.libs.libaa2cg.html">haddock.libs.libaa2cg module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.libs.libalign.html">libalign: sequence and structural alignments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcapri.html">haddock.libs.libcapri module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcli.html">libcli: functions helping clients</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.libs.libclust.html">libclust: functions related to clustering</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcns.html">libcns: creating CNS files</a></li>
@@ -139,6 +140,22 @@
 When set to true, the <code class="docutils literal notranslate"><span class="pre">with_parent</span></code> attribute returns the same
 as <code class="docutils literal notranslate"><span class="pre">file_name</span></code>.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libstructure.find_ff">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libstructure.</span></span><span class="sig-name descname"><span class="pre">find_ff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libstructure.html#find_ff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libstructure.find_ff" title="Link to this definition"></a></dt>
+<dd><p>Finds the force-field information (all-atom or martini) from the topology
+associated to the first model. Used in caprieval and caprifilter.</p>
+<p>The assumption is that the force-fields will be identical between models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>models</strong> (<em>list[PDBFile]</em>) – List of models where to find the topology</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ff</strong> (<em>str</em>) – The force-field used in those models.</p>
 </dd>
 </dl>
 </dd></dl>

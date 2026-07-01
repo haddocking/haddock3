@@ -80,9 +80,11 @@
              
   <h1>Source code for haddock.libs.libstructure</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Molecular data structures.&quot;&quot;&quot;</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
 
 
 <div class="viewcode-block" id="Molecule">
@@ -106,20 +108,20 @@
 <span class="sd">        as ``file_name``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">file_name</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-                 <span class="n">segid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">no_parent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">segid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">no_parent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># the rest of the code is too dependent on the Path API</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">Path</span><span class="p">),</span> \
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">Path</span><span class="p">),</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;`file_name` must be pathlib.Path: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="si">}</span><span class="s2"> given&quot;</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">segid</span> <span class="o">=</span> <span class="n">segid</span>
         <span class="k">if</span> <span class="n">no_parent</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">with_parent</span> <span class="o">=</span> <span class="n">file_name</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">with_parent</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">with_parent</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span></div>
 
 
 
@@ -128,6 +130,39 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">make_molecules</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Molecule</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get input molecules from the data stream.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">Molecule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">paths</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="find_ff">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libstructure.html#haddock.libs.libstructure.find_ff">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_ff</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Finds the force-field information (all-atom or martini) from the topology</span>
+<span class="sd">    associated to the first model. Used in caprieval and caprifilter.</span>
+
+<span class="sd">    The assumption is that the force-fields will be identical between models.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    models : list[PDBFile]</span>
+<span class="sd">        List of models where to find the topology</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    -------</span>
+<span class="sd">    ff : str</span>
+<span class="sd">        The force-field used in those models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">topology</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ff</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">ff</span> <span class="o">=</span> <span class="s2">&quot;aa&quot;</span>
+    <span class="c1"># In case of issue, fall back to all-atom</span>
+    <span class="k">if</span> <span class="s2">&quot;martini&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ff</span><span class="p">:</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="s2">&quot;aa&quot;</span>
+
+    <span class="k">return</span> <span class="n">ff</span></div>
 
 </pre></div>
 

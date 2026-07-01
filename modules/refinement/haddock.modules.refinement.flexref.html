@@ -106,44 +106,8 @@
              
   <section id="flexible-refinement-module">
 <h1>Flexible refinement module<a class="headerlink" href="#flexible-refinement-module" title="Link to this heading"></a></h1>
-<section id="module-haddock.modules.refinement.flexref">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.refinement.flexref" title="Link to this heading"></a></h2>
-<p>Flexible refinement with CNS.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">[flexref]</span></code> module (also known as <code class="docutils literal notranslate"><span class="pre">it1</span></code> stage in HADDOCK2.X series),
-is a semi-flexible simulated annealing (SA) protocol based on molecular
-dynamics in torsion angle space.</p>
-<p>This semi-flexible SA consists of several stages:</p>
-<ul class="simple">
-<li><p>High temperature rigid body molecular dynamics</p></li>
-<li><p>Rigid body SA</p></li>
-<li><p>Semi-flexible SA with flexible side-chains at the interface</p></li>
-<li><p>Semi-flexible SA with fully flexible interface (both backbone and side-chains)</p></li>
-</ul>
-<p>By default, only the interface regions is treated as flexible. It is automatically
-defined based on the intermolecular contacts made. It is also possible to manually
-define the semi-flexible regions, and also define fully flexible regions that are
-allowed to move throughout the entire protocol from the high temperature rigid
-body molecular dynamics on.</p>
-<p>The temperature and number of steps for the various stages can be tuned.</p>
-<p>For more details about this module, please <a class="reference external" href="https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#flexref-module">refer to the haddock3 user manual</a></p>
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.modules.refinement.flexref.HaddockModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.refinement.flexref.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/haddock/modules/refinement/flexref/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/refinement/flexref.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.refinement.flexref.HaddockModule" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.base_cns_module.BaseCNSModule" title="haddock.modules.base_cns_module.BaseCNSModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCNSModule</span></code></a></p>
-<p>HADDOCK3 module for flexible refinement.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.refinement.flexref.HaddockModule.confirm_installation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/refinement/flexref.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.refinement.flexref.HaddockModule.confirm_installation" title="Link to this definition"></a></dt>
-<dd><p>Confirm module is installed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="haddock.modules.refinement.flexref.HaddockModule.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'flexref'</span></em><a class="headerlink" href="#haddock.modules.refinement.flexref.HaddockModule.name" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 </section>
 <section id="default-parameters">
 <h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>

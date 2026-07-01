@@ -1,0 +1,7 @@
+haddock.modules.analysis.caprifilter.caprifilter module
+=======================================================
+
+.. automodule:: haddock.modules.analysis.caprifilter.caprifilter
+   :members:
+   :undoc-members:
+   :show-inheritance:

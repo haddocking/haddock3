@@ -58,6 +58,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.alascan.html">Alanine Scanning module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.caprieval.html">CAPRI Evaluation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.caprifilter.html">haddock.modules.analysis.caprifilter package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.clustfcc.html">FCC Clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.clustrmsd.html">RMSD Clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.contactmap.html">Contact Map module</a></li>
@@ -110,41 +111,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-haddock.modules.analysis.ilrmsdmatrix.ilrmsd">
-<span id="haddock-modules-analysis-ilrmsdmatrix-ilrmsd-module"></span><h1>haddock.modules.analysis.ilrmsdmatrix.ilrmsd module<a class="headerlink" href="#module-haddock.modules.analysis.ilrmsdmatrix.ilrmsd" title="Link to this heading"></a></h1>
-<p>ilRMSD calculations.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.ilrmsdmatrix.ilrmsd.</span></span><span class="sig-name descname"><span class="pre">Contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">core</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact_distance_cutoff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#Contact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Contact class.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact.output">
-<span class="sig-name descname"><span class="pre">output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#Contact.output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact.output" title="Link to this definition"></a></dt>
-<dd><p>Write down unique contacts to file.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#Contact.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact.run" title="Link to this definition"></a></dt>
-<dd><p>Run contact calculations.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.ilrmsdmatrix.ilrmsd.</span></span><span class="sig-name descname"><span class="pre">ContactJob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ContactJob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A Job dedicated to the fast retrieval of receptor contacts.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ContactJob.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob.run" title="Link to this definition"></a></dt>
-<dd><p>Run this ContactJob.</p>
-</dd></dl>
-
-</dd></dl>
-
+  <section id="haddock-modules-analysis-ilrmsdmatrix-ilrmsd-module">
+<h1>haddock.modules.analysis.ilrmsdmatrix.ilrmsd module<a class="headerlink" href="#haddock-modules-analysis-ilrmsdmatrix-ilrmsd-module" title="Link to this heading"></a></h1>
 </section>
 
 

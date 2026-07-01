@@ -9,6 +9,7 @@ Subpackages
 
    haddock.modules.analysis.alascan
    haddock.modules.analysis.caprieval
+   haddock.modules.analysis.caprifilter
    haddock.modules.analysis.clustfcc
    haddock.modules.analysis.clustrmsd
    haddock.modules.analysis.contactmap

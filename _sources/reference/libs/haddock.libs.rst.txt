@@ -17,6 +17,7 @@ Submodules
 
    haddock.libs.libaa2cg
    haddock.libs.libalign
+   haddock.libs.libcapri
    haddock.libs.libcli
    haddock.libs.libclust
    haddock.libs.libcns

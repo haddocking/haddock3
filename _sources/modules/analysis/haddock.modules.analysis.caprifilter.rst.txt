@@ -1,0 +1,23 @@
+haddock.modules.analysis.caprifilter package
+============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis.caprifilter.caprifilter
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.caprifilter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/caprifilter.rst
+

@@ -11,6 +11,7 @@ from haddock.libs.libio import PDBFile
 from haddock.libs.libpdb import (
     add_TER_on_chain_breaks,
     check_combination_chains,
+    handle_input_reference,
     read_chainids,
     read_segids,
     sanitize,
@@ -262,3 +263,50 @@ def test_split_ensemble_non_sequential_model_numbers(tmp_path, monkeypatch, atom
     assert len(result) == 2
     assert [r.name for r in result] == ["non_sequential_1.pdb", "non_sequential_2.pdb"]
     assert all(r.stat().st_size > 0 for r in result)
+
+
+# test handle_input_reference for capri
+
+# Minimal ATOM line shared across fixtures
+_ATOM_LINE = (
+    "ATOM      1  CA  ALA A   1       1.000   2.000   3.000  1.00  0.00           C"
+)
+
+
+def test_handle_single_model_reference(tmp_path):
+    ref = tmp_path / "single.pdb"
+    ref.write_text(f"{_ATOM_LINE}\nEND\n")
+    result = handle_input_reference(ref)
+    assert len(result) == 1
+    assert result[0] == ref
+
+
+def test_handle_ensemble_reference(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    ref = tmp_path / "ensemble.pdb"
+    ref.write_text(
+        f"MODEL        1\n{_ATOM_LINE}\nENDMDL\n"
+        f"MODEL        2\n{_ATOM_LINE}\nENDMDL\n"
+        "END\n"
+    )
+    result = handle_input_reference(ref)
+    assert len(result) == 2
+    assert [p.name for p in result] == [
+        "reference_model_1.pdb",
+        "reference_model_2.pdb",
+    ]
+    assert all(p.exists() for p in result)
+
+
+def test_handle_empty_file_raises(tmp_path):
+    ref = tmp_path / "empty.pdb"
+    ref.write_text("")
+    with pytest.raises(ValueError, match="No atoms found"):
+        handle_input_reference(ref)
+
+
+def test_handle_remark_only_raises(tmp_path):
+    ref = tmp_path / "remark_only.pdb"
+    ref.write_text("REMARK this file has no coordinates\nEND\n")
+    with pytest.raises(ValueError, match="No atoms found"):
+        handle_input_reference(ref)

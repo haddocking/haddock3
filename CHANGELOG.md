@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-07-01: Fixed condition in the guard for “previous module produced iterable” - Issue #1604
 - 2026-06-29: Fixed the cgtoaa reading to cg-to-aa restraints - Issue #1592
 - 2026-06-26: Corrected net charge for O1-methylated NAM - Issue #1586
 - 2026-06-18: Added support for O1-methylated NAG - Issue #1579

@@ -10,10 +10,11 @@ if more models should be refined.
 For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#seletop-module>`_
 """
+
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import Any, FilePath
+from haddock.core.typing import Any, Iterator, FilePath
 from haddock.libs.libontology import Format, PDBFile
 from haddock.modules import BaseHaddockModule
 
@@ -27,12 +28,14 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self,
-                 order: int,
-                 path: Path,
-                 *ignore: Any,
-                 init_params: FilePath = DEFAULT_CONFIG,
-                 **everything: Any) -> None:
+    def __init__(
+        self,
+        order: int,
+        path: Path,
+        *ignore: Any,
+        init_params: FilePath = DEFAULT_CONFIG,
+        **everything: Any,
+    ) -> None:
         super().__init__(order, path, init_params)
 
     @classmethod
@@ -43,26 +46,27 @@ class HaddockModule(BaseHaddockModule):
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        if type(self.previous_io) == iter:
-            self.finish_with_error('[seletop] This module cannot come after one'
-                                   ' that produced an iterable')
+        if isinstance(self.previous_io, Iterator):
+            self.finish_with_error(
+                "[seletop] This module cannot come after one that produced an iterable"
+            )
 
         models_to_select: list[PDBFile] = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.PDB
-            ]
+            p for p in self.previous_io.output if p.file_type == Format.PDB
+        ]
 
         # sort the models based on their score
         models_to_select.sort(key=lambda x: x.score)
 
-        if len(models_to_select) < self.params['select']:
-            self.log((
-                'Number of models to be selected is larger'
-                ' than generated models, selecting ALL'),
-                level='warning',
-                )
+        if len(models_to_select) < self.params["select"]:
+            self.log(
+                (
+                    "Number of models to be selected is larger"
+                    " than generated models, selecting ALL"
+                ),
+                level="warning",
+            )
 
         # select the models based on the parameter
-        self.output_models = models_to_select[:self.params['select']]
+        self.output_models = models_to_select[: self.params["select"]]
         self.export_io_models()

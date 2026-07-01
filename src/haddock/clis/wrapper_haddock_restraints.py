@@ -10,7 +10,7 @@ def main():
     binary = Path(files("haddock").joinpath("bin/haddock-restraints"))  # type: ignore
     sys.argv[0] = str(binary)  # Replace argv[0] with actual binary path
 
-    # Execute the binary
+    # Execute
     import subprocess
 
     sys.exit(subprocess.run([str(binary)] + sys.argv[1:]).returncode)

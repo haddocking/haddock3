@@ -90,6 +90,11 @@ sphinx-build -b html docs haddock3-docs
 4. **Version**: Update `pyproject.toml` if applicable
 5. **Code Review**: Address all feedback
 
+## Use of AI tools
+
+See [AI-POLICY.md](AI-POLICY.md) for guidance on how AI coding assistants
+may and may not be used when contributing.
+
 ## Support and Communication
 
 For questions or discussions:

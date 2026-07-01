@@ -33,11 +33,12 @@ def get_previous_cns_step(sel_steps: list, st_order: int) -> Union[str, None]:
         Name of the most recent CNS step.
     """
     cns_step = None
-    # just to be careful, remove steps with more than one underscore
-    sel_steps = [step for step in sel_steps if step.count("_") == 1]
+    # keep only well-formed "<order>_<module>" step folders; the module name
+    # itself may contain underscores, so do not assume a single underscore
+    sel_steps = [step for step in sel_steps if "_" in step]
     mod = min(st_order - 1, len(sel_steps) - 1)
     while mod > -1:
-        st_name = sel_steps[mod].split("_")[1]
+        st_name = sel_steps[mod].split("_", 1)[1]
         if st_name in CNS_MODULES:
             cns_step = sel_steps[mod]
             break

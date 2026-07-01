@@ -34,7 +34,7 @@ from math import isnan
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import FilePath, Iterator, Union
+from haddock.core.typing import FilePath, Union
 from haddock.libs.libaa2cg import martinize
 from haddock.libs.libcapri import (
     CAPRI,
@@ -87,11 +87,7 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
-        if isinstance(self.previous_io, Iterator):
-            self.finish_with_error(
-                "[caprifilter] cannot come after a module that produced an iterable."
-            )
-
+        # Get models from previous step
         models = self.previous_io.retrieve_models(individualize=True)
         if self.is_nested(models):
             raise ValueError(

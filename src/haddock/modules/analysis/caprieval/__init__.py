@@ -31,7 +31,7 @@ For more details about this module, please `refer to the haddock3 user manual
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import FilePath, Iterator, Union
+from haddock.core.typing import FilePath, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libaa2cg import martinize
@@ -109,10 +109,6 @@ class HaddockModule(BaseHaddockModule):
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        if isinstance(self.previous_io, Iterator):
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
-
         models = self.previous_io.retrieve_models(individualize=True)
         if self.is_nested(models):
             raise ValueError(

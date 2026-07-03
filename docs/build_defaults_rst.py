@@ -82,6 +82,11 @@ def change_title(rst_file: Path, title: str) -> None:
     """
     Change the title of the rst file.
 
+    Rewrites both the title line and its underline, keeping the underline
+    the same length as the new title -- RST requires the underline to be
+    at least as long as the title text, and the replacement title is not
+    generally the same length as the one it replaces.
+
     Parameters
     ----------
     rst_file : Path
@@ -91,13 +96,13 @@ def change_title(rst_file: Path, title: str) -> None:
     """
     with open(rst_file, "r") as fin:
         lines = fin.readlines()
+
+    underline_char = lines[1].strip()[0] if lines[1].strip() else "="
+    lines[0] = title + os.linesep
+    lines[1] = underline_char * len(title) + os.linesep
+
     with open(rst_file, "w") as fout:
-        for ln, line in enumerate(lines):
-            if ln == 0:
-                line = title + os.linesep
-            else:
-                line = line
-            fout.write(line)
+        fout.writelines(lines)
 
 
 def process_category_file(category: str) -> None:
@@ -144,10 +149,11 @@ def process_module_file(category: str, module_name: str) -> None:
         submodule_target_rst = Path(DOCS_SRC, "modules", category, submodule_rst.name)
         shutil.move(submodule_rst, submodule_target_rst)
 
+    section_title = "Default Parameters"
     with open(target_rst, "a") as fout:
         fout.write(
-            f"{os.linesep}Default Parameters{os.linesep}"
-            f"---------------{os.linesep}"
+            f"{os.linesep}{section_title}{os.linesep}"
+            f"{'-' * len(section_title)}{os.linesep}"
             f".. include:: params/{module_name}.rst" + os.linesep + os.linesep
         )
     # change title
@@ -212,8 +218,8 @@ def main() -> None:
     with open(params_file, "w") as fout:
         fout.write(text)
 
-    # now libs, gear and core
-    for folder in ("libs", "gear", "core"):
+    # now libs, gear, core and fcc
+    for folder in ("libs", "gear", "core", "fcc"):
         # make directory if it does not exist
         target_path = Path(DOCS_SRC, "reference", folder)
         target_path.mkdir(exist_ok=True, parents=True)
@@ -240,9 +246,10 @@ def main() -> None:
     text = build_rst(mandatory_params)
     params_file = Path(DOCS_SRC, "reference", "core", "mandatory_parameters.rst")
 
+    mandatory_title = "Mandatory Parameters"
     with open(params_file, "w") as fout:
-        fout.write("Mandatory Parameters" + os.linesep)
-        fout.write("====================" + os.linesep)
+        fout.write(mandatory_title + os.linesep)
+        fout.write("=" * len(mandatory_title) + os.linesep)
         fout.write(text)
 
     # now the command-line interfaces
@@ -257,6 +264,23 @@ def main() -> None:
         if title_key in CLI_TITLE_DICT:
             title = CLI_TITLE_DICT[title_key]
             change_title(target_rst, title)
+
+    # apidoc also generates a top-level package index (haddock.rst), its own
+    # master toctree (modules.rst), and stubs for haddock.modules /
+    # haddock.modules.base_cns_module. None of the loops above claim these
+    # -- they don't match the category/module dotted-name patterns -- so
+    # they'd otherwise sit here unused. Discard them: haddock.rst's and
+    # modules.rst's own toctrees point at files we've already moved
+    # elsewhere, and the other two duplicate what
+    # docs/pages/modules/index.rst already documents by hand.
+    stale_stubs = (
+        "haddock.rst",
+        "modules.rst",
+        "haddock.modules.rst",
+        "haddock.modules.base_cns_module.rst",
+    )
+    for stale in stale_stubs:
+        Path(DOCS_SRC, stale).unlink(missing_ok=True)
 
 
 def do_text(name: str, param: ParamMap, level: str) -> str:

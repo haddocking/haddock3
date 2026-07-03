@@ -39,43 +39,47 @@ from haddock.libs.librestraints import read_structure, calc_euclidean
 def add_z_surf_restraints_arguments(z_surf_restraints_subcommand):
     """Add arguments to the z_plan subcommand."""
     z_surf_restraints_subcommand.add_argument(
-        "--pdb", "-p",
+        "--pdb",
+        "-p",
         help="Path to a pdb file.",
         required=True,
-        default='',
+        default="",
         type=str,
-        )
+    )
 
     z_surf_restraints_subcommand.add_argument(
-        "--residues", "-r",
+        "--residues",
+        "-r",
         help=(
             "List of comma separated residues (can be multiple selections). "
             "Example 1,2,3 7,8,9 for two selections."
-            ),
+        ),
         required=False,
         default=[],
-        nargs='+',
+        nargs="+",
         type=str,
-        )
-    
+    )
+
     z_surf_restraints_subcommand.add_argument(
-        "--output", "-o",
+        "--output",
+        "-o",
         help=(
             "Base output path. This script will generate two files, "
             "therefore no extention needed here"
-            ),
+        ),
         required=False,
         default=None,
         type=str,
-        )
+    )
 
     z_surf_restraints_subcommand.add_argument(
-        "--spacing", "-s",
+        "--spacing",
+        "-s",
         type=float,
         help="Spacing between two beads (A)",
         required=False,
         default=20,
-        )
+    )
 
     z_surf_restraints_subcommand.add_argument(
         "--x-size",
@@ -84,8 +88,8 @@ def add_z_surf_restraints_arguments(z_surf_restraints_subcommand):
         required=False,
         default=100,
         type=float,
-        )
-    
+    )
+
     z_surf_restraints_subcommand.add_argument(
         "--y-size",
         "-y",
@@ -93,8 +97,8 @@ def add_z_surf_restraints_arguments(z_surf_restraints_subcommand):
         required=False,
         default=100,
         type=float,
-        )
-    
+    )
+
     z_surf_restraints_subcommand.add_argument(
         "--z-padding",
         "-z",
@@ -102,15 +106,15 @@ def add_z_surf_restraints_arguments(z_surf_restraints_subcommand):
         required=False,
         default=5.0,
         type=float,
-        )
-    
+    )
+
     z_surf_restraints_subcommand.add_argument(
         "--log_level",
-        default='INFO',
-        choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
+        default="INFO",
+        choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
         help="Logging level",
         required=False,
-        )
+    )
 
     return z_surf_restraints_subcommand
 
@@ -119,18 +123,18 @@ def setup_logging(log_level: str = "INFO") -> None:
     """Set log level and format."""
     logging.basicConfig(
         level=log_level,
-        format='%(asctime)s L%(lineno)d %(levelname)s - %(message)s',
-        datefmt='%d/%m/%Y %H:%M:%S',
-        )
+        format="%(asctime)s L%(lineno)d %(levelname)s - %(message)s",
+        datefmt="%d/%m/%Y %H:%M:%S",
+    )
 
 
 ############################
 # SET OF USEFULL FUNCTIONS #
 ############################
 def load_selected_resiudes_coords(
-        pdb_fpath: Union[str, Path],
-        selections: dict[str, list[int]],
-        ) -> tuple[dict[str, list[tuple[float, float, float]]], list[str], list[str]]:
+    pdb_fpath: Union[str, Path],
+    selections: dict[str, list[int]],
+) -> tuple[dict[str, list[tuple[float, float, float]]], list[str], list[str]]:
     """Load coordinates of selected residues.
 
     Parameters
@@ -155,7 +159,11 @@ def load_selected_resiudes_coords(
     for chain, resi, atname, coords in pdb_atoms:
         # Simplify the probleme to Calpha/Phosphates/BackBone atoms only
         # FIXME: maybe change P to C1 or C9 ?
-        if not atname in ("CA", "P", "BB", ):
+        if not atname in (
+            "CA",
+            "P",
+            "BB",
+        ):
             continue
         # Loop over selections
         for selection, sele_resis in selections.items():
@@ -174,8 +182,8 @@ def load_selected_resiudes_coords(
 
 
 def compute_barycenter(
-        resi_coords: list[tuple[float, float, float]],
-        ) -> tuple[float, float, float]:
+    resi_coords: list[tuple[float, float, float]],
+) -> tuple[float, float, float]:
     """Compute center of mass of multiple resiudes coordinates.
 
     Parameters
@@ -220,7 +228,7 @@ def load_selections(residues_lists: list[str]) -> dict[str, list[int]]:
     for listid, str_resiudes in enumerate(residues_lists, start=1):
         resid_indices: list[int] = []
         selection_key = f"selection_{listid}"
-        for strresid in str_resiudes.split(','):
+        for strresid in str_resiudes.split(","):
             try:
                 resid = int(strresid)
             except Exception as _e:
@@ -237,9 +245,9 @@ def load_selections(residues_lists: list[str]) -> dict[str, list[int]]:
 
 
 def get_z_coords(
-        select_coords: dict[str, list[tuple[float, float, float]]],
-        padding: float = 5.0,
-        ) -> dict[str, float]:
+    select_coords: dict[str, list[tuple[float, float, float]]],
+    padding: float = 5.0,
+) -> dict[str, float]:
     """Generate z-coordinates from selection of residues.
 
     Here the idea is to find the most distant points between selections,
@@ -267,7 +275,7 @@ def get_z_coords(
     select_centers = {
         select: compute_barycenter(select_resids_coords)
         for select, select_resids_coords in select_coords.items()
-        }
+    }
     # Compute distances
     dists: dict[str, dict[str, float]] = {s: {} for s in select_centers.keys()}
     max_dist: float = -1
@@ -291,7 +299,7 @@ def get_z_coords(
     selection_z = {
         max_dist_keys[0]: max_z,
         max_dist_keys[1]: -max_z,
-        }
+    }
     # Compute Z coords for internal surfaces (when nb. selections >= 3)
     for select, dist in dists.items():
         # If the selection is part of the external surfaces
@@ -303,17 +311,17 @@ def get_z_coords(
         select_z_coord = (dist_to_upper + dist_to_lower) / 2
         # Hold data
         selection_z[select] = select_z_coord
-    
+
     return selection_z
 
 
 def gen_z_restraints(
-        res_select: dict[str, list[int]],
-        selection_z: dict[str, float],
-        rest_dist: float = 7.5,
-        segids: list[str] = ["A"],
-        atome_types: list[str] = ["CA"],
-        ) -> str:
+    res_select: dict[str, list[int]],
+    selection_z: dict[str, float],
+    rest_dist: float = 7.5,
+    segids: list[str] = ["A"],
+    atome_types: list[str] = ["CA"],
+) -> str:
     """Generate set of z ambiguous restraints according to residue selections.
 
     Parameters
@@ -343,12 +351,14 @@ def gen_z_restraints(
     z_padding: float = 0.1
     # Compile chain selection
     chain_selection_string = _compile_multiple_cns_selections(
-        "segid", segids,
-        )
+        "segid",
+        segids,
+    )
     # Compile atome selection
     atom_selection_string = _compile_multiple_cns_selections(
-        "name", atome_types,
-        )
+        "name",
+        atome_types,
+    )
     # Loop over selections
     for select in res_select.keys():
         # Point data
@@ -369,7 +379,7 @@ def gen_z_restraints(
                     f"{atom_selection_string} and {chain_selection_string}) "
                     f"(name SHA and attr z lt {lt_coord:>-8.2f}) "
                     f"{rest_dist:.1f} {rest_dist:.1f} 0.0"
-                    )
+                )
             # If the upper Z coordinate plan
             elif z_coord == maxz:
                 rest = (
@@ -377,7 +387,7 @@ def gen_z_restraints(
                     f"{atom_selection_string} and {chain_selection_string}) "
                     f"(name SHA and attr z gt {gt_coord:>-8.2f}) "
                     f"{rest_dist:.1f} {rest_dist:.1f} 0.0"
-                    )
+                )
             # If in between lower and upper plans (when nb. plans >= 3)
             else:
                 rest = (
@@ -386,17 +396,17 @@ def gen_z_restraints(
                     f"(name SHA and attr z lt {lt_coord:>-8.2f} "
                     f"and attr z gt {gt_coord:>-8.2f}) "
                     f"{rest_dist:.1f} {rest_dist:.1f} 0.0"
-                    )
+                )
             restraints.append(rest)
     all_restraints = os.linesep.join(restraints)
     return all_restraints
 
 
 def _compile_multiple_cns_selections(
-        selection_key: str,
-        selections: list[str],
-        logical_operator: str = 'OR',
-        ) -> str:
+    selection_key: str,
+    selections: list[str],
+    logical_operator: str = "OR",
+) -> str:
     """Generate a selection from multiple ones using logical operator.
 
     Parameters
@@ -414,20 +424,17 @@ def _compile_multiple_cns_selections(
     assert len(selections) >= 1
     if len(selections) == 1:
         return f"{selection_key} {selections[0]}"
-    compiled_selections = [
-        f"{selection_key} {select}"
-        for select in selections
-        ]
+    compiled_selections = [f"{selection_key} {select}" for select in selections]
     joined_selections = f" {logical_operator} ".join(compiled_selections)
     combined_selection = f"({joined_selections})"
     return combined_selection
 
 
 def output_data(
-        restraints: str,
-        plans: str,
-        output: Optional[Union[str, Path]] = None,
-        ) -> tuple[str, str]:
+    restraints: str,
+    plans: str,
+    output: Optional[Union[str, Path]] = None,
+) -> tuple[str, str]:
     """Write output files.
 
     Parameters
@@ -448,25 +455,25 @@ def output_data(
     """
     # Define base output path if not given
     if not output:
-        output = 'Zrestraints'
+        output = "Zrestraints"
     # Write restraints
     restraints_fpath = f"{output}.tbl"
-    with open(restraints_fpath, 'w') as filout:
+    with open(restraints_fpath, "w") as filout:
         filout.write(restraints)
     # Write restraints
     beadplans_fpath = f"{output}_beads.pdb"
-    with open(beadplans_fpath, 'w') as filout:
+    with open(beadplans_fpath, "w") as filout:
         filout.write(plans)
     # Return filepaths
     return restraints_fpath, beadplans_fpath
 
 
 def gen_bead_plans(
-        spacing: float = 40,
-        x_size: float = 200,
-        y_size: float = 200,
-        z_coords: Optional[list[float]] = None,
-        ) -> str:
+    spacing: float = 40,
+    x_size: float = 200,
+    y_size: float = 200,
+    z_coords: Optional[list[float]] = None,
+) -> str:
     """Generate multiple bead plans.
 
     Parameters
@@ -486,7 +493,7 @@ def gen_bead_plans(
         A PDB file containing multiple plans.
     """
     # Presets
-    bead_plans: str = ''
+    bead_plans: str = ""
     resindex: int = 0
     if not z_coords:
         z_coords = [0]
@@ -498,18 +505,18 @@ def gen_bead_plans(
             y_size=y_size,
             z_coord=z,
             resindex=resindex,
-            )
+        )
         bead_plans += plan
     return bead_plans
-    
-    
+
+
 def bead_plan(
-        spacing: float = 40,
-        x_size: float = 200,
-        y_size: float = 200,
-        z_coord: float = 0,
-        resindex: int = 0,
-        ) -> tuple[str, int]:
+    spacing: float = 40,
+    x_size: float = 200,
+    y_size: float = 200,
+    z_coord: float = 0,
+    resindex: int = 0,
+) -> tuple[str, int]:
     """Generate a PDB plan made of beads.
 
     Parameters
@@ -542,7 +549,7 @@ def bead_plan(
             bead = shape_bead(x_coord, y_coord, z_coord, resindex)
             plan_beads.append(bead)
     # Finalize plan
-    plan = ''.join(plan_beads)
+    plan = "".join(plan_beads)
     return plan, resindex
 
 
@@ -587,7 +594,7 @@ def _step_coords(size: float, spacing: float) -> Generator[float, None, None]:
         1D coodinate of current position.
     """
     # Define initial position
-    coord = - (size / 2)
+    coord = -(size / 2)
     # Define oversized position
     oversized = (size + spacing) / 2
     # Loop until oversized
@@ -597,14 +604,14 @@ def _step_coords(size: float, spacing: float) -> Generator[float, None, None]:
 
 
 def shape_bead(
-        x: float,
-        y: float,
-        z: float,
-        resindex: int,
-        chain: str = "S",
-        atindex: int = 1,
-        bfactor: float = 1.00,
-        ) -> str:
+    x: float,
+    y: float,
+    z: float,
+    resindex: int,
+    chain: str = "S",
+    atindex: int = 1,
+    bfactor: float = 1.00,
+) -> str:
     """Generate a PDB shape bead.
 
     Parameters
@@ -656,15 +663,15 @@ def _get_ideal_restraint_dist(spacing: float) -> float:
 
 
 def main(
-        pdb: Union[str, Path],
-        residues: Optional[list[str]] = None,
-        output: Optional[str] = None,
-        spacing: float = 40,
-        x_size: float = 200,
-        y_size: float = 200,
-        z_padding: float = 5.0,
-        log_level: str = "INFO",
-        ) -> tuple[str, str]:
+    pdb: Union[str, Path],
+    residues: Optional[list[str]] = None,
+    output: Optional[str] = None,
+    spacing: float = 40,
+    x_size: float = 200,
+    y_size: float = 200,
+    z_padding: float = 5.0,
+    log_level: str = "INFO",
+) -> tuple[str, str]:
     """Generate both z-restraints and z-surface beads from residue selection.
 
     Parameters
@@ -688,9 +695,7 @@ def main(
     # Load residue selection
     res_select = load_selections(residues)
     # Load corresponding coordinates
-    select_coords, chainids, atomtypes = load_selected_resiudes_coords(
-        pdb, res_select
-        )
+    select_coords, chainids, atomtypes = load_selected_resiudes_coords(pdb, res_select)
     # Compute z-coordinates for each selection
     selection_z = get_z_coords(select_coords, padding=z_padding)
     # Generate corresponding z-surfaces
@@ -699,7 +704,7 @@ def main(
         x_size=x_size,
         y_size=y_size,
         z_coords=[zcoord for zcoord in selection_z.values()],
-        )
+    )
     # Compute ideal restraint distance based on spacing
     restraint_distance = _get_ideal_restraint_dist(spacing)
     # Generate corresponding z-surface restraints
@@ -709,7 +714,7 @@ def main(
         rest_dist=restraint_distance,
         segids=chainids,
         atome_types=atomtypes,
-        )
+    )
     # Output data
     restraints_tbl, plans_pdb = output_data(restraints, plans, output=output)
     return restraints_tbl, plans_pdb
@@ -723,25 +728,26 @@ gen_z_surface_restraints = main
 ############################
 if __name__ == "__main__":
     import argparse
+
     # Command line interface parser
     ap = argparse.ArgumentParser(
         prog="haddock3-restraints",
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        )
+    )
     add_z_surf_restraints_arguments(ap)
     args = vars(ap.parse_args())
-    setup_logging(log_level=args['log_level'])
+    setup_logging(log_level=args["log_level"])
     # Launch main
     restraints_fpath, plan_s_fpath = gen_z_surface_restraints(
-        args['residues'],
-        residues=args['residues'],
-        output=args['output'],
-        spacing=args['spacing'],
-        x_size=args['x_size'],
-        y_size=args['y_size'],
-        z_padding=args['z_padding'],
+        args["residues"],
+        residues=args["residues"],
+        output=args["output"],
+        spacing=args["spacing"],
+        x_size=args["x_size"],
+        y_size=args["y_size"],
+        z_padding=args["z_padding"],
         log_level=args["log_level"],
-        )
+    )
     logging.info(restraints_fpath)
     logging.info(plan_s_fpath)

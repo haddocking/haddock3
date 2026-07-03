@@ -24,6 +24,7 @@ The workflow will stop at ``[exit]`` and ``[flexref]`` will not be performed.
 You can also use this option combined with ``--restart`` and ``--extend-run``.
 See examples in ``examples/docking-protein-protein/*-exit-test.cfg`` files.
 """
+
 import shutil
 from pathlib import Path
 
@@ -43,13 +44,13 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-            self,
-            order: int,
-            path: Path,
-            *ignore: Any,
-            init_params: FilePath = DEFAULT_CONFIG,
-            **everything: Any,
-            ) -> None:
+        self,
+        order: int,
+        path: Path,
+        *ignore: Any,
+        init_params: FilePath = DEFAULT_CONFIG,
+        **everything: Any,
+    ) -> None:
         super().__init__(order, path, init_params)
 
     @classmethod

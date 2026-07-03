@@ -31,6 +31,7 @@ MODULE_TITLE_DICT = {
     "emscoring": "Energy Minimization scoring module",
     "clustfcc": "FCC Clustering module",
     "caprieval": "CAPRI Evaluation module",
+    "caprifilter": "CAPRI filter module",
     "contactmap": "Contact Map module",
     "clustrmsd": "RMSD Clustering module",
     "rmsdmatrix": "RMSD Matrix calculation module",
@@ -373,7 +374,7 @@ def main() -> None:
     clients_folder.mkdir(exist_ok=True)
 
     cli_rst_files = Path('docs').glob(
-        f"haddock.clis*.rst"
+        "haddock.clis*.rst"
     )
     for cli_rst_file in cli_rst_files:
         target_rst = Path(

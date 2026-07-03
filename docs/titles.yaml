@@ -36,6 +36,9 @@ modules:
   prodigyprotein: "Binding affinity prediction with PRODIGY"
   prodigyligand: "Ligand binding affinity prediction with PRODIGY-lig"
   filter: "Filtering module"
+  caprifilter: "CAPRI Filtering module"
+  cgtoaa: "Coarse-grained to all-atom backmapping module"
+  topocg: "Coarse-grained topology module"
 
 # for docs/src/reference/<folder>/
 reference:
@@ -87,6 +90,7 @@ reference:
   core.supported_molecules: "Supported molecules"
   core.typing: "typing"
   mandatory_parameters.rst: "Mandatory Parameters"
+  libs.libcapri: "libcapri: functions related to CAPRI metrics calculation"
 
 # for docs/src/clients/
 clis:

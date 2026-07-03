@@ -9,7 +9,7 @@ contributing effectively.
 
 ### 1. Prerequisites
 
-- Install HADDOCK3 following [INSTALL.md](docs/pages/INSTALL.md)
+- Install HADDOCK3 following [INSTALL.md](https://github.com/haddocking/haddock3/blob/main/docs/pages/INSTALL.md)
 - Python 3.10+ development environment
 - Familiarity with Git and GitHub workflows
 
@@ -92,7 +92,7 @@ sphinx-build -b html docs haddock3-docs
 
 ## Use of AI tools
 
-See [AI-POLICY.md](AI-POLICY.md) for guidance on how AI coding assistants
+See [AI-POLICY.md](https://github.com/haddocking/haddock3/blob/main/AI-POLICY.md) for guidance on how AI coding assistants
 may and may not be used when contributing.
 
 ## Support and Communication

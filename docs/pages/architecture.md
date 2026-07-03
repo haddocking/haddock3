@@ -6,7 +6,7 @@ This document describes the code architecture of HADDOCK3 and maps the major
 concepts to the files and folders that implement them. It is intended for
 developers and contributors who want a mental model of how the pieces fit
 together. For user-facing documentation see [docs/pages/intro.md](intro.md),
-the [examples](../../examples/), and the
+the [examples](https://github.com/haddocking/haddock3/tree/main/examples/), and the
 [online user manual](https://www.bonvinlab.org/haddock3-user-manual).
 
 > **Scope.** This is a code-architecture map, not an API reference. The
@@ -72,23 +72,23 @@ The end-to-end control flow for `haddock3 <config>`:
 
 | Step | Where | What happens |
 |------|-------|--------------|
-| 1. Parse CLI args | [src/haddock/clis/cli.py](../../src/haddock/clis/cli.py) | `maincli` → `main(workflow, restart, extend_run, …)` |
-| 2. Setup & validate | [gear/prepare_run.py](../../src/haddock/gear/prepare_run.py) `setup_run()` | Parse config, validate module names/params, create `run_dir/`, copy inputs to `data/`, resolve defaults |
-| 3. Build workflow | [libs/libworkflow.py](../../src/haddock/libs/libworkflow.py) `WorkflowManager` → `Workflow` → `Step` | One `Step` per config block, in order |
+| 1. Parse CLI args | [src/haddock/clis/cli.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli.py) | `maincli` → `main(workflow, restart, extend_run, …)` |
+| 2. Setup & validate | [gear/prepare_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/prepare_run.py) `setup_run()` | Parse config, validate module names/params, create `run_dir/`, copy inputs to `data/`, resolve defaults |
+| 3. Build workflow | [libs/libworkflow.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libworkflow.py) `WorkflowManager` → `Workflow` → `Step` | One `Step` per config block, in order |
 | 4. Run each step | `Step.execute()` | Import the module package, instantiate `HaddockModule`, `update_params`, `save_config`, `run()` |
 | 5. Module body | each module's `_run()` | Build CNS input (or run Python analysis), fan out jobs via an **engine**, collect models, write `io.json` |
 | 6. Forward runtime params | `WorkflowManager.run()` | Propagate any `_output_params` a module produced to later steps |
 | 7. Post-process | `WorkflowManager.postprocess()` | Run `cli_analyse` + `cli_traceback` over `caprieval` steps |
-| 8. Clean / archive | `WorkflowManager.clean()`, [gear/postprocessing.py](../../src/haddock/gear/postprocessing.py) | Optionally compress step outputs and archive the run |
+| 8. Clean / archive | `WorkflowManager.clean()`, [gear/postprocessing.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/postprocessing.py) | Optionally compress step outputs and archive the run |
 
 Two variants of step 3–4 exist:
 
 - **`--restart N`** (positional): delete step folders from `N` onward and re-run
-  from there. See [gear/restart_run.py](../../src/haddock/gear/restart_run.py). There
+  from there. See [gear/restart_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/restart_run.py). There
   is no content-based identity or partial reuse — changing `sampling=200→400`
   forces a full re-run of sampling.
 - **`--extend-run`**: append new steps to a finished run, via
-  `WorkflowManagerExtend` in [gear/extend_run.py](../../src/haddock/gear/extend_run.py)
+  `WorkflowManagerExtend` in [gear/extend_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/extend_run.py)
   (paired with the `haddock3-copy` CLI).
 
 ---
@@ -97,16 +97,16 @@ Two variants of step 3–4 exist:
 
 | Path | Role |
 |------|------|
-| [src/haddock/](../../src/haddock/) | The Python package — all application code (see §5) |
-| [docs/](.) | Sphinx documentation sources (`.md`, `.rst`), built to HTML |
-| [examples/](../../examples/) | Ready-to-run example workflows and data, organised by system type |
-| [tests/](../../tests/) | Unit tests (no CNS required) |
-| [integration_tests/](../../integration_tests/) | Integration tests (require CNS) |
-| [end-to-end_tests/](../../end-to-end_tests/) | Full-workflow tests |
-| [notebooks/](../../notebooks/) | Example/analysis Jupyter notebooks |
-| [varia/](../../varia/), [devtools/](../../devtools/) | Auxiliary scripts and developer tooling |
-| [pyproject.toml](../../pyproject.toml), [setup.py](../../setup.py) | Packaging, dependencies, console-script entry points |
-| [Dockerfile](../../Dockerfile), [entrypoint.sh](../../entrypoint.sh) | Containerised execution |
+| [src/haddock/](https://github.com/haddocking/haddock3/tree/main/src/haddock/) | The Python package — all application code (see §5) |
+| [docs/](https://github.com/haddocking/haddock3/tree/main/docs/) | Sphinx documentation sources (`.md`, `.rst`), built to HTML |
+| [examples/](https://github.com/haddocking/haddock3/tree/main/examples/) | Ready-to-run example workflows and data, organised by system type |
+| [tests/](https://github.com/haddocking/haddock3/tree/main/tests/) | Unit tests (no CNS required) |
+| [integration_tests/](https://github.com/haddocking/haddock3/tree/main/integration_tests/) | Integration tests (require CNS) |
+| [end-to-end_tests/](https://github.com/haddocking/haddock3/tree/main/end-to-end_tests/) | Full-workflow tests |
+| [notebooks/](https://github.com/haddocking/haddock3/tree/main/notebooks/) | Example/analysis Jupyter notebooks |
+| [varia/](https://github.com/haddocking/haddock3/tree/main/varia/), [devtools/](https://github.com/haddocking/haddock3/tree/main/devtools/) | Auxiliary scripts and developer tooling |
+| [pyproject.toml](https://github.com/haddocking/haddock3/blob/main/pyproject.toml), [setup.py](https://github.com/haddocking/haddock3/blob/main/setup.py) | Packaging, dependencies, console-script entry points |
+| [Dockerfile](https://github.com/haddocking/haddock3/blob/main/Dockerfile), [entrypoint.sh](https://github.com/haddocking/haddock3/blob/main/entrypoint.sh) | Containerised execution |
 | `CHANGELOG.md`, `CONTRIBUTING.md`, `README.md`, `LICENSE`, … | Project metadata |
 
 ---
@@ -137,13 +137,13 @@ The lowest layer: no logic, just definitions everything else depends on.
 
 | File | Contents |
 |------|----------|
-| [defaults.py](../../src/haddock/core/defaults.py) | Framework constants: `RUNDIR`, `MODULE_IO_FILE` (`io.json`), `MODULE_DEFAULT_YAML` (`defaults.yaml`), `CNS_MODULES`, CNS executable discovery, exec paths for compiled deps |
-| [mandatory.yaml](../../src/haddock/core/mandatory.yaml) | Global mandatory parameters: `run_dir`, `molecules` |
-| [optional.yaml](../../src/haddock/core/optional.yaml) | Global optional parameters: `preprocess`, `postprocess`, `gen_archive` |
-| [exceptions.py](../../src/haddock/core/exceptions.py) | Custom errors: `HaddockError`, `StepError`, `ConfigurationError`, `HaddockTermination` |
-| [typing.py](../../src/haddock/core/typing.py) | Shared type aliases (`FilePath`, `ParamDict`, `ParamMap`, …) |
-| [cns_paths.py](../../src/haddock/core/cns_paths.py) | Locations of CNS topology/parameter files |
-| [supported_molecules.py](../../src/haddock/core/supported_molecules.py) | Recognised residues/molecule types |
+| [defaults.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/defaults.py) | Framework constants: `RUNDIR`, `MODULE_IO_FILE` (`io.json`), `MODULE_DEFAULT_YAML` (`defaults.yaml`), `CNS_MODULES`, CNS executable discovery, exec paths for compiled deps |
+| [mandatory.yaml](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/mandatory.yaml) | Global mandatory parameters: `run_dir`, `molecules` |
+| [optional.yaml](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/optional.yaml) | Global optional parameters: `preprocess`, `postprocess`, `gen_archive` |
+| [exceptions.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/exceptions.py) | Custom errors: `HaddockError`, `StepError`, `ConfigurationError`, `HaddockTermination` |
+| [typing.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/typing.py) | Shared type aliases (`FilePath`, `ParamDict`, `ParamMap`, …) |
+| [cns_paths.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/cns_paths.py) | Locations of CNS topology/parameter files |
+| [supported_molecules.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/supported_molecules.py) | Recognised residues/molecule types |
 
 ### 5.2 `gear/` — run-lifecycle machinery
 
@@ -152,21 +152,21 @@ CLI and the modules. Each handles one cross-cutting concern.
 
 | File | Concern |
 |------|---------|
-| [prepare_run.py](../../src/haddock/gear/prepare_run.py) | The big one: `setup_run()` — parse, validate (names, types, ranges, compatibility), create the run dir, copy inputs, expand parameters |
-| [config.py](../../src/haddock/gear/config.py) | Read/write the HADDOCK3 config format (`load`/`loads`/`save`, `get_module_name`, path coercion) |
-| [yaml2cfg.py](../../src/haddock/gear/yaml2cfg.py) | Turn a module's annotated `defaults.yaml` into a flat default config; detect incompatible params |
-| [parameters.py](../../src/haddock/gear/parameters.py) | Definitions of mandatory/general parameter sets |
-| [expandable_parameters.py](../../src/haddock/gear/expandable_parameters.py) | Per-molecule / repeatable parameter blocks (e.g. `mol_*`, `seg_*`) |
-| [validations.py](../../src/haddock/gear/validations.py) | Domain-specific validation rules |
-| [restart_run.py](../../src/haddock/gear/restart_run.py) | `--restart` flag logic |
-| [extend_run.py](../../src/haddock/gear/extend_run.py) | `--extend-run` flag + `haddock3-copy`; `WorkflowManagerExtend` |
-| [clean_steps.py](../../src/haddock/gear/clean_steps.py) | Compress/clean a step's output files |
-| [postprocessing.py](../../src/haddock/gear/postprocessing.py) | Archive the run, build analysis bundle |
-| [preprocessing.py](../../src/haddock/gear/preprocessing.py) | Input PDB sanitisation/preprocessing |
-| [zerofill.py](../../src/haddock/gear/zerofill.py) | Compute the zero-padded numeric step-folder prefixes |
-| [haddockmodel.py](../../src/haddock/gear/haddockmodel.py) | `HaddockModel`: parse CNS output PDBs and their energy headers |
-| [known_cns_errors.py](../../src/haddock/gear/known_cns_errors.py) | Pattern-match common CNS failures from logs |
-| [greetings.py](../../src/haddock/gear/greetings.py) | Banner / feedback messages |
+| [prepare_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/prepare_run.py) | The big one: `setup_run()` — parse, validate (names, types, ranges, compatibility), create the run dir, copy inputs, expand parameters |
+| [config.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/config.py) | Read/write the HADDOCK3 config format (`load`/`loads`/`save`, `get_module_name`, path coercion) |
+| [yaml2cfg.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/yaml2cfg.py) | Turn a module's annotated `defaults.yaml` into a flat default config; detect incompatible params |
+| [parameters.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/parameters.py) | Definitions of mandatory/general parameter sets |
+| [expandable_parameters.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/expandable_parameters.py) | Per-molecule / repeatable parameter blocks (e.g. `mol_*`, `seg_*`) |
+| [validations.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/validations.py) | Domain-specific validation rules |
+| [restart_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/restart_run.py) | `--restart` flag logic |
+| [extend_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/extend_run.py) | `--extend-run` flag + `haddock3-copy`; `WorkflowManagerExtend` |
+| [clean_steps.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/clean_steps.py) | Compress/clean a step's output files |
+| [postprocessing.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/postprocessing.py) | Archive the run, build analysis bundle |
+| [preprocessing.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/preprocessing.py) | Input PDB sanitisation/preprocessing |
+| [zerofill.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/zerofill.py) | Compute the zero-padded numeric step-folder prefixes |
+| [haddockmodel.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/haddockmodel.py) | `HaddockModel`: parse CNS output PDBs and their energy headers |
+| [known_cns_errors.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/known_cns_errors.py) | Pattern-match common CNS failures from logs |
+| [greetings.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/greetings.py) | Banner / feedback messages |
 
 ### 5.3 `libs/` — reusable libraries
 
@@ -174,31 +174,31 @@ Stateless or near-stateless helpers used across modules and gears.
 
 | File | Responsibility |
 |------|----------------|
-| [libworkflow.py](../../src/haddock/libs/libworkflow.py) | **Workflow engine**: `WorkflowManager`, `Workflow`, `Step` (see §3) |
-| [libontology.py](../../src/haddock/libs/libontology.py) | **Inter-module data model**: `PDBFile`, `TopologyFile`, `RMSDFile`, `ModuleIO` (see §6) |
-| [libcns.py](../../src/haddock/libs/libcns.py) | Build CNS input scripts from templates + parameters |
-| [libsubprocess.py](../../src/haddock/libs/libsubprocess.py) | `CNSJob` and `Job` wrappers around subprocess execution |
-| [libparallel.py](../../src/haddock/libs/libparallel.py) | `Scheduler`/`Worker` — local multiprocessing fan-out |
-| [libhpc.py](../../src/haddock/libs/libhpc.py) | `HPCScheduler` — batch/queue submission |
-| [libmpi.py](../../src/haddock/libs/libmpi.py) | `MPIScheduler` — MPI execution |
-| [libgrid.py](../../src/haddock/libs/libgrid.py) | `GRIDScheduler` — DIRAC grid execution |
-| [libpdb.py](../../src/haddock/libs/libpdb.py), [libstructure.py](../../src/haddock/libs/libstructure.py) | Parse and manipulate PDB structures |
-| [libalign.py](../../src/haddock/libs/libalign.py), [libmath.py](../../src/haddock/libs/libmath.py) | Alignment and RMSD/geometry maths |
-| [libclust.py](../../src/haddock/libs/libclust.py), [libfcc.py](../../src/haddock/libs/libfcc.py) | Clustering helpers |
-| [librestraints.py](../../src/haddock/libs/librestraints.py) | Restraint (`.tbl`) handling |
-| [libaa2cg.py](../../src/haddock/libs/libaa2cg.py), [libligand.py](../../src/haddock/libs/libligand.py) | Coarse-grain mapping, ligand topology |
-| [libplots.py](../../src/haddock/libs/libplots.py), [libnotebooks.py](../../src/haddock/libs/libnotebooks.py) | Analysis plots and notebook generation |
-| [libprodigy.py](../../src/haddock/libs/libprodigy.py) | PRODIGY binding-affinity scoring integration |
-| [libinteractive.py](../../src/haddock/libs/libinteractive.py) | Backing for `haddock3-re` interactive re-scoring/clustering |
-| [libio.py](../../src/haddock/libs/libio.py), [liblog.py](../../src/haddock/libs/liblog.py), [libtimer.py](../../src/haddock/libs/libtimer.py), [libutil.py](../../src/haddock/libs/libutil.py), [libcli.py](../../src/haddock/libs/libcli.py), [libfunc.py](../../src/haddock/libs/libfunc.py) | Cross-cutting utilities (I/O, logging, timing, CLI args, functional helpers) |
-| [assets/](../../src/haddock/libs/assets/) | Static assets used by libs (e.g. templates) |
+| [libworkflow.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libworkflow.py) | **Workflow engine**: `WorkflowManager`, `Workflow`, `Step` (see §3) |
+| [libontology.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libontology.py) | **Inter-module data model**: `PDBFile`, `TopologyFile`, `RMSDFile`, `ModuleIO` (see §6) |
+| [libcns.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libcns.py) | Build CNS input scripts from templates + parameters |
+| [libsubprocess.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libsubprocess.py) | `CNSJob` and `Job` wrappers around subprocess execution |
+| [libparallel.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libparallel.py) | `Scheduler`/`Worker` — local multiprocessing fan-out |
+| [libhpc.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libhpc.py) | `HPCScheduler` — batch/queue submission |
+| [libmpi.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libmpi.py) | `MPIScheduler` — MPI execution |
+| [libgrid.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libgrid.py) | `GRIDScheduler` — DIRAC grid execution |
+| [libpdb.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libpdb.py), [libstructure.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libstructure.py) | Parse and manipulate PDB structures |
+| [libalign.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libalign.py), [libmath.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libmath.py) | Alignment and RMSD/geometry maths |
+| [libclust.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libclust.py), [libfcc.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libfcc.py) | Clustering helpers |
+| [librestraints.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/librestraints.py) | Restraint (`.tbl`) handling |
+| [libaa2cg.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libaa2cg.py), [libligand.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libligand.py) | Coarse-grain mapping, ligand topology |
+| [libplots.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libplots.py), [libnotebooks.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libnotebooks.py) | Analysis plots and notebook generation |
+| [libprodigy.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libprodigy.py) | PRODIGY binding-affinity scoring integration |
+| [libinteractive.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libinteractive.py) | Backing for `haddock3-re` interactive re-scoring/clustering |
+| [libio.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libio.py), [liblog.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/liblog.py), [libtimer.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libtimer.py), [libutil.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libutil.py), [libcli.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libcli.py), [libfunc.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libfunc.py) | Cross-cutting utilities (I/O, logging, timing, CLI args, functional helpers) |
+| [assets/](https://github.com/haddocking/haddock3/tree/main/src/haddock/libs/assets/) | Static assets used by libs (e.g. templates) |
 
 ### 5.4 `modules/` — the simulation & analysis modules
 
 This is where the science lives. Modules are grouped into **categories**, which
 are just the immediate subfolders. The category registry and the
 `BaseHaddockModule` contract are defined in
-[modules/__init__.py](../../src/haddock/modules/__init__.py).
+[modules/__init__.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/modules/__init__.py).
 
 ```
 modules/
@@ -230,7 +230,7 @@ constraint on mixing categories in a workflow; the hierarchy is organisational.
   `haddock3-cfg` help output, and the web/GUI parameter forms.
 - `cns/` (CNS modules only) — the `.cns` template scripts run by CNS.
 
-See [modules/_template_cat/](../../src/haddock/modules/_template_cat/) for the
+See [modules/_template_cat/](https://github.com/haddocking/haddock3/tree/main/src/haddock/modules/_template_cat/) for the
 canonical skeleton when adding a module.
 
 `Step.execute()` discovers a module dynamically: it looks up the category in the
@@ -241,40 +241,40 @@ correctly-shaped folder in the right category — no central registration.
 ### 5.5 `clis/` — command-line interfaces
 
 Each `cli_*.py` exposes a `maincli()` wired to a console script in
-[pyproject.toml](../../pyproject.toml). The full toolset:
+[pyproject.toml](https://github.com/haddocking/haddock3/blob/main/pyproject.toml). The full toolset:
 
 | Command | Module | Purpose |
 |---------|--------|---------|
-| `haddock3` | [cli.py](../../src/haddock/clis/cli.py) | Run a workflow (the main entry point) |
-| `haddock3-cfg` | [cli_cfg.py](../../src/haddock/clis/cli_cfg.py) | Print a module's parameters/defaults |
-| `haddock3-copy` | [cli_cp.py](../../src/haddock/clis/cli_cp.py) | Copy/prepare a run for `--extend-run` |
-| `haddock3-clean` | [cli_clean.py](../../src/haddock/clis/cli_clean.py) | Compress/clean a run's outputs |
-| `haddock3-pp` | [cli_pp.py](../../src/haddock/clis/cli_pp.py) | Preprocess input PDBs |
-| `haddock3-score` | [cli_score.py](../../src/haddock/clis/cli_score.py) | Score a complex standalone |
-| `haddock3-analyse` | [cli_analyse.py](../../src/haddock/clis/cli_analyse.py) | Generate analysis reports/plots |
-| `haddock3-traceback` | [cli_traceback.py](../../src/haddock/clis/cli_traceback.py) | Trace each final model back through the steps |
-| `haddock3-re` | [cli_re.py](../../src/haddock/clis/cli_re.py) + [re/](../../src/haddock/clis/re/) | Interactive re-scoring/re-clustering of a finished step |
-| `haddock3-restraints` | [cli_restraints.py](../../src/haddock/clis/cli_restraints.py) + [restraints/](../../src/haddock/clis/restraints/) | Restraint generation utilities |
-| `haddock3-mpitask` | [cli_mpi.py](../../src/haddock/clis/cli_mpi.py) | Worker invoked under MPI execution |
-| `haddock3-dmn` | [cli_dmn.py](../../src/haddock/clis/cli_dmn.py) | Daemon for batch/grid coordination |
-| `haddock3-unpack` | [cli_unpack.py](../../src/haddock/clis/cli_unpack.py) | Unpack an archived/cleaned run |
+| `haddock3` | [cli.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli.py) | Run a workflow (the main entry point) |
+| `haddock3-cfg` | [cli_cfg.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_cfg.py) | Print a module's parameters/defaults |
+| `haddock3-copy` | [cli_cp.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_cp.py) | Copy/prepare a run for `--extend-run` |
+| `haddock3-clean` | [cli_clean.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_clean.py) | Compress/clean a run's outputs |
+| `haddock3-pp` | [cli_pp.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_pp.py) | Preprocess input PDBs |
+| `haddock3-score` | [cli_score.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_score.py) | Score a complex standalone |
+| `haddock3-analyse` | [cli_analyse.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_analyse.py) | Generate analysis reports/plots |
+| `haddock3-traceback` | [cli_traceback.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_traceback.py) | Trace each final model back through the steps |
+| `haddock3-re` | [cli_re.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_re.py) + [re/](https://github.com/haddocking/haddock3/tree/main/src/haddock/clis/re/) | Interactive re-scoring/re-clustering of a finished step |
+| `haddock3-restraints` | [cli_restraints.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_restraints.py) + [restraints/](https://github.com/haddocking/haddock3/tree/main/src/haddock/clis/restraints/) | Restraint generation utilities |
+| `haddock3-mpitask` | [cli_mpi.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_mpi.py) | Worker invoked under MPI execution |
+| `haddock3-dmn` | [cli_dmn.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_dmn.py) | Daemon for batch/grid coordination |
+| `haddock3-unpack` | [cli_unpack.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_unpack.py) | Unpack an archived/cleaned run |
 
 ### 5.6 Bundled native/data assets
 
 | Path | Contents |
 |------|----------|
-| [cns/bin/](../../src/haddock/cns/bin/) | Per-platform CNS executables |
-| [cns/toppar/](../../src/haddock/cns/toppar/) | CNS force-field topology/parameter files (`TOPPAR` env var points here) |
-| [deps/](../../src/haddock/deps/) | `contact_fcc.cpp`, `fast-rmsdmatrix.c` — compiled to `bin/` at install |
-| [fcc/](../../src/haddock/fcc/) | Python FCC matrix calculation and clustering |
-| [prodrg/](../../src/haddock/prodrg/) | Per-platform PRODRG ligand-topology binaries |
+| [cns/bin/](https://github.com/haddocking/haddock3/tree/main/src/haddock/cns/bin/) | Per-platform CNS executables |
+| [cns/toppar/](https://github.com/haddocking/haddock3/tree/main/src/haddock/cns/toppar/) | CNS force-field topology/parameter files (`TOPPAR` env var points here) |
+| [deps/](https://github.com/haddocking/haddock3/tree/main/src/haddock/deps/) | `contact_fcc.cpp`, `fast-rmsdmatrix.c` — compiled to `bin/` at install |
+| [fcc/](https://github.com/haddocking/haddock3/tree/main/src/haddock/fcc/) | Python FCC matrix calculation and clustering |
+| [prodrg/](https://github.com/haddocking/haddock3/tree/main/src/haddock/prodrg/) | Per-platform PRODRG ligand-topology binaries |
 
 ---
 
 ## 6. Inter-module communication: the ontology
 
 Modules never call each other directly. They communicate through files described
-by the **ontology** in [libs/libontology.py](../../src/haddock/libs/libontology.py):
+by the **ontology** in [libs/libontology.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libontology.py):
 
 - **`Persistent`** — base class for any framework-generated file (records name,
   type, path, optional md5, restraint file).
@@ -290,7 +290,7 @@ by the **ontology** in [libs/libontology.py](../../src/haddock/libs/libontology.
   `remove_missing()` enforce output completeness tolerance.
 
 The mechanics in `BaseHaddockModule`
-([modules/__init__.py](../../src/haddock/modules/__init__.py)):
+([modules/__init__.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/modules/__init__.py)):
 
 - On construction, `_load_previous_io()` reads the previous step's `io.json`
   into `self.previous_io`.
@@ -306,7 +306,7 @@ for anyone reworking the engine, caching, or determinism:
 1. **`_output_params`** — a module may publish key/value pairs that
    `WorkflowManager.run()` then injects into *all later steps* that expose the
    same key and haven't set it
-   ([libworkflow.py](../../src/haddock/libs/libworkflow.py#L52)). Example: `topoaa`
+   ([libworkflow.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libworkflow.py#L52)). Example: `topoaa`
    propagates auto-generated `ligand_param_fname`/`ligand_top_fname` downstream.
 2. **In-place mutation of `PDBFile`** — attributes are mutated during execution
    (e.g. `clustfcc` writes cluster info onto the model objects; `seletop` sets
@@ -318,27 +318,27 @@ for anyone reworking the engine, caching, or determinism:
 
 - **Module defaults** live in each module's `defaults.yaml` as *annotated*
   entries (default, type, range, help text, group, expert level).
-  [gear/yaml2cfg.py](../../src/haddock/gear/yaml2cfg.py) flattens these into a usable
+  [gear/yaml2cfg.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/yaml2cfg.py) flattens these into a usable
   config; the same metadata powers `haddock3-cfg` and external GUIs.
 - **Global parameters** come from two places:
   - mandatory/optional run-level params in
-    [core/mandatory.yaml](../../src/haddock/core/mandatory.yaml) /
-    [core/optional.yaml](../../src/haddock/core/optional.yaml) (`run_dir`,
+    [core/mandatory.yaml](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/mandatory.yaml) /
+    [core/optional.yaml](https://github.com/haddocking/haddock3/blob/main/src/haddock/core/optional.yaml) (`run_dir`,
     `molecules`, `preprocess`, `postprocess`, `gen_archive`);
   - non-mandatory general params in
-    [modules/defaults.yaml](../../src/haddock/modules/defaults.yaml) (`ncores`,
+    [modules/defaults.yaml](https://github.com/haddocking/haddock3/blob/main/src/haddock/modules/defaults.yaml) (`ncores`,
     `mode`, `cns_exec`, `clean`, `self_contained`, …) which can be set globally
     and overridden per module.
 - **Precedence**: module-local value > global value > module default. This is
   applied by `recursive_dict_update` in `update_params`
-  ([modules/__init__.py](../../src/haddock/modules/__init__.py#L160)) and in
+  ([modules/__init__.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/modules/__init__.py#L160)) and in
   `Workflow.__init__`.
 - **Expandable parameters**
-  ([gear/expandable_parameters.py](../../src/haddock/gear/expandable_parameters.py))
+  ([gear/expandable_parameters.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/expandable_parameters.py))
   handle repeated/per-molecule blocks (e.g. `mol1_*`, `seg_*`), expanded against
   the actual number of input molecules.
 - **Config format**: a TOML-like `.cfg` parsed/written by
-  [gear/config.py](../../src/haddock/gear/config.py); `_fname`-suffixed parameters are
+  [gear/config.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/config.py); `_fname`-suffixed parameters are
   coerced to paths and existence-checked.
 
 ---
@@ -347,15 +347,15 @@ for anyone reworking the engine, caching, or determinism:
 
 - **Across steps: none.** Steps run strictly sequentially.
 - **Within a step: pluggable engine.** `get_engine(mode, params)` in
-  [modules/__init__.py](../../src/haddock/modules/__init__.py#L403) is a small factory
+  [modules/__init__.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/modules/__init__.py#L403) is a small factory
   selecting an engine by the `mode` parameter:
 
   | `mode` | Engine | File |
   |--------|--------|------|
-  | `local` | `Scheduler` (multiprocessing) | [libs/libparallel.py](../../src/haddock/libs/libparallel.py) |
-  | `batch` | `HPCScheduler` (queue submit) | [libs/libhpc.py](../../src/haddock/libs/libhpc.py) |
-  | `mpi` | `MPIScheduler` | [libs/libmpi.py](../../src/haddock/libs/libmpi.py) |
-  | `grid` | `GRIDScheduler` (DIRAC; falls back to `local` if unreachable) | [libs/libgrid.py](../../src/haddock/libs/libgrid.py) |
+  | `local` | `Scheduler` (multiprocessing) | [libs/libparallel.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libparallel.py) |
+  | `batch` | `HPCScheduler` (queue submit) | [libs/libhpc.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libhpc.py) |
+  | `mpi` | `MPIScheduler` | [libs/libmpi.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libmpi.py) |
+  | `grid` | `GRIDScheduler` (DIRAC; falls back to `local` if unreachable) | [libs/libgrid.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libgrid.py) |
 
 - **Granularity.** Sampling/refinement modules generate one CNS subprocess
   (`CNSJob`) per output model, and the engine fans these jobs across cores/nodes.
@@ -366,22 +366,22 @@ for anyone reworking the engine, caching, or determinism:
 ## 9. CNS coupling
 
 The physics modules wrap CNS rather than reimplementing it. The coupling lives in
-[modules/base_cns_module.py](../../src/haddock/modules/base_cns_module.py) and
-[libs/libcns.py](../../src/haddock/libs/libcns.py):
+[modules/base_cns_module.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/modules/base_cns_module.py) and
+[libs/libcns.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libcns.py):
 
 - A CNS module loads its `.cns` template (`recipe_str`), fills it with the
   current parameters and per-model data via `libcns`, and writes a concrete `.inp`.
 - Each job runs as a `CNSJob`
-  ([libs/libsubprocess.py](../../src/haddock/libs/libsubprocess.py)) — the CNS binary
-  from [cns/bin/](../../src/haddock/cns/bin/), with env vars `MODULE`, `MODDIR`,
-  `TOPPAR` (pointing at [cns/toppar/](../../src/haddock/cns/toppar/)).
+  ([libs/libsubprocess.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libsubprocess.py)) — the CNS binary
+  from [cns/bin/](https://github.com/haddocking/haddock3/tree/main/src/haddock/cns/bin/), with env vars `MODULE`, `MODDIR`,
+  `TOPPAR` (pointing at [cns/toppar/](https://github.com/haddocking/haddock3/tree/main/src/haddock/cns/toppar/)).
 - `self_contained` mode copies the CNS scripts, toppar, and executable into the
   run directory so it can be re-run elsewhere.
 
 Because the workflow plumbing is independent of CNS, replacing CNS for a given
 module is mostly a matter of replacing the subprocess invocation in that
 module's `_run()`. The modern OpenMM refinement
-([modules/refinement/openmm/](../../src/haddock/modules/refinement/openmm/)) is an
+([modules/refinement/openmm/](https://github.com/haddocking/haddock3/tree/main/src/haddock/modules/refinement/openmm/)) is an
 example of a non-CNS engine living alongside the CNS ones.
 
 ---
@@ -406,7 +406,7 @@ run_dir/
 
 The step-folder naming (`<index>_<modulename>`) is the system of record for step
 identity and ordering. `get_module_steps_folders()` and `is_step_folder()` in
-[modules/__init__.py](../../src/haddock/modules/__init__.py) parse it; the
+[modules/__init__.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/modules/__init__.py) parse it; the
 `step_folder_regex` there is the canonical matcher. Restart and extend operate on
 these folders by index.
 
@@ -416,9 +416,9 @@ these folders by index.
 
 | Suite | Location | CNS needed | Scope |
 |-------|----------|------------|-------|
-| Unit | [tests/](../../tests/) | No | Functions/classes in isolation; fixtures in `tests/golden_data`, `tests/data` |
-| Integration | [integration_tests/](../../integration_tests/) | Yes | Individual modules end-to-end against CNS |
-| End-to-end | [end-to-end_tests/](../../end-to-end_tests/) | Yes | Complete workflows |
+| Unit | [tests/](https://github.com/haddocking/haddock3/tree/main/tests/) | No | Functions/classes in isolation; fixtures in `tests/golden_data`, `tests/data` |
+| Integration | [integration_tests/](https://github.com/haddocking/haddock3/tree/main/integration_tests/) | Yes | Individual modules end-to-end against CNS |
+| End-to-end | [end-to-end_tests/](https://github.com/haddocking/haddock3/tree/main/end-to-end_tests/) | Yes | Complete workflows |
 
 Run with `pytest tests/`, `pytest integration_tests/`, `pytest
 end-to-end_tests/`. See [docs/pages/DEVELOPMENT.md](DEVELOPMENT.md) and
@@ -428,14 +428,14 @@ end-to-end_tests/`. See [docs/pages/DEVELOPMENT.md](DEVELOPMENT.md) and
 
 ## 12. Where to start when…
 
-- **Adding a module** → copy [modules/_template_cat/](../../src/haddock/modules/_template_cat/);
+- **Adding a module** → copy [modules/_template_cat/](https://github.com/haddocking/haddock3/tree/main/src/haddock/modules/_template_cat/);
   implement `HaddockModule._run()` and author `defaults.yaml`. No central
   registration is needed.
-- **Changing how steps are scheduled/chained** → [libs/libworkflow.py](../../src/haddock/libs/libworkflow.py).
-- **Changing what flows between modules** → [libs/libontology.py](../../src/haddock/libs/libontology.py).
-- **Changing run setup/validation** → [gear/prepare_run.py](../../src/haddock/gear/prepare_run.py).
+- **Changing how steps are scheduled/chained** → [libs/libworkflow.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libworkflow.py).
+- **Changing what flows between modules** → [libs/libontology.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libontology.py).
+- **Changing run setup/validation** → [gear/prepare_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/prepare_run.py).
 - **Adding/adjusting parallel execution** → `get_engine()` in
-  [modules/__init__.py](../../src/haddock/modules/__init__.py) and the `lib*scheduler`
-  files in [libs/](../../src/haddock/libs/).
+  [modules/__init__.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/modules/__init__.py) and the `lib*scheduler`
+  files in [libs/](https://github.com/haddocking/haddock3/tree/main/src/haddock/libs/).
 - **A new CLI tool** → add `clis/cli_<name>.py` with a `maincli()` and register
-  it under `[project.scripts]` in [pyproject.toml](../../pyproject.toml).
+  it under `[project.scripts]` in [pyproject.toml](https://github.com/haddocking/haddock3/blob/main/pyproject.toml).

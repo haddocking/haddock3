@@ -15,6 +15,8 @@ To develop your own HADDOCK3 module follow the patterns used in other modules.
 1. If your module requires any extra libraries, describe how to install those libraries
    in the `docs/pages/INSTALL.md` file. Unless approved by the Haddock Team, do not add
    those dependencies to the `requirements.*` files.
+1. Add your module (and its category, if new) to `docs/titles.yaml` so the
+   generated docs page gets a friendly title instead of the raw module name.
 1. HADDOCK3 has already many features related to IO, subprocess run, sending jobs,
    etc. Please, look around the `libs` folder for pertinent functions, but, above all,
    feel welcomed to reach out to us with any doubts.

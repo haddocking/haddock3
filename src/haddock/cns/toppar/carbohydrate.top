@@ -18,13 +18,15 @@ REMARKS GLA:       alpha-D-galactopyranose
 REMARKS GAL (GLB): beta- D-galactopyranose
 REMARKS MAN:       alpha-D-mannopyranose
 REMARKS BMA:       beta -D-mannopyronose
+REMARKS MAG:       2-N-Acetyl-beta-D-glucopyranose + Methyl at O1
 REMARKS NDG:       2-N-acetyl-alpha-D-glucopyranose
 REMARKS A2G:       2-N-acetyl-alpha-D-glucopyranose, different stereochemistry at C4
 REMARKS GCS:       2-N-beta-D-glucopyranose (glucosamine)
 REMARKS NAG:       2-N-acetyl-beta-D-glucopyranose
-REMARKS NAM:       1-O-methyl-2-N-Acetyl-beta-D-glucopyranose 
-REMARKS NAA:       1-O-methyl-2-N-Acetyl-alpha-D-glucopyranose 
+REMARKS NAM:       1-O-methyl-2-N-Acetyl-beta-D-glucopyranose
+REMARKS NAA:       1-O-methyl-2-N-Acetyl-alpha-D-glucopyranose
 REMARKS NGA:       2-N-acetyl-beta-D-galactopyranose
+REMARKS NGM:       1-O-methyl-2-N-Acetyl-alpha-D-galactopyranose
 REMARKS FUC:       alpha-L-fucopyranose
 REMARKS FUL:       beta -L-fucopyranose
 REMARKS FCA:       alpha-D-fucopyranose
@@ -951,7 +953,7 @@ RESIdue NAA  !1-O-methyl-2-N-Acetyl-alpha-D-glucopyranose
   IMPRoper N2 C7 C2 HN2 {planar N}
   IMPRoper C7 C8 N2 O7  {planar C}
 
-  IMPRoper C9 O5 O1 C2  {alpha C1}
+  IMPRoper H1 O5 O1 C2  {alpha C1}
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
   IMPRoper H4 C3 O4 C5  {C4}
@@ -1312,6 +1314,105 @@ RESIdue A2G  !2-N-Acetyl-alpha-D-galactopyranose, different stereochemistry at C
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
   IMPRoper H4 O4 C3 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+  IMPRoper C2 N2 C7 C8 {trans peptide}
+
+END
+!-------------------------------------------------------------------
+
+RESIdue NGM  !1-O-methyl-2-N-Acetyl-alpha-D-galactopyranose 
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.100   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OAS  CHARge=-0.400   END
+  ATOM C9   TYPE=CCS  CHARge= 0.100   END
+  ATOM H91  TYPE=HAS  CHARge= 0.100   END
+  ATOM H92  TYPE=HAS  CHARge= 0.100   END
+  ATOM H93  TYPE=HAS  CHARge= 0.100   END
+  ATOM C2   TYPE=CCS  CHARge= 0.000   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM N2   TYPE=NH1  CHARge=-0.350   END
+  ATOM HN2  TYPE=H    CHARge= 0.250   END
+  ATOM C7   TYPE=C    CHARge= 0.550   END
+  ATOM O7   TYPE=O    CHARge=-0.550   END 
+  ATOM C8   TYPE=CCS  CHARge=-0.300   END
+  ATOM H81  TYPE=HAS  CHARge= 0.100   END
+  ATOM H82  TYPE=HAS  CHARge= 0.100   END
+  ATOM H83  TYPE=HAS  CHARge= 0.100   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 C9
+  BOND C9 H91
+  BOND C9 H92
+  BOND C9 H93
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 N2
+  BOND N2 HN2
+  BOND N2 C7
+  BOND C7 O7
+  BOND C7 C8
+  BOND C8 H81
+  BOND C8 H82
+  BOND C8 H83
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 C9
+  DIHEDRAL H2 C2 N2 HN2
+  DIHEDRAL C2 N2 C7 C8
+  DIHEDRAL N2 C7 C8 H81
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 C1 N2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C4 O3 C5  {C4}
   IMPRoper H5 C4 O5 C6  {C5}
   IMPRoper H61 H62 O6 C5  !stereo C6
   IMPRoper C2 N2 C7 C8 {trans peptide}

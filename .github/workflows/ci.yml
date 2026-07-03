@@ -109,10 +109,9 @@ jobs:
         run: uv run pytest -v --random-order --no-cov end-to-end_tests/
 
       - name: check if docs are buildable
-        continue-on-error: true
         run: |
-          uv run sphinx-apidoc -f -e -o docs/ src/haddock -d 1
-          uv run sphinx-build docs haddock3-docs
+          cd docs
+          uv run make html
 
   # Run the remaining OSxPython combinations in parallel
   test-matrix:

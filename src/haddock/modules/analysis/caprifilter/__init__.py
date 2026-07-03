@@ -9,6 +9,7 @@ For each metric, a per-metric cutoff and filter direction are set independently:
 
 All active filters are applied simultaneously (AND logic), a model must pass
 every filter to be kept. The following metrics are supported:
+
 - RMSD
 - iRMSD (interface RMSD)
 - lRMSD (ligand RMSD)
@@ -17,6 +18,7 @@ every filter to be kept. The following metrics are supported:
 - DOCKQ
 
 The following files are generated:
+
 - **caprifilter.tsv**: kept models with score and the user-requested metric
   columns only.
 - **caprifilter_all_models.tsv**: all input models, user-requested metrics,

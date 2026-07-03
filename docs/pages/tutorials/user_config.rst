@@ -119,12 +119,12 @@ Inside the `examples
 <https://github.com/haddocking/haddock3/tree/main/examples>`_ subfolders you will
 a panoply of examples of workflow configuration files (``.cfg``).
 
-Here is a list of all available :ref:`Modules`.
+Here is a list of all available :ref:`Modules <pages/modules/index:Modules>`.
 
 Finally, if you are a developer and wish to use HADDOCK3 as a library to read
 and write configuration files please see the related Python modules:
 
-* :ref:`Configuration file I/O`
+* :ref:`Configuration file I/O <src/reference/gear/haddock.gear.config:Configuration file I/O>`
 
 For example, to read a workflow configuration file:
 

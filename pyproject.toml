@@ -68,7 +68,6 @@ docs = [
   "sphinx-argparse>=0.4.0",
   "sphinx_rtd_theme>=3.0.1",
   "CommonMark>=0.9.1",
-  "mock>=5.1.0",
   "myst-parser>=3.0.1",
 ]
 mpi = ["mpi4py>=4.0.2"]

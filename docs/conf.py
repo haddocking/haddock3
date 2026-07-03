@@ -64,6 +64,12 @@ html_last_updated_fmt = "%b %d, %Y"
 html_split_index = False
 html_short_title = "%s-%s" % (project, version)
 
+# master_doc lives at pages/index, so it builds to pages/index.html rather
+# than index.html at the site root. Static hosts (GitHub Pages included)
+# need an index.html at the root to serve the bare site URL, so redirect/
+# provides one that forwards to pages/index.html.
+html_extra_path = ["redirect"]
+
 autosectionlabel_prefix_document = True
 
 napoleon_use_ivar = True

@@ -9,7 +9,7 @@ contributing effectively.
 
 ### 1. Prerequisites
 
-- Install HADDOCK3 following [INSTALL.md](docs/INSTALL.md)
+- Install HADDOCK3 following [INSTALL.md](docs/pages/INSTALL.md)
 - Python 3.10+ development environment
 - Familiarity with Git and GitHub workflows
 

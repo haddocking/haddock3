@@ -422,7 +422,7 @@ these folders by index.
 
 Run with `pytest tests/`, `pytest integration_tests/`, `pytest
 end-to-end_tests/`. See [docs/pages/DEVELOPMENT.md](DEVELOPMENT.md) and
-[CONTRIBUTING.md](../../CONTRIBUTING.md).
+[CONTRIBUTING.md](contributing.rst).
 
 ---
 

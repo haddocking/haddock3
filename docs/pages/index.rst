@@ -23,6 +23,10 @@ Content
    modules/index
    testing/index
    contributing
+   architecture
+   DEVELOPMENT
+   PYTHON
+   CNS
    citing
    reference/index
 

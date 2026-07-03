@@ -6,13 +6,20 @@ on:
     branches:
       - main
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   pages:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       pages: write
       id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -32,14 +39,17 @@ jobs:
 
       - name: Generate docs
         run: |
-          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
-          sphinx-build -b html docs haddock3-docs
-          touch haddock3-docs/.nojekyll
+          cd docs
+          make html
 
-      - name: deploy
-        uses: s0/git-publish-subdir-action@develop
-        env:
-          REPO: self
-          BRANCH: gh-pages
-          FOLDER: haddock3-docs
-          GITHUB_TOKEN: ${{ secrets.PAGES }}
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: haddock3-docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -76,7 +76,7 @@ class Cluster(object):
 
 def read_matrix(path, cutoff, strictness):
     """
-    Reads in a four column matrix (1 2 0.123 0.456\n)
+    Reads in a four column matrix (1 2 0.123 0.456\\n)
     and creates an dictionary of Elements.
 
     The strictness factor is a <float> that multiplies by the cutoff

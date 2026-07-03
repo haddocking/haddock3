@@ -3,7 +3,8 @@
 Generate both z-restraints and corresponding z-surfaces based on
 input pdb structure and residue selection.
 
-Usage:
+Usage::
+
     haddock3-restraints z-surface-restraints
         --pdb       <path/to/the/structure.pdb>
         --residues  <list of coma separated residue index>
@@ -13,15 +14,16 @@ Usage:
         --y-size    <size_in_y_dim>
         --z-padding <additional_z_padding_between_two_extrema_plans>
 
-e.g:
-haddock3-restraints z-surface-restraints
-  --pdb mystructure.pdb
-  --residues 1,2,3 7,8,9
-  --spacing 20
-  --x-size 200
-  --y-size 200
-  --z-padding 5
-  --output myZrestaints
+e.g.::
+
+    haddock3-restraints z-surface-restraints
+      --pdb mystructure.pdb
+      --residues 1,2,3 7,8,9
+      --spacing 20
+      --x-size 200
+      --y-size 200
+      --z-padding 5
+      --output myZrestaints
 """
 
 import logging

@@ -13,7 +13,7 @@ Martinize Script from Tserk Wassenaar
 Uses Biopython to parse the structure and DSSP output.
 Uses pieces of the martinize-1.1.py script to convert the SS types
 
-Outputs a coarse grained pdb file (*_ss.pdb) with assigned bfactors.
+Outputs a coarse grained pdb file (``*_ss.pdb``) with assigned bfactors.
 Outputs a tbl file to map the beads to the atoms they represent.
 
 Updates
@@ -859,8 +859,8 @@ def martinize(
             Path to the input AA PDB file.
         output_path (str):
             Directory where the output files will be written.
-                - A CG PDB file (*_cg.pdb)
-                - A restraint table (*_cg_to_aa.tbl)
+                - A CG PDB file (``*_cg.pdb``)
+                - A restraint table (``*_cg_to_aa.tbl``)
         skipss (bool):
             If True, skips secondary structure assignment (DSSP step).
             If False, assigns secondary structure and encodes it

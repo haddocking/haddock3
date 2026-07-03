@@ -601,7 +601,7 @@ def scatter_plot_handler(
     """Create scatter plots.
 
     The idea is that for each pair of variables of interest (SCATTER_PAIRS,
-     declared as global) we create a scatter plot.
+    declared as global) we create a scatter plot.
     If available, each scatter plot containts cluster information.
 
     Parameters

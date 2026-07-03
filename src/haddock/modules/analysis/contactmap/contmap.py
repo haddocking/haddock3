@@ -792,7 +792,7 @@ def get_ordered_coords(
 def compute_distance_matrix(all_atm_coords: list[list[float]]) -> NDFloat:
     """Compute all vs all distance matrix.
 
-    Paramaters
+    Parameters
     ----------
     all_atm_coords : list[list[float]]
         List of atomic coordinates.
@@ -813,7 +813,7 @@ def extract_submatrix(
         ) -> NDFloat:
     """Extract submatrix based on desired indices.
 
-    Paramaters
+    Parameters
     ----------
     matrix : NDFloat
         A N*N matrix.
@@ -1079,8 +1079,8 @@ def tsv_to_heatmap(
         ) -> Union[Path, str]:
     """Read a tsv file and generate a heatmap from it.
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     tsv_path : Path
         Path a the .tsv file containing contact data.
     sep : str
@@ -1276,7 +1276,7 @@ def get_ideogram_ends(
         ) -> list[tuple[float, float]]:
     """Generate ideogram ends.
 
-    Paramaters
+    Parameters
     ----------
     ideogram_len : NDArray
         Length of each ideograms.
@@ -2262,8 +2262,8 @@ def tsv_to_chordchart(
         ) -> Union[Path, str]:
     """Read a tsv file and generate a chord diagram from it.
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     tsv_path : Path
         Path a the .tsv file containing contact data.
     sep : str

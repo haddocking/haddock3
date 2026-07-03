@@ -113,7 +113,7 @@ def output_clusters(handle, cluster):
 
 
 def load_matrix(matrix_path) -> list[tuple[int, int, float, float]]:
-    """Read in a four column matrix (1 2 0.123 0.456\n)
+    """Read in a four column matrix (1 2 0.123 0.456\\n)
 
     Parameters
     ----------

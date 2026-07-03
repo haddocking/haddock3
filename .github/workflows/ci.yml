@@ -20,7 +20,7 @@ jobs:
       python: ${{ github.event_name != 'pull_request' || steps.filter.outputs.python_any_changed == 'true' }}
       docker: ${{ github.event_name != 'pull_request' || steps.filter.outputs.docker_any_changed == 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
         id: filter
@@ -47,7 +47,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
@@ -72,9 +72,9 @@ jobs:
       checks: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.14"
 
@@ -87,6 +87,11 @@ jobs:
 
       - name: install haddock3 with extra dependencies
         run: uv sync --extra mpi --extra dev --extra docs --extra notebooks
+
+      - name: install openmm
+        # Not a pyproject.toml extra: pdbfixer has no PyPI release and is
+        # installed from a direct GitHub URL
+        run: uv pip install openmm "pdbfixer @ https://github.com/openmm/pdbfixer/archive/refs/tags/v1.10.tar.gz"
 
       - name: run unit tests
         run: uv run pytest -v --random-order tests/ --cov --cov-report=
@@ -109,9 +114,8 @@ jobs:
         run: uv run pytest -v --random-order --no-cov end-to-end_tests/
 
       - name: check if docs are buildable
-        run: |
-          cd docs
-          uv run make html
+        working-directory: docs
+        run: uv run make html
 
   # Run the remaining OSxPython combinations in parallel
   test-matrix:
@@ -138,9 +142,9 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -174,7 +178,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 

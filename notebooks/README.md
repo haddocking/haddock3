@@ -52,7 +52,7 @@ go to <http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb> - click 
 
 ### Running the interface analysis notebook
 
-**Prerequisites:** HADDOCK3 installed in development mode (`pip install -e '.[dev]'`) and CNS available on your `PATH` (see `docs/CNS.md`).
+**Prerequisites:** HADDOCK3 installed in development mode (`pip install -e '.[dev]'`) and CNS available on your `PATH` (see `docs/pages/CNS.md`).
 
 ```bash
 # install marimo (if not already present)

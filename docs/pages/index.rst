@@ -1,7 +1,7 @@
 Welcome to HADDOCK3 Documentation!
 ==================================
 
-.. include:: ../README.md
+.. include:: ../../README.md
    :start-after: .. start-description
    :end-before: .. end-description
 
@@ -19,10 +19,14 @@ Content
    USAGE
    examples
    tutorials/index
-   clients/haddock.clis
+   ../src/clients/haddock.clis
    modules/index
    testing/index
    contributing
+   architecture
+   DEVELOPMENT
+   PYTHON
+   CNS
    citing
    reference/index
 

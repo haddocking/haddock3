@@ -9,7 +9,7 @@ In the previous HADDOCK2.x versions, users had access to a highly
 parameterisable yet rigid simulation pipeline composed of three steps:
 `ridig-body docking (it0)`, `semi-flexible refinement (it1)`, and `final refinement (itw)`.
 
-![HADDOCK 2.x workflow](figs/HADDOCK2-stages.png)
+![HADDOCK 2.x workflow](../figs/HADDOCK2-stages.png)
 
 In HADDOCK3, users have the freedom to configure docking workflows into
 functional pipelines by combining the different HADDOCK3 modules, thus
@@ -28,7 +28,7 @@ Any type of information that can be converted into ambiguous interaction
 restraints can, however, be used in HADDOCK3, which also supports the
 *ab initio* docking modes of HADDOCK.
 
-![HADDOCK3 workflow](figs/HADDOCK3-workflow-scheme.png)
+![HADDOCK3 workflow](../figs/HADDOCK3-workflow-scheme.png)
 
 To keep HADDOCK3's modules organised, we catalogued them into several
 categories. But, there are no constraints on piping modules of different

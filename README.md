@@ -28,10 +28,10 @@ Simple installation of the [latest release](https://pypi.org/project/haddock3/) 
 pip install haddock3
 ```
 
-For Python environment setup and installation instructions, see [docs/PYTHON.md](docs/PYTHON.md).
+For Python environment setup and installation instructions, see [docs/pages/PYTHON.md](docs/pages/PYTHON.md).
 
 For development installation or to install the latest unreleased version
-please refer to [docs/DEVELOPMENT.md](/docs/DEVELOPMENT.md)
+please refer to [docs/pages/DEVELOPMENT.md](/docs/pages/DEVELOPMENT.md)
 
 ## Usage
 
@@ -62,7 +62,7 @@ If you clone this repository and use `haddock3` for your research, please suppor
 
 ## Development
 
-For development setup and guidelines, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+For development setup and guidelines, see [docs/pages/DEVELOPMENT.md](docs/pages/DEVELOPMENT.md).
 
 ## Contributing
 

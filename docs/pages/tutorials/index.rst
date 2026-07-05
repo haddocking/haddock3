@@ -14,11 +14,3 @@ HADDOCK3 functionalities
    user_config
    continuing_runs
    mpi
-
-Tutorials for developers
-------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   benchmark

@@ -189,15 +189,15 @@ class CNSJob:
         Parameters
         ----------
         compress_inp : bool
-            Compress the *.inp file to '.gz' after the run. Defaults to
+            Compress the ``*.inp`` file to '.gz' after the run. Defaults to
             ``False``.
 
         compress_out : bool
-            Compress the *.out file to '.gz' after the run. Defaults to
+            Compress the ``*.out`` file to '.gz' after the run. Defaults to
             ``True``.
 
         compress_seed : bool
-            Compress the *.seed file to '.gz' after the run. Defaults to
+            Compress the ``*.seed`` file to '.gz' after the run. Defaults to
             ``False``.
         """
 

@@ -75,7 +75,7 @@ class HaddockModule(BaseHaddockModule):
         if not os.access(EXEC_PATH, mode=os.F_OK):
             raise Exception(
                 f"Required {str(EXEC_PATH)} file does not exist.{os.linesep}"
-                "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md"
+                "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/pages/INSTALL.md"
             )
 
         if not os.access(EXEC_PATH, mode=os.X_OK):

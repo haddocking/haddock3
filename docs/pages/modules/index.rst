@@ -8,12 +8,12 @@ composed in *steps*, and each step is a HADDOCK3 module. There are modules for
 .. toctree::
    :maxdepth: 2
 
-   topology/index
-   sampling/index
-   refinement/index
-   scoring/index
-   analysis/index
-   extras/index
+   ../../src/modules/topology/index
+   ../../src/modules/sampling/index
+   ../../src/modules/refinement/index
+   ../../src/modules/scoring/index
+   ../../src/modules/analysis/index
+   ../../src/modules/extras/index
 
 Parent code for modules
 -----------------------
@@ -38,4 +38,4 @@ General default parameters can be defined in the main section of the
 configuration file, but can also be defined for each individual module (step).
 In the later case, overriding the general definition.
 
-.. include:: general_module_params.rst
+.. include:: ../../src/modules/general_module_params.rst

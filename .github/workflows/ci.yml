@@ -139,7 +139,7 @@ jobs:
           # Already covered by test-linux-py314, don't run again
           - os: ubuntu-latest
             python-version: "3.14"
-      fail-fast: false
+      fail-fast: true
 
     steps:
       - uses: actions/checkout@v5

@@ -11,7 +11,7 @@ This guide provides instructions for setting up a HADDOCK3 development environme
 
 Clone the repository,setup Python environment and install in editable mode
 
-> If you need help seting up your Python environment, look into [docs/PYTHON.md](docs/PYTHON.md)
+> If you need help seting up your Python environment, look into [PYTHON.md](PYTHON.md)
 
 ```
 git clone https://github.com/haddocking/haddock3.git
@@ -50,4 +50,4 @@ fail if `ruff format --check` reports differences.
 
 ## CNS Executable Troubleshooting
 
-If you encounter CNS related errors please refer to [CNS.md](docs/CNS.md)
+If you encounter CNS related errors please refer to [CNS.md](CNS.md)

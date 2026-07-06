@@ -28,24 +28,23 @@ For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#caprieval-module>`_
 """
 
-
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
+from haddock.libs.libaa2cg import martinize
+from haddock.libs.libstructure import find_ff
+from haddock.libs.libpdb import handle_input_reference
 from haddock.modules import BaseHaddockModule
-from haddock.modules.analysis.caprieval.capri import (
+from haddock.libs.libcapri import (
     CAPRI,
     capri_cluster_analysis,
-    dump_weights,
     extract_data_from_capri_class,
     extract_models_best_references,
-    )
-from haddock.libs.libaa2cg import martinize
-from pdbtools.pdb_wc import run as pdb_wc
-from pdbtools.pdb_splitmodel import run as pdb_splitmodel
+)
+from haddock.modules.analysis.caprieval.capri import dump_weights
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -77,97 +76,6 @@ class HaddockModule(BaseHaddockModule):
                 return True
         return False
 
-    @staticmethod
-    def find_ff(models: list[PDBFile]) -> str:
-        """Finds the force-field information (all-atom or martini) from the topology 
-        associated to the first model.
-
-        The assumption is that the force-fields will be identical between models.
-        
-        Parameters
-        -----------
-        models : list[PDBFile]
-            List of models where to find the topology
-        
-        Return
-        -------
-        ff : str
-            The force-field used in those models.
-        """
-        try:
-            ff = Path(models[0].topology[0].rel_path).stem.split("_")[-1]
-        except TypeError:
-            try:
-                ff = Path(models[0].topology.rel_path).stem.split("_")[-1]
-            except AttributeError:
-                ff = "aa"
-        # In case of issue, fall back to all-atom
-        if "martini" not in ff:
-            ff = "aa"
-
-        return ff
-
-    def handle_input_reference(self, reference: Path) -> list[Path]:
-        """Validate the reference file by returning only one model.
-
-        Parameters
-        ----------
-        reference : Path
-            Path to the input reference structure, possibly containing
-            an ensemble.
-
-        Returns
-        -------
-        reference or first_model_path : Path
-            Path to the reference structure to be used downstream.
-        """
-        # Extremly complicated stuff to manage the gathering of the sys.stdout,
-        # as the pdb_tools.pdb_wc is basically writing on it.
-        import sys
-        from io import TextIOWrapper, BytesIO
-        # Memorize previous sys.stdout
-        original_stdout = sys.stdout
-        # setup the new stdout environment
-        sys.stdout = TextIOWrapper(BytesIO(), sys.stdout.encoding)
-
-        # Count number of models
-        with open(reference, "r") as fh:
-            pdb_wc(fh, "m")
-        # Get output
-        sys.stdout.seek(0)  # Jump to the start
-        wc_return = sys.stdout.read()  # Read output
-        # Restore original stdout
-        sys.stdout.close()
-        sys.stdout = original_stdout
-        # Parse output
-        # using here `\n` (and not os.linesep) as it is the output for pdb_wc
-        for line in wc_return.split("\n"):
-            if "No. models" in line:
-                sline = line.strip().split()
-                nb_models = int(sline[-1])
-                break
-        # Return reference as only one structure present
-        if nb_models == 1:
-            return [reference]
-
-        self.log(
-            f"Multiple structures ({nb_models}) found in reference file. "
-            "Using all conformations as reference."
-            )
-        # Split models
-        with open(reference, "r") as ref_in:
-            pdb_splitmodel(ref_in, "reference_model")
-        # Gather individual references and sort them
-        references = sorted(
-            list(Path(".").glob("reference_model_*.pdb")),
-            key=lambda k: int(k.stem.split("_")[-1]),
-            )
-        assert len(references) == nb_models, (
-                "Issue while splitting references conformation: "
-                f"{nb_models} detected, {len(references)} generated"
-            )
-        return references
-
     def get_reference(self, models: list[PDBFile]) -> list[Path]:
         """Manage to obtain the reference structure to be used downstream.
 
@@ -184,7 +92,7 @@ class HaddockModule(BaseHaddockModule):
         """
         if self.params["reference_fname"]:
             _reference = Path(self.params["reference_fname"])
-            references = self.handle_input_reference(_reference)
+            references = handle_input_reference(_reference)
         else:
             self.log(
                 "No reference structure provided. "
@@ -201,10 +109,6 @@ class HaddockModule(BaseHaddockModule):
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        if type(self.previous_io) == iter:
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
-
         models = self.previous_io.retrieve_models(individualize=True)
         if self.is_nested(models):
             raise ValueError(
@@ -216,13 +120,13 @@ class HaddockModule(BaseHaddockModule):
         dump_weights(self.order)
 
         # Find force-field
-        ff = self.find_ff(models)
+        ff = find_ff(models)
         # Get reference file
         if ff == "martini2":
             references = [
                 Path(martinize(ref_aa, self.path.resolve().parent, False))
                 for ref_aa in self.get_reference(models)
-                ]
+            ]
         else:
             references = self.get_reference(models)
 
@@ -237,9 +141,8 @@ class HaddockModule(BaseHaddockModule):
             # `CAPRI` class is expecting a single model
             if isinstance(model_to_be_evaluated, list):
                 raise ValueError(
-                    "CAPRI module cannot handle a list "
-                    "of `model_to_be_evaluated`"
-                    )
+                    "CAPRI module cannot handle a list of `model_to_be_evaluated`"
+                )
             # Loop over references
             for ref_id, reference in enumerate(references, start=1):
                 jobs.append(
@@ -250,7 +153,7 @@ class HaddockModule(BaseHaddockModule):
                         reference=reference,
                         params=self.params,
                         ref_id=ref_id,
-                        ff=ff
+                        ff=ff,
                     )
                 )
 
@@ -258,7 +161,7 @@ class HaddockModule(BaseHaddockModule):
             tasks=jobs,
             ncores=self.params["ncores"],
             max_cpus=self.params["max_cpus"],
-            )
+        )
         engine.run()
 
         jobs = engine.results
@@ -299,6 +202,6 @@ class HaddockModule(BaseHaddockModule):
                 add_reference_id=True,
             )
 
-        # Send models to the next step,  no operation is done on them
+        # Send models to the next step, no operation is done on them
         self.output_models = models  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
         self.export_io_models()

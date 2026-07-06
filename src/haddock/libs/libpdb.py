@@ -1,14 +1,17 @@
 """Parse molecular structures in PDB format."""
 
+from contextlib import redirect_stdout
 import os
 from copy import deepcopy
 from functools import partial
+from io import StringIO
 from pathlib import Path
 
 from pdbtools.pdb_segxchain import run as place_seg_on_chain
 from pdbtools.pdb_splitchain import run as split_chain
 from pdbtools.pdb_splitmodel import run as split_model
 from pdbtools.pdb_tidy import run as tidy_pdbfile
+from pdbtools.pdb_wc import run as pdb_wc
 
 from haddock.core.exceptions import SetupError
 from haddock.core.supported_molecules import supported_residues
@@ -21,6 +24,7 @@ from haddock.core.typing import (
     TypeVar,
     Union,
 )
+from haddock import log as haddock_log
 from haddock.libs.libio import PDBFile, working_directory
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
 
@@ -511,15 +515,75 @@ def check_combination_chains(combination: list[PDBFile]) -> list[str]:
 def check_mol_shape(input_mol: Path) -> bool:
     """
     Checks if molecules provided is a shape or not.
-    
+
     Args:
         input_pdb (PDBFile): input PDB to check if shape.
-    
+
     Returns:
         bool: True if shape, False if not.
     """
     shape: bool = False
-    with open(input_mol, 'rt') as input_file_mol:
-        if any('SHA SHA ' in line for line in input_file_mol):
+    with open(input_mol, "rt") as input_file_mol:
+        if any("SHA SHA " in line for line in input_file_mol):
             shape = True
     return shape
+
+
+def handle_input_reference(reference: Path) -> list[Path]:
+    """Validate the reference file by returning only one model.
+
+    Parameters
+    ----------
+    reference : Path
+        Path to the input reference structure, possibly containing
+        an ensemble.
+
+    Returns
+    -------
+    reference or first_model_path : Path
+        Path to the reference structure to be used downstream.
+    """
+    # Check that the file contains at least one coordinate record before
+    # doing anything else — catches empty files, REMARK-only files, non-PDB text.
+    with open(reference, "r") as fh:
+        has_atoms = any(line.startswith(("ATOM", "HETATM")) for line in fh)
+    if not has_atoms:
+        raise ValueError(
+            f"No atoms found in reference file! "
+            "Please check that it is a valid PDB file containing ATOM/HETATM records."
+        )
+
+    # pdb_wc writes to stdout; capture it without touching sys.stdout globally.
+    buf = StringIO()
+    with open(reference, "r") as fh, redirect_stdout(buf):
+        pdb_wc(fh, "m")
+    wc_return = buf.getvalue()
+
+    # Parse output
+    # using here `\n` (and not os.linesep) as it is the output for pdb_wc
+    nb_models = 1  # pdb_wc treats a file without MODEL records as a single model
+    for line in wc_return.split("\n"):
+        if "No. models" in line:
+            nb_models = int(line.strip().split()[-1])
+            break
+    # Return reference as only one structure present
+    if nb_models == 1:
+        return [reference]
+    # If more than one model in reference
+    haddock_log.info(
+        f"Multiple structures ({nb_models}) found in reference file. "
+        "Using all conformations as reference."
+    )
+    # Split models
+    with open(reference, "r") as ref_in:
+        split_model(ref_in, "reference_model")
+    # Gather individual references and sort them
+    references = sorted(
+        list(Path(".").glob("reference_model_*.pdb")),
+        key=lambda k: int(k.stem.split("_")[-1]),
+    )
+    assert len(references) == nb_models, (
+        "Issue while splitting references conformation: "
+        f"{nb_models} detected, {len(references)} generated"
+    )
+    return references

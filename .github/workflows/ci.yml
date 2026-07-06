@@ -94,7 +94,7 @@ jobs:
         run: uv pip install openmm "pdbfixer @ https://github.com/openmm/pdbfixer/archive/refs/tags/v1.10.tar.gz"
 
       - name: run unit tests
-        run: uv run pytest -v --random-order tests/ --cov --cov-report=
+        run: uv run pytest -x -v --random-order tests/ --cov --cov-report=
 
       - name: generate coverage report
         run: |
@@ -108,10 +108,10 @@ jobs:
           coverage-reports: ./coverage.xml
 
       - name: run integration tests
-        run: uv run pytest -v --random-order integration_tests/
+        run: uv run pytest -x -v --random-order integration_tests/
 
       - name: run end to end tests
-        run: uv run pytest -v --random-order --no-cov end-to-end_tests/
+        run: uv run pytest -x -v --random-order --no-cov end-to-end_tests/
 
       - name: check if docs are buildable
         working-directory: docs
@@ -139,7 +139,7 @@ jobs:
           # Already covered by test-linux-py314, don't run again
           - os: ubuntu-latest
             python-version: "3.14"
-      fail-fast: false
+      fail-fast: true
 
     steps:
       - uses: actions/checkout@v5
@@ -164,10 +164,10 @@ jobs:
         run: uv sync --extra mpi --extra dev --extra docs --extra notebooks
 
       - name: run unit tests
-        run: uv run pytest -v --random-order tests/
+        run: uv run pytest -x -v --random-order tests/
 
       - name: run integration tests
-        run: uv run pytest -v --random-order integration_tests/
+        run: uv run pytest -x -v --random-order integration_tests/
 
   # Verify the Docker image still builds successfully (image is not pushed)
   docker-build:

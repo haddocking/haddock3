@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-07-02: Added support 1-O-methyl-2-N-Acetyl-alpha-D-galactopyranose (NGM) - Issue #1608
 - 2026-07-01: Removed unused guard for “previous module produced iterable” - Issue #1604
 - 2026-06-30: Added caprifilter module, moved shared capri calculation to libcapri - Issue #1550
 - 2026-06-29: Added support 1-O-methyl-2-N-Acetyl-alpha-D-glucopyranose (NAA) - Issue #1593

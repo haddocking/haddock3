@@ -53,6 +53,7 @@ all TOML rules apply regarding defining ``parameter = value`` pairs.
 
 Read more about TOML for Python here: https://pypi.org/project/toml/
 """
+
 import collections.abc
 import os
 import re
@@ -80,6 +81,10 @@ _main_header_re = re.compile(r"^ *\[(\w+)\]", re.ASCII)
 # Matches ['<name>.<digit>']
 _main_quoted_header_re = re.compile(r"^ *\[\'(\w+)\.\d+\'\]", re.ASCII)
 
+# Matches a quoted bare header ['<name>'] (pure TOML, no numeric suffix).
+# Normalized like a main header so all instances of a module carry a `.N`.
+_main_quoted_bare_header_re = re.compile(r"^ *\[\'(\w+)\'\]", re.ASCII)
+
 # Captures sub-headers
 # https://regex101.com/r/6OpJJ8/1
 # thanks https://stackoverflow.com/questions/39158902
@@ -106,14 +111,14 @@ _keys_that_accept_files = [
 ]
 
 
-class ConfigFormatError(Exception):
-    """Exception if there is a format error."""
+class ConfigFormatError(ConfigurationError):
+    """Exception raised when incompatible config header formats are mixed."""
 
     pass
 
 
 # main public API
-def load(fpath: FilePath) -> ParamDict:
+def load(fpath: FilePath, strict: bool = True) -> ParamDict:
     """
     Load an HADDOCK3 configuration file to a dictionary.
 
@@ -123,6 +128,13 @@ def load(fpath: FilePath) -> ParamDict:
     ----------
     fpath : str or :external:py:class:`pathlib.Path`
         Path to user configuration file.
+
+    strict : bool
+        When ``True`` (default), reject numeric dotted headers such as
+        ``[module.1]`` which silently merge into sub-tables and drop
+        workflow steps silently. Set to ``False`` only when reloading internally
+        generated ``params.cfg`` files, which legitimately contain such
+        numeric sub-tables. See :py:func:`loads`.
 
     Returns
     -------
@@ -135,14 +147,15 @@ def load(fpath: FilePath) -> ParamDict:
         * :py:func:`loads`
     """
     try:
-        return loads(Path(fpath).read_text())
+        return loads(Path(fpath).read_text(), strict=strict)
+    except ConfigFormatError:
+        # raise instead of masking
+        raise
     except Exception as err:
-        raise ConfigurationError(
-            "Something is wrong with the config file."
-        ) from err  # noqa: E501
+        raise ConfigurationError("Something is wrong with the config file.") from err  # noqa: E501
 
 
-def loads(cfg_str: str) -> ParamDict:
+def loads(cfg_str: str, strict: bool = True) -> ParamDict:
     """
     Read a string representing a config file to a dictionary.
 
@@ -161,11 +174,20 @@ def loads(cfg_str: str) -> ParamDict:
         The string representing the config file. Accepted formats are
         the HADDOCK3 config file or pure `toml` syntax.
 
+    strict : bool
+        When ``True`` (default), a numeric dotted header such as
+        ``[module.1]`` raises :py:class:`ConfigFormatError`. Repeated
+        HADDOCK3 modules must be declared with repeated bare headers
+        (``[module]`` written several times); the dotted form is a TOML
+        sub-table and would silently drop the intended step. Set to
+        ``False`` only when reloading internally generated ``params.cfg``
+        files, which legitimately store numeric sub-tables.
+
     Returns
     -------
     all_configs : dict
         A dictionary holding all the configuration file steps:
-        
+
         - 'raw_input': Original input file as provided by user.
         - 'cleaned_input': Regex cleaned input file.
         - 'loaded_cleaned_input': Dict of toml loaded cleaned input.
@@ -176,11 +198,24 @@ def loads(cfg_str: str) -> ParamDict:
     new_lines: list[str] = []
     cfg_lines = cfg_str.split(os.linesep)
     counter: dict[str, int] = {}
+    styles: dict[str, str] = {}
+
+    def register_style(name: str, style: str) -> None:
+        """Reject mixing numbered and unnumbered instances of a module."""
+        previous = styles.setdefault(name, style)
+        if strict and previous != style:
+            raise ConfigFormatError(
+                f"Inconsistent headers for module '{name}': a numbered "
+                f"instance (['{name}.N']) is mixed with an unnumbered one "
+                f"([{name}] or ['{name}']). Use one style consistently for "
+                "every instance of a module."
+            )
 
     # this for-loop normalizes all headers regardless of their input format.
     for line in cfg_lines:
         if group := _main_header_re.match(line):
             name = group[1]
+            register_style(name, "bare")
             counter.setdefault(name, 0)
             counter[name] += 1
             count = counter[name]
@@ -188,6 +223,15 @@ def loads(cfg_str: str) -> ParamDict:
 
         elif group := _main_quoted_header_re.match(line):
             name = group[1]
+            register_style(name, "numbered")
+            counter.setdefault(name, 0)
+            counter[name] += 1
+            count = counter[name]
+            new_line = f"['{name}.{count}']"
+
+        elif group := _main_quoted_bare_header_re.match(line):
+            name = group[1]
+            register_style(name, "bare")
             counter.setdefault(name, 0)
             counter[name] += 1
             count = counter[name]
@@ -195,6 +239,18 @@ def loads(cfg_str: str) -> ParamDict:
 
         elif group := _sub_header_re.match(line):
             name = group[1]
+            # A numeric first sub-segment (e.g. `[caprieval.1]`) is the
+            # ambiguous mix of the `.cfg` repeated-header format and TOML
+            # NOTE: For some reason internally haddock will generate this
+            # mix of toml-cfg - here we reject it unless we are reloading
+            # an internally generated `params.cfg` (strict=False)
+            if strict and group[2].split(".")[1].isdigit():
+                raise ConfigFormatError(
+                    f"Ambiguous config header '[{name}{group[2]}]': numeric "
+                    "dotted headers are not valid HADDOCK3 module syntax. "
+                    "To declare repeated modules use bare repeated headers: "
+                    f"'[{name}]' written several times or '[\"{name}.N\"]'"
+                )
             count = counter[name]  # name should be already defined here
             new_line = f"['{name}.{count}'{group[2]}]"
 
@@ -220,7 +276,7 @@ def loads(cfg_str: str) -> ParamDict:
         cfg_dict = toml.loads(cfg)  # Try to load it with the toml library
     except Exception as err:
         raise ConfigurationError(
-            "Some thing is wrong with the config file: " f"{str(err)}"
+            f"Some thing is wrong with the config file: {str(err)}"
         ) from err
 
     final_cfg = convert_variables_to_paths(cfg_dict)

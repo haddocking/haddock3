@@ -16,7 +16,7 @@ ambig_fname = "data/ambig-CDR-NMR-CSP.tbl"
 sampling = 1000
 #--------------------------------------------------------------------#
 # Evaluate the gdock models against the reference structure.
-[caprieval]
+["caprieval.1"]
 reference_fname = "data/4G6M-matched.pdb"
 #--------------------------------------------------------------------#
 # Select the top-scoring models for downstream refinement.
@@ -24,7 +24,7 @@ reference_fname = "data/4G6M-matched.pdb"
 select = 200
 #--------------------------------------------------------------------#
 # Re-evaluate after top-model selection.
-["caprieval.1"]
+["caprieval.2"]
 reference_fname = "data/4G6M-matched.pdb"
 #--------------------------------------------------------------------#
 # Refine docking models with flexible backbone and side chains.
@@ -34,7 +34,7 @@ ambig_fname = "data/ambig-CDR-NMR-CSP.tbl"
 unambig_fname = "data/unambig.tbl"
 #--------------------------------------------------------------------#
 # Evaluate models after flexible refinement.
-["caprieval.2"]
+["caprieval.3"]
 reference_fname = "data/4G6M-matched.pdb"
 #--------------------------------------------------------------------#
 # Final energy minimization to remove clashes and optimize geometry.
@@ -44,7 +44,7 @@ ambig_fname = "data/ambig-CDR-NMR-CSP.tbl"
 unambig_fname = "data/unambig.tbl"
 #--------------------------------------------------------------------#
 # Evaluate models after energy minimization.
-["caprieval.3"]
+["caprieval.4"]
 reference_fname = "data/4G6M-matched.pdb"
 #--------------------------------------------------------------------#
 # Cluster models by fraction of common contacts (FCC).
@@ -55,6 +55,6 @@ reference_fname = "data/4G6M-matched.pdb"
 top_models = 4
 #--------------------------------------------------------------------#
 # Final evaluation of cluster representatives.
-["caprieval.4"]
+["caprieval.5"]
 reference_fname = "data/4G6M-matched.pdb"
 # ====================================================================

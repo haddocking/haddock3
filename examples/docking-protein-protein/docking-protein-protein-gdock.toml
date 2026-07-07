@@ -26,7 +26,7 @@ ambig_fname = "data/e2a-hpr_air.tbl"
 sampling = 1000
 #--------------------------------------------------------------------#
 # Evaluate the gdock models against the reference structure.
-[caprieval]
+["caprieval.1"]
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 #--------------------------------------------------------------------#
 # Select the top-scoring models for downstream refinement.
@@ -34,7 +34,7 @@ reference_fname = "data/e2a-hpr_1GGR.pdb"
 select = 200
 #--------------------------------------------------------------------#
 # Re-evaluate after top-model selection.
-["caprieval.1"]
+["caprieval.2"]
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 #--------------------------------------------------------------------#
 # Refine docking models with flexible backbone and side chains.
@@ -43,7 +43,7 @@ tolerance = 5
 ambig_fname = "data/e2a-hpr_air.tbl"
 #--------------------------------------------------------------------#
 # Evaluate models after flexible refinement.
-["caprieval.2"]
+["caprieval.3"]
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 #--------------------------------------------------------------------#
 # Final energy minimization to remove clashes and optimize geometry.
@@ -52,7 +52,7 @@ tolerance = 5
 ambig_fname = "data/e2a-hpr_air.tbl"
 #--------------------------------------------------------------------#
 # Evaluate models after energy minimization.
-["caprieval.3"]
+["caprieval.4"]
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 #--------------------------------------------------------------------#
 # Cluster models by fraction of common contacts (FCC).
@@ -63,6 +63,6 @@ reference_fname = "data/e2a-hpr_1GGR.pdb"
 top_models = 4
 #--------------------------------------------------------------------#
 # Final evaluation of cluster representatives.
-["caprieval.4"]
+["caprieval.5"]
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 # ====================================================================

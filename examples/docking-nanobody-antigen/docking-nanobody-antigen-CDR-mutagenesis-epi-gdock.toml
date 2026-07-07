@@ -25,7 +25,7 @@ reference_fname = "data/7tgfB_ref.pdb"
 select = 200
 #--------------------------------------------------------------------#
 # Re-evaluate after top-model selection.
-[caprieval.1]
+["caprieval.1"]
 reference_fname = "data/7tgfB_ref.pdb"
 #--------------------------------------------------------------------#
 # Refine docking models with flexible backbone and side chains.
@@ -34,7 +34,7 @@ tolerance = 10
 ambig_fname = "data/7tgfB_twohit_ambig.tbl"
 #--------------------------------------------------------------------#
 # Evaluate models after flexible refinement.
-[caprieval.2]
+["caprieval.2"]
 reference_fname = "data/7tgfB_ref.pdb"
 #--------------------------------------------------------------------#
 # Final energy minimization to remove clashes and optimize geometry.
@@ -42,7 +42,7 @@ reference_fname = "data/7tgfB_ref.pdb"
 ambig_fname = "data/7tgfB_twohit_ambig.tbl"
 #--------------------------------------------------------------------#
 # Evaluate models after energy minimization.
-[caprieval.3]
+["caprieval.3"]
 reference_fname = "data/7tgfB_ref.pdb"
 #--------------------------------------------------------------------#
 # Cluster models by fraction of common contacts (FCC).
@@ -53,6 +53,6 @@ reference_fname = "data/7tgfB_ref.pdb"
 top_models = 4
 #--------------------------------------------------------------------#
 # Final evaluation of cluster representatives.
-[caprieval.4]
+["caprieval.4"]
 reference_fname = "data/7tgfB_ref.pdb"
 # ====================================================================

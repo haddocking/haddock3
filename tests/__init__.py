@@ -45,9 +45,24 @@ has_notebook = pytest.mark.skipif(
     not NOTEBOOK_ENABLED, reason="notebook dependencies not found"
 )
 
+try:
+    import gdock  # noqa: F401
+
+    GDOCK_ENABLED = True
+except ImportError:
+    GDOCK_ENABLED = False
+
+has_gdock = pytest.mark.skipif(not GDOCK_ENABLED, reason="gdock dependency not found")
+
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
 
-_CHROME_BINS = ("google-chrome", "google-chrome-stable", "chromium-browser", "chromium", "chrome")
+_CHROME_BINS = (
+    "google-chrome",
+    "google-chrome-stable",
+    "chromium-browser",
+    "chromium",
+    "chrome",
+)
 has_chrome = pytest.mark.skipif(
     not any(shutil.which(b) for b in _CHROME_BINS),
     reason="Google Chrome not found (required by Kaleido for PNG export)",

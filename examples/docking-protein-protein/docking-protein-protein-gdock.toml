@@ -1,0 +1,68 @@
+# ====================================================================
+# Protein-protein docking example with NMR-derived ambiguous interaction restraints
+#
+# NOTE: Sampling is performed with gdock instead of rigidbody
+#
+run_dir = "run1-gdock"
+ncores = 16
+molecules = ["data/e2aP_1F3G.pdb", "data/hpr_ensemble.pdb"]
+# ====================================================================
+# Generate CNS-compatible topology and parameters for all input molecules.
+[topoaa]
+autohis = false
+[topoaa.mol1]
+nhisd = 0
+nhise = 1
+hise_1 = 75
+[topoaa.mol2]
+nhisd = 1
+hisd_1 = 76
+nhise = 1
+hise_1 = 15
+#--------------------------------------------------------------------#
+# Sample docking conformations using a genetic algorithm.
+[gdock]
+ambig_fname = "data/e2a-hpr_air.tbl"
+sampling = 1000
+#--------------------------------------------------------------------#
+# Evaluate the gdock models against the reference structure.
+["caprieval.1"]
+reference_fname = "data/e2a-hpr_1GGR.pdb"
+#--------------------------------------------------------------------#
+# Select the top-scoring models for downstream refinement.
+[seletop]
+select = 200
+#--------------------------------------------------------------------#
+# Re-evaluate after top-model selection.
+["caprieval.2"]
+reference_fname = "data/e2a-hpr_1GGR.pdb"
+#--------------------------------------------------------------------#
+# Refine docking models with flexible backbone and side chains.
+[flexref]
+tolerance = 5
+ambig_fname = "data/e2a-hpr_air.tbl"
+#--------------------------------------------------------------------#
+# Evaluate models after flexible refinement.
+["caprieval.3"]
+reference_fname = "data/e2a-hpr_1GGR.pdb"
+#--------------------------------------------------------------------#
+# Final energy minimization to remove clashes and optimize geometry.
+[emref]
+tolerance = 5
+ambig_fname = "data/e2a-hpr_air.tbl"
+#--------------------------------------------------------------------#
+# Evaluate models after energy minimization.
+["caprieval.4"]
+reference_fname = "data/e2a-hpr_1GGR.pdb"
+#--------------------------------------------------------------------#
+# Cluster models by fraction of common contacts (FCC).
+[clustfcc]
+#--------------------------------------------------------------------#
+# Select the best-scoring models from each cluster.
+[seletopclusts]
+top_models = 4
+#--------------------------------------------------------------------#
+# Final evaluation of cluster representatives.
+["caprieval.5"]
+reference_fname = "data/e2a-hpr_1GGR.pdb"
+# ====================================================================

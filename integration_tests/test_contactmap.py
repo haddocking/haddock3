@@ -1,16 +1,16 @@
 """Integration-test of the CONTact MAP module."""
 
+import glob
 import os
-import pytest
 import tempfile
 from pathlib import Path
-import glob
 
+import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.contactmap import HaddockModule as CMapModule
+from haddock.libs.libutil import get_available_memory
 from haddock.modules.analysis.contactmap import DEFAULT_CONFIG as CONTMAP_CONF
-
+from haddock.modules.analysis.contactmap import HaddockModule as CMapModule
 from integration_tests import GOLDEN_DATA
 
 
@@ -55,6 +55,10 @@ class MockPreviousIO:
         return models
 
 
+@pytest.mark.skipif(
+    get_available_memory() < 4,
+    reason="not enough memory to run this test",
+)
 def test_contactmap_example(contactmap, monkeypatch, mocker):
     """Test the contact map module run."""
     # mock the previous_io behavior

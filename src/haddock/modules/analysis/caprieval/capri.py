@@ -59,7 +59,8 @@ def save_scoring_weights(cns_step: str) -> Path:
     scoring_params_fname : Path
         Path to the json file.
     """
-    cns_params = read_config(Path("..", cns_step, "params.cfg"))
+    # `params.cfg` is a mix of toml and cfg format, set strict to false
+    cns_params = read_config(Path("..", cns_step, "params.cfg"), strict=False)
     key = list(cns_params["final_cfg"].keys())[0]
     scoring_pars = {kv: cns_params["final_cfg"][key][kv] for kv in WEIGHTS}
 

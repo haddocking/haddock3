@@ -725,8 +725,15 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
     """
     # Case for choices
     if "choices" in param.keys():
-        if val not in (choices := param["choices"]):
-            return f'Value "{val}" is not among the accepted choices: {choices}'  # noqa : E501
+        if param['type'] == 'list':
+            if set(val) - set(param["choices"]):
+                return (
+                    f'Value "{val}" is not among the accepted choices: '
+                    f"{param['choices']}"
+                )
+        else:
+            if val not in (choices := param["choices"]):
+                return f'Value "{val}" is not among the accepted choices: {choices}'  # noqa : E501
     # Case for ranges
     elif "min" in param.keys() and "max" in param.keys():
         if val < param["min"] or val > param["max"]:

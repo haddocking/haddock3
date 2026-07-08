@@ -725,7 +725,7 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
     """
     # Case for choices
     if "choices" in param.keys():
-        if param["type"] == "list":
+        if param.get("type") == "list":
             if set(val) - set(param["choices"]):
                 return (
                     f'Value "{val}" is not among the accepted choices: '

@@ -14,10 +14,16 @@ filter_by:
   type: list
   minitems: 1
   maxitems: 6
+  choices:
+    - rmsd
+    - irmsd
+    - lrmsd
+    - ilrmsd
+    - fnat
+    - dockq
   title: Metrics to filter by.
   short: List of CAPRI metrics to use for filtering.
-  long: List of CAPRI metrics to filter on. Valid values are rmsd, irmsd, lrmsd,
-    ilrmsd, fnat, dockq. Each metric must have its corresponding
+  long: List of CAPRI metrics to filter on. Each metric must have its corresponding
     {metric}_filter_cutoff and {metric}_filter_out parameters set. All
     filters are applied simultaneously (AND logic), so a model must pass
     every active filter to be kept.

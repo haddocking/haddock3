@@ -75,13 +75,10 @@ class HaddockModule(ScoringModule):
         result_dic: dict[str, float] = deeprank_wrapper.run()
 
         # Deeprank predicts fnat (0 to 1, higher is better), but the rest of
-        # the pipeline expects lower scores to be better, so flip the sign
-        # by default.
-        sign = -1 if self.params["flip_score"] else 1
-
-        # Add the score obtained by deeprank back to the models
+        # the pipeline expects lower scores to be better, so the sign is
+        # flipped to match that convention.
         for model, model_path in zip(models_to_use, model_paths):
-            model.score = sign * result_dic[str(model_path)]
+            model.score = -result_dic[str(model_path)]
 
         # Pass the models ahead
         self.output_models: list[PDBFile] = models_to_use

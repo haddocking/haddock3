@@ -65,20 +65,3 @@ def test_deeprank_run(deeprank_module, mocker):
 
     assert model1.score == pytest.approx(-0.147, abs=1e-3)
     assert model2.score == pytest.approx(-0.102, abs=1e-3)
-
-
-@has_deeprank
-def test_deeprank_run_no_flip(deeprank_module, mocker):
-    """With `flip_score=False`, the raw fnat prediction must be kept as-is."""
-    deeprank_module.params["flip_score"] = False
-    deeprank_module.previous_io = MockPreviousIO(path=deeprank_module.path)
-    mocker.patch(
-        "haddock.modules.BaseHaddockModule.export_io_models",
-        return_value=None,
-    )
-
-    deeprank_module.run()
-
-    model1, model2 = deeprank_module.output_models
-    assert model1.score == pytest.approx(0.147, abs=1e-3)
-    assert model2.score == pytest.approx(0.102, abs=1e-3)

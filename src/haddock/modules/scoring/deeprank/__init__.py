@@ -68,15 +68,20 @@ class HaddockModule(ScoringModule):
             ncores=ncores,
             chain_i=self.params["chain_i"],
             chain_j=self.params["chain_j"],
-            path=".",
         )
 
-        deeprank_wrapper.run()
-        result_dic: dict[str, float] = deeprank_wrapper.retrieve_scores()
+        # `run()` executes entirely inside a temporary directory and returns
+        # only the scores - none of deeprank's intermediate files land here
+        result_dic: dict[str, float] = deeprank_wrapper.run()
+
+        # Deeprank predicts fnat (0 to 1, higher is better), but the rest of
+        # the pipeline expects lower scores to be better, so flip the sign
+        # by default.
+        sign = -1 if self.params["flip_score"] else 1
 
         # Add the score obtained by deeprank back to the models
         for model, model_path in zip(models_to_use, model_paths):
-            model.score = result_dic[str(model_path)]
+            model.score = sign * result_dic[str(model_path)]
 
         # Pass the models ahead
         self.output_models: list[PDBFile] = models_to_use

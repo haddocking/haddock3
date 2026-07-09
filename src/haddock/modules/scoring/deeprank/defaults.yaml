@@ -18,3 +18,14 @@ chain_j:
   long: Chain ID of the second partner used by deeprank for scoring.
   group: "scoring"
   explevel: easy
+flip_score:
+  default: true
+  type: boolean
+  title: Flip the sign of the predicted score
+  short: Negate deeprank's predicted fnat so lower is better.
+  long: Deeprank predicts a fraction of native contacts (fnat) between 0 and
+    1, where 1 is the best score. The rest of the HADDOCK3 pipeline (e.g.
+    caprieval, ranking) assumes lower scores are better, so by default the
+    predicted score is negated to match that convention.
+  group: "scoring"
+  explevel: easy

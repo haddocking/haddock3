@@ -1,6 +1,7 @@
 # Changelog
 
 =======
+- 2026-07-09: Added `deeprank` scoring module using deeprank-gnn-esm - Issue #569
 - 2026-07-07: Re-add `gdock` as a sampling module
 - 2026-07-02: Added support 1-O-methyl-2-N-Acetyl-alpha-D-galactopyranose (NGM) - Issue #1608
 - 2026-07-01: Removed unused guard for “previous module produced iterable” - Issue #1604

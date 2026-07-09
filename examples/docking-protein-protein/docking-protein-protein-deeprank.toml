@@ -30,7 +30,6 @@ select = 200
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 #####################################################################
 [flexref]
-concat = 5
 tolerance = 5
 ambig_fname = "data/e2a-hpr_air.tbl"
 #####################################################################
@@ -38,7 +37,6 @@ ambig_fname = "data/e2a-hpr_air.tbl"
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 #####################################################################
 [emref]
-concat = 5
 tolerance = 5
 ambig_fname = "data/e2a-hpr_air.tbl"
 #####################################################################

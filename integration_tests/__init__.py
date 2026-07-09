@@ -34,17 +34,6 @@ except ImportError:
 has_mpi = pytest.mark.skipif(not MPI_ENABLED, reason="MPI is not enabled")
 
 try:
-    import deeprank_gnn.predict  # noqa: F401
-
-    DEEPRANK_ENABLED = True
-except (ImportError, ModuleNotFoundError):
-    DEEPRANK_ENABLED = False
-
-has_deeprank = pytest.mark.skipif(
-    not DEEPRANK_ENABLED,
-    reason="deeprank_gnn is not installed or not supported on this platform",
-)
-try:
     import gdock  # noqa: F401
 
     GDOCK_ENABLED = True

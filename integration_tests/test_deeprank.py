@@ -10,7 +10,8 @@ from haddock.libs.libontology import PDBFile
 from haddock.modules.scoring.deeprank import DEFAULT_CONFIG as DEEPRANK_CONF
 from haddock.modules.scoring.deeprank import HaddockModule as DeeprankModule
 
-from integration_tests import GOLDEN_DATA, has_deeprank
+from integration_tests import GOLDEN_DATA
+from tests.conftest import has_deeprank
 
 
 class MockPreviousIO:
@@ -62,6 +63,5 @@ def test_deeprank_run(deeprank_module, mocker):
     assert model2.score is not None
     assert isinstance(model2.score, float)
 
-    # FIXME: Make sure the results are consistent
-    # assert model1.score == pytest.approx(0.119)
-    # assert model2.score == pytest.approx(0.081)
+    assert model1.score == pytest.approx(0.147, abs=1e-3)
+    assert model2.score == pytest.approx(0.102, abs=1e-3)

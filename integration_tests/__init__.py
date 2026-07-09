@@ -33,8 +33,6 @@ except ImportError:
 
 has_mpi = pytest.mark.skipif(not MPI_ENABLED, reason="MPI is not enabled")
 
-import platform as _platform
-
 try:
     import deeprank_gnn.predict  # noqa: F401
 
@@ -46,6 +44,14 @@ has_deeprank = pytest.mark.skipif(
     not DEEPRANK_ENABLED,
     reason="deeprank_gnn is not installed or not supported on this platform",
 )
+try:
+    import gdock  # noqa: F401
+
+    GDOCK_ENABLED = True
+except ImportError:
+    GDOCK_ENABLED = False
+
+has_gdock = pytest.mark.skipif(not GDOCK_ENABLED, reason="gdock dependency not found")
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
 is_linux_x86_64 = pytest.mark.skipif(
     platform.system().lower() != "linux" or platform.machine().lower() != "x86_64",

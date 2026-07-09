@@ -7,7 +7,6 @@ from pathlib import Path
 
 from haddock.libs.libgrid import ping_dirac
 from haddock.modules import modules_category
-import platform as _platform
 
 tests_path = Path(__file__).resolve().parents[0]
 data_folder = Path(tests_path, "data")
@@ -45,6 +44,15 @@ has_notebook = pytest.mark.skipif(
     not NOTEBOOK_ENABLED, reason="notebook dependencies not found"
 )
 
+try:
+    import gdock  # noqa: F401
+
+    GDOCK_ENABLED = True
+except ImportError:
+    GDOCK_ENABLED = False
+
+has_gdock = pytest.mark.skipif(not GDOCK_ENABLED, reason="gdock dependency not found")
+
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
 
 try:
@@ -58,7 +66,6 @@ has_deeprank = pytest.mark.skipif(
     not DEEPRANK_ENABLED,
     reason="deeprank_gnn is not installed or not supported on this platform",
 )
-
 _CHROME_BINS = (
     "google-chrome",
     "google-chrome-stable",

@@ -55,10 +55,7 @@ class Persistent:
         self.restr_fname = restr_fname
 
     def __repr__(self) -> str:
-        rep = (
-            f"[{self.file_type}|{self.created}]"
-            f"{Path(self.path) / self.file_name}"
-        )
+        rep = f"[{self.file_type}|{self.created}]{Path(self.path) / self.file_name}"
         return rep
 
     def is_present(self) -> bool:
@@ -97,7 +94,7 @@ class PDBFile(Persistent):
             path=path,
             md5=md5,
             restr_fname=restr_fname,
-            )
+        )
 
         self.topology = topology
         self.score: Optional[float] = score
@@ -109,10 +106,11 @@ class PDBFile(Persistent):
         self.seed: Optional[int] = None
         self.ligand_top_fname = ligand_top_fname
         self.ligand_param_fname = ligand_param_fname
-        self.aa_topology: Optional[Union[List[TopologyFile], TopologyFile]] = aa_topology
+        self.aa_topology: Optional[Union[List[TopologyFile], TopologyFile]] = (
+            aa_topology
+        )
         self.cgtoaa_tbl: Optional[Union[List[str], str]] = cgtoaa_tbl
         self.shape: Optional[Union[List[bool], bool]] = shape
-        self.len = score
 
     def __lt__(self, other: "PDBFile") -> bool:
         return self.score < other.score
@@ -175,7 +173,9 @@ class ModuleIO:
             self.output = content["output"]  # type: ignore
 
     def retrieve_models(
-        self, crossdock: bool = False, individualize: bool = False,
+        self,
+        crossdock: bool = False,
+        individualize: bool = False,
     ) -> list[Union[PDBFile, list[PDBFile]]]:
         """Retrieve the PDBobjects to be used in the module."""
         # Get the models generated in previous step
@@ -208,7 +208,7 @@ class ModuleIO:
             elif crossdock and not individualize:
                 model_list = [
                     values for values in itertools.product(*input_dic.values())
-                    ]
+                ]
             elif individualize:
                 model_list = list(itertools.chain(*input_dic.values()))
 

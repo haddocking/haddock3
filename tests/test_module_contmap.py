@@ -104,12 +104,6 @@ def fixture_contactmap(monkeypatch):
         )
 
 
-@pytest.fixture(name="cluster_input_iter")
-def fixture_cluster_input_iter(protprot_input_list) -> Callable:
-    """Generate an iterable of files path."""
-    return iter(protprot_input_list)
-
-
 @pytest.fixture(name="params")
 def fixture_params() -> dict:
     """Set of parameters."""
@@ -350,15 +344,6 @@ def test_contactmap_run_errors(contactmap, protprot_input_list, mocker):
     """Test content of _run() function from __init__.py HaddockModule class."""
     contactmap.previous_io = protprot_input_list
     # run main module _run() function
-    with pytest.raises(RuntimeError):
-        module_sucess = contactmap.run()
-        assert module_sucess is None
-
-
-def test_contactmap_run_iter_errors(contactmap, cluster_input_iter, mocker):
-    """Test content of _run() function from __init__.py HaddockModule class."""
-    contactmap.previous_io = cluster_input_iter
-    # run main module _run() function.
     with pytest.raises(RuntimeError):
         module_sucess = contactmap.run()
         assert module_sucess is None

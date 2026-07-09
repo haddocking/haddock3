@@ -65,9 +65,6 @@ class HaddockModule(BaseHaddockModule):
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        if type(self.previous_io) == iter:
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
         models = []
         try:
             models = self.previous_io.retrieve_models(individualize=True)

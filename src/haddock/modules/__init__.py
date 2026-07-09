@@ -71,7 +71,9 @@ incompatible_defaults_params = find_incompatible_parameters(modules_defaults_pat
 
 config_readers = {
     ".yaml": read_from_yaml_config,
-    ".cfg": config.load,
+    # module params are internally generated as a mix of toml and cfg format
+    # set strict to false
+    ".cfg": partial(config.load, strict=False),
 }
 
 _step_folder_regex = tuple(

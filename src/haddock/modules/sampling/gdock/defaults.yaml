@@ -1,0 +1,71 @@
+#
+# Group distance restraints
+#
+ambig_fname:
+  default: ""
+  type: file
+  title: Ambiguous distance restraints filename
+  short: Filename of the ambiguous distance restraints file
+  long: Filename of the ambiguous distance restraints file. Restraints
+    between the receptor and ligand chains are converted to residue pairs
+    and used by gdock to bias the genetic algorithm search.
+  group: "distance restraints"
+  explevel: easy
+#
+# Group sampling
+#
+max_generations:
+  default: 250
+  type: integer
+  min: 1
+  max: 100000
+  title: Maximum number of generations
+  short: Maximum number of genetic algorithm generations.
+  long: Maximum number of genetic algorithm generations run by gdock.
+  group: "sampling"
+  explevel: easy
+number_of_individuals:
+  default: 150
+  type: integer
+  min: 1
+  max: 100000
+  title: Number of individuals
+  short: Number of individuals in the GA population.
+  long: Number of individuals (chromosomes) in each generation of gdock's
+    genetic algorithm. Larger populations explore the conformational space more
+    broadly but increase runtime proportionally.
+  group: "sampling"
+  explevel: easy
+seed:
+  default: 42
+  type: integer
+  min: 0
+  max: 999999999
+  title: Random seed
+  short: Random seed used by gdock's genetic algorithm.
+  long: Random seed used by gdock's genetic algorithm, for reproducibility.
+  group: "sampling"
+  explevel: easy
+sampling:
+  default: 1000
+  type: integer
+  min: 1
+  max: 500000
+  title: Number of maximum models to generate
+  short: Maximum number of unique conformations gdock collects per input model.
+  long: Controls gdock's Hall-of-Fame capacity. gdock accumulates up to this
+    many unique conformations during the genetic algorithm run and returns them
+    all sorted by fitness.
+  group: "sampling"
+  explevel: easy
+crossdock:
+  default: true
+  type: boolean
+  title: Cross docking of starting ensembles
+  short: If true, all combinations of input models are docked; if false, models are paired by index.
+  long: Controls how starting model ensembles are combined. When true (default), gdock docks
+    all combinations of receptor x ligand models (same as rigidbody crossdock=true).
+    When false, the first receptor model is paired with the first ligand model, etc.;
+    this requires both ensembles to have the same number of models.
+  group: "sampling"
+  explevel: expert

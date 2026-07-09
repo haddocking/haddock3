@@ -1,3 +1,5 @@
+"""Wrapper around deeprank-gnn-esm for use as a HADDOCK3 scoring backend."""
+
 import csv
 import os
 import sys
@@ -5,14 +7,15 @@ from pathlib import Path
 
 
 def deeprank_is_available() -> bool:
-    try:
-        import deeprank_gnn  # type: ignore
-    except ImportError:
-        raise
+    """Check whether the `deeprank_gnn` package is importable."""
+    import deeprank_gnn  # type: ignore  # noqa: F401
+
     return True
 
 
-class DeeprankWraper:
+class DeeprankWrapper:
+    """Run deeprank-gnn-esm on a set of models and collect predicted scores."""
+
     def __init__(self, models, ncores, chain_i, chain_j, path):
         self.models = models
         self.chain_i = chain_i

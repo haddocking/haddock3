@@ -12,7 +12,6 @@ mol1 = { nhisd = 0, nhise = 1, hise_1 = 75 }
 mol2 = { nhisd = 1, hisd_1 = 76, nhise = 1, hise_1 = 15 }
 #####################################################################
 [rigidbody]
-concat = 20
 tolerance = 5
 ambig_fname = "data/e2a-hpr_air.tbl"
 sampling = 1000

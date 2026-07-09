@@ -2,7 +2,7 @@
 # Protein-protein docking example with NMR-derived ambiguous 
 #  interaction restraints
 # ====================================================================
-run_dir = "run1-deeprank"
+run_dir = "run1-deeprank-test"
 ncores = 16
 molecules = ["data/e2aP_1F3G.pdb", "data/hpr_ensemble.pdb"]
 #####################################################################
@@ -14,7 +14,7 @@ mol2 = { nhisd = 1, hisd_1 = 76, nhise = 1, hise_1 = 15 }
 [rigidbody]
 tolerance = 5
 ambig_fname = "data/e2a-hpr_air.tbl"
-sampling = 1000
+sampling = 20
 #####################################################################
 [caprieval]
 reference_fname = "data/e2a-hpr_1GGR.pdb"
@@ -23,11 +23,11 @@ reference_fname = "data/e2a-hpr_1GGR.pdb"
 chain_i = "A"
 chain_j = "B"
 #####################################################################
-[seletop]
-select = 200
-#####################################################################
 [caprieval]
 reference_fname = "data/e2a-hpr_1GGR.pdb"
+#####################################################################
+[seletop]
+select = 5
 #####################################################################
 [caprieval]
 reference_fname = "data/e2a-hpr_1GGR.pdb"

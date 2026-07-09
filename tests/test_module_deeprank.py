@@ -1,17 +1,15 @@
 """Tests for the deeprank scoring module wrapper."""
 
-import sys
 import tempfile
 import shutil
-from unittest.mock import MagicMock, patch
 from pathlib import Path
 
 import pytest
 
-from haddock.libs.libontology import PDBFile
-from haddock.modules.scoring.deeprank.deeprank import DeeprankWraper
+from haddock.modules.scoring.deeprank.deeprank import DeeprankWrapper
 
-from . import golden_data as GOLDEN_DATA, has_deeprank
+from . import golden_data as GOLDEN_DATA
+from .conftest import has_deeprank
 
 
 @pytest.fixture
@@ -20,7 +18,7 @@ def deeprank_wrapper():
         src = GOLDEN_DATA / "protprot_complex_1.pdb"
         dst = Path(temp_dir, src.name)
         shutil.copy(src, dst)
-        yield DeeprankWraper(
+        yield DeeprankWrapper(
             models=[dst],
             ncores=1,
             chain_i="A",

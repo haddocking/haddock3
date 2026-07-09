@@ -11,6 +11,18 @@ from haddock.libs.libontology import PDBFile
 
 from . import golden_data
 
+try:
+    import deeprank_gnn.predict  # noqa: F401
+
+    DEEPRANK_ENABLED = True
+except (ImportError, ModuleNotFoundError):
+    DEEPRANK_ENABLED = False
+
+has_deeprank = pytest.mark.skipif(
+    not DEEPRANK_ENABLED,
+    reason="deeprank_gnn is not installed or not supported on this platform",
+)
+
 
 def remove_aln_files(class_name):
     """Helper function to remove intermediary alignment files."""

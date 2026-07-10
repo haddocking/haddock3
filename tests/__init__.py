@@ -8,7 +8,6 @@ from pathlib import Path
 from haddock.libs.libgrid import ping_dirac
 from haddock.modules import modules_category
 
-
 tests_path = Path(__file__).resolve().parents[0]
 data_folder = Path(tests_path, "data")
 golden_data = Path(tests_path, "golden_data")

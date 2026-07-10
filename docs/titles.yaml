@@ -35,6 +35,7 @@ modules:
   sasascore: "Surface Accessibility Scoring module"
   prodigyprotein: "Binding affinity prediction with PRODIGY"
   prodigyligand: "Ligand binding affinity prediction with PRODIGY-lig"
+  deeprank: "Deep learning (GNN) scoring module"
   filter: "Filtering module"
   caprifilter: "CAPRI Filtering module"
   cgtoaa: "Coarse-grained to all-atom backmapping module"

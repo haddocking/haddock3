@@ -53,6 +53,7 @@ all categories and modules. Below is a summary of the available modules:
 * **Scoring modules**
     * `emscoring`: *scoring of a complex performing a short EM (builds the topology and all missing atoms).*
     * `mdscoring`: *scoring of a complex performing a short MD in explicit solvent + EM (builds the topology and all missing atoms).*
+    * `deeprank`: *scoring of a complex using a graph neural network (deeprank-gnn-esm).*
 * **Analysis modules**
     * `alascan`: *Performs alanine scanning on the models generated in the previous step.*
     * `caprieval`: *Calculates CAPRI metrics (i-RMDS, l-RMSD, Fnat, DockQ) with respect to the top scoring model or reference structure if provided.*

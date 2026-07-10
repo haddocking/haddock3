@@ -86,7 +86,7 @@ jobs:
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: install haddock3 with extra dependencies
-        run: uv sync --extra mpi --extra dev --extra docs --extra notebooks
+        run: uv sync --extra mpi --extra dev --extra docs --extra notebooks --extra deeprank-gnn-esm
 
       - name: install openmm
         # Not a pyproject.toml extra: pdbfixer has no PyPI release and is
@@ -161,7 +161,7 @@ jobs:
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: install haddock3 with extra dependencies
-        run: uv sync --extra mpi --extra dev --extra docs --extra notebooks
+        run: uv sync --extra mpi --extra dev --extra docs --extra notebooks --extra deeprank-gnn-esm
 
       - name: run unit tests
         run: uv run pytest -x -v --random-order tests/

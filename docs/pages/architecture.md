@@ -208,7 +208,7 @@ modules/
 ├── topology/            # topoaa, topocg
 ├── sampling/            # rigidbody, lightdock
 ├── refinement/          # flexref, emref, mdref, cgtoaa, openmm
-├── scoring/             # emscoring, mdscoring, prodigyprotein, prodigyligand, sasascore
+├── scoring/             # emscoring, mdscoring, prodigyprotein, prodigyligand, sasascore, deeprank
 ├── analysis/            # caprieval, clustfcc, clustrmsd, rmsdmatrix, ilrmsdmatrix,
 │                        #   seletop, seletopclusts, alascan, contactmap, filter
 ├── extras/              # exit

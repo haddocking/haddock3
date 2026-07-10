@@ -748,7 +748,10 @@ def rank_according_to_score(
                               its rank based on the 'score'.
     """
     score_rankkey_values = [(k, v["score"]) for k, v in data.items()]
-    score_rankkey_values.sort(key=lambda x: x[1])
+    score_rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False,
+    )
 
     for i, k in enumerate(score_rankkey_values):
         data_idx, _ = k
@@ -969,7 +972,10 @@ def capri_cluster_analysis(
 
     # Rank according to the score
     score_rankkey_values = [(key, v["score"]) for key, v in output_dic.items()]
-    score_rankkey_values.sort(key=lambda x: x[1])
+    score_rankkey_values.sort(
+        key=lambda x: x[1], 
+        reverse=True if not sort_ascending else False,
+    )
     for i, k in enumerate(score_rankkey_values):
         idx, _ = k
         output_dic[idx]["caprieval_rank"] = i + 1

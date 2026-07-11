@@ -973,7 +973,7 @@ def capri_cluster_analysis(
     # Rank according to the score
     score_rankkey_values = [(key, v["score"]) for key, v in output_dic.items()]
     score_rankkey_values.sort(
-        key=lambda x: x[1], 
+        key=lambda x: x[1],
         reverse=True if not sort_ascending else False,
     )
     for i, k in enumerate(score_rankkey_values):

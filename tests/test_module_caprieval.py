@@ -9,6 +9,7 @@ import pytest
 from haddock.libs.libcapri import (
     CAPRI,
     capri_cluster_analysis,
+    rank_according_to_score,
 )
 from haddock.modules.analysis.caprieval.capri import get_previous_cns_step
 
@@ -203,6 +204,9 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list, monke
             path=Path("."),
         )
 
+        # With sort_ascending=False the caprieval_rank is assigned by score in
+        # descending order, so the highest-scoring cluster (id 2, score 50) is
+        # ranked first.
         observed_outf_l = read_capri_file("capri_clt.txt")
         expected_outf_l = [
             [
@@ -219,6 +223,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list, monke
                 "lrmsd_std",
                 "dockq",
                 "dockq_std",
+                "ilrmsd",
+                "ilrmsd_std",
                 "rmsd",
                 "rmsd_std",
                 "caprieval_rank",
@@ -237,9 +243,11 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list, monke
                 "0.000",
                 "nan",
                 "nan",
+                "4.300",
+                "0.000",
                 "0.010",
                 "0.000",
-                "2",
+                "1",
             ],
             [
                 "1",
@@ -255,11 +263,52 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list, monke
                 "0.000",
                 "nan",
                 "nan",
+                "4.300",
+                "0.000",
                 "0.010",
                 "0.000",
-                "1",
+                "2",
             ],
         ]
+        assert observed_outf_l == expected_outf_l
+
+
+def test_rank_according_to_score_ascending():
+    """Test that the lowest score is ranked first when sort_ascending is True."""
+    data = {
+        0: {"score": 42.0, "irmsd": 1.0},
+        1: {"score": 50.0, "irmsd": 2.0},
+        2: {"score": 10.0, "irmsd": 3.0},
+    }
+    ranked = rank_according_to_score(data, sort_key="score", sort_ascending=True)
+
+    # Returned dict is keyed by rank (1..n) in ascending score order
+    assert [v["score"] for v in ranked.values()] == [10.0, 42.0, 50.0]
+    # caprieval_rank follows the score: lowest score gets rank 1
+    assert ranked[1]["score"] == 10.0
+    assert ranked[1]["caprieval_rank"] == 1
+    assert ranked[2]["caprieval_rank"] == 2
+    assert ranked[3]["score"] == 50.0
+    assert ranked[3]["caprieval_rank"] == 3
+
+
+def test_rank_according_to_score_descending():
+    """Test that the highest score is ranked first when sort_ascending is False."""
+    data = {
+        0: {"score": 42.0, "irmsd": 1.0},
+        1: {"score": 50.0, "irmsd": 2.0},
+        2: {"score": 10.0, "irmsd": 3.0},
+    }
+    ranked = rank_according_to_score(data, sort_key="score", sort_ascending=False)
+
+    # Returned dict is keyed by rank (1..n) in descending score order
+    assert [v["score"] for v in ranked.values()] == [50.0, 42.0, 10.0]
+    # caprieval_rank follows the score: highest score gets rank 1
+    assert ranked[1]["score"] == 50.0
+    assert ranked[1]["caprieval_rank"] == 1
+    assert ranked[2]["caprieval_rank"] == 2
+    assert ranked[3]["score"] == 10.0
+    assert ranked[3]["caprieval_rank"] == 3
 
 
 def test_get_previous_cns_step():

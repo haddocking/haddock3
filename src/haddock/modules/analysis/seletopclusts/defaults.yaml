@@ -36,7 +36,7 @@ sort_ascending:
   type: boolean
   title: Sort in ascending order
   short: Sort in ascending order.
-  long: Sort in ascending order. To be used when a higher positive score corresponds to a better predicted model quality.  
+  long: Sort in ascending order.  “sort_ascending = false” should be used when a higher score corresponds to a better predicted model quality and is only used if “sortby” is set to "score".
   group: analysis
   explevel: easy
 cluster_score_threshold:

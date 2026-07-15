@@ -11,8 +11,7 @@ import pytest
 
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.seletopclusts import DEFAULT_CONFIG
-from haddock.modules.analysis.seletopclusts import \
-    HaddockModule as SeleTopClustModule
+from haddock.modules.analysis.seletopclusts import HaddockModule as SeleTopClustModule
 from haddock.modules.analysis.seletopclusts.seletopclusts import (
     map_clusters_models,
     rank_clust_order,
@@ -20,7 +19,7 @@ from haddock.modules.analysis.seletopclusts.seletopclusts import (
     size_clust_order,
     sort_models,
     write_selected_models,
-    )
+)
 
 from . import golden_data
 

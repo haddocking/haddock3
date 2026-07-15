@@ -49,9 +49,15 @@ class HaddockModule(BaseHaddockModule):
         models_to_select: list[PDBFile] = [
             p for p in self.previous_io.output if p.file_type == Format.PDB
         ]
+        if self.params["sort_ascending"]:
+            reverse = False
+        else:
+            reverse = True
+        if reverse:
+            self.log("Selecting models with the highest score")
 
         # sort the models based on their score
-        models_to_select.sort(key=lambda x: x.score)
+        models_to_select.sort(key=lambda x: x.score, reverse=reverse)
 
         if len(models_to_select) < self.params["select"]:
             self.log(

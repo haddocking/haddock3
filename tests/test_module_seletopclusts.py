@@ -4,6 +4,7 @@ import math
 import os
 import shutil
 import tempfile
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -57,6 +58,8 @@ def fixture_clustered_models() -> list[PDBFile]:
                 # Add attributes
                 pdbfile.clt_rank = clt_rank
                 pdbfile.clt_model_rank = mdl_rank
+                # Lower cluster rank -> better (lower) average score
+                pdbfile.score = float(clt_rank * 100 + mdl_rank)
                 models.append(pdbfile)
     return models
 
@@ -226,6 +229,7 @@ def test_select_top_ranked_clusts_models(clustered_models):
     # Test 1 model, 1 cluster
     selected_models, _notes = select_top_clusts_models(
         "score",
+        False,
         clustered_models,
         1,
         1,
@@ -237,6 +241,7 @@ def test_select_top_ranked_clusts_models(clustered_models):
     # Test max models
     selected_models, _notes = select_top_clusts_models(
         "score",
+        False,
         clustered_models,
         2,
         8,
@@ -253,6 +258,7 @@ def test_select_top_ranked_clusts_models(clustered_models):
     # Test max models and max clusters
     selected_models, _notes = select_top_clusts_models(
         "score",
+        False,
         clustered_models,
         NB_CLUSTERS + 2,
         NB_CLUSTERS + MDL_RANK_INCREMENT + 1,
@@ -268,6 +274,7 @@ def test_select_top_ranked_clusts_models(clustered_models):
     # Test unspecified nb models, max clusters
     selected_models, _notes = select_top_clusts_models(
         "score",
+        False,
         clustered_models,
         NB_CLUSTERS + 2,
         math.nan,
@@ -281,23 +288,47 @@ def test_select_top_ranked_clusts_models(clustered_models):
             ind += 1
 
 
+def test_select_top_ranked_clusts_models_reverse(clustered_models):
+    """Naming follows the reversed (high-to-low score) cluster ranking."""
+    selected_models, _notes = select_top_clusts_models(
+        "score",
+        True,
+        clustered_models,
+        NB_CLUSTERS + 2,
+        math.nan,
+    )
+    assert len(selected_models) == len(clustered_models)
+    ind = 0
+    # Reverse score order selects worst-scoring cluster first (orig ranks
+    # 3, 2, 1), renumbered to new ranks 1, 2, 3.
+    for new_rank, orig_rank in enumerate(range(NB_CLUSTERS, 0, -1), start=1):
+        nb_models = orig_rank + MDL_RANK_INCREMENT - 1
+        for mdl_rank in range(1, nb_models + 1):
+            assert selected_models[ind].clt_rank == new_rank
+            assert selected_models[ind].clt_model_rank == mdl_rank
+            ind += 1
+
+
 def test_select_top_sized_clusts_models(clustered_models):
     """Test select_top_clusts_models behavior with size ordered clusters."""
     # Test 1 model, 1 cluster
     selected_models, _notes = select_top_clusts_models(
         "size",
-        clustered_models,
+        False,
+        deepcopy(clustered_models),
         1,
         1,
     )
     assert len(selected_models) == 1
-    assert selected_models[0].clt_rank == 3
+    # Biggest cluster (orig rank 3) is renamed to rank 1
+    assert selected_models[0].clt_rank == 1
     assert selected_models[0].clt_model_rank == 1
 
     # Test max models
     selected_models, _notes = select_top_clusts_models(
         "size",
-        clustered_models,
+        False,
+        deepcopy(clustered_models),
         2,
         8,
     )
@@ -313,30 +344,36 @@ def test_select_top_sized_clusts_models(clustered_models):
     # Test max models and max clusters
     selected_models, _notes = select_top_clusts_models(
         "size",
-        clustered_models,
+        False,
+        deepcopy(clustered_models),
         NB_CLUSTERS + 2,
         NB_CLUSTERS + MDL_RANK_INCREMENT + 1,
     )
     assert len(selected_models) == len(clustered_models)
     ind = 0
-    for clt_rank in range(NB_CLUSTERS, 0, -1):
-        for mdl_rank in range(1, clt_rank + MDL_RANK_INCREMENT):
-            assert selected_models[ind].clt_rank == clt_rank
+    # Size order selects biggest cluster first (orig ranks 3, 2, 1),
+    # renumbered to new ranks 1, 2, 3.
+    for new_rank, orig_rank in enumerate(range(NB_CLUSTERS, 0, -1), start=1):
+        nb_models = orig_rank + MDL_RANK_INCREMENT - 1
+        for mdl_rank in range(1, nb_models + 1):
+            assert selected_models[ind].clt_rank == new_rank
             assert selected_models[ind].clt_model_rank == mdl_rank
             ind += 1
 
     # Test unspecified nb models, max clusters
     selected_models, _notes = select_top_clusts_models(
         "size",
-        clustered_models,
+        False,
+        deepcopy(clustered_models),
         NB_CLUSTERS + 2,
         math.nan,
     )
     assert len(selected_models) == len(clustered_models)
     ind = 0
-    for clt_rank in range(NB_CLUSTERS, 0, -1):
-        for mdl_rank in range(1, clt_rank + MDL_RANK_INCREMENT):
-            assert selected_models[ind].clt_rank == clt_rank
+    for new_rank, orig_rank in enumerate(range(NB_CLUSTERS, 0, -1), start=1):
+        nb_models = orig_rank + MDL_RANK_INCREMENT - 1
+        for mdl_rank in range(1, nb_models + 1):
+            assert selected_models[ind].clt_rank == new_rank
             assert selected_models[ind].clt_model_rank == mdl_rank
             ind += 1
 

@@ -31,3 +31,21 @@ sortby:
   long: if the selection is done by 'score' the average score of the top (4) models of each cluster is used to define the cluster rank. When clustering by 'size', a bigger cluster size corresponds to a higher rank. By default, 'score' is selected.
   group: analysis
   explevel: easy
+sort_ascending:
+  default: true
+  type: boolean
+  title: Sort in ascending order
+  short: Sort in ascending order.
+  long: Sort in ascending order.
+  group: analysis
+  explevel: easy
+cluster_score_threshold:
+  default: 4
+  type: integer
+  min: 1
+  max: 99999
+  title: Number of models used to compute a cluster's average score
+  short: Number of best-scoring models per cluster used to compute its average score. By default 4.
+  long: When ranking clusters by 'score', the average score of this many best-scoring models of each cluster is used to define the cluster rank. By default 4.
+  group: analysis
+  explevel: easy

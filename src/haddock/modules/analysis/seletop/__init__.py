@@ -51,6 +51,7 @@ class HaddockModule(BaseHaddockModule):
         ]
         if self.params["sort_ascending"]:
             reverse = False
+            self.log("Selecting models with the lowest score")
         else:
             reverse = True
         if reverse:

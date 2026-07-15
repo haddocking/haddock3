@@ -63,7 +63,10 @@ class HaddockModule(BaseHaddockModule):
         reverse = not self.params["sort_ascending"]
         if reverse and self.params["sortby"] != "size":
             self.log("Selecting clusters with the highest score first")
+        elif not reverse and self.params["sortby"] != "size":
+            self.log("Selecting clusters with the lowest score first")
         else:
+            self.log("Selecting clusters with the largest size first")
             self.log("Selecting clusters with the lowest score first")
         # Retrieve list of previous models
         models_to_select = self.previous_io.retrieve_models()

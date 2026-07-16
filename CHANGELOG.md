@@ -1,6 +1,16 @@
 # Changelog
 
 - 2026-06-26: Removed duplicated definition in param files - Issue ##1589
+- 2026-07-13: Added option to select models/clusters in reverse order - Issue #1620
+- 2026-07-10: Corrected ranking in caprieval for reverse sorting - Issue #1621
+- 2026-07-09: Added `deeprank` scoring module using deeprank-gnn-esm - Issue #569
+- 2026-07-07: Re-add `gdock` as a sampling module
+- 2026-07-02: Added support 1-O-methyl-2-N-Acetyl-alpha-D-galactopyranose (NGM) - Issue #1608
+- 2026-07-01: Removed unused guard for “previous module produced iterable” - Issue #1604
+- 2026-06-30: Added caprifilter module, moved shared capri calculation to libcapri - Issue #1550
+- 2026-06-29: Added support 1-O-methyl-2-N-Acetyl-alpha-D-glucopyranose (NAA) - Issue #1593
+- 2026-06-29: Fixed the cgtoaa reading to cg-to-aa restraints - Issue #1592
+- 2026-06-26: Corrected net charge for O1-methylated NAM - Issue #1586
 - 2026-06-18: Added support for O1-methylated NAG - Issue #1579
 - 2026-06-18: Added support for O-glycosylated serine - Issue #1577
 - 2026-06-14: Dropped support for Python 3.9, minimum required version is now 3.10

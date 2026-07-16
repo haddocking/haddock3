@@ -9,7 +9,7 @@ contributing effectively.
 
 ### 1. Prerequisites
 
-- Install HADDOCK3 following [INSTALL.md](docs/INSTALL.md)
+- Install HADDOCK3 following [INSTALL.md](https://github.com/haddocking/haddock3/blob/main/docs/pages/INSTALL.md)
 - Python 3.10+ development environment
 - Familiarity with Git and GitHub workflows
 
@@ -63,24 +63,13 @@ HADDOCK3 maintains minimal dependencies:
 
 ## Documentation Contributions
 
-HADDOCK3 documentation uses Sphinx with Markdown and reStructuredText:
+- Update docstrings for any function, class, or module you add or change.
+- Update the relevant pages under `docs/pages/` for user-facing changes.
+- New modules need a title to be added manually in `docs/titles.yaml`.
+- Confirm `docs/` still builds without introducing new warnings before submitting.
 
-### Local Documentation Build
-
-```bash
-# Install documentation dependencies
-pip install -e '.[docs]'
-
-# Build documentation
-sphinx-apidoc -f -e -o docs/ src/haddock -d 1
-sphinx-build -b html docs haddock3-docs
-```
-
-### Documentation Structure
-
-- Source files in `docs/` directory
-- Follow existing organization and formatting
-- Update both code docstrings and markdown files
+See [docs/README.md](https://github.com/haddocking/haddock3/blob/main/docs/README.md)
+for how to build the docs locally and how docstrings should be formatted.
 
 ## Pull Request Requirements
 
@@ -89,6 +78,11 @@ sphinx-build -b html docs haddock3-docs
 3. **CHANGELOG**: Add entry for significant changes
 4. **Version**: Update `pyproject.toml` if applicable
 5. **Code Review**: Address all feedback
+
+## Use of AI tools
+
+See [AI-POLICY.md](https://github.com/haddocking/haddock3/blob/main/AI-POLICY.md) for guidance on how AI coding assistants
+may and may not be used when contributing.
 
 ## Support and Communication
 

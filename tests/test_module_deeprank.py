@@ -1,12 +1,16 @@
 """Tests for the deeprank scoring module wrapper."""
 
-import tempfile
+import builtins
 import shutil
+import tempfile
 from pathlib import Path
 
 import pytest
 
-from haddock.modules.scoring.deeprank.deeprank import DeeprankWrapper
+from haddock.modules.scoring.deeprank.deeprank import (
+    DeeprankWrapper,
+    deeprank_is_available,
+)
 
 from . import golden_data as GOLDEN_DATA
 from .conftest import has_deeprank
@@ -41,6 +45,22 @@ def deeprank_wrapper_ensemble():
             chain_i="A",
             chain_j="B",
         )
+
+
+def test_deeprank_is_available_requires_sqlite3(monkeypatch):
+    """Must raise a clear error when the interpreter lacks sqlite3 support."""
+    real_import = builtins.__import__
+
+    # mock not being able to find `sqlite3`
+    def fake_import(name, *args, **kwargs):
+        if name == "sqlite3":
+            raise ImportError("No module named '_sqlite3'")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+
+    with pytest.raises(ImportError, match="sqlite3"):
+        deeprank_is_available()
 
 
 @has_deeprank

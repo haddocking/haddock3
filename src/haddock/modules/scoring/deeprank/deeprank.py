@@ -10,8 +10,23 @@ from pdbtools import pdb_mkensemble
 
 
 def deeprank_is_available() -> bool:
-    """Check whether the `deeprank_gnn` package is importable."""
-    import deeprank_gnn  # type: ignore  # noqa: F401
+    """Check whether deeprank-gnn-esm's requirements are met."""
+    try:
+        import sqlite3  # noqa: F401
+    except ImportError as err:
+        raise ImportError(
+            "The `deeprank` module requires a python interpreter built with "
+            "sqlite3 support, which is missing from your current "
+            "environment."
+        ) from err
+
+    try:
+        import deeprank_gnn  # type: ignore  # noqa: F401
+    except ImportError as err:
+        raise ImportError(
+            "The `deeprank` module requires the `deeprank_gnn` package, "
+            "which is not installed in your current environment."
+        ) from err
 
     return True
 

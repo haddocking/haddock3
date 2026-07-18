@@ -1,6 +1,6 @@
 # Changelog
 
-=======
+- 2026-06-26: Removed duplicated definition in param files - Issue ##1589
 - 2026-07-13: Added option to select models/clusters in reverse order - Issue #1620
 - 2026-07-10: Corrected ranking in caprieval for reverse sorting - Issue #1621
 - 2026-07-09: Added `deeprank` scoring module using deeprank-gnn-esm - Issue #569

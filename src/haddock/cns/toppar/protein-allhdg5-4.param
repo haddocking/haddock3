@@ -536,7 +536,6 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CR1E CR1E CY       500.00 {sd=     0.031}    121.1348
  ANGLe  CR1E CR1E CY2      500.00 {sd=     0.031}    119.6224
  ANGLe  CR1E CR1W CY2      500.00 {sd=     0.031}    119.6224
- ANGLe  CR1E CR1E CY2      500.00 {sd=     0.031}    119.6224
  ANGLe  CR1E CR1E HA       500.00 {sd=     0.031}    119.9433
  ANGLe  CR1E CR1W CR1W     500.00 {sd=     0.031}    121.4832
  ANGLe  CR1E CR1W HA       500.00 {sd=     0.031}    118.7598
@@ -1159,7 +1158,6 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  CH2E CH2E CH2E CH2E   2.00     3  0.0000
  DIHEdral  NH1  CH2E CH2E CH2E   2.00     3  0.0000 
  DIHEdral  NH3  CH2E CH2E CH2E   2.00     3  0.0000 
- DIHEdral  CH2E CH2E CH2E NH1    2.00     3  0.0000
  DIHEdral  C    CH2E SM   CH2E   2.00     3  0.0000
  DIHEdral  CH1E CH2E SM   CH2E   2.00     3  0.0000
  DIHEdral  CH2E CH2E SM   CH3E   2.00     3  0.0000
@@ -1369,7 +1367,6 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
 
 ! Acetylated GLY (AB 27-02-14)
  DIHEdral CH2G   NH1    C       CH3E  500.0  2 180.0
- DIHEdral CH3E   C      NH1     CH2G  500.0  2 180.0
 
 ! Residue PNS
 eval ($pd_v=$pd_x*     5.6) DIHE CD28 O3P  P    OG   $pd_v 2   0.000

@@ -1,7 +1,7 @@
 # Changelog
 
 =======
-- 2026-07-21: Fixed `gen_archive=true` crash (`Directory not empty`) on non-local filesystems (NFS, gcsfuse/s3fs, overlayfs) by closing the run log file before deleting the run directory, with a retrying/tolerant rmtree fallback
+- 2026-07-21: Fixed `gen_archive=true` crash (`Directory not empty`) on non-local filesystems (NFS, gcsfuse/s3fs, overlayfs) - Issue #1626
 - 2026-07-13: Added option to select models/clusters in reverse order - Issue #1620
 - 2026-07-10: Corrected ranking in caprieval for reverse sorting - Issue #1621
 - 2026-07-09: Added `deeprank` scoring module using deeprank-gnn-esm - Issue #569

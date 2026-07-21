@@ -15,7 +15,7 @@ def _robust_rmtree(path: str, retries: int = 3, delay: float = 0.5) -> None:
 
     On non-local filesystems (NFS, FUSE object-store mounts such as gcsfuse or
     s3fs, overlayfs in containers, CIFS/SMB) deleting a still-open file does not
-    remove it immediately, and directory listings can be eventually consistent.
+    remove it immediately, and directory listings can be eventually inconsistent.
     As a result ``shutil.rmtree`` may fail with
     ``OSError: [Errno 39] Directory not empty`` even when nothing should remain.
 

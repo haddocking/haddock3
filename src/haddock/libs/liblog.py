@@ -77,6 +77,22 @@ def add_log_for_CLI(log: Logger, log_level: str, logfile: FilePath) -> None:
     return
 
 
+def close_logfile_handlers(log: Logger) -> None:
+    """Close and detach all file-based logging handlers.
+
+    This releases the open file descriptor on the run's ``log`` file so it
+    can be deleted cleanly. On network filesystems (e.g. NFS), deleting a
+    still-open file triggers a "silly rename" to a ``.nfs*`` file, leaving
+    the directory non-empty and causing ``rmtree`` to fail with
+    ``OSError: [Errno 39] Directory not empty``.
+    """
+    for handler in list(log.handlers):
+        if isinstance(handler, FileHandler):
+            handler.close()
+            log.removeHandler(handler)
+    return
+
+
 add_sysout_handler = partial(add_handler, handler=StreamHandler, stream=sys.stdout)  # noqa: E501
 add_syserr_handler = partial(add_handler, handler=StreamHandler, stream=sys.stderr, log_level='ERROR')  # noqa: E501
 add_logfile_handler = partial(add_handler, handler=FileHandler, stream=log_file_name)  # noqa: E501

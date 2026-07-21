@@ -1,5 +1,6 @@
 """Test liblog."""
 import argparse
+from logging import FileHandler, StreamHandler
 
 import pytest
 
@@ -48,3 +49,23 @@ def test_add_loglevel_arg_error():
         ap.parse_args('--log-level BAD'.split())
 
     assert err.value.code == 2
+
+
+def test_close_logfile_handlers(tmp_path):
+    """File handlers are closed and detached, stream handlers are kept."""
+    log.handlers.clear()
+    logfile = tmp_path / "log"
+    liblog.add_sysout_handler(log)
+    liblog.add_logfile_handler(log, stream=str(logfile))
+    log.info("something")
+
+    file_handlers = [h for h in log.handlers if isinstance(h, FileHandler)]
+    assert len(file_handlers) == 1
+
+    liblog.close_logfile_handlers(log)
+
+    # No FileHandler remains, the StreamHandler is untouched.
+    assert not any(isinstance(h, FileHandler) for h in log.handlers)
+    assert any(isinstance(h, StreamHandler) for h in log.handlers)
+    # The underlying file descriptor has been released.
+    assert file_handlers[0].stream is None or file_handlers[0].stream.closed

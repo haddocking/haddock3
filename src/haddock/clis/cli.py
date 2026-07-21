@@ -123,6 +123,7 @@ def main(
     from haddock.libs.liblog import (
         add_log_for_CLI,
         add_stringio_handler,
+        close_logfile_handlers,
         log_file_name,
         log_formatters,
     )
@@ -200,6 +201,11 @@ def main(
 
     # Generate archive of the run
     if other_params["gen_archive"]:
+        # Release the open file descriptor on run_dir/log before deleting the
+        # run directory. On network filesystems (NFS) an open file cannot be
+        # deleted and is silly-renamed to a .nfs* file, which leaves the
+        # directory non-empty and makes shutil.rmtree fail with ENOTEMPTY.
+        close_logfile_handlers(log)
         _run_archive, _analysis_archive = archive_run(_run_dir)
         log.info(f"Run archive created: {_run_archive}!")
         if _analysis_archive:

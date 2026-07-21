@@ -81,8 +81,9 @@ def close_logfile_handlers(log: Logger) -> None:
     """Close and detach all file-based logging handlers.
 
     This releases the open file descriptor on the run's ``log`` file so it
-    can be deleted cleanly. On network filesystems (e.g. NFS), deleting a
-    still-open file triggers a "silly rename" to a ``.nfs*`` file, leaving
+    can be deleted cleanly. On non-local filesystems (NFS, FUSE object-store mounts 
+    such as gcsfuse or s3fs, overlayfs in containers, CIFS/SMB) 
+    deleting a still-open file might not remove it immediately, leaving
     the directory non-empty and causing ``rmtree`` to fail with
     ``OSError: [Errno 39] Directory not empty``.
     """

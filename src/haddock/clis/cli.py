@@ -200,9 +200,10 @@ def main(
     # Generate archive of the run
     if other_params["gen_archive"]:
         # Release the open file descriptor on run_dir/log before deleting the
-        # run directory. On network filesystems (NFS) an open file cannot be
-        # deleted and is silly-renamed to a .nfs* file, which leaves the
-        # directory non-empty and makes shutil.rmtree fail with ENOTEMPTY.
+        # run directory. On non-local filesystems (NFS, FUSE object-store mounts 
+        # such as gcsfuse or s3fs, overlayfs in containers, CIFS/SMB) 
+        # deleting a still-open file might not remove it immediately,
+        # which leaves the directory non-empty and makes shutil.rmtree fail with ENOTEMPTY.
         close_logfile_handlers(log)
         _run_archive, _analysis_archive = archive_run(_run_dir)
         log.info(f"Run archive created: {_run_archive}!")

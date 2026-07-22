@@ -1,6 +1,7 @@
 # Changelog
 
 =======
+- 2026-07-22: Added protein-DNA docking Jupyter notebook
 - 2026-07-13: Added option to select models/clusters in reverse order - Issue #1620
 - 2026-07-10: Corrected ranking in caprieval for reverse sorting - Issue #1621
 - 2026-07-09: Added `deeprank` scoring module using deeprank-gnn-esm - Issue #569

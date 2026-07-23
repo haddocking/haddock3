@@ -1,6 +1,6 @@
 # Changelog
 
-=======
+- 2026-07-22: Added protein-DNA docking Jupyter notebook
 - 2026-07-21: Fixed `gen_archive=true` crash (`Directory not empty`) on non-local filesystems (NFS, gcsfuse/s3fs, overlayfs) - Issue #1626
 - 2026-07-13: Added option to select models/clusters in reverse order - Issue #1620
 - 2026-07-10: Corrected ranking in caprieval for reverse sorting - Issue #1621

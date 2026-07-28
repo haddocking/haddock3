@@ -1,6 +1,7 @@
 """Test finding the best structures in libplots."""
 
 import os
+import re
 
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from haddock.libs.libplots import (
     create_other_cluster,
     find_best_struct,
     make_alascan_plot,
+    make_rnascan_plot,
     offline_js_manager,
     scatter_plot_handler,
     read_capri_table,
@@ -303,6 +305,28 @@ def test_make_alascan_plot(example_df_scan_clt, monkeypatch):
         make_alascan_plot(example_df_scan_clt, clt_id="-")
         # assert existence of plot
         assert Path("scan_clt_-.html").exists()
+
+
+def test_make_rnascan_plot(example_df_scan_clt, monkeypatch):
+    """Test make_rnascan_plot produces one panel per energy component."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        make_rnascan_plot(example_df_scan_clt, clt_id="-", scan_res="RNA base")
+        out = Path("scan_clt_-.html")
+        # assert existence of plot
+        assert out.exists()
+        html = out.read_text()
+        # each energy component must have its own panel: 4 distinct x-axes
+        axes = sorted(set(re.findall(r'"(xaxis\d*)"', html)))
+        assert axes == ["xaxis", "xaxis2", "xaxis3", "xaxis4"]
+        # and each panel is titled with its component
+        for title in (
+            "HADDOCK score",
+            "van der Waals energy",
+            "electrostatic energy",
+            "desolvation energy",
+        ):
+            assert title in html
 
 
 def test_plotly_cdn_url():

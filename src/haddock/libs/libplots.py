@@ -1551,6 +1551,119 @@ def make_alascan_plot(
     return html_output_filename
 
 
+def make_rnascan_plot(
+    df: pd.DataFrame,
+    clt_id: int,
+    scan_res: str = "RNA base",
+    offline: bool = False,
+) -> str:
+    """
+    Make a plotly interactive plot for a base (RNA/DNA) scan.
+
+    Unlike :func:`make_alascan_plot`, which overlays all the score components
+    in a single panel, this function draws one separate panel per energy
+    component (HADDOCK score, van der Waals, electrostatics and desolvation),
+    stacked as four rows within the same HTML file. Each panel has its own
+    y-axis so that the magnitude of each energy change can be read
+    independently.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing the results of the base scan.
+    clt_id : int
+        Cluster ID.
+    scan_res : str, optional
+        Label used for the scan, by default "RNA base".
+    offline : bool, optional
+        Whether the plot must be functional offline, by default False.
+
+    Returns
+    -------
+    html_output_filename : str
+        Name of the plot generated
+    """
+    plot_name = f"scan_clt_{clt_id}"
+    log.info(f"Generating {scan_res} scanning plot {plot_name}")
+
+    # One panel per energy component: (value column, std column, title, colour)
+    components = [
+        ("delta_score", "delta_score_std", "&#916; HADDOCK score", "#1f77b4"),
+        ("delta_vdw", "delta_vdw_std", "&#916; van der Waals energy", "#ff7f0e"),
+        ("delta_elec", "delta_elec_std", "&#916; electrostatic energy", "#2ca02c"),
+        ("delta_desolv", "delta_desolv_std", "&#916; desolvation energy", "#d62728"),
+    ]
+
+    # create four stacked rows of subplots, one per energy component
+    fig = make_subplots(
+        rows=4,
+        cols=1,
+        subplot_titles=[title for _, _, title, _ in components],
+        vertical_spacing=0.06,
+    )
+    positions = [(1, 1), (2, 1), (3, 1), (4, 1)]
+
+    for (col_name, std_name, title, color), (row, col) in zip(components, positions):
+        error_y = None
+        if std_name in df.columns:
+            error_y = {"type": "data", "array": df[std_name]}
+        fig.add_trace(
+            go.Bar(
+                x=df["full_resname"],
+                y=df[col_name],
+                error_y=error_y,
+                name=title,
+                marker_color=color,
+                showlegend=False,
+            ),
+            row=row,
+            col=col,
+        )
+        fig.update_yaxes(
+            title={"text": "Average Delta (WT - mutant)", "font": {"size": 14}},
+            tickfont_size=12,
+            row=row,
+            col=col,
+        )
+        fig.update_xaxes(
+            title={"text": "Mutation", "font": {"size": 14}},
+            tickfont_size=12,
+            row=row,
+            col=col,
+        )
+        # add vertical separators between mutations
+        for n in range(df.shape[0] - 1):
+            fig.add_vline(
+                x=0.5 + n,
+                line_color="gray",
+                opacity=0.2,
+                row=row,
+                col=col,
+            )
+
+    # prettifying layout (one wide row per component, stacked vertically)
+    width, height = 2000, 1600
+    fig.update_layout(
+        title=f"{scan_res} scanning cluster {clt_id}",
+        width=width,
+        height=height,
+        hovermode="x unified",
+        hoverlabel={"font_size": 16, "font_family": "Helvetica"},
+        bargap=0.05,
+    )
+
+    # save html
+    html_output_filename = f"{plot_name}.html"
+    export_plotly_figure(
+        fig,
+        html_output_filename,
+        figure_height=height,
+        figure_width=width,
+        offline=offline,
+    )
+    return html_output_filename
+
+
 def fig_to_html(
     fig: Figure,
     fpath: Union[str, Path],

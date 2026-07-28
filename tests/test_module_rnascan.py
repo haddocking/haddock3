@@ -10,11 +10,11 @@ import pytest
 
 from haddock.core.exceptions import ConfigurationError
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libscan import add_zscores
 from haddock.modules.analysis.rnascan import DEFAULT_CONFIG
 from haddock.modules.analysis.rnascan import HaddockModule as RnascanModule
 from haddock.modules.analysis.rnascan.scan import (
     AddDeltaBFactor,
-    add_zscores,
     calc_score,
     ClusterOutputer,
     get_atoms_to_keep,
@@ -348,19 +348,21 @@ def test_get_atoms_to_keep_same_ring_type():
 
 def test_get_atoms_to_keep_cross_ring_type():
     """Cross-type mutations keep the backbone plus renamed anchor atoms."""
-    # purine -> pyrimidine: keep glycosidic anchors, renamed N9->N1, C8->C6
+    # purine -> pyrimidine: keep glycosidic anchors, renamed N9->N1, C4->C2, C8->C6
     keep = get_atoms_to_keep("G", "C")
     assert set(BACKBONE_ATOMS).issubset(keep)
     assert keep["N9"] == "N1"
+    assert keep["C4"] == "C2"
     assert keep["C8"] == "C6"
-    # only the two anchor atoms are kept from the base
-    assert set(keep) - set(BACKBONE_ATOMS) == {"N9", "C8"}
-    # pyrimidine -> purine: keep glycosidic anchors, renamed N1->N9, C6->C8
+    # only the three anchor atoms are kept from the base
+    assert set(keep) - set(BACKBONE_ATOMS) == {"N9", "C4", "C8"}
+    # pyrimidine -> purine: keep glycosidic anchors, renamed N1->N9, C2->C4, C6->C8
     keep = get_atoms_to_keep("U", "A")
     assert set(BACKBONE_ATOMS).issubset(keep)
     assert keep["N1"] == "N9"
+    assert keep["C2"] == "C4"
     assert keep["C6"] == "C8"
-    assert set(keep) - set(BACKBONE_ATOMS) == {"N1", "C6"}
+    assert set(keep) - set(BACKBONE_ATOMS) == {"N1", "C2", "C6"}
 
 
 def test_backbone_includes_ribose_hydroxyl():
@@ -390,14 +392,15 @@ def test_mutate_cross_type(rna_model_list, monkeypatch):
                     assert line[17:20] == "  U"
                     kept_atoms.append(line[12:16].strip().replace("*", "'"))
         # purine -> pyrimidine: the glycosidic anchors are kept and renamed
-        # (N9 -> N1, C8 -> C6); no other base atoms remain
+        # (N9 -> N1, C4 -> C2, C8 -> C6); no other base atoms remain
         assert "N9" not in kept_atoms
         assert "C8" not in kept_atoms
         assert "N1" in kept_atoms
+        assert "C2" in kept_atoms
         assert "C6" in kept_atoms
-        # only the two renamed anchors survive from the base
+        # only the three renamed anchors survive from the base
         base_atoms = [a for a in kept_atoms if a not in BACKBONE_ATOMS]
-        assert set(base_atoms) == {"N1", "C6"}
+        assert set(base_atoms) == {"N1", "C2", "C6"}
         assert "C1'" in kept_atoms
         assert "P" in kept_atoms
         # ribose 2'-hydroxyl must be preserved
@@ -465,7 +468,7 @@ def test_add_zscores(example_df_scan_clt):
 def test_calc_score(mocker):
     """Test the calc_score function."""
     mocker.patch(
-        "haddock.modules.analysis.rnascan.scan.get_score_string",
+        "haddock.libs.libscan.get_score_string",
         return_value=[
             "> starting calculations...",
             "> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.0 * air) + (0.0 * bsa)",

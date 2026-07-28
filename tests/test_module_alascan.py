@@ -1,8 +1,6 @@
 """Test the Alascan module."""
 
 import os
-import logging
-import shutil
 import tempfile
 from pathlib import Path
 
@@ -11,11 +9,11 @@ import pandas as pd
 import pytest
 
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libscan import add_zscores
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan.scan import (
     AddDeltaBFactor,
-    add_zscores,
     calc_score,
     ClusterOutputer,
     group_scan_by_cluster,
@@ -288,7 +286,7 @@ def test_init(alascan):
     # Once a module is initialized, it should have the following attributes
     assert alascan.path == Path("0_anything")
     assert alascan._origignal_config_file == DEFAULT_CONFIG
-    assert type(alascan.params) == dict
+    assert isinstance(alascan.params, dict)
     assert len(alascan.params) != 0
 
 
@@ -405,15 +403,15 @@ def test_interface_scanner_init_default_params():
 def test_interface_scanner_run(mocker, interface_scanner):
     """Test InterfaceScanner.run() (in haddock mode, so returns mutation jobs)."""
     # mock stand-alone functions
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface", return_value={"A": [19, 20]}
     )
-    mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
-    mock_load_coords = mocker.patch(
+    mocker.patch("haddock.libs.libalign.get_atoms")
+    mocker.patch(
         "haddock.libs.libalign.load_coords",
         return_value=(
             {
@@ -461,7 +459,7 @@ def test_interface_scanner_run_library_mode(
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
         # mock dependencies
-        mock_calc_score = mocker.patch(
+        mocker.patch(
             "haddock.modules.analysis.alascan.scan.calc_score",
             return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
         )
@@ -469,10 +467,8 @@ def test_interface_scanner_run_library_mode(
             "haddock.libs.libcapri.CAPRI.identify_interface",
             return_value={"A": [19, 20]},
         )
-        mock_get_atoms = mocker.patch(
-            "haddock.libs.libalign.get_atoms", return_value=[]
-        )
-        mock_load_coords = mocker.patch(
+        mocker.patch("haddock.libs.libalign.get_atoms", return_value=[])
+        mocker.patch(
             "haddock.libs.libalign.load_coords",
             return_value=(
                 {("A", 19, "CA", "THR"): [0, 0, 0], ("A", 20, "CA", "ILE"): [1, 1, 1]}
@@ -577,16 +573,16 @@ def test_interface_scanner_run_library_mode_no_mutations(
 def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
     """Test chain filtering in InterfaceScanner."""
     params_with_chains = {**params, "chains": ["A"]}
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20], "B": [30, 31]},
     )
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
-    mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
-    mock_load_coords = mocker.patch(
+    mocker.patch("haddock.libs.libalign.get_atoms")
+    mocker.patch(
         "haddock.libs.libalign.load_coords",
         return_value=(
             {
@@ -610,16 +606,16 @@ def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
 def test_interface_scanner_residue_filtering(mocker, complex_pdb, params):
     """Test residue filtering with resdic parameters."""
     params_with_resdic = {**params, "resdic_A": [19], "resdic_B": [30]}
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20, 21], "B": [30, 31, 32]},
     )
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
-    mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
-    mock_load_coords = mocker.patch(
+    mocker.patch("haddock.libs.libalign.get_atoms")
+    mocker.patch(
         "haddock.libs.libalign.load_coords",
         return_value=(
             {("A", 19, "CA", "THR"): [0, 0, 0], ("B", 30, "CA", "VAL"): [1, 1, 1]},
@@ -644,18 +640,16 @@ def test_interface_scanner_residue_filtering_not_in_interface(
         "resdic_A": [999],
         "resdic_B": [999],
     }  # Not in interface
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20], "B": [30, 31]},
     )
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
-    mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
-    mock_load_coords = mocker.patch(
-        "haddock.libs.libalign.load_coords", return_value=({}, {})
-    )
+    mocker.patch("haddock.libs.libalign.get_atoms")
+    mocker.patch("haddock.libs.libalign.load_coords", return_value=({}, {}))
     scanner = InterfaceScanner(
         model=complex_pdb, params=params_with_resdic, library_mode=False
     )
@@ -666,11 +660,11 @@ def test_interface_scanner_residue_filtering_not_in_interface(
 
 def test_interface_scanner_skip_same_residue_mutation(mocker, complex_pdb, params):
     """Test that mutations to same residue type are skipped."""
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20]},  # here 19 is TRP, so should be not mutated
     )
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
@@ -902,7 +896,7 @@ def test_confirm_installation(alascan):
 def test_calc_score(mocker):
     """Test the run_scan method."""
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.get_score_string",
+        "haddock.libs.libscan.get_score_string",
         return_value=[
             "> starting calculations...",
             "> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.0 * air) + (0.0 * bsa)",
@@ -918,7 +912,7 @@ def test_calc_score(mocker):
 
 def test_calc_score_wrong(mocker):
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.get_score_string",
+        "haddock.libs.libscan.get_score_string",
         return_value=["> could not calculate score"],
     )
     # now calc_score should raise an Exception

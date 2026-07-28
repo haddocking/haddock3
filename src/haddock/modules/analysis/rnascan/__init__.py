@@ -54,10 +54,10 @@ mutations between bases of the same ring type (purine <-> purine, i.e.
 A <-> G, or pyrimidine <-> pyrimidine, i.e. C <-> U), the shared base ring
 atoms are also kept so that the base orientation is preserved and CNS only
 rebuilds the differing substituents. For cross-type mutations (purine <->
-pyrimidine), the two glycosidic-region anchor atoms are kept and renamed to
-their counterpart in the target ring system (pyrimidine N1/C6 <-> purine
-N9/C8), so that the base orientation is preserved and CNS rebuilds the rest of
-the new base.
+pyrimidine), the three glycosidic-region anchor atoms are kept and renamed to
+their counterpart in the target ring system (pyrimidine N1/C2/C6 <-> purine
+N9/C4/C8), so that the base orientation is preserved and CNS rebuilds the rest
+of the new base.
 """
 
 from pathlib import Path

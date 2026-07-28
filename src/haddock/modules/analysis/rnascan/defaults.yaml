@@ -1,5 +1,5 @@
 scan_bases:
-  default: [A, C, G, U]
+  default: [“A", “C", “G", “U"]
   type: list
   minitems: 1
   maxitems: 4

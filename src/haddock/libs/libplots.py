@@ -1594,12 +1594,14 @@ def make_rnascan_plot(
         ("delta_desolv", "delta_desolv_std", "&#916; desolvation energy", "#d62728"),
     ]
 
-    # create four stacked rows of subplots, one per energy component
+    # create four stacked rows of subplots, one per energy component.
+    # A generous vertical spacing keeps the (potentially long) mutation labels
+    # of one panel from overlapping the title of the panel below it.
     fig = make_subplots(
         rows=4,
         cols=1,
         subplot_titles=[title for _, _, title, _ in components],
-        vertical_spacing=0.06,
+        vertical_spacing=0.12,
     )
     positions = [(1, 1), (2, 1), (3, 1), (4, 1)]
 
@@ -1641,8 +1643,10 @@ def make_rnascan_plot(
                 col=col,
             )
 
-    # prettifying layout (one wide row per component, stacked vertically)
-    width, height = 2000, 1600
+    # prettifying layout (one wide row per component, stacked vertically).
+    # The tall height gives each of the four panels enough room so the mutation
+    # labels do not overlap with the neighbouring panels.
+    width, height = 2000, 2200
     fig.update_layout(
         title=f"{scan_res} scanning cluster {clt_id}",
         width=width,

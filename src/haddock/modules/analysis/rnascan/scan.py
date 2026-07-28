@@ -59,17 +59,32 @@ RNA_RESIDUES = ("A", "C", "G", "U")
 PURINES = ("A", "G")
 PYRIMIDINES = ("C", "U")
 
+# Glycosidic-region anchor atoms kept (and renamed) on cross-type mutations
+# (purine <-> pyrimidine). Because the purine and pyrimidine ring systems do
+# not share atom names, these two atoms are preserved and renamed to their
+# counterpart in the target ring so that CNS rebuilds the new base with the
+# correct glycosidic orientation. The correspondence is:
+#   pyrimidine N1 <-> purine N9   (glycosidic nitrogen)
+#   pyrimidine C6 <-> purine C8
+PYRIMIDINE_TO_PURINE_ANCHORS = {"N1": "N9", "C6": "C8"}
+PURINE_TO_PYRIMIDINE_ANCHORS = {"N9": "N1", "C8": "C6"}
 
-def get_atoms_to_keep(ori_resname: str, target_resname: str) -> List[str]:
-    """Return the atom names to preserve when mutating one base into another.
+
+def get_atoms_to_keep(ori_resname: str, target_resname: str) -> Dict[str, str]:
+    """Return the atoms to preserve when mutating one base into another.
+
+    The result maps each atom name to keep (as found in the original residue)
+    to the atom name it must be written with in the mutated residue. Backbone
+    atoms and same-ring-type base atoms keep their name (mapped to themselves).
 
     The ribose-phosphate backbone is always kept. In addition, when the
     original and target bases are of the same ring type (both purines or both
     pyrimidines), the base ring atoms common to that type are kept as well, so
     that the base orientation is preserved and CNS only rebuilds the differing
-    substituents. For cross-type mutations (purine <-> pyrimidine) the ring
-    systems do not overlap, so only the backbone is kept and the whole base is
-    rebuilt by CNS.
+    substituents. For cross-type mutations (purine <-> pyrimidine) the two
+    glycosidic-region anchor atoms are kept and renamed to their counterpart in
+    the target ring system (pyrimidine N1/C6 <-> purine N9/C8), so that the
+    base orientation is preserved and CNS rebuilds the rest of the new base.
 
     Parameters
     ----------
@@ -80,14 +95,20 @@ def get_atoms_to_keep(ori_resname: str, target_resname: str) -> List[str]:
 
     Returns
     -------
-    list of str
-        Atom names to preserve for the mutated nucleotide.
+    dict of str -> str
+        Mapping of original atom name -> atom name to write for the mutated
+        nucleotide.
     """
-    atoms_to_keep = list(BACKBONE_ATOMS)
+    # Backbone is always kept, with unchanged atom names.
+    atoms_to_keep: Dict[str, str] = {atom: atom for atom in BACKBONE_ATOMS}
     if ori_resname in PURINES and target_resname in PURINES:
-        atoms_to_keep += PURINE_BASE_ATOMS
+        atoms_to_keep.update({atom: atom for atom in PURINE_BASE_ATOMS})
     elif ori_resname in PYRIMIDINES and target_resname in PYRIMIDINES:
-        atoms_to_keep += PYRIMIDINE_BASE_ATOMS
+        atoms_to_keep.update({atom: atom for atom in PYRIMIDINE_BASE_ATOMS})
+    elif ori_resname in PYRIMIDINES and target_resname in PURINES:
+        atoms_to_keep.update(PYRIMIDINE_TO_PURINE_ANCHORS)
+    elif ori_resname in PURINES and target_resname in PYRIMIDINES:
+        atoms_to_keep.update(PURINE_TO_PYRIMIDINE_ANCHORS)
     return atoms_to_keep
 
 
@@ -177,8 +198,11 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
     The ribose-phosphate backbone is always kept for the mutated nucleotide.
     When the original and target bases share a ring type (both purines or both
     pyrimidines) the common base ring atoms are kept as well to preserve the
-    base orientation (see ``get_atoms_to_keep``); the remaining base atoms are
-    dropped and rebuilt by CNS during scoring.
+    base orientation (see ``get_atoms_to_keep``). For cross-type mutations
+    (purine <-> pyrimidine) the two glycosidic-region anchor atoms are kept and
+    renamed to their counterpart in the target ring (pyrimidine N1/C6 <->
+    purine N9/C8). The remaining base atoms are dropped and rebuilt by CNS
+    during scoring.
 
     Parameters
     ----------
@@ -218,8 +242,16 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
                         # base is known (depends on the ori/target ring types).
                         atoms_to_keep = get_atoms_to_keep(resname, mut_resname)
                     if atom_name in atoms_to_keep:
-                        # mutate
+                        # mutate the residue name
                         line = line[:17] + resname_field + line[20:]
+                        # rename the atom if it maps to a different name in the
+                        # target ring system (cross-type anchor atoms)
+                        new_atom_name = atoms_to_keep[atom_name]
+                        if new_atom_name != atom_name:
+                            new_field = line[12:16].replace(
+                                atom_name, new_atom_name, 1
+                            )
+                            line = line[:12] + new_field + line[16:]
                         mut_pdb_l.append(line)
                 else:
                     mut_pdb_l.append(line)

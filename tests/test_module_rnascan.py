@@ -347,11 +347,20 @@ def test_get_atoms_to_keep_same_ring_type():
 
 
 def test_get_atoms_to_keep_cross_ring_type():
-    """Cross-type mutations keep only the backbone."""
+    """Cross-type mutations keep the backbone plus renamed anchor atoms."""
+    # purine -> pyrimidine: keep glycosidic anchors, renamed N9->N1, C8->C6
     keep = get_atoms_to_keep("G", "C")
-    assert keep == BACKBONE_ATOMS
+    assert set(BACKBONE_ATOMS).issubset(keep)
+    assert keep["N9"] == "N1"
+    assert keep["C8"] == "C6"
+    # only the two anchor atoms are kept from the base
+    assert set(keep) - set(BACKBONE_ATOMS) == {"N9", "C8"}
+    # pyrimidine -> purine: keep glycosidic anchors, renamed N1->N9, C6->C8
     keep = get_atoms_to_keep("U", "A")
-    assert keep == BACKBONE_ATOMS
+    assert set(BACKBONE_ATOMS).issubset(keep)
+    assert keep["N1"] == "N9"
+    assert keep["C6"] == "C8"
+    assert set(keep) - set(BACKBONE_ATOMS) == {"N1", "C6"}
 
 
 def test_backbone_includes_ribose_hydroxyl():
@@ -380,9 +389,15 @@ def test_mutate_cross_type(rna_model_list, monkeypatch):
                 ):
                     assert line[17:20] == "  U"
                     kept_atoms.append(line[12:16].strip().replace("*", "'"))
-        # no base atoms should remain (e.g. N9, C8 of the original guanine)
+        # purine -> pyrimidine: the glycosidic anchors are kept and renamed
+        # (N9 -> N1, C8 -> C6); no other base atoms remain
         assert "N9" not in kept_atoms
         assert "C8" not in kept_atoms
+        assert "N1" in kept_atoms
+        assert "C6" in kept_atoms
+        # only the two renamed anchors survive from the base
+        base_atoms = [a for a in kept_atoms if a not in BACKBONE_ATOMS]
+        assert set(base_atoms) == {"N1", "C6"}
         assert "C1'" in kept_atoms
         assert "P" in kept_atoms
         # ribose 2'-hydroxyl must be preserved

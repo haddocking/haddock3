@@ -56,6 +56,9 @@ atoms are also kept so that the base orientation is preserved and CNS only
 rebuilds the differing substituents. For cross-type mutations (purine <->
 pyrimidine) the ring systems do not overlap, so the whole base is rebuilt by
 CNS from the backbone.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#rnascan-module>`_
 """
 
 from pathlib import Path

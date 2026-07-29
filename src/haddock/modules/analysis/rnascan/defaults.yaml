@@ -51,6 +51,14 @@ plot:
   long: Plot scanning data.
   group: analysis
   explevel: easy
+splitplot:
+  default: false
+  type: boolean
+  title: Split the scan plot into one panel per energy component.
+  short: One plot panel per energy component.
+  long: If true, the scan plot shows one separate panel per energy component (HADDOCK score, van der Waals, electrostatics and desolvation). If false, all components are overlaid in a single panel.
+  group: analysis
+  explevel: easy
 chains:
   default: []
   type: list

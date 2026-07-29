@@ -41,6 +41,8 @@ You can use the parameters below to customize the behavior of the module:
     * `output_bfactor`: if True, the module will output the non-mutated models
       with the rescaled delta_score in the B-factor column
     * `plot`: if True, the module will generate plots of the RNA scan data
+    * `splitplot`: if True, the scan plot shows one panel per energy component;
+      if False (default) all components are overlaid in a single panel
     * `resdic`: list of residues to be used for the scanning. An example is:
 
     >>> resdic_A = [1,2,3,4]
@@ -215,6 +217,7 @@ class HaddockModule(BaseHaddockModule):
                     scan_residue="RNA base",
                     generate_plot=self.params["plot"],
                     offline=self.params["offline"],
+                    splitplot=self.params["splitplot"],
                 )
                 for clt_id, clt_data in clt_scan.items()
             ]

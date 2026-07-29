@@ -20,6 +20,45 @@ import pandas as pd
 from haddock import log
 from haddock.clis import cli_score
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libplots import make_alascan_plot, make_rnascan_plot
+
+
+def make_scan_plot(
+    df: pd.DataFrame,
+    clt_id,
+    scan_res: str = "residue",
+    offline: bool = False,
+    splitplot: bool = False,
+) -> str:
+    """Generate a scan cluster plot (harmonised across scan modules).
+
+    Shared plotting entry point for the ``alascan``, ``rnascan`` and ``dnascan``
+    modules. Depending on ``splitplot`` the energy components are either drawn
+    as separate stacked panels (one panel per energy term) or overlaid in a
+    single grouped-bar panel.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Cluster scan data to plot.
+    clt_id : int or str
+        Cluster identifier.
+    scan_res : str, optional
+        Label used for the scan (e.g. ``"ALA"``, ``"RNA base"``).
+    offline : bool, optional
+        Whether the plot must be functional offline, by default False.
+    splitplot : bool, optional
+        If True draw one panel per energy component; if False (default) overlay
+        all components in a single panel.
+
+    Returns
+    -------
+    html_output_filename : str
+        Name of the plot generated.
+    """
+    if splitplot:
+        return make_rnascan_plot(df, clt_id, scan_res=scan_res, offline=offline)
+    return make_alascan_plot(df, clt_id, scan_res=scan_res, offline=offline)
 
 
 @dataclass
@@ -348,17 +387,14 @@ class ClusterOutputer:
     on whether a mutation is a single residue or a base pair) via
     :meth:`_identity_columns` and :meth:`_identity_row`, and set the class
     attributes :attr:`module_name`, :attr:`sort_columns`,
-    :attr:`zscore_reference`, :attr:`default_scan_residue` and
-    :attr:`plot_func`. The averaging, z-scoring, sorting, file writing and plot
-    handling are shared.
+    :attr:`zscore_reference` and :attr:`default_scan_residue`. The averaging,
+    z-scoring, sorting, file writing and (harmonised) plot handling are shared.
     """
 
     module_name: str = "scan"
     default_scan_residue: str = "residue"
     sort_columns = ["chain", "resid"]
     zscore_reference: str = "residues"
-    #: plotting function ``f(df, clt_id, scan_res, offline=...)``; set by subclass
-    plot_func = None
 
     def __init__(
         self,
@@ -368,6 +404,7 @@ class ClusterOutputer:
         scan_residue: Optional[str] = None,
         generate_plot: bool = False,
         offline: bool = False,
+        splitplot: bool = False,
     ):
         """Initialization function
 
@@ -385,6 +422,9 @@ class ClusterOutputer:
             Defines if a plot must be generated, by default False
         offline : bool, optional
             Defines if the plot should be functional offline, by default False
+        splitplot : bool, optional
+            If True draw one plot panel per energy component; if False (default)
+            overlay all components in a single panel.
         """
         self.cluster_scan_data = cluster_scan_data
         self.clt_id = clt_id
@@ -394,6 +434,7 @@ class ClusterOutputer:
         )
         self.generate_plot = generate_plot
         self.offline = offline
+        self.splitplot = splitplot
 
     def _identity_columns(self) -> List[str]:
         """Return the identity column names preceding the statistics columns."""
@@ -479,14 +520,15 @@ class ClusterOutputer:
         df_scan_clt : pd.DataFrame
             The data frame containing the data to be plotted.
         """
-        if not self.generate_plot or self.plot_func is None:
+        if not self.generate_plot:
             return
         try:
-            self.plot_func(
+            make_scan_plot(
                 df_scan_clt,
                 self.clt_id,
                 self.scanned_residue,
                 offline=self.offline,
+                splitplot=self.splitplot,
             )
         except Exception as e:
             log.warning(

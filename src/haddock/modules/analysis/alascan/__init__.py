@@ -3,7 +3,7 @@ HADDOCK3 module for alanine scan.
 
 This module is responsible for the alanine (or any other residue) scan analysis
 of the model(s) generated in the previous step of the workflow.
-For each model, this module will mutate the interface residues and calculate 
+For each model, this module will mutate the interface residues and calculate
 the differences in the haddock score and its individual components between the
 wild type and the mutant, thus providing a measure of the impact of such mutation.
 Such difference (delta_score) is always calculated as:
@@ -19,7 +19,7 @@ a Z score is calculated as:
 
     Z = (delta_score - mean) / std
 
-where mean and std are the mean and standard deviation of the delta_score over 
+where mean and std are the mean and standard deviation of the delta_score over
 all the amino acids.
 
 The module will also generate plots of the alanine scan data, showing the
@@ -35,6 +35,8 @@ You can use the parameters below to customize the behavior of the module:
     * `output_bfactor`: if True, the module will output the non-mutated models
       with the rescaled delta_score in the B-factor column
     * `plot`: if True, the module will generate plots of the alanine scan data
+    * `splitplot`: if True, the scan plot shows one panel per energy component;
+      if False (default) all components are overlaid in a single panel
     * `scan_residue`: the residue to scan (default is 'ALA')
     * `resdic`: list of residues to be used for the scanning. An example is:
 
@@ -70,18 +72,17 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, *ignore, init_params=DEFAULT_CONFIG,
-                 **everything):
+    def __init__(self, order, path, *ignore, init_params=DEFAULT_CONFIG, **everything):
         super().__init__(order, path, init_params)
 
     @classmethod
     def confirm_installation(cls):
         """Confirm if module is installed."""
         return
-    
+
     def validate_ouput_mutant_parameter(self, nmodels: int) -> None:
         """Validate the output mutant parameter.
-        
+
         This parameter can be set to True if only one input model is provided,
         otherewise we risk to generate too many PDB files.
 
@@ -97,7 +98,7 @@ class HaddockModule(BaseHaddockModule):
                     "'output_mutants' parameter is set to True, "
                     "but more than one model was found. "
                     "Setting 'output_mutant' parameter to False."
-                    )
+                )
                 self.params["output_mutants"] = False
 
     def _run(self):
@@ -107,24 +108,24 @@ class HaddockModule(BaseHaddockModule):
             models = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
-        
+
         # Compute number of input model
         nmodels = len(models)
-        
+
         # Validate `output_mutant` parameter
         self.validate_ouput_mutant_parameter(nmodels)
-        
+
         # Step1: "get mutations" i.e. get target interface residues per input model
-        # 1 scan_obj per input model, merged into scan_objects to give to Engine  
+        # 1 scan_obj per input model, merged into scan_objects to give to Engine
         scan_objects = [
             InterfaceScanner(
                 mutation_res=self.params["scan_residue"],
                 model=model,
                 params=self.params,
                 library_mode=False,
-                )
+            )
             for model in models
-            ]
+        ]
 
         log.info(f"Scanning {nmodels} models for possible mutations")
         exec_mode = get_analysis_exec_mode(self.params["mode"])
@@ -137,13 +138,13 @@ class HaddockModule(BaseHaddockModule):
         mutation_objects = []
         for mutations_to_perform in engine.results:
             if mutations_to_perform:
-                mutation_objects.extend(mutations_to_perform) 
+                mutation_objects.extend(mutations_to_perform)
 
         total_mutations = len(mutation_objects)
         log.info(f"Found {total_mutations} mutations")
 
         if mutation_objects:
-            # let engine take care of parallelization  
+            # let engine take care of parallelization
             engine = Engine(mutation_objects)
             engine.run()
 
@@ -163,7 +164,7 @@ class HaddockModule(BaseHaddockModule):
             engine = Engine(scan_writter_jobs)
             engine.run()
 
-            # Generate output models with bfactors if requested  
+            # Generate output models with bfactors if requested
             if self.params["output_bfactor"]:
                 update_with_bfactor_jobs = []
                 for model in models:
@@ -175,13 +176,13 @@ class HaddockModule(BaseHaddockModule):
                         model_results = []
                     update_with_bfactor_jobs.append(
                         AddDeltaBFactor(model, self.path, model_results)
-                        )
+                    )
                 engine = Engine(update_with_bfactor_jobs)
                 engine.run()
                 models_to_export = engine.results
                 self.output_models = models_to_export
             else:
-                # Send models to the next step, no operation is done on them 
+                # Send models to the next step, no operation is done on them
                 self.output_models = models
 
             # Cluster-based analysis
@@ -194,6 +195,7 @@ class HaddockModule(BaseHaddockModule):
                     scan_residue=self.params["scan_residue"],
                     generate_plot=self.params["plot"],
                     offline=self.params["offline"],
+                    splitplot=self.params["splitplot"],
                 )
                 for clt_id, clt_data in clt_scan.items()
             ]

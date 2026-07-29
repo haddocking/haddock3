@@ -19,7 +19,6 @@ from haddock.libs.libscan import (
     write_scan_out as _write_scan_out,
     group_scan_by_cluster as _group_scan_by_cluster,
 )
-from haddock.libs.libplots import make_rnascan_plot
 from haddock.libs.libcapri import CAPRI
 
 # Heavy atoms of the ribose-phosphate backbone that are common to all RNA
@@ -257,7 +256,6 @@ class ClusterOutputer(_ClusterOutputer):
     default_scan_residue = "RNA base"
     sort_columns = ["chain", "resid", "target_resname"]
     zscore_reference = "mutations"
-    plot_func = staticmethod(make_rnascan_plot)
 
     def _identity_columns(self):
         return ["chain", "resid", "resname", "target_resname", "full_resname"]

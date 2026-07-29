@@ -18,7 +18,6 @@ from haddock.libs.libscan import (
     write_scan_out as _write_scan_out,
     group_scan_by_cluster as _group_scan_by_cluster,
 )
-from haddock.libs.libplots import make_alascan_plot
 from haddock.libs.libcapri import CAPRI
 
 ATOMS_TO_BE_MUTATED = ["C", "N", "CA", "O", "CB"]
@@ -130,7 +129,6 @@ class ClusterOutputer(_ClusterOutputer):
     default_scan_residue = "ALA"
     sort_columns = ["chain", "resid"]
     zscore_reference = "residues"
-    plot_func = staticmethod(make_alascan_plot)
 
     def _identity_columns(self):
         return ["chain", "resid", "resname", "full_resname"]

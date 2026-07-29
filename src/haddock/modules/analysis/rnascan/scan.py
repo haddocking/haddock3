@@ -14,6 +14,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import (
     MutationResult,
     calc_score,
+    execute_scan_jobs,
     AddDeltaBFactor as _AddDeltaBFactor,
     ClusterOutputer as _ClusterOutputer,
     write_scan_out as _write_scan_out,
@@ -161,17 +162,6 @@ def validate_scan_bases(scan_bases: List[str]) -> List[str]:
     return normalised
 
 
-RES_CODES = dict(
-    [
-        # RNA
-        ("A", "A"),
-        ("C", "C"),
-        ("G", "G"),
-        ("U", "U"),
-    ]
-)
-
-
 def _norm_atom_name(atom_name: str) -> str:
     """Normalise atom names so that primes are always written as `'`."""
     return atom_name.replace("*", "'")
@@ -239,10 +229,10 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
                         mut_pdb_l.append(line)
                 else:
                     mut_pdb_l.append(line)
-    try:
-        mut_id = f"{RES_CODES[resname]}{target_resid}{RES_CODES[mut_resname]}"
-    except KeyError:
+    # RNA residue names are already the one-letter codes used in identifiers.
+    if resname not in RNA_RESIDUES or mut_resname not in RNA_RESIDUES:
         raise KeyError(f"Could not mutate {resname} into {mut_resname}.")
+    mut_id = f"{resname}{target_resid}{mut_resname}"
     mut_pdb_fname = Path(pdb_f.name.replace(".pdb", f"-{target_chain}_{mut_id}.pdb"))
     with open(mut_pdb_fname, "w") as fh:
         fh.write("".join(mut_pdb_l))
@@ -345,6 +335,41 @@ class InterfaceScanner:
             self.model_path = Path(model)
             self.model_id = self.model_path.stem
 
+    @staticmethod
+    def _iter_mutations(interface, resname_dict, scan_bases):
+        """Yield each valid single-base mutation to perform.
+
+        Flattens the interface (chain -> residues) and the requested target
+        bases into a single stream of ``(chain, resid, ori_resname,
+        target_resname)`` tuples, skipping non-RNA residues and no-op mutations
+        (target base equal to the original, e.g. ``A -> A``).
+
+        Parameters
+        ----------
+        interface : dict
+            Mapping of chain id to the list of interface residue numbers.
+        resname_dict : dict
+            Mapping of ``"{chain}-{resid}"`` to the residue name.
+        scan_bases : list of str
+            Target bases to scan each nucleotide into.
+
+        Yields
+        ------
+        tuple
+            ``(chain, resid, ori_resname, target_resname)`` for each mutation.
+        """
+        for chain, residues in interface.items():
+            for res in residues:
+                ori_resname = resname_dict[f"{chain}-{res}"]
+                # Only scan RNA nucleotides, skip protein/other residues
+                if ori_resname not in RNA_RESIDUES:
+                    continue
+                for end_resname in scan_bases:
+                    # Skip no-op mutation (e.g. A -> A)
+                    if ori_resname == end_resname:
+                        continue
+                    yield chain, res, ori_resname, end_resname
+
     def run(self):
         """
         Get interface nucleotides and create mutation jobs.
@@ -419,58 +444,37 @@ class InterfaceScanner:
 
             # Create mutations
             output_mutants = self.params.get("output_mutants", False)
-            for chain in interface:
-                for res in interface[chain]:
-                    ori_resname = resname_dict[f"{chain}-{res}"]
-                    # Only scan RNA nucleotides, skip protein/other residues
-                    if ori_resname not in RNA_RESIDUES:
-                        continue
-                    # Test each requested target base
-                    for end_resname in self.scan_bases:
-                        # Skip if target base is the same as original
-                        # (e.g. skip A->A)
-                        if ori_resname == end_resname:
-                            continue
-                        job = ModelPointMutation(
-                            model_path=self.model_path,
-                            model_id=self.model_id,
-                            chain=chain,
-                            resid=res,
-                            ori_resname=ori_resname,
-                            target_resname=end_resname,
-                            native_scores=native_scores,
-                            output_mutants=output_mutants,
-                            ligand_param_fname=self.ligand_param_fname,
-                            ligand_top_fname=self.ligand_top_fname,
-                        )
-                        self.point_mutations_jobs.append(job)
-
-            # Execute jobs if in library mode
-            if self.library_mode:
-                log.info(
-                    f"Executing {len(self.point_mutations_jobs)} "
-                    f"mutations for {self.model_id}"
+            for chain, res, ori_resname, end_resname in self._iter_mutations(
+                interface, resname_dict, self.scan_bases
+            ):
+                job = ModelPointMutation(
+                    model_path=self.model_path,
+                    model_id=self.model_id,
+                    chain=chain,
+                    resid=res,
+                    ori_resname=ori_resname,
+                    target_resname=end_resname,
+                    native_scores=native_scores,
+                    output_mutants=output_mutants,
+                    ligand_param_fname=self.ligand_param_fname,
+                    ligand_top_fname=self.ligand_top_fname,
                 )
-                results = []
-                total = len(self.point_mutations_jobs)
+                self.point_mutations_jobs.append(job)
 
-                for i, job in enumerate(self.point_mutations_jobs, 1):
-                    log.info(
-                        f"Processing mutation {i}/{total}: "
-                        f"{job.chain}:{job.resid} {job.ori_resname}"
-                        f"->{job.target_resname}"
-                    )
-                    result = job.run()
-                    results.append(result)
-                    if result.success:
-                        log.info(f"Delta score: {result.delta_scores[0]:.2f}")
-                    else:
-                        log.warning(f"Failed: {result.error_msg}")
-
-                write_scan_out(results, self.model_id)
-            else:
-                # return point_mutations_jobs back to rnascan/__init__.py
+            if not self.library_mode:
+                # return point_mutations_jobs back to rnascan/__init__.py, which
+                # hands them to a haddock Engine
                 return self.point_mutations_jobs
+
+            # Library mode: run the mutation jobs through a haddock Engine
+            # (exactly as the module does in Step 2) instead of executing each
+            # job inline, so they go through the normal job lifecycle.
+            log.info(
+                f"Executing {len(self.point_mutations_jobs)} "
+                f"mutations for {self.model_id}"
+            )
+            results = execute_scan_jobs(self.point_mutations_jobs, self.params)
+            write_scan_out(results, self.model_id)
 
         except Exception as e:
             log.error(f"Failed to scan model {self.model_id}: {e}")

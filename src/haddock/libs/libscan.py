@@ -21,6 +21,39 @@ from haddock import log
 from haddock.clis import cli_score
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libplots import make_alascan_plot, make_rnascan_plot
+from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
+
+
+def execute_scan_jobs(jobs, params):
+    """Run mutation jobs through a haddock Engine and collect the results.
+
+    Shared by the scan modules' ``InterfaceScanner`` in *library mode*, where
+    the scanner is not itself driven by an Engine and must therefore schedule
+    its own mutation jobs (rather than running them inline). Analysis modules
+    always run locally, so the execution mode is resolved through
+    :func:`get_analysis_exec_mode`.
+
+    Parameters
+    ----------
+    jobs : list
+        Mutation jobs to execute (each exposes a ``run()`` method).
+    params : dict
+        Scanner parameters; execution parameters (``mode``, ``ncores``,
+        ``max_cpus``) are read from here when present.
+
+    Returns
+    -------
+    list
+        The ``MutationResult`` objects returned by the Engine, in the order it
+        returned them (``None`` results are dropped).
+    """
+    engine_params = {"ncores": None, "max_cpus": False, **params}
+    exec_mode = get_analysis_exec_mode(engine_params.get("mode", "local"))
+    Engine = get_engine(exec_mode, engine_params)
+    engine = Engine(jobs)
+    engine.run()
+    return [result for result in engine.results if result is not None]
 
 
 def make_scan_plot(

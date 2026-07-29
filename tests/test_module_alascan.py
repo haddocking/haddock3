@@ -474,17 +474,21 @@ def test_interface_scanner_run_library_mode(
                 {("A", 19, "CA", "THR"): [0, 0, 0], ("A", 20, "CA", "ILE"): [1, 1, 1]}
             ),
         )
-        # mock stand-alone functions
-        mock_mutation_run = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.ModelPointMutation.run",
-            side_effect=[successful_mutation_result, successful_mutation_result_2],
+        # In library mode the mutation jobs are executed through a haddock
+        # Engine; mock that boundary rather than the individual job's run().
+        mock_execute = mocker.patch(
+            "haddock.modules.analysis.alascan.scan.execute_scan_jobs",
+            return_value=[successful_mutation_result, successful_mutation_result_2],
         )
         mock_write_scan_out = mocker.patch(
             "haddock.modules.analysis.alascan.scan.write_scan_out"
         )
         result = interface_scanner_library.run()
         assert result is None
-        assert mock_mutation_run.call_count == 2
+        # two interface residues (A19, A20) -> two mutation jobs scheduled
+        mock_execute.assert_called_once()
+        jobs_passed = mock_execute.call_args[0][0]
+        assert len(jobs_passed) == 2
         mock_write_scan_out.assert_called_once()
         call_args = mock_write_scan_out.call_args
         results_passed = call_args[0][0]
@@ -528,14 +532,14 @@ def test_interface_scanner_run_library_mode_fails(
         mock_write_scan_out = mocker.patch(
             "haddock.modules.analysis.alascan.scan.write_scan_out"
         )
-        # mock ModelPointMutation.run() with mixed results
-        mock_mutation_run = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.ModelPointMutation.run",
-            side_effect=[successful_mutation_result, failed_mutation_result],
+        # Engine execution returns mixed results (one success, one failure)
+        mock_execute = mocker.patch(
+            "haddock.modules.analysis.alascan.scan.execute_scan_jobs",
+            return_value=[successful_mutation_result, failed_mutation_result],
         )
         result = interface_scanner_library.run()
         assert result is None
-        assert mock_mutation_run.call_count == 2
+        mock_execute.assert_called_once()
         mock_write_scan_out.assert_called_once()
         results_passed = mock_write_scan_out.call_args[0][0]
         assert len(results_passed) == 2

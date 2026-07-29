@@ -13,6 +13,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import (
     MutationResult,
     calc_score,
+    execute_scan_jobs,
     AddDeltaBFactor as _AddDeltaBFactor,
     ClusterOutputer as _ClusterOutputer,
     write_scan_out as _write_scan_out,
@@ -214,6 +215,36 @@ class InterfaceScanner:
             self.model_path = Path(model)
             self.model_id = self.model_path.stem
 
+    @staticmethod
+    def _iter_mutations(interface, resname_dict, mutation_res):
+        """Yield each mutation to perform for the interface residues.
+
+        Flattens the interface (chain -> residues) into a single stream of
+        ``(chain, resid, ori_resname, target_resname)`` tuples, skipping no-op
+        mutations (target residue equal to the original, e.g. ``ALA -> ALA``).
+
+        Parameters
+        ----------
+        interface : dict
+            Mapping of chain id to the list of interface residue numbers.
+        resname_dict : dict
+            Mapping of ``"{chain}-{resid}"`` to the residue name.
+        mutation_res : str
+            Residue to mutate every interface residue into (e.g. ``ALA``).
+
+        Yields
+        ------
+        tuple
+            ``(chain, resid, ori_resname, target_resname)`` for each mutation.
+        """
+        for chain, residues in interface.items():
+            for res in residues:
+                ori_resname = resname_dict[f"{chain}-{res}"]
+                # Skip no-op mutation (e.g. ALA -> ALA)
+                if ori_resname == mutation_res:
+                    continue
+                yield chain, res, ori_resname, mutation_res
+
     def run(self):
         """
         Get interface residues and create mutation jobs.
@@ -288,53 +319,37 @@ class InterfaceScanner:
 
             # Create mutation
             output_mutants = self.params.get("output_mutants", False)
-            for chain in interface:
-                for res in interface[chain]:
-                    ori_resname = resname_dict[f"{chain}-{res}"]
-                    end_resname = self.mutation_res
-                    # Skip if scan_residue is the same as original
-                    # (e.g. skip ALA->ALA)
-                    if ori_resname != end_resname:
-                        job = ModelPointMutation(
-                            model_path=self.model_path,
-                            model_id=self.model_id,
-                            chain=chain,
-                            resid=res,
-                            ori_resname=ori_resname,
-                            target_resname=end_resname,
-                            native_scores=native_scores,
-                            output_mutants=output_mutants,
-                            ligand_param_fname=self.ligand_param_fname,
-                            ligand_top_fname=self.ligand_top_fname,
-                        )
-                        self.point_mutations_jobs.append(job)
-
-            # Execute jobs if in library mode
-            if self.library_mode:
-                log.info(
-                    f"Executing {len(self.point_mutations_jobs)} "
-                    f"mutations for {self.model_id}"
+            for chain, res, ori_resname, end_resname in self._iter_mutations(
+                interface, resname_dict, self.mutation_res
+            ):
+                job = ModelPointMutation(
+                    model_path=self.model_path,
+                    model_id=self.model_id,
+                    chain=chain,
+                    resid=res,
+                    ori_resname=ori_resname,
+                    target_resname=end_resname,
+                    native_scores=native_scores,
+                    output_mutants=output_mutants,
+                    ligand_param_fname=self.ligand_param_fname,
+                    ligand_top_fname=self.ligand_top_fname,
                 )
-                results = []
-                total = len(self.point_mutations_jobs)
+                self.point_mutations_jobs.append(job)
 
-                for i, job in enumerate(self.point_mutations_jobs, 1):
-                    log.info(
-                        f"Processing mutation {i}/{total}: "
-                        f"{job.chain}:{job.resid} {job.ori_resname}"
-                        f"->{job.target_resname}"
-                    )
-                    result = job.run()
-                    results.append(result)
-                    if result.success:
-                        log.info(f"Delta score: {result.delta_scores[0]:.2f}")
-                    else:
-                        log.warning(f"Failed: {result.error_msg}")
-
-                write_scan_out(results, self.model_id)
-            else:
-                # return point_mutations_jobs back to alascan/__init__.py
+            if not self.library_mode:
+                # return point_mutations_jobs back to alascan/__init__.py, which
+                # hands them to a haddock Engine
                 return self.point_mutations_jobs
+
+            # Library mode: run the mutation jobs through a haddock Engine
+            # (exactly as the module does in Step 2) instead of executing each
+            # job inline, so they go through the normal job lifecycle.
+            log.info(
+                f"Executing {len(self.point_mutations_jobs)} "
+                f"mutations for {self.model_id}"
+            )
+            results = execute_scan_jobs(self.point_mutations_jobs, self.params)
+            write_scan_out(results, self.model_id)
 
         except Exception as e:
             log.error(f"Failed to scan model {self.model_id}: {e}")

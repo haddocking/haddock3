@@ -165,68 +165,69 @@ class HaddockModule(BaseHaddockModule):
         total_mutations = len(mutation_objects)
         log.info(f"Found {total_mutations} mutations")
 
-        if mutation_objects:
-            # let engine take care of parallelization
-            engine = Engine(mutation_objects)
-            engine.run()
-
-            # Organize engine output by model
-            results_by_model = {}
-            for result in engine.results:
-                if result and result.success:
-                    if result.model_id not in results_by_model:
-                        results_by_model[result.model_id] = []
-                    results_by_model[result.model_id].append(result)
-
-            # Save to .tsv
-            scan_writter_jobs = [
-                GenericTask(write_scan_out, results, model_id)
-                for model_id, results in results_by_model.items()
-            ]
-            engine = Engine(scan_writter_jobs)
-            engine.run()
-
-            # Generate output models with bfactors if requested
-            if self.params["output_bfactor"]:
-                update_with_bfactor_jobs = []
-                for model in models:
-                    model_id = model.file_name.removesuffix(".pdb")
-                    try:
-                        model_results = results_by_model[model_id]
-                    except KeyError:
-                        # Case when no data computed for this model
-                        model_results = []
-                    update_with_bfactor_jobs.append(
-                        AddDeltaBFactor(model, self.path, model_results)
-                    )
-                engine = Engine(update_with_bfactor_jobs)
-                engine.run()
-                models_to_export = engine.results
-                self.output_models = models_to_export
-            else:
-                # Send models to the next step, no operation is done on them
-                self.output_models = models
-
-            # Cluster-based analysis
-            clt_scan, clt_pops = group_scan_by_cluster(models, results_by_model)
-            rnascan_cluster_jobs = [
-                ClusterOutputer(
-                    clt_data,
-                    clt_id,
-                    clt_pops[clt_id],
-                    scan_residue="RNA base",
-                    generate_plot=self.params["plot"],
-                    offline=self.params["offline"],
-                    splitplot=self.params["splitplot"],
-                )
-                for clt_id, clt_data in clt_scan.items()
-            ]
-            engine = Engine(rnascan_cluster_jobs)
-            engine.run()
-
-        else:
+        if not mutation_objects:
             log.info("No interface nucleotides found - skipping mutation analysis")
             # Send models to the next step, no operation is done on them
             self.output_models = models
+            self.export_io_models()
+            return
+
+        # let engine take care of parallelization
+        engine = Engine(mutation_objects)
+        engine.run()
+
+        # Organize engine output by model
+        results_by_model = {}
+        for result in engine.results:
+            if result and result.success:
+                if result.model_id not in results_by_model:
+                    results_by_model[result.model_id] = []
+                results_by_model[result.model_id].append(result)
+
+        # Save to .tsv
+        scan_writter_jobs = [
+            GenericTask(write_scan_out, results, model_id)
+            for model_id, results in results_by_model.items()
+        ]
+        engine = Engine(scan_writter_jobs)
+        engine.run()
+
+        # Generate output models with bfactors if requested
+        if self.params["output_bfactor"]:
+            update_with_bfactor_jobs = []
+            for model in models:
+                model_id = model.file_name.removesuffix(".pdb")
+                try:
+                    model_results = results_by_model[model_id]
+                except KeyError:
+                    # Case when no data computed for this model
+                    model_results = []
+                update_with_bfactor_jobs.append(
+                    AddDeltaBFactor(model, self.path, model_results)
+                )
+            engine = Engine(update_with_bfactor_jobs)
+            engine.run()
+            models_to_export = engine.results
+            self.output_models = models_to_export
+        else:
+            # Send models to the next step, no operation is done on them
+            self.output_models = models
+
+        # Cluster-based analysis
+        clt_scan, clt_pops = group_scan_by_cluster(models, results_by_model)
+        rnascan_cluster_jobs = [
+            ClusterOutputer(
+                clt_data,
+                clt_id,
+                clt_pops[clt_id],
+                scan_residue="RNA base",
+                generate_plot=self.params["plot"],
+                offline=self.params["offline"],
+                splitplot=self.params["splitplot"],
+            )
+            for clt_id, clt_data in clt_scan.items()
+        ]
+        engine = Engine(rnascan_cluster_jobs)
+        engine.run()
 
         self.export_io_models()

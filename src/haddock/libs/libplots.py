@@ -1558,10 +1558,9 @@ def make_rnascan_plot(
     offline: bool = False,
 ) -> str:
     """
-    Make a plotly interactive plot for a base (RNA/DNA) scan.
+    Make a plotly interactive plot for mutational scans.
 
-    Unlike :func:`make_alascan_plot`, which overlays all the score components
-    in a single panel, this function draws one separate panel per energy
+    This function draws one separate panel per energy
     component (HADDOCK score, van der Waals, electrostatics and desolvation),
     stacked as four rows within the same HTML file. Each panel has its own
     y-axis so that the magnitude of each energy change can be read

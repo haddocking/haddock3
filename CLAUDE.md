@@ -10,6 +10,8 @@ underlying idea to whatever you're working on.
 > may change this file. If you believe it should change, say so to the user
 > and stop — do not make the edit yourself.
 
+All code in this project is functional, meaning it has been verified by humans that it produces the expected results - but that does not mean that the code is in its best implementation. If you copy code from somewhere else, try to improve it, do not assume it is already optimal.
+
 ## Overview
 
 HADDOCK3 is a modular biomolecular docking platform developed by BonvinLab (Utrecht University). It uses a workflow engine that chains discrete modules together, where each module's output (PDB files + metadata) becomes the next module's input. CNS (Crystallography & NMR System) is the primary external computational engine for sampling and refinement.

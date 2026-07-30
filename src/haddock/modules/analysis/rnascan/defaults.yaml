@@ -1,12 +1,24 @@
+scan_bases:
+  default: ["A", "C", "G", "U"]
+  type: list
+  minitems: 1
+  maxitems: 4
+  title: List of target RNA bases to test for each nucleotide.
+  short: List of target RNA bases tested for each selected interface nucleotide.
+  long: List of target RNA bases (A, C, G, U) to be tested for each selected
+    interface nucleotide. By default all four bases are tested. The wild-type
+    base is automatically skipped for each nucleotide.
+  group: analysis
+  explevel: easy
 resdic_:
   default: []
   type: list
   minitems: 0
   maxitems: 100
   title: List of residues to be mutated
-  short: List of residues to be mutated. By default all the interface residues are
+  short: List of residues to be mutated. By default all the interface nucleotides are
     mutated.
-  long: List of residues to be mutated. By default all the interface residues are
+  long: List of residues to be mutated. By default all the interface nucleotides are
     mutated. resdic_* is an expandable parameter. You can provide resdic_A,
     resdic_B, resdic_C, etc, where the last capital letter is the chain
     identifier.
@@ -27,19 +39,8 @@ output_bfactor:
   default: false
   type: boolean
   title: Dump the input models with the rescaled delta_score written in the b-factor column.
-  short: Dump the input models with the rescaled delta_score written in the b-factor column. 
-  long: Dump the input models with the rescaled delta_score written in the b-factor column. Those files do not contain the mutations, but rather will display the normalized (between 0 and 100) delta HADDOCK score (100 * (delta_score - min_score) / (max_score - min_score)) in the b-factor column. The higher the b-factor, the more favourable (or less unfavourable) the mutation. You can color the PDB files according to this attribute (in pymol, type "spectrum b")
-  group: analysis
-  explevel: easy
-scan_residue:
-  default: "ALA"
-  type: string
-  minchars: 3
-  maxchars: 3
-  choices: [ALA, ARG, ASN, ASP, CYS, GLN, GLU, GLY, HIS, ILE, LEU, LYS, MET, PHE, PRO, SER, THR, TRP, TYR, VAL, ALY, ASH, CFE, CSP, CYC, CYF, CYM, DDZ, GLH, HLY, HY3, HYP, M3L, MLY, MLZ, MSE, NEP, PNS, PTR, SEP, TOP, TYP, TYS, CIR]
-  title: Residue to be used for the scanning
-  short: Residue to be used for the scanning. The default is alanine.
-  long: Residue to be used for the scanning. The default is alanine. Use bigger residues at your own risk.
+  short: Dump the input models with the rescaled delta_score written in the b-factor column.
+  long: Dump the input models with the rescaled delta_score written in the b-factor column. Those files do not contain the mutations, but rather will display the normalized (between 0 and 100) delta HADDOCK score (100 * (delta_score - min_score) / (max_score - min_score)), averaged over the tested bases, in the b-factor column. The higher the b-factor, the more favourable (or less unfavourable) the mutations. You can color the PDB files according to this attribute (in pymol, type "spectrum b")
   group: analysis
   explevel: easy
 plot:

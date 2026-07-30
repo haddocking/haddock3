@@ -440,9 +440,7 @@ def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
             }
         ),
     )
-    scanner = InterfaceScanner(
-        model=complex_pdb, params=params_with_chains
-    )
+    scanner = InterfaceScanner(model=complex_pdb, params=params_with_chains)
     mutation_jobs = scanner.run()
     # Should only include chain A mutations
     chains_in_jobs = {job.chain for job in mutation_jobs}
@@ -469,9 +467,7 @@ def test_interface_scanner_residue_filtering(mocker, complex_pdb, params):
             {},
         ),
     )
-    scanner = InterfaceScanner(
-        model=complex_pdb, params=params_with_resdic
-    )
+    scanner = InterfaceScanner(model=complex_pdb, params=params_with_resdic)
     mutation_jobs = scanner.run()
     expected_residues = {(job.chain, job.resid) for job in mutation_jobs}
     # only residues in resdic_*,  not entire inteface
@@ -497,9 +493,7 @@ def test_interface_scanner_residue_filtering_not_in_interface(
     )
     mocker.patch("haddock.libs.libalign.get_atoms")
     mocker.patch("haddock.libs.libalign.load_coords", return_value=({}, {}))
-    scanner = InterfaceScanner(
-        model=complex_pdb, params=params_with_resdic
-    )
+    scanner = InterfaceScanner(model=complex_pdb, params=params_with_resdic)
     mutation_jobs = scanner.run()
     # no mutatioins to return
     assert len(mutation_jobs) == 0
@@ -515,9 +509,7 @@ def test_interface_scanner_skip_same_residue_mutation(mocker, complex_pdb, param
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
-    scanner = InterfaceScanner(
-        model=complex_pdb, mutation_res="THR", params=params
-    )
+    scanner = InterfaceScanner(model=complex_pdb, mutation_res="THR", params=params)
     mutation_jobs = scanner.run()
     assert len(mutation_jobs) == 1
 

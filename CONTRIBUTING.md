@@ -40,6 +40,8 @@ src/haddock/
 - **Function Design**: Small, testable functions preferred over complex classes
 - **Naming**: Use descriptive variable names
 - **Comments**: Explain *why* not *how*
+- **Reuse**: Existing code being functional doesn't mean it's the best
+  implementation. If you ctrl-c ctrl-v code from elsewhere in the codebase evaluate it on its own merits and improve it if you can.
 - **Documentation**: Update docstrings and markdown files
 - **Formatting**: Code is formatted with [ruff](https://docs.astral.sh/ruff/)
   (`ruff format`); CI checks formatting of changed files on every pull request

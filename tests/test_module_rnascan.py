@@ -120,7 +120,6 @@ def fixture_interface_scanner(rna_model_list, params):
         model=rna_model_list[0],
         scan_bases=["A", "C", "G", "U"],
         params=params,
-        library_mode=False,
     )
 
 
@@ -225,7 +224,7 @@ def test_validate_scan_bases_rejects_empty():
 
 def test_interface_scanner_init_default_bases():
     """Default scan_bases should be the four RNA bases."""
-    scanner = InterfaceScanner(model=Path("test.pdb"), library_mode=False)
+    scanner = InterfaceScanner(model=Path("test.pdb"))
     assert scanner.scan_bases == DEFAULT_SCAN_BASES
     assert scanner.params == {}
     assert scanner.filter_resdic == {}
@@ -268,7 +267,6 @@ def test_interface_scanner_skips_non_rna(mocker, rna_model_list, params):
     scanner = InterfaceScanner(
         model=rna_model_list[0],
         params={**params, "resdic_B": [3], "resdic_A": [40]},
-        library_mode=False,
     )
     mocker.patch(
         "haddock.modules.analysis.rnascan.scan.calc_score",
@@ -301,7 +299,6 @@ def test_interface_scanner_restrict_scan_bases(mocker, rna_model_list, params):
         model=rna_model_list[0],
         scan_bases=["G"],
         params=params,
-        library_mode=False,
     )
     mocker.patch(
         "haddock.modules.analysis.rnascan.scan.calc_score",

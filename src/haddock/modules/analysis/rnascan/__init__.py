@@ -144,7 +144,6 @@ class HaddockModule(BaseHaddockModule):
                 scan_bases=self.params["scan_bases"],
                 model=model,
                 params=self.params,
-                library_mode=False,
             )
             for model in models
         ]

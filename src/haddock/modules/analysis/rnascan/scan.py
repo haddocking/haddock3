@@ -14,7 +14,6 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import (
     MutationResult,
     calc_score,
-    execute_scan_jobs,
     AddDeltaBFactor as _AddDeltaBFactor,
     ClusterOutputer as _ClusterOutputer,
     write_scan_out as _write_scan_out,
@@ -294,7 +293,6 @@ class InterfaceScanner:
         model: Union[str, Path, Any],
         scan_bases: Optional[List[str]] = None,
         params: Optional[Dict[str, Any]] = None,
-        library_mode: bool = True,
     ) -> None:
         """
         Initialize InterfaceScanner for a single model.
@@ -302,22 +300,16 @@ class InterfaceScanner:
         Parameters
         ----------
         model : str, Path, or model object
-            HADDOCK model object (if library_mode = False) or
-            Path to PDB file (if library mode = True)
+            HADDOCK ``PDBFile`` model object or a path to a PDB file.
         scan_bases : list of str, optional
             Target bases tested for each interface nucleotide
             (default: A, C, G, T)
         params : dict, optional
             Additional parameters for interface detection
             (list on top of rnascan/__init__.py)
-        library_mode : bool
-            If True, execute mutations sequentially inside InterfaceScanner.run()
-            If False, just prepare jobs - execution will be taken care of in
-            __init__.py of rnascan module by haddock Engine
         """
         self.model = model
         self.scan_bases = list(scan_bases) if scan_bases else list(DEFAULT_SCAN_BASES)
-        self.library_mode = library_mode
         self.params = params or {}
         self.point_mutations_jobs = []
         self.ligand_param_fname = self.params.get("ligand_param_fname", "")
@@ -331,7 +323,7 @@ class InterfaceScanner:
             self.model_path = model.rel_path
             self.model_id = model.file_name.removesuffix(".pdb")
         else:
-            # for library mode
+            # model given as a plain path
             self.model_path = Path(model)
             self.model_id = self.model_path.stem
 
@@ -372,13 +364,15 @@ class InterfaceScanner:
 
     def run(self):
         """
-        Get interface nucleotides and create mutation jobs.
-        If library_mode=True, also execute the mutations sequentially.
+        Get interface nucleotides and create the mutation jobs for this model.
+
+        The jobs are returned (not executed): the caller hands them to a haddock
+        Engine so that all mutations are scheduled together.
 
         Returns
         -------
-        Optional[List[ModelPointMutation]]
-            List of mutation jobs if library_mode=False, None if library_mode=True
+        List[ModelPointMutation]
+            The mutation jobs to perform for this model.
         """
         try:
             # Calculate native scores
@@ -461,20 +455,7 @@ class InterfaceScanner:
                 )
                 self.point_mutations_jobs.append(job)
 
-            if not self.library_mode:
-                # return point_mutations_jobs back to rnascan/__init__.py, which
-                # hands them to a haddock Engine
-                return self.point_mutations_jobs
-
-            # Library mode: run the mutation jobs through a haddock Engine
-            # (exactly as the module does in Step 2) instead of executing each
-            # job inline, so they go through the normal job lifecycle.
-            log.info(
-                f"Executing {len(self.point_mutations_jobs)} "
-                f"mutations for {self.model_id}"
-            )
-            results = execute_scan_jobs(self.point_mutations_jobs, self.params)
-            write_scan_out(results, self.model_id)
+            return self.point_mutations_jobs
 
         except Exception as e:
             log.error(f"Failed to scan model {self.model_id}: {e}")

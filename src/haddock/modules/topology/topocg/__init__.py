@@ -37,7 +37,6 @@ from haddock.libs.libaa2cg import (
     gen_cg_tbl_backmapping_fname,
     )
 from haddock.libs.libontology import Format, PDBFile, TopologyFile
-from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -169,7 +168,7 @@ class HaddockModule(BaseCNSModule):
         lines = text.split(os.linesep)
         REMARK_lines = (line for line in lines if line.startswith("REMARK"))
         re_origin = re.compile(
-            "REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)"
+            r"REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)"
         )  # noqa : E501
         for line in REMARK_lines:
             if match := re_origin.search(line):
@@ -183,10 +182,13 @@ class HaddockModule(BaseCNSModule):
         """Execute module."""
 
         try:
-            _molecules = self.previous_io.output
-            molecules = []
-            for mol in _molecules:
-                molecules.append(make_molecules([mol[key].rel_path for key in mol]))
+            # Models already come split into individual structures from the
+            # previous (topoaa) step, so we can use them directly. Each entry
+            # of `molecules` is the list of model paths for one input molecule.
+            molecules = [
+                [pdbfile.rel_path for pdbfile in mol.values()]
+                for mol in self.previous_io.output
+            ]
         except Exception as e:
             self.finish_with_error(e)
 
@@ -221,57 +223,35 @@ class HaddockModule(BaseCNSModule):
 
         force_field = self.params["cgffversion"]
 
-        for i, molecule in enumerate(molecules, start=1):
-            #self.log(f"Molecule {i}: {molecule.with_parent}")
+        for i, models in enumerate(molecules, start=1):
             shape_dic[i] = False
-            # Copy the molecule to the step folder
             models_dic[i] = []
 
-            # Split models
-            # these come already sorted
-            splited_models = [
-                libpdb.split_ensemble(Path(mol.file_name), dest=Path.cwd(),)[0]
-                for mol in molecule
-            ]
-
             # check for shape
-            if libpdb.check_mol_shape(splited_models[0]):
+            if libpdb.check_mol_shape(models[0]):
                 shape_dic[i] = True
 
             # Get psf files for aa topology
             psf_files[i] = [
-                Path(mol.parent, f"{mol.stem}.{Format.TOPOLOGY}")
-                for mol in splited_models
+                Path(model.parent, f"{model.stem}.{Format.TOPOLOGY}")
+                for model in models
                 ]
 
             # get the MD5 hash of each model
-            ens_dic[i] = [
-                self.get_md5(mol.file_name)
-                for mol in molecule
-                ]
+            ens_dic[i] = [self.get_md5(model) for model in models]
             origi_ens_dic[i] = [
-                self.get_ensemble_origin(mol.file_name)
-                for mol in molecule
+                self.get_ensemble_origin(model) for model in models
             ]
-            # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
 
-            for task_id, model in enumerate(splited_models):
+            for task_id, model in enumerate(models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
 
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]
                     self.log(f"Using custom topology {custom_top}")
-                    libpdb.sanitize(
-                        model,
-                        overwrite=True,
-                        custom_topology=custom_top,
-                    )
-
-                else:
-                    libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
                 topocg_input = generate_topology(

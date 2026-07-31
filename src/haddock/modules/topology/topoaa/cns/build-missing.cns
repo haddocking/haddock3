@@ -211,6 +211,57 @@ if ( $tobuild > 0 ) then
         print thres=5. angles
 
     end if
+
+    for $id in id ( name HA and not resn GLY ) loop ltod
+
+        show (segid) (id $id)
+        evaluate ($segid=$result)
+        show (resid) (id $id)
+        evaluate ($resid=$result)
+        show (resn) (id $id)
+        evaluate ($resn=$result)
+
+        show ave(x) (segid $segid and resid $resid and (name CB or name C or name N) and known)
+        evaluate ($ave_x=$result)
+        show ave(y) (segid $segid and resid $resid and (name CB or name C or name N) and known)
+        evaluate ($ave_y=$result)
+        show ave(z) (segid $segid and resid $resid and (name CB or name C or name N) and known)
+        evaluate ($ave_z=$result)
+        show ave(x) (segid $segid and resid $resid and name CA and known)
+        evaluate ($ha_x=3*$result-2*$ave_x)
+        show ave(y) (segid $segid and resid $resid and name CA and known)
+        evaluate ($ha_y=3*$result-2*$ave_y)
+        show ave(z) (segid $segid and resid $resid and name CA and known)
+        evaluate ($ha_z=3*$result-2*$ave_z)
+
+        do (x=$ha_x) (segid $segid and resid $resid and name HA)
+        do (y=$ha_y) (segid $segid and resid $resid and name HA)
+        do (z=$ha_z) (segid $segid and resid $resid and name HA)
+
+        flags exclude * include bond angle vdw end
+        minimize powell nstep=50 drop=40.0 nprint=50 end
+
+        pick impr
+            (segid $segid and resid $resid and name HA)
+            (segid $segid and resid $resid and name N)
+            (segid $segid and resid $resid and name C)
+            (segid $segid and resid $resid and name CB)
+            geometry
+
+        if ($result lt 0) then
+            patch LTOD reference=nil=(segid $segid and resid $resid) end
+            buffer message
+            display D-amino acid detected for $resn $resid of chain $segid
+            end
+            flag exclude * include bond impr end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+            flag include angle end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+            flag include vdw end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+        end if
+
+    end loop ltod
   
     noe reset end
     rest dihe reset end

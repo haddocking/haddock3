@@ -1,8 +1,6 @@
 """Test the Alascan module."""
 
 import os
-import logging
-import shutil
 import tempfile
 from pathlib import Path
 
@@ -11,11 +9,11 @@ import pandas as pd
 import pytest
 
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libscan import add_zscores
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan.scan import (
     AddDeltaBFactor,
-    add_zscores,
     calc_score,
     ClusterOutputer,
     group_scan_by_cluster,
@@ -177,15 +175,6 @@ def fixture_interface_scanner(protprot_model_list, params):
         model=protprot_model_list[0],
         mutation_res="ALA",
         params=params,
-        library_mode=False,
-    )
-
-
-@pytest.fixture(name="interface_scanner_library")
-def fixture_interface_scanner_library(complex_pdb, params):
-    """Interface scanner in library mode."""
-    return InterfaceScanner(
-        model=complex_pdb, mutation_res="ALA", params=params, library_mode=True
     )
 
 
@@ -235,22 +224,6 @@ def fixture_successful_mutation_result_2():
     )
 
 
-@pytest.fixture(name="failed_mutation_result")
-def fixture_failed_mutation_result():
-    """Failed mutation result."""
-    return MutationResult(
-        model_id="protprot_complex_1",
-        chain="A",
-        resid=20,
-        ori_resname="ILE",
-        target_resname="ALA",
-        mutant_scores=(0, 0, 0, 0, 0),
-        delta_scores=(0, 0, 0, 0, 0),
-        success=False,
-        error_msg="Mutation failed",
-    )
-
-
 @pytest.fixture(name="results_by_model")
 def fixture_results_by_model(successful_mutation_result, successful_mutation_result_2):
     return {
@@ -288,7 +261,7 @@ def test_init(alascan):
     # Once a module is initialized, it should have the following attributes
     assert alascan.path == Path("0_anything")
     assert alascan._origignal_config_file == DEFAULT_CONFIG
-    assert type(alascan.params) == dict
+    assert isinstance(alascan.params, dict)
     assert len(alascan.params) != 0
 
 
@@ -360,15 +333,12 @@ def test_mutation_result_success_failure_states():
 
 
 def test_interface_scanner_init(protprot_model_list, params):
-    """Test InterfaceScanner initialization in haddock mode."""
+    """Test InterfaceScanner initialization from a PDBFile model."""
     model = protprot_model_list[0]
-    scanner = InterfaceScanner(
-        model=model, mutation_res="GLY", params=params, library_mode=False
-    )
+    scanner = InterfaceScanner(model=model, mutation_res="GLY", params=params)
     assert scanner.model_path == model.rel_path
     assert scanner.model_id == model.file_name.removesuffix(".pdb")
     assert scanner.mutation_res == "GLY"
-    assert scanner.library_mode is False
     # extracts chain-specific residue lists from the parameters
     # and arrange them into a dictionary for easy comparison with user input
     expected_filter = {
@@ -377,15 +347,12 @@ def test_interface_scanner_init(protprot_model_list, params):
     assert scanner.filter_resdic == expected_filter
 
 
-def test_interface_scanner_init_library_mode(complex_pdb, params):
-    """Test InterfaceScanner initialization in library mode."""
-    scanner = InterfaceScanner(
-        model=complex_pdb, mutation_res="ALA", params=params, library_mode=True
-    )
+def test_interface_scanner_init_from_path(complex_pdb, params):
+    """Test InterfaceScanner initialization from a plain PDB path."""
+    scanner = InterfaceScanner(model=complex_pdb, mutation_res="ALA", params=params)
     assert scanner.model_path == Path(complex_pdb)
     assert scanner.model_id == Path(complex_pdb).stem
     assert scanner.mutation_res == "ALA"
-    assert scanner.library_mode is True
     assert scanner.params == params
     expected_filter = {
         key[-1]: value for key, value in params.items() if key.startswith("resdic")
@@ -395,7 +362,7 @@ def test_interface_scanner_init_library_mode(complex_pdb, params):
 
 def test_interface_scanner_init_default_params():
     """Test InterfaceScanner initialization with default parameters."""
-    scanner = InterfaceScanner(model=Path("test.pdb"), library_mode=False)
+    scanner = InterfaceScanner(model=Path("test.pdb"))
     # check default values
     assert scanner.mutation_res == "ALA"
     assert scanner.params == {}
@@ -405,15 +372,15 @@ def test_interface_scanner_init_default_params():
 def test_interface_scanner_run(mocker, interface_scanner):
     """Test InterfaceScanner.run() (in haddock mode, so returns mutation jobs)."""
     # mock stand-alone functions
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface", return_value={"A": [19, 20]}
     )
-    mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
-    mock_load_coords = mocker.patch(
+    mocker.patch("haddock.libs.libalign.get_atoms")
+    mocker.patch(
         "haddock.libs.libalign.load_coords",
         return_value=(
             {
@@ -450,143 +417,19 @@ def test_interface_scanner_run_empty_interface(mocker, interface_scanner):
     assert mutation_jobs == []
 
 
-def test_interface_scanner_run_library_mode(
-    mocker,
-    interface_scanner_library,
-    successful_mutation_result,
-    successful_mutation_result_2,
-    monkeypatch,
-):
-    """Test InterfaceScanner.run() in library mode, so executes mutations."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        monkeypatch.chdir(tmpdir)
-        # mock dependencies
-        mock_calc_score = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.calc_score",
-            return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
-        )
-        mock_identify_interface = mocker.patch(
-            "haddock.libs.libcapri.CAPRI.identify_interface",
-            return_value={"A": [19, 20]},
-        )
-        mock_get_atoms = mocker.patch(
-            "haddock.libs.libalign.get_atoms", return_value=[]
-        )
-        mock_load_coords = mocker.patch(
-            "haddock.libs.libalign.load_coords",
-            return_value=(
-                {("A", 19, "CA", "THR"): [0, 0, 0], ("A", 20, "CA", "ILE"): [1, 1, 1]}
-            ),
-        )
-        # mock stand-alone functions
-        mock_mutation_run = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.ModelPointMutation.run",
-            side_effect=[successful_mutation_result, successful_mutation_result_2],
-        )
-        mock_write_scan_out = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.write_scan_out"
-        )
-        result = interface_scanner_library.run()
-        assert result is None
-        assert mock_mutation_run.call_count == 2
-        mock_write_scan_out.assert_called_once()
-        call_args = mock_write_scan_out.call_args
-        results_passed = call_args[0][0]
-        model_id_passed = call_args[0][1]
-        assert model_id_passed == interface_scanner_library.model_id
-        assert len(results_passed) == 2
-        assert results_passed[0] == successful_mutation_result
-        assert results_passed[1] == successful_mutation_result_2
-        assert all(result.success for result in results_passed)
-        mock_identify_interface.assert_called_once_with(
-            interface_scanner_library.model_path,
-            cutoff=interface_scanner_library.params.get("int_cutoff", 5.0),
-        )
-
-
-def test_interface_scanner_run_library_mode_fails(
-    mocker,
-    interface_scanner_library,
-    successful_mutation_result,
-    failed_mutation_result,
-    monkeypatch,
-):
-    """Test InterfaceScanner.run() in library mode with some failed mutations."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        monkeypatch.chdir(tmpdir)
-        mocker.patch(
-            "haddock.modules.analysis.alascan.scan.calc_score",
-            return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
-        )
-        mocker.patch(
-            "haddock.libs.libcapri.CAPRI.identify_interface",
-            return_value={"A": [19, 20]},
-        )
-        mocker.patch("haddock.libs.libalign.get_atoms", return_value=[])
-        mocker.patch(
-            "haddock.libs.libalign.load_coords",
-            return_value=(
-                {("A", 19, "CA", "THR"): [0, 0, 0], ("A", 20, "CA", "ILE"): [1, 1, 1]}
-            ),
-        )
-        mock_write_scan_out = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.write_scan_out"
-        )
-        # mock ModelPointMutation.run() with mixed results
-        mock_mutation_run = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.ModelPointMutation.run",
-            side_effect=[successful_mutation_result, failed_mutation_result],
-        )
-        result = interface_scanner_library.run()
-        assert result is None
-        assert mock_mutation_run.call_count == 2
-        mock_write_scan_out.assert_called_once()
-        results_passed = mock_write_scan_out.call_args[0][0]
-        assert len(results_passed) == 2
-        assert results_passed[0].success is True
-        assert results_passed[1].success is False
-        assert results_passed[1].error_msg == "Mutation failed"
-
-
-def test_interface_scanner_run_library_mode_no_mutations(
-    mocker, interface_scanner_library, monkeypatch
-):
-    """Test InterfaceScanner.run() in library mode when no mutations are created."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        monkeypatch.chdir(tmpdir)
-        mocker.patch(
-            "haddock.modules.analysis.alascan.scan.calc_score",
-            return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
-        )
-        mocker.patch(
-            "haddock.libs.libcapri.CAPRI.identify_interface",
-            return_value={},  # No interface residues
-        )
-        mocker.patch("haddock.libs.libalign.get_atoms", return_value=[])
-        mocker.patch("haddock.libs.libalign.load_coords", return_value=({}, {}))
-        mock_write_scan_out = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.write_scan_out"
-        )
-        result = interface_scanner_library.run()
-        assert result is None
-        mock_write_scan_out.assert_called_once_with(
-            [], interface_scanner_library.model_id
-        )
-
-
 def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
     """Test chain filtering in InterfaceScanner."""
     params_with_chains = {**params, "chains": ["A"]}
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20], "B": [30, 31]},
     )
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
-    mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
-    mock_load_coords = mocker.patch(
+    mocker.patch("haddock.libs.libalign.get_atoms")
+    mocker.patch(
         "haddock.libs.libalign.load_coords",
         return_value=(
             {
@@ -597,9 +440,7 @@ def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
             }
         ),
     )
-    scanner = InterfaceScanner(
-        model=complex_pdb, params=params_with_chains, library_mode=False
-    )
+    scanner = InterfaceScanner(model=complex_pdb, params=params_with_chains)
     mutation_jobs = scanner.run()
     # Should only include chain A mutations
     chains_in_jobs = {job.chain for job in mutation_jobs}
@@ -610,25 +451,23 @@ def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
 def test_interface_scanner_residue_filtering(mocker, complex_pdb, params):
     """Test residue filtering with resdic parameters."""
     params_with_resdic = {**params, "resdic_A": [19], "resdic_B": [30]}
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20, 21], "B": [30, 31, 32]},
     )
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
-    mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
-    mock_load_coords = mocker.patch(
+    mocker.patch("haddock.libs.libalign.get_atoms")
+    mocker.patch(
         "haddock.libs.libalign.load_coords",
         return_value=(
             {("A", 19, "CA", "THR"): [0, 0, 0], ("B", 30, "CA", "VAL"): [1, 1, 1]},
             {},
         ),
     )
-    scanner = InterfaceScanner(
-        model=complex_pdb, params=params_with_resdic, library_mode=False
-    )
+    scanner = InterfaceScanner(model=complex_pdb, params=params_with_resdic)
     mutation_jobs = scanner.run()
     expected_residues = {(job.chain, job.resid) for job in mutation_jobs}
     # only residues in resdic_*,  not entire inteface
@@ -644,21 +483,17 @@ def test_interface_scanner_residue_filtering_not_in_interface(
         "resdic_A": [999],
         "resdic_B": [999],
     }  # Not in interface
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20], "B": [30, 31]},
     )
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
-    mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
-    mock_load_coords = mocker.patch(
-        "haddock.libs.libalign.load_coords", return_value=({}, {})
-    )
-    scanner = InterfaceScanner(
-        model=complex_pdb, params=params_with_resdic, library_mode=False
-    )
+    mocker.patch("haddock.libs.libalign.get_atoms")
+    mocker.patch("haddock.libs.libalign.load_coords", return_value=({}, {}))
+    scanner = InterfaceScanner(model=complex_pdb, params=params_with_resdic)
     mutation_jobs = scanner.run()
     # no mutatioins to return
     assert len(mutation_jobs) == 0
@@ -666,17 +501,15 @@ def test_interface_scanner_residue_filtering_not_in_interface(
 
 def test_interface_scanner_skip_same_residue_mutation(mocker, complex_pdb, params):
     """Test that mutations to same residue type are skipped."""
-    mock_identify_interface = mocker.patch(
+    mocker.patch(
         "haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20]},  # here 19 is TRP, so should be not mutated
     )
-    mock_calc_score = mocker.patch(
+    mocker.patch(
         "haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
-    scanner = InterfaceScanner(
-        model=complex_pdb, mutation_res="THR", params=params, library_mode=False
-    )
+    scanner = InterfaceScanner(model=complex_pdb, mutation_res="THR", params=params)
     mutation_jobs = scanner.run()
     assert len(mutation_jobs) == 1
 
@@ -902,7 +735,7 @@ def test_confirm_installation(alascan):
 def test_calc_score(mocker):
     """Test the run_scan method."""
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.get_score_string",
+        "haddock.libs.libscan.get_score_string",
         return_value=[
             "> starting calculations...",
             "> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.0 * air) + (0.0 * bsa)",
@@ -918,7 +751,7 @@ def test_calc_score(mocker):
 
 def test_calc_score_wrong(mocker):
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.get_score_string",
+        "haddock.libs.libscan.get_score_string",
         return_value=["> could not calculate score"],
     )
     # now calc_score should raise an Exception

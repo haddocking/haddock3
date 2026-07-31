@@ -1,12 +1,13 @@
-"""alascan module."""
+"""rnascan module."""
 
 import os
 import shutil
 from pathlib import Path
-from typing import Tuple, Dict
+from typing import List, Tuple, Dict
 
 
 from haddock import log
+from haddock.core.exceptions import ConfigurationError
 from haddock.core.typing import Any, Optional, Union
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libontology import PDBFile
@@ -20,61 +21,163 @@ from haddock.libs.libscan import (
 )
 from haddock.libs.libcapri import CAPRI
 
-ATOMS_TO_BE_MUTATED = ["C", "N", "CA", "O", "CB"]
+# Heavy atoms of the ribose-phosphate backbone that are common to all RNA
+# nucleotides. These atoms are always preserved when mutating a base. The
+# ribose 2'-hydroxyl oxygen (O2') is part of the backbone for RNA. Both the
+# modern (OP1/OP2) and legacy (O1P/O2P) phosphate oxygen namings are accepted
+# so that models from either convention are handled correctly.
+BACKBONE_ATOMS = [
+    "P",
+    "OP1",
+    "OP2",
+    "O1P",
+    "O2P",
+    "O5'",
+    "C5'",
+    "C4'",
+    "O4'",
+    "C1'",
+    "C2'",
+    "O2'",
+    "C3'",
+    "O3'",
+]
 
-RES_CODES = dict(
-    [
-        ("CYS", "C"),
-        ("ASP", "D"),
-        ("SER", "S"),
-        ("GLN", "Q"),
-        ("LYS", "K"),
-        ("ILE", "I"),
-        ("PRO", "P"),
-        ("THR", "T"),
-        ("PHE", "F"),
-        ("ASN", "N"),
-        ("GLY", "G"),
-        ("HIS", "H"),
-        ("LEU", "L"),
-        ("ARG", "R"),
-        ("TRP", "W"),
-        ("ALA", "A"),
-        ("VAL", "V"),
-        ("GLU", "E"),
-        ("TYR", "Y"),
-        ("MET", "M"),
-        ("ALY", "K"),
-        ("ASH", "D"),
-        ("CFE", "C"),
-        ("CSP", "C"),
-        ("CYC", "C"),
-        ("CYF", "C"),
-        ("CYM", "C"),
-        ("DDZ", "A"),
-        ("GLH", "E"),
-        ("HLY", "P"),
-        ("HY3", "P"),
-        ("HYP", "P"),
-        ("M3L", "K"),
-        ("MLY", "K"),
-        ("MLZ", "K"),
-        ("MSE", "M"),
-        ("NEP", "H"),
-        ("PNS", "S"),
-        ("PTR", "Y"),
-        ("SEP", "S"),
-        ("TOP", "T"),
-        ("TYP", "Y"),
-        ("TYS", "Y"),
-        ("CIR", "R"),
-    ]
-)
+# Base ring atoms shared by both purines (A and G). Preserving them when
+# mutating one purine into the other keeps the base plane and glycosidic
+# orientation, so CNS only has to rebuild the differing substituents.
+PURINE_BASE_ATOMS = ["N9", "C8", "N7", "C5", "C4", "N3", "C2", "N1", "C6"]
+
+# Base ring atoms shared by both pyrimidines (C and U). Same rationale as for
+# the purines above.
+PYRIMIDINE_BASE_ATOMS = ["N1", "C2", "O2", "N3", "C4", "C5", "C6"]
+
+# RNA residues that can be scanned/mutated by this module.
+RNA_RESIDUES = ("A", "C", "G", "U")
+
+# Ring-type classification of the RNA bases.
+PURINES = ("A", "G")
+PYRIMIDINES = ("C", "U")
+
+# Glycosidic-region anchor atoms kept (and renamed) on cross-type mutations
+# (purine <-> pyrimidine). Because the purine and pyrimidine ring systems do
+# not share atom names, these three atoms are preserved and renamed to their
+# counterpart in the target ring so that CNS rebuilds the new base with the
+# correct glycosidic orientation (and syn/anti conformation). The
+# correspondence is:
+#   pyrimidine N1 <-> purine N9   (glycosidic nitrogen)
+#   pyrimidine C2 <-> purine C4
+#   pyrimidine C6 <-> purine C8
+PYRIMIDINE_TO_PURINE_ANCHORS = {"N1": "N9", "C2": "C4", "C6": "C8"}
+PURINE_TO_PYRIMIDINE_ANCHORS = {"N9": "N1", "C4": "C2", "C8": "C6"}
+
+
+def get_atoms_to_keep(ori_resname: str, target_resname: str) -> Dict[str, str]:
+    """Return the atoms to preserve when mutating one base into another.
+
+    The result maps each atom name to keep (as found in the original residue)
+    to the atom name it must be written with in the mutated residue. Backbone
+    atoms and same-ring-type base atoms keep their name (mapped to themselves).
+
+    The ribose-phosphate backbone is always kept. In addition, when the
+    original and target bases are of the same ring type (both purines or both
+    pyrimidines), the base ring atoms common to that type are kept as well, so
+    that the base orientation is preserved and CNS only rebuilds the differing
+    substituents. For cross-type mutations (purine <-> pyrimidine) the three
+    glycosidic-region anchor atoms are kept and renamed to their counterpart in
+    the target ring system (pyrimidine N1/C2/C6 <-> purine N9/C4/C8), so that the
+    base orientation is preserved and CNS rebuilds the rest of the new base.
+
+    Parameters
+    ----------
+    ori_resname : str
+        Original (wild-type) residue name.
+    target_resname : str
+        Target base residue name.
+
+    Returns
+    -------
+    dict of str -> str
+        Mapping of original atom name -> atom name to write for the mutated
+        nucleotide.
+    """
+    # Backbone is always kept, with unchanged atom names.
+    atoms_to_keep: Dict[str, str] = {atom: atom for atom in BACKBONE_ATOMS}
+    if ori_resname in PURINES and target_resname in PURINES:
+        atoms_to_keep.update({atom: atom for atom in PURINE_BASE_ATOMS})
+    elif ori_resname in PYRIMIDINES and target_resname in PYRIMIDINES:
+        atoms_to_keep.update({atom: atom for atom in PYRIMIDINE_BASE_ATOMS})
+    elif ori_resname in PYRIMIDINES and target_resname in PURINES:
+        atoms_to_keep.update(PYRIMIDINE_TO_PURINE_ANCHORS)
+    elif ori_resname in PURINES and target_resname in PYRIMIDINES:
+        atoms_to_keep.update(PURINE_TO_PYRIMIDINE_ANCHORS)
+    return atoms_to_keep
+
+
+# Default set of target bases tested for each selected interface nucleotide.
+DEFAULT_SCAN_BASES = ["A", "C", "G", "U"]
+
+
+def validate_scan_bases(scan_bases: List[str]) -> List[str]:
+    """Validate and normalise the list of target RNA bases.
+
+    Only the canonical RNA residue names (``A``, ``C``, ``G``, ``U``) are
+    accepted, in a case-insensitive manner. Two-letter names prefixed with
+    ``D`` (``DA``, ``DC``, ``DG``, ``DT``) denote DNA residues in HADDOCK and
+    are therefore rejected by this RNA-specific module.
+
+    Parameters
+    ----------
+    scan_bases : list of str
+        Target bases requested by the user.
+
+    Returns
+    -------
+    list of str
+        Normalised, de-duplicated list of canonical RNA residue names, in the
+        order first seen.
+
+    Raises
+    ------
+    ConfigurationError
+        If ``scan_bases`` is empty or contains an unrecognised base.
+    """
+    if not scan_bases:
+        raise ConfigurationError(
+            "'scan_bases' must contain at least one RNA base "
+            f"among {', '.join(RNA_RESIDUES)}."
+        )
+    normalised: List[str] = []
+    for base in scan_bases:
+        canonical = str(base).strip().upper()
+        if canonical not in RNA_RESIDUES:
+            raise ConfigurationError(
+                f"Invalid 'scan_bases' entry {base!r}. Allowed values are the "
+                f"RNA residue names {', '.join(RNA_RESIDUES)} (two-letter names "
+                "such as DA, DC, DG, DT denote DNA and are not supported)."
+            )
+        if canonical not in normalised:
+            normalised.append(canonical)
+    return normalised
+
+
+def _norm_atom_name(atom_name: str) -> str:
+    """Normalise atom names so that primes are always written as `'`."""
+    return atom_name.replace("*", "'")
 
 
 def mutate(pdb_f, target_chain, target_resid, mut_resname):
     """
-    Mutate a residue in a PDB file into a different residue.
+    Mutate an RNA base in a PDB file into a different base.
+
+    The ribose-phosphate backbone is always kept for the mutated nucleotide.
+    When the original and target bases share a ring type (both purines or both
+    pyrimidines) the common base ring atoms are kept as well to preserve the
+    base orientation (see ``get_atoms_to_keep``). For cross-type mutations
+    (purine <-> pyrimidine) the three glycosidic-region anchor atoms are kept and
+    renamed to their counterpart in the target ring (pyrimidine N1/C2/C6 <->
+    purine N9/C4/C8). The remaining base atoms are dropped and rebuilt by CNS
+    during scoring.
 
     Parameters
     ----------
@@ -82,13 +185,13 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
         Path to the pdb file.
 
     target_chain : str
-        Chain of the residue to be mutated.
+        Chain of the nucleotide to be mutated.
 
     target_resid : int
-        Residue number of the residue to be mutated.
+        Residue number of the nucleotide to be mutated.
 
     mut_resname : str
-        Residue name of the residue to be mutated.
+        Residue name of the target base (e.g. ``A``, ``C``, ``G``, ``U``).
 
     Returns
     -------
@@ -97,25 +200,38 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
     """
     mut_pdb_l = []
     resname = ""
+    atoms_to_keep: List[str] = []
+    # RNA residue names are shorter than 3 characters, so they must be
+    # right-justified to keep the PDB columns (18-20) aligned.
+    resname_field = mut_resname.rjust(3)
     with open(pdb_f, "r") as fh:
         for line in fh.readlines():
             if line.startswith("ATOM"):
                 chain = line[21]
                 resid = int(line[22:26])
-                atom_name = line[12:16].strip()
+                atom_name = _norm_atom_name(line[12:16].strip())
                 if target_chain == chain and target_resid == resid:
                     if not resname:
                         resname = line[17:20].strip()
-                    if atom_name in ATOMS_TO_BE_MUTATED:
-                        # mutate
-                        line = line[:17] + mut_resname + line[20:]
+                        # Determine which atoms to keep now that the original
+                        # base is known (depends on the ori/target ring types).
+                        atoms_to_keep = get_atoms_to_keep(resname, mut_resname)
+                    if atom_name in atoms_to_keep:
+                        # mutate the residue name
+                        line = line[:17] + resname_field + line[20:]
+                        # rename the atom if it maps to a different name in the
+                        # target ring system (cross-type anchor atoms)
+                        new_atom_name = atoms_to_keep[atom_name]
+                        if new_atom_name != atom_name:
+                            new_field = line[12:16].replace(atom_name, new_atom_name, 1)
+                            line = line[:12] + new_field + line[16:]
                         mut_pdb_l.append(line)
                 else:
                     mut_pdb_l.append(line)
-    try:
-        mut_id = f"{RES_CODES[resname]}{target_resid}{RES_CODES[mut_resname]}"
-    except KeyError:
+    # RNA residue names are already the one-letter codes used in identifiers.
+    if resname not in RNA_RESIDUES or mut_resname not in RNA_RESIDUES:
         raise KeyError(f"Could not mutate {resname} into {mut_resname}.")
+    mut_id = f"{resname}{target_resid}{mut_resname}"
     mut_pdb_fname = Path(pdb_f.name.replace(".pdb", f"-{target_chain}_{mut_id}.pdb"))
     with open(mut_pdb_fname, "w") as fh:
         fh.write("".join(mut_pdb_l))
@@ -123,56 +239,59 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
 
 
 class ClusterOutputer(_ClusterOutputer):
-    """Manage the generation of alascan outputs for cluster-based analysis."""
+    """Manage the generation of rnascan outputs for cluster-based analysis."""
 
-    module_name = "alascan"
-    default_scan_residue = "ALA"
-    sort_columns = ["chain", "resid"]
-    zscore_reference = "residues"
+    module_name = "rnascan"
+    default_scan_residue = "RNA base"
+    sort_columns = ["chain", "resid", "target_resname"]
+    zscore_reference = "mutations"
 
     def _identity_columns(self):
-        return ["chain", "resid", "resname", "full_resname"]
+        return ["chain", "resid", "resname", "target_resname", "full_resname"]
 
     def _identity_row(self, ident, clt_res_dt):
-        parts = ident.split("-")
-        return [parts[0], int(parts[1]), parts[2], ident]
+        # ident is "<chain>-<resid>-<ori_resname>-<target_resname>"
+        chain, resid, resname, target_resname = ident.split("-")
+        return [chain, int(resid), resname, target_resname, ident]
 
 
 class AddDeltaBFactor(_AddDeltaBFactor):
-    """Add alascan delta score in the b-factor column of a PDB."""
+    """Add rnascan delta score in the b-factor column of a PDB."""
 
-    module_name = "alascan"
+    module_name = "rnascan"
 
 
 def group_scan_by_cluster(models, results_by_model):
-    """Group alascan data per cluster, keyed by residue."""
+    """Group rnascan data per cluster, keyed by mutation (base included)."""
     return _group_scan_by_cluster(
         models,
         results_by_model,
-        ident_builder=lambda r: f"{r.chain}-{r.resid}-{r.ori_resname}",
+        ident_builder=lambda r: (
+            f"{r.chain}-{r.resid}-{r.ori_resname}-{r.target_resname}"
+        ),
     )
 
 
 def write_scan_out(results, model_id):
-    """Save alascan mutation results for one model to a tsv file."""
+    """Save rnascan mutation results for one model to a tsv file."""
     _write_scan_out(
         results,
         model_id,
-        module_name="alascan",
-        sort_columns=["chain", "res"],
-        zscore_reference="residues",
+        module_name="rnascan",
+        sort_columns=["chain", "res", "end_resname"],
+        zscore_reference="mutations",
     )
 
 
 class InterfaceScanner:
-    """Scan interface of a model to get tartget residues and create
+    """Scan interface of a model to get target nucleotides and create
     corresponding mutation jobs.
     """
 
     def __init__(
         self,
         model: Union[str, Path, Any],
-        mutation_res: str = "ALA",
+        scan_bases: Optional[List[str]] = None,
         params: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
@@ -182,14 +301,15 @@ class InterfaceScanner:
         ----------
         model : str, Path, or model object
             HADDOCK ``PDBFile`` model object or a path to a PDB file.
-        mutation_res : str
-            Target residue for mutation (default: "ALA")
+        scan_bases : list of str, optional
+            Target bases tested for each interface nucleotide
+            (default: A, C, G, T)
         params : dict, optional
             Additional parameters for interface detection
-            (list on top of alascan/__inint__.py)
+            (list on top of rnascan/__init__.py)
         """
         self.model = model
-        self.mutation_res = mutation_res
+        self.scan_bases = list(scan_bases) if scan_bases else list(DEFAULT_SCAN_BASES)
         self.params = params or {}
         self.point_mutations_jobs = []
         self.ligand_param_fname = self.params.get("ligand_param_fname", "")
@@ -208,12 +328,13 @@ class InterfaceScanner:
             self.model_id = self.model_path.stem
 
     @staticmethod
-    def _iter_mutations(interface, resname_dict, mutation_res):
-        """Yield each mutation to perform for the interface residues.
+    def _iter_mutations(interface, resname_dict, scan_bases):
+        """Yield each valid single-base mutation to perform.
 
-        Flattens the interface (chain -> residues) into a single stream of
-        ``(chain, resid, ori_resname, target_resname)`` tuples, skipping no-op
-        mutations (target residue equal to the original, e.g. ``ALA -> ALA``).
+        Flattens the interface (chain -> residues) and the requested target
+        bases into a single stream of ``(chain, resid, ori_resname,
+        target_resname)`` tuples, skipping non-RNA residues and no-op mutations
+        (target base equal to the original, e.g. ``A -> A``).
 
         Parameters
         ----------
@@ -221,8 +342,8 @@ class InterfaceScanner:
             Mapping of chain id to the list of interface residue numbers.
         resname_dict : dict
             Mapping of ``"{chain}-{resid}"`` to the residue name.
-        mutation_res : str
-            Residue to mutate every interface residue into (e.g. ``ALA``).
+        scan_bases : list of str
+            Target bases to scan each nucleotide into.
 
         Yields
         ------
@@ -232,14 +353,18 @@ class InterfaceScanner:
         for chain, residues in interface.items():
             for res in residues:
                 ori_resname = resname_dict[f"{chain}-{res}"]
-                # Skip no-op mutation (e.g. ALA -> ALA)
-                if ori_resname == mutation_res:
+                # Only scan RNA nucleotides, skip protein/other residues
+                if ori_resname not in RNA_RESIDUES:
                     continue
-                yield chain, res, ori_resname, mutation_res
+                for end_resname in scan_bases:
+                    # Skip no-op mutation (e.g. A -> A)
+                    if ori_resname == end_resname:
+                        continue
+                    yield chain, res, ori_resname, end_resname
 
     def run(self):
         """
-        Get interface residues and create the mutation jobs for this model.
+        Get interface nucleotides and create the mutation jobs for this model.
 
         The jobs are returned (not executed): the caller hands them to a haddock
         Engine so that all mutations are scheduled together.
@@ -272,7 +397,7 @@ class InterfaceScanner:
                 add_resname=True,
             )
 
-            # Determine target residues: get interface, then apply user filers, if given
+            # Determine target nucleotides: get interface, then apply user filters
             # Get all interface residues
             cutoff = self.params.get("int_cutoff", 5.0)
             interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
@@ -304,17 +429,17 @@ class InterfaceScanner:
                     if chain in user_chains
                 }
 
-            # get all atoms of the model to verifiy residue type down the line
+            # get all atoms of the model to verify residue type down the line
             resname_dict = {}
             for chain, resid, _atom, resname in coords.keys():
                 key = f"{chain}-{resid}"
                 if key not in resname_dict:
                     resname_dict[key] = resname
 
-            # Create mutation
+            # Create mutations
             output_mutants = self.params.get("output_mutants", False)
             for chain, res, ori_resname, end_resname in self._iter_mutations(
-                interface, resname_dict, self.mutation_res
+                interface, resname_dict, self.scan_bases
             ):
                 job = ModelPointMutation(
                     model_path=self.model_path,
@@ -338,7 +463,7 @@ class InterfaceScanner:
 
 
 class ModelPointMutation:
-    """Executes a single point mutation."""
+    """Executes a single base point mutation."""
 
     def __init__(
         self,
@@ -369,7 +494,7 @@ class ModelPointMutation:
         ori_resname : str
             Original residue name
         target_resname : str
-            Target residue name for mutation
+            Target base name for mutation
         native_scores : tuple
             Native model scores (score, vdw, elec, desolv, bsa)
         output_mutants : bool
@@ -433,7 +558,7 @@ class ModelPointMutation:
                 if em_mut_pdb.exists():
                     os.remove(em_mut_pdb)
             else:
-                # othervise keep energy-minimized pdb
+                # otherwise keep energy-minimized pdb
                 if os.path.exists(em_mut_pdb):
                     shutil.move(em_mut_pdb, mut_pdb)
             # clean up scoring dir

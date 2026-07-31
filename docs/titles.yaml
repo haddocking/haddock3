@@ -29,6 +29,7 @@ modules:
   seletop: "Selection of top models module"
   seletopclusts: "Selection of top clusters module"
   alascan: "Alanine Scanning module"
+  rnascan: "RNA Scanning module"
   ilrmsdmatrix: "Interface Ligand RMSD Matrix calculation module"
   exit: "Exit module"
   openmm: "OpenMM Molecular Dynamics module"

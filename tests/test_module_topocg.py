@@ -62,7 +62,7 @@ def test_generate_topology(topocg, protein):
     """Test generate_topology function."""
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", PDBConstructionWarning)
-        force_field=topocg.params["cgffversion"]
+        force_field = topocg.params["cgffversion"]
         observed_inp_out = generate_topology(
             input_pdb=protein,
             output_path=topocg.path,
@@ -74,10 +74,12 @@ def test_generate_topology(topocg, protein):
         )
 
     assert observed_inp_out == Path(protein.name).with_suffix(f".{Format.CNS_INPUT}")
-    
+
     # Confirm the expected output file exists
     expected_filename = topocg.path.resolve() / f"{protein.stem}_cg.pdb"
-    assert expected_filename.exists(), f"Expected CG PDB file not found: {expected_filename}"
+    assert expected_filename.exists(), (
+        f"Expected CG PDB file not found: {expected_filename}"
+    )
 
     # Check that backmapping tbl file has been created
     tbl_backmapping_fpath = topocg.path.resolve() / f"{protein.stem}_cg_to_aa.tbl"

@@ -5,7 +5,7 @@ parameters and topologies (``.psf``) for each of the input structures.
 
 It will:
 - Convert an all atom model to a Martini coarse-grained model
-- Detect missing atoms 
+- Detect missing atoms
 - Re-build them when missing
 - Build and write out topologies (``.psf``) and coordinates (``.pdb``) files
 - Write out a restrain file to convert back the CG model to all atoms
@@ -30,12 +30,12 @@ from haddock.libs.libcns import (
     load_workflow_params,
     prepare_output,
     prepare_single_input,
-    )
+)
 from haddock.libs.libaa2cg import (
     martinize,
     gen_cg_filename,
     gen_cg_tbl_backmapping_fname,
-    )
+)
 from haddock.libs.libontology import Format, PDBFile, TopologyFile
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
@@ -235,13 +235,11 @@ class HaddockModule(BaseCNSModule):
             psf_files[i] = [
                 Path(model.parent, f"{model.stem}.{Format.TOPOLOGY}")
                 for model in models
-                ]
+            ]
 
             # get the MD5 hash of each model
             ens_dic[i] = [self.get_md5(model) for model in models]
-            origi_ens_dic[i] = [
-                self.get_ensemble_origin(model) for model in models
-            ]
+            origi_ens_dic[i] = [self.get_ensemble_origin(model) for model in models]
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
 
@@ -263,7 +261,7 @@ class HaddockModule(BaseCNSModule):
                     default_params_path=self.toppar_path,
                     write_to_disk=self.params["debug"],
                     force_field=force_field,
-                    shape=shape_dic[i]
+                    shape=shape_dic[i],
                 )
                 self.log("Topology CNS input created")
 
@@ -314,17 +312,17 @@ class HaddockModule(BaseCNSModule):
                         self.path.resolve().parent,
                         origin_name_model,
                         force_field=force_field,
-                        )
+                    )
                     processed_topology = gen_cg_filename(
                         self.path.resolve().parent,
                         origin_name_model,
                         force_field=force_field,
                         ext=Format.TOPOLOGY,
-                        )
+                    )
                     processed_cgtoaa_tbl = gen_cg_tbl_backmapping_fname(
                         self.path.resolve().parent,
                         origin_name_model,
-                        ).resolve()
+                    ).resolve()
                 else:
                     processed_pdb = Path(f"{origin_name_model}.{Format.PDB}")
                     processed_topology = Path(f"{origin_name_model}.{Format.TOPOLOGY}")
@@ -348,7 +346,9 @@ class HaddockModule(BaseCNSModule):
 
         # Remove temporary `*_cg.pdb` files if not in debug mode
         if not self.params["debug"]:
-            for tmp_cg in Path(self.path.resolve().parent).glob(f"{gen_cg_filename('', '*')}"):
+            for tmp_cg in Path(self.path.resolve().parent).glob(
+                f"{gen_cg_filename('', '*')}"
+            ):
                 os.remove(tmp_cg)
 
         # Save module information

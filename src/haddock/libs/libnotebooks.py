@@ -414,9 +414,7 @@ def align_full_ens(
 
         # Reference atoms are taken from its first model
         ref_model = next(ref_struct.get_models())
-        ref_atoms, ref_chain_info = get_atoms_from_chains(
-            ref_model, chains, atom_types
-        )
+        ref_atoms, ref_chain_info = get_atoms_from_chains(ref_model, chains, atom_types)
         print(
             f"Atoms for alignment - Reference: {ref_chain_info}, "
             f"Total: {len(ref_atoms)}"
@@ -476,9 +474,7 @@ def align_full_ens(
                 # PDB string and add them as animation frames of one model.
                 # 3Dmol.js cycles through frames while the reference (model 0)
                 # stays static.
-                frames_pdb = "\n".join(
-                    _model_to_pdb_string(m) for m in aligned_models
-                )
+                frames_pdb = "\n".join(_model_to_pdb_string(m) for m in aligned_models)
                 view.addModelsAsFrames(frames_pdb, "pdb")
 
                 if show_model_number:

@@ -348,7 +348,7 @@ end if
 inline @MODULE:bondglycans.cns
 
 if ($delenph = true) then
-    delete sele=(name H* and attr charge = 0) end
+    delete sele=(name H* and attr charge = 0 and not name HA) end
 end if
 
 set seed=$iniseed end

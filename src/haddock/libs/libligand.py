@@ -218,7 +218,8 @@ def run_prodrg(
     ligand is given a unique ``CNSSEP`` character so that prodrg generates
     non-overlapping atom type names across the concatenated files; the
     characters used are also chosen to avoid the separators already present in
-    the built-in ``cofactors.top`` topology.
+    the built-in ``cofactors.top`` topology, so a single auto-generated ligand
+    likewise cannot clash with the cofactor atom types.
 
     Parameters
     ----------
@@ -264,20 +265,18 @@ def run_prodrg(
         # PRODRG only handles one molecule at a time, so run it once per distinct
         # ligand (on a single extracted copy) and concatenate the results.
         distinct_resnames = list(dict.fromkeys(ligand_resnames))
-        # With several ligands, give each a unique CNSSEP character so their
-        # prodrg atom type names do not overlap once concatenated, avoiding the
-        # separators already used by the built-in cofactors topology.
-        separators: Optional[list[str]] = None
-        if len(distinct_resnames) > 1:
-            excluded = _used_cofactor_separators()
-            separators = [c for c in ascii_uppercase + digits if c not in excluded]
-            if len(distinct_resnames) > len(separators):
-                raise RuntimeError(
-                    "Cannot auto-generate topologies for more than "
-                    f"{len(separators)} distinct ligands."
-                )
+        # Give each ligand a unique CNSSEP character so their prodrg atom type
+        # names do not overlap once concatenated, avoiding the separators
+        # already used by the built-in cofactors topology.
+        excluded = _used_cofactor_separators()
+        separators = [c for c in ascii_uppercase + digits if c not in excluded]
+        if len(distinct_resnames) > len(separators):
+            raise RuntimeError(
+                "Cannot auto-generate topologies for more than "
+                f"{len(separators)} distinct ligands."
+            )
         for idx, resname in enumerate(distinct_resnames):
-            cnssep = separators[idx] if separators is not None else None
+            cnssep = separators[idx]
             with tempfile.TemporaryDirectory() as tmpdir:
                 ligand_pdb = extract_ligand(
                     pdb_file, [resname], Path(tmpdir, f"{resname}.pdb")

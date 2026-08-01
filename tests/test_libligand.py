@@ -171,8 +171,8 @@ def test_run_prodrg_concatenates_multiple_ligands(tmp_path, monkeypatch):
     assert "PAR LGA" in par.read_text() and "PAR LGB" in par.read_text()
 
 
-def test_run_prodrg_single_ligand_uses_no_cnssep(tmp_path, monkeypatch):
-    """A single ligand is run without a CNSSEP separator (unchanged behavior)."""
+def test_run_prodrg_single_ligand_uses_cofactor_safe_cnssep(tmp_path, monkeypatch):
+    """A single ligand also gets a cofactor-safe CNSSEP separator."""
     pdb = tmp_path / "one.pdb"
     pdb.write_text(
         "ATOM      1  C1  LGA A 284       0.000   0.000   0.000  1.00  0.00      A    C\n"
@@ -188,7 +188,9 @@ def test_run_prodrg_single_ligand_uses_no_cnssep(tmp_path, monkeypatch):
     monkeypatch.setattr("haddock.libs.libligand._run_prodrg_single", fake_single)
 
     run_prodrg(pdb, tmp_path, ligand_resnames=["LGA"])
-    assert seps == [None]
+    assert len(seps) == 1
+    assert seps[0] is not None
+    assert seps[0] not in _used_cofactor_separators()
 
 
 def test_run_prodrg_deduplicates_ligand_resnames(tmp_path, monkeypatch):

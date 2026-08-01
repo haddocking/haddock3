@@ -11,6 +11,7 @@ from haddock.libs.libligand import (
     run_prodrg,
     _remove_nbonds,
     _sanitize_atom_names,
+    _used_cofactor_separators,
 )
 from haddock.core.supported_molecules import supported_HETATM
 from . import golden_data as GOLDEN_DATA
@@ -148,11 +149,11 @@ def test_run_prodrg_concatenates_multiple_ligands(tmp_path, monkeypatch):
         "END\n"
     )
 
-    calls: list[str] = []
+    calls: list[tuple[str, object]] = []
 
-    def fake_single(ligand_pdb):
+    def fake_single(ligand_pdb, cnssep=None):
         resname = ligand_pdb.stem
-        calls.append(resname)
+        calls.append((resname, cnssep))
         return (f"TOP {resname}", f"PAR {resname}")
 
     monkeypatch.setattr("haddock.libs.libligand._run_prodrg_single", fake_single)
@@ -160,10 +161,34 @@ def test_run_prodrg_concatenates_multiple_ligands(tmp_path, monkeypatch):
     top, par = run_prodrg(pdb, tmp_path, ligand_resnames=["LGA", "LGB"])
 
     # prodrg is invoked once per distinct ligand
-    assert calls == ["LGA", "LGB"]
+    assert [c[0] for c in calls] == ["LGA", "LGB"]
+    # each ligand gets a distinct CNSSEP character that avoids the cofactor ones
+    seps = [c[1] for c in calls]
+    assert len(set(seps)) == len(seps)
+    assert not (set(seps) & _used_cofactor_separators())
     # both ligand topologies/parameters are concatenated
     assert "TOP LGA" in top.read_text() and "TOP LGB" in top.read_text()
     assert "PAR LGA" in par.read_text() and "PAR LGB" in par.read_text()
+
+
+def test_run_prodrg_single_ligand_uses_no_cnssep(tmp_path, monkeypatch):
+    """A single ligand is run without a CNSSEP separator (unchanged behavior)."""
+    pdb = tmp_path / "one.pdb"
+    pdb.write_text(
+        "ATOM      1  C1  LGA A 284       0.000   0.000   0.000  1.00  0.00      A    C\n"
+        "END\n"
+    )
+
+    seps: list[object] = []
+
+    def fake_single(ligand_pdb, cnssep=None):
+        seps.append(cnssep)
+        return ("TOP", "PAR")
+
+    monkeypatch.setattr("haddock.libs.libligand._run_prodrg_single", fake_single)
+
+    run_prodrg(pdb, tmp_path, ligand_resnames=["LGA"])
+    assert seps == [None]
 
 
 def test_run_prodrg_deduplicates_ligand_resnames(tmp_path, monkeypatch):
@@ -176,7 +201,7 @@ def test_run_prodrg_deduplicates_ligand_resnames(tmp_path, monkeypatch):
 
     calls: list[str] = []
 
-    def fake_single(ligand_pdb):
+    def fake_single(ligand_pdb, cnssep=None):
         calls.append(ligand_pdb.stem)
         return ("TOP", "PAR")
 
@@ -184,6 +209,13 @@ def test_run_prodrg_deduplicates_ligand_resnames(tmp_path, monkeypatch):
 
     run_prodrg(pdb, tmp_path, ligand_resnames=["LGA", "LGA"])
     assert calls == ["LGA"]
+
+
+def test_used_cofactor_separators_excludes_known_chars():
+    """The cofactor separator set reflects the atom types in cofactors.top."""
+    seps = _used_cofactor_separators()
+    # cofactors.top atom types use these separators (2nd character)
+    assert {"A", "C", "F", "G", "N"} <= seps
 
 
 def test_remove_nbonds_removes_block():

@@ -4,6 +4,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
+from string import ascii_uppercase, digits
 
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.defaults import prodrg_exec, prodrg_param
@@ -91,7 +92,10 @@ def extract_ligand(
     return dest
 
 
-def _run_prodrg_single(pdb_file: Path) -> tuple[str, str]:
+def _run_prodrg_single(
+    pdb_file: Path,
+    cnssep: Optional[str] = None,
+) -> tuple[str, str]:
     """Run prodrg on a single small-molecule PDB and return its CNS content.
 
     prodrg writes its output to fixed filenames in the current working
@@ -102,6 +106,11 @@ def _run_prodrg_single(pdb_file: Path) -> tuple[str, str]:
     ----------
     pdb_file : Path
         Path to a PDB file containing a single small molecule.
+    cnssep : Optional[str]
+        Single character passed to prodrg as ``CNSSEP=<x>``. prodrg embeds it
+        in every generated atom type name (e.g. ``CA82``/``HA82`` for ``A``),
+        so giving each ligand a unique letter keeps their atom types from
+        clashing when several topologies are concatenated.
 
     Returns
     -------
@@ -120,9 +129,18 @@ def _run_prodrg_single(pdb_file: Path) -> tuple[str, str]:
         shutil.copy(prodrg_param, Path(tmpdir, prodrg_param.name))
         shutil.copy(pdb_file, Path(tmpdir, pdb_file.name))
 
+        # NOTE: We need this `PDBELEM` flag here
+        prodrg_args = [
+            str(prodrg_exec),
+            str(pdb_file.name),
+            str(prodrg_param.name),
+            "PDBELEM",
+        ]
+        if cnssep:
+            prodrg_args.append(f"CNSSEP={cnssep}")
+
         result = subprocess.run(
-            # NOTE: We need this `PDBELEM` flag here
-            [str(prodrg_exec), str(pdb_file.name), str(prodrg_param.name), "PDBELEM"],
+            prodrg_args,
             cwd=tmpdir,
             capture_output=True,
             text=True,
@@ -156,6 +174,33 @@ def _run_prodrg_single(pdb_file: Path) -> tuple[str, str]:
     return top_content, par_content
 
 
+def _used_cofactor_separators() -> set[str]:
+    """Return the CNSSEP separator characters already used by the cofactors.
+
+    prodrg encodes its ``CNSSEP`` character as the second character of every
+    atom type name it generates (e.g. ``CA82`` for ``A``). The built-in
+    ``cofactors.top`` topology was generated the same way, so its atom type
+    names occupy some of these separators. Reusing one of them for an
+    auto-generated ligand could produce atom types that clash with the
+    cofactor ones, hence they must be avoided.
+
+    Returns
+    -------
+    set[str]
+        Upper-cased second characters of every ``MASS`` atom type name defined
+        in ``cofactors.top``.
+    """
+    from haddock import toppar_path
+
+    cofactors_top = Path(toppar_path, "cofactors.top")
+    separators: set[str] = set()
+    for line in cofactors_top.read_text().splitlines():
+        match = re.match(r"\s*MASS\s+(\S+)", line)
+        if match and len(match.group(1)) >= 2:
+            separators.add(match.group(1)[1].upper())
+    return separators
+
+
 def run_prodrg(
     pdb_file: FilePath,
     output_dir: FilePath,
@@ -169,7 +214,11 @@ def run_prodrg(
     prodrg can only process a single small molecule at a time. When
     ``ligand_resnames`` lists several distinct ligands, prodrg is run once per
     ligand (on a single extracted copy of each) and the resulting topology and
-    parameter files are concatenated into one ``.top`` and one ``.param``.
+    parameter files are concatenated into one ``.top`` and one ``.param``. Each
+    ligand is given a unique ``CNSSEP`` character so that prodrg generates
+    non-overlapping atom type names across the concatenated files; the
+    characters used are also chosen to avoid the separators already present in
+    the built-in ``cofactors.top`` topology.
 
     Parameters
     ----------
@@ -214,12 +263,26 @@ def run_prodrg(
         par_parts: list[str] = []
         # PRODRG only handles one molecule at a time, so run it once per distinct
         # ligand (on a single extracted copy) and concatenate the results.
-        for resname in dict.fromkeys(ligand_resnames):
+        distinct_resnames = list(dict.fromkeys(ligand_resnames))
+        # With several ligands, give each a unique CNSSEP character so their
+        # prodrg atom type names do not overlap once concatenated, avoiding the
+        # separators already used by the built-in cofactors topology.
+        separators: Optional[list[str]] = None
+        if len(distinct_resnames) > 1:
+            excluded = _used_cofactor_separators()
+            separators = [c for c in ascii_uppercase + digits if c not in excluded]
+            if len(distinct_resnames) > len(separators):
+                raise RuntimeError(
+                    "Cannot auto-generate topologies for more than "
+                    f"{len(separators)} distinct ligands."
+                )
+        for idx, resname in enumerate(distinct_resnames):
+            cnssep = separators[idx] if separators is not None else None
             with tempfile.TemporaryDirectory() as tmpdir:
                 ligand_pdb = extract_ligand(
                     pdb_file, [resname], Path(tmpdir, f"{resname}.pdb")
                 )
-                top_content, par_content = _run_prodrg_single(ligand_pdb)
+                top_content, par_content = _run_prodrg_single(ligand_pdb, cnssep=cnssep)
             top_parts.append(top_content)
             par_parts.append(par_content)
         top_path.write_text("\n".join(top_parts))

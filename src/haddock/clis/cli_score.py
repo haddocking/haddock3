@@ -223,6 +223,7 @@ def main(
                 "molecules": [input_pdb_copy],
                 "ligand_param_fname": ems_dict["ligand_param_fname"],
                 "ligand_top_fname": ems_dict["ligand_top_fname"],
+                "autotoppar": True,
                 },
             "emscoring": ems_dict,
         }

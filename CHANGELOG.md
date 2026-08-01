@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-08-01: Fixed autotoppar/PRODRG topology generation when the unknown ligand is embedded in a larger system: only the ligand is now extracted and passed to PRODRG. A single copy is used when a ligand is present in multiple copies, and when several distinct ligands are present each is run through PRODRG separately and their topology/parameter files are concatenated
 - 2026-07-27: Added `rnascan` module for mutagenesis scanning of RNA bases (mutating interface nucleotides to A, C, G, U) - Issue #1631
 - 2026-07-22: Added protein-DNA docking Jupyter notebook
 - 2026-07-21: Fixed `gen_archive=true` crash (`Directory not empty`) on non-local filesystems (NFS, gcsfuse/s3fs, overlayfs) - Issue #1626

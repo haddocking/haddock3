@@ -7,6 +7,7 @@ import tempfile
 import shutil
 from haddock.libs.libligand import (
     identify_unknown_hetatms,
+    extract_ligand,
     run_prodrg,
     _remove_nbonds,
     _sanitize_atom_names,
@@ -90,6 +91,99 @@ def test_run_prodrg_fails_on_complex(protlig_complex_pdb, tmp_path):
     """
     with pytest.raises(RuntimeError):
         run_prodrg(protlig_complex_pdb, tmp_path)
+
+
+def test_extract_ligand_keeps_only_selected_residues(protlig_complex_pdb, tmp_path):
+    """extract_ligand strips everything except the requested residues."""
+    dest = tmp_path / "ligand_only.pdb"
+    out = extract_ligand(protlig_complex_pdb, ["G39"], dest)
+    assert out == dest
+    lines = dest.read_text().splitlines()
+    atom_lines = [ln for ln in lines if ln.startswith(("ATOM  ", "HETATM"))]
+    assert atom_lines  # at least one ligand atom was kept
+    assert all(ln[17:20].strip() == "G39" for ln in atom_lines)
+    # no leftover protein residues
+    assert identify_unknown_hetatms(dest) == ["G39"]
+
+
+def test_extract_ligand_keeps_single_copy(tmp_path):
+    """Only the first copy of a repeated ligand residue is kept."""
+    pdb = tmp_path / "multi_copy.pdb"
+    pdb.write_text(
+        "ATOM      1  C1  LIG A 284       0.000   0.000   0.000  1.00  0.00      A    C\n"
+        "ATOM      2  C2  LIG A 284       1.000   0.000   0.000  1.00  0.00      A    C\n"
+        "ATOM      3  C1  LIG A 285       0.000   0.000   0.000  1.00  0.00      A    C\n"
+        "ATOM      4  C2  LIG A 285       1.000   0.000   0.000  1.00  0.00      A    C\n"
+        "END\n"
+    )
+    dest = tmp_path / "ligand_only.pdb"
+    extract_ligand(pdb, ["LIG"], dest)
+    atom_lines = [
+        ln for ln in dest.read_text().splitlines() if ln.startswith(("ATOM  ", "HETATM"))
+    ]
+    assert len(atom_lines) == 2
+    assert all(ln[21:27] == "A 284 " for ln in atom_lines)
+
+
+def test_run_prodrg_on_complex_with_ligand_resnames(protlig_complex_pdb, tmp_path):
+    """run_prodrg succeeds on a complex when the ligand residues are given.
+
+    The ligand is extracted from the surrounding protein before prodrg runs,
+    which is the fix for feeding a full system to prodrg.
+    """
+    top, par = run_prodrg(protlig_complex_pdb, tmp_path, ligand_resnames=["G39"])
+    assert top.exists()
+    assert par.exists()
+    assert "MASS" in top.read_text()
+    assert "BOND" in par.read_text()
+    assert "NBONds" not in par.read_text()
+
+
+def test_run_prodrg_concatenates_multiple_ligands(tmp_path, monkeypatch):
+    """Each distinct ligand runs prodrg once; the outputs are concatenated."""
+    pdb = tmp_path / "two_ligands.pdb"
+    pdb.write_text(
+        "ATOM      1  C1  LGA A 284       0.000   0.000   0.000  1.00  0.00      A    C\n"
+        "ATOM      2  C1  LGB A 285       0.000   0.000   0.000  1.00  0.00      A    C\n"
+        "END\n"
+    )
+
+    calls: list[str] = []
+
+    def fake_single(ligand_pdb):
+        resname = ligand_pdb.stem
+        calls.append(resname)
+        return (f"TOP {resname}", f"PAR {resname}")
+
+    monkeypatch.setattr("haddock.libs.libligand._run_prodrg_single", fake_single)
+
+    top, par = run_prodrg(pdb, tmp_path, ligand_resnames=["LGA", "LGB"])
+
+    # prodrg is invoked once per distinct ligand
+    assert calls == ["LGA", "LGB"]
+    # both ligand topologies/parameters are concatenated
+    assert "TOP LGA" in top.read_text() and "TOP LGB" in top.read_text()
+    assert "PAR LGA" in par.read_text() and "PAR LGB" in par.read_text()
+
+
+def test_run_prodrg_deduplicates_ligand_resnames(tmp_path, monkeypatch):
+    """A repeated residue name only triggers a single prodrg run."""
+    pdb = tmp_path / "dup.pdb"
+    pdb.write_text(
+        "ATOM      1  C1  LGA A 284       0.000   0.000   0.000  1.00  0.00      A    C\n"
+        "END\n"
+    )
+
+    calls: list[str] = []
+
+    def fake_single(ligand_pdb):
+        calls.append(ligand_pdb.stem)
+        return ("TOP", "PAR")
+
+    monkeypatch.setattr("haddock.libs.libligand._run_prodrg_single", fake_single)
+
+    run_prodrg(pdb, tmp_path, ligand_resnames=["LGA", "LGA"])
+    assert calls == ["LGA"]
 
 
 def test_remove_nbonds_removes_block():

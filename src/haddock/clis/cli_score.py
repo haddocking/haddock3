@@ -65,7 +65,8 @@ ap.add_argument(
 )
 
 ap.add_argument(
-    "-k--keep-all",
+    "-k",
+    "--keep-all",
     dest="keep_all",
     action="store_true",
     help="Keep the whole run folder.",

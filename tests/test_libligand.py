@@ -12,6 +12,8 @@ from haddock.libs.libligand import (
     _remove_nbonds,
     _sanitize_atom_names,
     _used_cofactor_separators,
+    _unsupported_metal_symbols,
+    _demetalise_atom,
 )
 from haddock.core.supported_molecules import supported_HETATM
 from . import golden_data as GOLDEN_DATA
@@ -114,6 +116,60 @@ def test_extract_ligand_keeps_only_selected_residues(azs_complex_pdb, tmp_path):
     assert all(ln[17:20].strip() == "GSP" for ln in atom_lines)
     # no leftover protein residues
     assert identify_unknown_hetatms(dest) == ["GSP"]
+
+
+def test_unsupported_metal_symbols():
+    """Metal symbols are flagged; prodrg-supported halides are not."""
+    metals = _unsupported_metal_symbols()
+    assert "PB" in metals  # lead -> mislabelling to fix
+    assert "CL" not in metals  # chlorine -> prodrg supports it
+    assert "BR" not in metals  # bromine -> prodrg supports it
+
+
+def test_demetalise_atom_fixes_mislabeled_metal():
+    """A phosphate PB mislabelled as lead is collapsed back to phosphorus."""
+    metals = _unsupported_metal_symbols()
+    # CNS writes the beta-phosphorus with element "PB" and the name shifted to
+    # the two-letter-element column.
+    line = (
+        "ATOM   3437 PB   GSP B 395      "
+        "-0.953   3.951   3.655  1.00 15.00      B   PB  \n"
+    )
+    assert line[76:78] == "PB"  # precondition: mislabelled
+    fixed = _demetalise_atom(line, metals)
+    assert fixed[76:78] == " P"  # element collapsed to first character
+    assert fixed[12:16] == " PB "  # name re-justified to 1-letter-element column
+    assert fixed[17:20] == "GSP"  # residue name preserved
+
+
+def test_demetalise_atom_keeps_halogen():
+    """A genuine chlorine atom is left untouched (prodrg supports Cl)."""
+    metals = _unsupported_metal_symbols()
+    line = (
+        "ATOM   3437 CL   LIG B 395      "
+        "-0.953   3.951   3.655  1.00 15.00      B   CL  \n"
+    )
+    assert _demetalise_atom(line, metals) == line
+
+
+def test_extract_ligand_demetalises_mislabeled_atom(tmp_path):
+    """extract_ligand corrects a metal-mislabelled ligand atom."""
+    pdb = tmp_path / "mislabeled.pdb"
+    pdb.write_text(
+        "ATOM   3437 PB   GSP B 395      "
+        "-0.953   3.951   3.655  1.00 15.00      B   PB  \n"
+        "END\n"
+    )
+    dest = tmp_path / "ligand_only.pdb"
+    extract_ligand(pdb, ["GSP"], dest)
+    atom_lines = [
+        ln
+        for ln in dest.read_text().splitlines()
+        if ln.startswith(("ATOM  ", "HETATM"))
+    ]
+    assert len(atom_lines) == 1
+    assert atom_lines[0][76:78] == " P"
+    assert atom_lines[0][12:16] == " PB "
 
 
 def test_extract_ligand_keeps_single_copy(tmp_path):

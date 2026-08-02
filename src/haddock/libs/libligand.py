@@ -8,6 +8,7 @@ from string import ascii_uppercase, digits
 
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.defaults import prodrg_exec, prodrg_param
+from haddock.libs.libpdb import format_atom_name
 from haddock import log
 import shutil
 
@@ -39,6 +40,81 @@ def identify_unknown_hetatms(pdb_file: FilePath) -> list[str]:
     return seen
 
 
+# Two-letter elements prodrg is able to parametrise (halides). Every other
+# supported element (H, C, N, O, S, P, F, I) is a single letter.
+_PRODRG_TWO_LETTER_ELEMENTS = ("CL", "BR")
+
+
+def _unsupported_metal_symbols() -> set[str]:
+    """Two-letter metal/ion element symbols prodrg cannot handle.
+
+    CNS can mislabel a ligand atom's element as a two-letter metal: a
+    beta-phosphorus named ``PB`` ends up with element ``PB`` (lead), which
+    prodrg rejects. The set of such symbols is read from ``ion.top`` (its
+    residue names are the ion element symbols, optionally suffixed with a
+    charge). Isolated ions are never passed to prodrg, so any of these symbols
+    appearing on a ligand atom is a mislabelling. The two-letter halides prodrg
+    *does* support (``Cl``, ``Br``) are excluded so genuine halogen atoms are
+    left untouched.
+
+    Returns
+    -------
+    set[str]
+        Upper-cased two-letter element symbols to treat as mislabellings.
+    """
+    from haddock import toppar_path
+
+    ion_top = Path(toppar_path, "ion.top")
+    metals: set[str] = set()
+    for line in ion_top.read_text().splitlines():
+        match = re.match(r"\s*RESI\w*\s+([A-Za-z]+)", line)
+        if match:
+            symbol = match.group(1).upper()
+            if len(symbol) == 2 and symbol not in _PRODRG_TWO_LETTER_ELEMENTS:
+                metals.add(symbol)
+    return metals
+
+
+def _demetalise_atom(line: str, metals: set[str]) -> str:
+    """Fix a ligand atom line that CNS mislabelled as a two-letter metal.
+
+    When the element column holds an unsupported two-letter metal symbol (e.g.
+    ``PB`` for a phosphate phosphorus), the element is collapsed to its first
+    character and the atom name is re-justified to the single-letter-element
+    convention. Lines that are not mislabelled are returned unchanged.
+
+    Parameters
+    ----------
+    line : str
+        A PDB ``ATOM``/``HETATM`` line.
+    metals : set[str]
+        Two-letter symbols to treat as mislabellings (see
+        :func:`_unsupported_metal_symbols`).
+
+    Returns
+    -------
+    str
+        The (possibly corrected) PDB line, newline-terminated.
+    """
+    element = line[76:78].strip().upper()
+    if element not in metals:
+        return line
+    stripped = line.rstrip("\n").ljust(78)
+    atom_name = stripped[12:16].strip()
+    # organic ligand atoms only carry single-letter elements here, so the real
+    # element is the first character of the mislabelled two-letter symbol.
+    true_element = element[0]
+    name_field = format_atom_name(atom_name, true_element)
+    fixed = (
+        stripped[:12]
+        + name_field
+        + stripped[16:76]
+        + true_element.rjust(2)
+        + stripped[78:]
+    )
+    return fixed + "\n"
+
+
 def extract_ligand(
     pdb_file: FilePath,
     resnames: list[str],
@@ -56,6 +132,10 @@ def extract_ligand(
     first copy of each residue name is kept to avoid feeding prodrg redundant
     (and potentially too many) atoms.
 
+    Atoms that CNS mislabelled as a two-letter metal element (e.g. a phosphate
+    ``PB`` written with element ``Pb``) are corrected back to their real
+    single-letter element so prodrg can parametrise them.
+
     Parameters
     ----------
     pdb_file : FilePath
@@ -71,6 +151,7 @@ def extract_ligand(
         Path to the written ligand-only PDB file (``dest``).
     """
     keep = set(resnames)
+    metals = _unsupported_metal_symbols()
     # residue identity (chain + residue number + insertion code) of the first
     # copy seen for each residue name; only atoms of that copy are written out.
     first_copy: dict[str, str] = {}
@@ -87,7 +168,7 @@ def extract_ligand(
             if resname not in first_copy:
                 first_copy[resname] = res_id
             if first_copy[resname] == res_id:
-                out.write(line)
+                out.write(_demetalise_atom(line, metals))
         out.write("END" + "\n")
     return dest
 

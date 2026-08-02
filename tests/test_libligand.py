@@ -36,6 +36,15 @@ def protlig_complex_pdb():
 
 
 @pytest.fixture
+def azs_complex_pdb():
+    src = Path(GOLDEN_DATA, "1AZS_l_u.pdb")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        dst = Path(tmpdir, "1AZS_l_u.pdb")
+        shutil.copy(src, dst)
+        yield dst
+
+
+@pytest.fixture
 def protein_pdb():
     src = Path(GOLDEN_DATA, "protein.pdb")
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -84,27 +93,27 @@ def test_run_prodrg_with_relative_output_dir(ligand_pdb, tmp_path, monkeypatch):
     assert par.exists()
 
 
-def test_run_prodrg_fails_on_complex(protlig_complex_pdb, tmp_path):
+def test_run_prodrg_fails_on_complex(azs_complex_pdb, tmp_path):
     """run_prodrg raises RuntimeError when given a protein-ligand complex.
 
     prodrg only accepts small molecule inputs; passing a full complex
     causes it to abort with 'Too many lines of text in input'.
     """
     with pytest.raises(RuntimeError):
-        run_prodrg(protlig_complex_pdb, tmp_path)
+        run_prodrg(azs_complex_pdb, tmp_path)
 
 
-def test_extract_ligand_keeps_only_selected_residues(protlig_complex_pdb, tmp_path):
+def test_extract_ligand_keeps_only_selected_residues(azs_complex_pdb, tmp_path):
     """extract_ligand strips everything except the requested residues."""
     dest = tmp_path / "ligand_only.pdb"
-    out = extract_ligand(protlig_complex_pdb, ["G39"], dest)
+    out = extract_ligand(azs_complex_pdb, ["GSP"], dest)
     assert out == dest
     lines = dest.read_text().splitlines()
     atom_lines = [ln for ln in lines if ln.startswith(("ATOM  ", "HETATM"))]
     assert atom_lines  # at least one ligand atom was kept
-    assert all(ln[17:20].strip() == "G39" for ln in atom_lines)
+    assert all(ln[17:20].strip() == "GSP" for ln in atom_lines)
     # no leftover protein residues
-    assert identify_unknown_hetatms(dest) == ["G39"]
+    assert identify_unknown_hetatms(dest) == ["GSP"]
 
 
 def test_extract_ligand_keeps_single_copy(tmp_path):
@@ -126,13 +135,13 @@ def test_extract_ligand_keeps_single_copy(tmp_path):
     assert all(ln[21:27] == "A 284 " for ln in atom_lines)
 
 
-def test_run_prodrg_on_complex_with_ligand_resnames(protlig_complex_pdb, tmp_path):
+def test_run_prodrg_on_complex_with_ligand_resnames(azs_complex_pdb, tmp_path):
     """run_prodrg succeeds on a complex when the ligand residues are given.
 
     The ligand is extracted from the surrounding protein before prodrg runs,
     which is the fix for feeding a full system to prodrg.
     """
-    top, par = run_prodrg(protlig_complex_pdb, tmp_path, ligand_resnames=["G39"])
+    top, par = run_prodrg(azs_complex_pdb, tmp_path, ligand_resnames=["GSP"])
     assert top.exists()
     assert par.exists()
     assert "MASS" in top.read_text()

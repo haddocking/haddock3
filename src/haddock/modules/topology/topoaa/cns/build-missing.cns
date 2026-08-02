@@ -308,9 +308,6 @@ else
         do (y=$ha_y) (segid $segid and resid $resid and name HA)
         do (z=$ha_z) (segid $segid and resid $resid and name HA)
 
-        flags exclude * include bond angle vdw end
-        minimize powell nstep=50 drop=40.0 nprint=50 end
-
         pick impr
             (segid $segid and resid $resid and name HA)
             (segid $segid and resid $resid and name N)
@@ -323,12 +320,6 @@ else
             buffer message
             display D-amino acid detected for $resn $resid of chain $segid
             end
-            flag exclude * include bond impr end
-            minimize powell nstep=50 drop=10.0 nprint=10 end
-            flag include angle end
-            minimize powell nstep=50 drop=10.0 nprint=10 end
-            flag include vdw end
-            minimize powell nstep=50 drop=10.0 nprint=10 end
         end if
 
     end loop ltod

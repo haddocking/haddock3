@@ -129,7 +129,9 @@ def test_extract_ligand_keeps_single_copy(tmp_path):
     dest = tmp_path / "ligand_only.pdb"
     extract_ligand(pdb, ["LIG"], dest)
     atom_lines = [
-        ln for ln in dest.read_text().splitlines() if ln.startswith(("ATOM  ", "HETATM"))
+        ln
+        for ln in dest.read_text().splitlines()
+        if ln.startswith(("ATOM  ", "HETATM"))
     ]
     assert len(atom_lines) == 2
     assert all(ln[21:27] == "A 284 " for ln in atom_lines)

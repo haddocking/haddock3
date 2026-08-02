@@ -14,9 +14,9 @@ define(atom_build=(not(known)))
 identity (store9) (none)
 
 identity (store9) (&atom_build)
-if ( &hydrogen_build = "all" ) then
+if ( $hydrogen_build = "all" ) then
     identity (store9) (store9 or hydrogen)
-elseif ( &hydrogen_build = "unknown" ) then
+elseif ( $hydrogen_build = "unknown" ) then
     identity (store9) (store9 or (not(known) and hydrogen))
 end if
 

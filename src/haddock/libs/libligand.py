@@ -8,7 +8,7 @@ from string import ascii_uppercase, digits
 
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.defaults import prodrg_exec, prodrg_param
-from haddock.libs.libpdb import format_atom_name
+from haddock.libs.libpdb import format_atom_name, slc_element, slc_name, slc_resname
 from haddock import log
 import shutil
 
@@ -96,11 +96,11 @@ def _demetalise_atom(line: str, metals: set[str]) -> str:
     str
         The (possibly corrected) PDB line, newline-terminated.
     """
-    element = line[76:78].strip().upper()
+    element = line[slc_element].strip().upper()
     if element not in metals:
         return line
     stripped = line.rstrip("\n").ljust(78)
-    atom_name = stripped[12:16].strip()
+    atom_name = stripped[slc_name].strip()
     # organic ligand atoms only carry single-letter elements here, so the real
     # element is the first character of the mislabelled two-letter symbol.
     true_element = element[0]
@@ -160,14 +160,12 @@ def extract_ligand(
         for line in fh:
             if not line.startswith(("ATOM  ", "HETATM")):
                 continue
-            resname = line[17:20].strip()
+            resname = line[slc_resname].strip()
             if resname not in keep:
                 continue
             # chainID (col 22) + resSeq (cols 23-26) + iCode (col 27)
             res_id = line[21:27]
-            if resname not in first_copy:
-                first_copy[resname] = res_id
-            if first_copy[resname] == res_id:
+            if first_copy.setdefault(resname, res_id) == res_id:
                 out.write(_demetalise_atom(line, metals))
         out.write("END" + "\n")
     return dest

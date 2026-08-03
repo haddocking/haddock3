@@ -102,12 +102,30 @@ PURINE_TO_PYRIMIDINE_ANCHORS = {"N9": "N1", "C4": "C2", "C8": "C6"}
 # implies mutating its partner to the complementary base to keep a valid pair.
 COMPLEMENT = {"DA": "DT", "DT": "DA", "DG": "DC", "DC": "DG"}
 
+# Mapping of the two-letter DNA residue name to the short one-letter code used
+# when building mutation identifiers and output file names.
+RES_CODES = dict(
+    [
+        # DNA (two-letter name -> short one-letter code used in identifiers)
+        ("DA", "A"),
+        ("DC", "C"),
+        ("DG", "G"),
+        ("DT", "T"),
+    ]
+)
+
 # Distance cutoff (Å) used when detecting Watson-Crick base pairs from the
 # distance between the hydrogen-bonding ring nitrogens (N1 of the purine and
 # N3 of the pyrimidine). A canonical WC pair has an N1...N3 distance of ~2.8 Å;
 # a small margin is allowed to tolerate energy-minimised / slightly distorted
-# geometries.
+# geometries. Overridden at runtime by the ``bp_cutoff`` value from the module's
+# defaults.yaml.
 BP_CUTOFF = 3.5
+
+# Default distance cutoff (Å) used to define interface contacts between two
+# interacting molecules. Overridden at runtime by the ``int_cutoff`` value from
+# the module's defaults.yaml.
+INT_CUTOFF = 5.0
 
 
 def wc_atom(resname: str) -> str:
@@ -217,17 +235,6 @@ def validate_scan_bases(scan_bases: List[str]) -> List[str]:
         if canonical not in normalised:
             normalised.append(canonical)
     return normalised
-
-
-RES_CODES = dict(
-    [
-        # DNA (two-letter name -> short one-letter code used in identifiers)
-        ("DA", "A"),
-        ("DC", "C"),
-        ("DG", "G"),
-        ("DT", "T"),
-    ]
-)
 
 
 def _norm_atom_name(atom_name: str) -> str:
@@ -781,7 +788,7 @@ class InterfaceScanner:
 
             # Determine target nucleotides: get interface, then apply user filters
             # Get all interface residues
-            cutoff = self.params.get("int_cutoff", 5.0)
+            cutoff = self.params.get("int_cutoff", INT_CUTOFF)
             interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
 
             # get user_chains for the check down the line

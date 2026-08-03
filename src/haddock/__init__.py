@@ -9,11 +9,9 @@ log = logging.getLogger(__name__)
 log.handlers.clear()
 log.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(sys.stdout)
-# The logger is kept at DEBUG so that `--log-level DEBUG` can be honoured
-# once `add_log_for_CLI` reconfigures the handlers. This default handler,
-# however, must not leak DEBUG records to stdout for code paths that never
-# go through `add_log_for_CLI` (e.g. parallel worker subprocesses that
-# re-import `haddock`). Default it to INFO.
+# Logger stays at DEBUG so `add_log_for_CLI` can raise the handler to DEBUG
+# when requested; the default handler stays at INFO so paths that never call
+# it (e.g. re-imports in worker subprocesses) don't leak DEBUG to stdout.
 handler.setLevel(logging.INFO)
 handler.setFormatter(
     logging.Formatter("[%(asctime)s %(module)s %(levelname)s] %(message)s")

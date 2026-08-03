@@ -35,10 +35,8 @@ import numpy as np
 
 
 from haddock import log
-from haddock.core.exceptions import ConfigurationError
 from haddock.core.typing import Any, Optional, Union
 from haddock.libs.libalign import get_atoms, load_coords
-from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import (
     MutationResult,
     calc_score,
@@ -46,6 +44,14 @@ from haddock.libs.libscan import (
     ClusterOutputer as _ClusterOutputer,
     write_scan_out as _write_scan_out,
     group_scan_by_cluster as _group_scan_by_cluster,
+    BaseInterfaceScanner as _BaseInterfaceScanner,
+    PURINE_BASE_ATOMS,  # noqa: F401  re-exported for the module's public API
+    PYRIMIDINE_BASE_ATOMS,  # noqa: F401  re-exported for the module's public API
+    norm_atom_name as _norm_atom_name,
+    get_atoms_to_keep as _get_atoms_to_keep,
+    validate_scan_bases as _validate_scan_bases,
+    filter_interface,
+    build_resname_dict,
 )
 from haddock.libs.libcapri import CAPRI
 
@@ -70,15 +76,6 @@ BACKBONE_ATOMS = [
     "O3'",
 ]
 
-# Base ring atoms shared by both purines (DA and DG). Preserving them when
-# mutating one purine into the other keeps the base plane and glycosidic
-# orientation, so CNS only has to rebuild the differing substituents.
-PURINE_BASE_ATOMS = ["N9", "C8", "N7", "C5", "C4", "N3", "C2", "N1", "C6"]
-
-# Base ring atoms shared by both pyrimidines (DC and DT). Same rationale as for
-# the purines above.
-PYRIMIDINE_BASE_ATOMS = ["N1", "C2", "O2", "N3", "C4", "C5", "C6"]
-
 # DNA residues that can be scanned/mutated by this module.
 DNA_RESIDUES = ("DA", "DC", "DG", "DT")
 
@@ -86,17 +83,9 @@ DNA_RESIDUES = ("DA", "DC", "DG", "DT")
 PURINES = ("DA", "DG")
 PYRIMIDINES = ("DC", "DT")
 
-# Glycosidic-region anchor atoms kept (and renamed) on cross-type mutations
-# (purine <-> pyrimidine). Because the purine and pyrimidine ring systems do
-# not share atom names, these three atoms are preserved and renamed to their
-# counterpart in the target ring so that CNS rebuilds the new base with the
-# correct glycosidic orientation (and syn/anti conformation). The
-# correspondence is:
-#   pyrimidine N1 <-> purine N9   (glycosidic nitrogen)
-#   pyrimidine C2 <-> purine C4
-#   pyrimidine C6 <-> purine C8
-PYRIMIDINE_TO_PURINE_ANCHORS = {"N1": "N9", "C2": "C4", "C6": "C8"}
-PURINE_TO_PYRIMIDINE_ANCHORS = {"N9": "N1", "C4": "C2", "C8": "C6"}
+# Base ring atoms and glycosidic anchors are chemistry-invariant and shared with
+# rnascan; they live in libscan (PURINE_BASE_ATOMS / PYRIMIDINE_BASE_ATOMS are
+# re-exported above so this module's public names are preserved).
 
 # Watson-Crick base-pair complementarity. Mutating a base to a target
 # implies mutating its partner to the complementary base to keep a valid pair.
@@ -104,15 +93,7 @@ COMPLEMENT = {"DA": "DT", "DT": "DA", "DG": "DC", "DC": "DG"}
 
 # Mapping of the two-letter DNA residue name to the short one-letter code used
 # when building mutation identifiers and output file names.
-RES_CODES = dict(
-    [
-        # DNA (two-letter name -> short one-letter code used in identifiers)
-        ("DA", "A"),
-        ("DC", "C"),
-        ("DG", "G"),
-        ("DT", "T"),
-    ]
-)
+RES_CODES = {"DA": "A", "DC": "C", "DG": "G", "DT": "T"}
 
 # Distance cutoff (Å) used when detecting Watson-Crick base pairs from the
 # distance between the hydrogen-bonding ring nitrogens (N1 of the purine and
@@ -148,49 +129,23 @@ def wc_atom(resname: str) -> str:
 
 
 def get_atoms_to_keep(ori_resname: str, target_resname: str) -> Dict[str, str]:
-    """Return the atoms to preserve when mutating one base into another.
+    """Return the atoms to preserve when mutating one DNA base into another.
 
-    The result maps each atom name to keep (as found in the original residue)
-    to the atom name it must be written with in the mutated residue. Backbone
-    atoms and same-ring-type base atoms keep their name (mapped to themselves).
-
-    The deoxyribose-phosphate backbone is always kept. In addition, when the
-    original and target bases are of the same ring type (both purines or both
-    pyrimidines), the base ring atoms common to that type are kept as well, so
-    that the base orientation is preserved and CNS only rebuilds the differing
-    substituents. For cross-type mutations (purine <-> pyrimidine) the three
-    glycosidic-region anchor atoms are kept and renamed to their counterpart in
-    the target ring system (pyrimidine N1/C2/C6 <-> purine N9/C4/C8), so that the
-    base orientation is preserved and CNS rebuilds the rest of the new base.
-
-    Parameters
-    ----------
-    ori_resname : str
-        Original (wild-type) residue name.
-    target_resname : str
-        Target base residue name.
-
-    Returns
-    -------
-    dict of str -> str
-        Mapping of original atom name -> atom name to write for the mutated
-        nucleotide.
+    Thin wrapper around :func:`haddock.libs.libscan.get_atoms_to_keep` bound to
+    this module's deoxyribose-phosphate backbone and DNA ring-type
+    classification.
     """
-    # Backbone is always kept, with unchanged atom names.
-    atoms_to_keep: Dict[str, str] = {atom: atom for atom in BACKBONE_ATOMS}
-    if ori_resname in PURINES and target_resname in PURINES:
-        atoms_to_keep.update({atom: atom for atom in PURINE_BASE_ATOMS})
-    elif ori_resname in PYRIMIDINES and target_resname in PYRIMIDINES:
-        atoms_to_keep.update({atom: atom for atom in PYRIMIDINE_BASE_ATOMS})
-    elif ori_resname in PYRIMIDINES and target_resname in PURINES:
-        atoms_to_keep.update(PYRIMIDINE_TO_PURINE_ANCHORS)
-    elif ori_resname in PURINES and target_resname in PYRIMIDINES:
-        atoms_to_keep.update(PURINE_TO_PYRIMIDINE_ANCHORS)
-    return atoms_to_keep
+    return _get_atoms_to_keep(
+        ori_resname,
+        target_resname,
+        backbone_atoms=BACKBONE_ATOMS,
+        purines=PURINES,
+        pyrimidines=PYRIMIDINES,
+    )
 
 
 # Default set of target bases tested for each selected interface nucleotide.
-DEFAULT_SCAN_BASES = ["DA", "DC", "DG", "DT"]
+DEFAULT_SCAN_BASES = list(DNA_RESIDUES)
 
 
 def validate_scan_bases(scan_bases: List[str]) -> List[str]:
@@ -201,45 +156,18 @@ def validate_scan_bases(scan_bases: List[str]) -> List[str]:
     (``A``, ``C``, ``G``, ``U``) denote RNA bases in HADDOCK and are therefore
     rejected by this DNA-specific module.
 
-    Parameters
-    ----------
-    scan_bases : list of str
-        Target bases requested by the user.
-
-    Returns
-    -------
-    list of str
-        Normalised, de-duplicated list of canonical DNA residue names, in the
-        order first seen.
-
-    Raises
-    ------
-    ConfigurationError
-        If ``scan_bases`` is empty or contains an unrecognised base.
+    Thin wrapper around :func:`haddock.libs.libscan.validate_scan_bases`.
     """
-    if not scan_bases:
-        raise ConfigurationError(
-            "'scan_bases' must contain at least one DNA base "
-            f"among {', '.join(DNA_RESIDUES)}."
-        )
-    normalised: List[str] = []
-    for base in scan_bases:
-        canonical = str(base).strip().upper()
-        if canonical not in DNA_RESIDUES:
-            raise ConfigurationError(
-                f"Invalid 'scan_bases' entry {base!r}. Allowed values are the "
-                f"two-letter DNA residue names {', '.join(DNA_RESIDUES)} "
-                "(one-letter names such as A, C, G, U denote RNA bases and are "
-                "not supported)."
-            )
-        if canonical not in normalised:
-            normalised.append(canonical)
-    return normalised
-
-
-def _norm_atom_name(atom_name: str) -> str:
-    """Normalise atom names so that primes are always written as `'`."""
-    return atom_name.replace("*", "'")
+    return _validate_scan_bases(
+        scan_bases,
+        DNA_RESIDUES,
+        base_kind="DNA",
+        allowed_note=(
+            f"two-letter DNA residue names {', '.join(DNA_RESIDUES)} "
+            "(one-letter names such as A, C, G, U denote RNA bases and are "
+            "not supported)."
+        ),
+    )
 
 
 def is_cross_type(ori_resname: str, target_resname: str) -> bool:
@@ -281,11 +209,15 @@ def _mutate_residues(pdb_f, mutations: Dict[Tuple[str, int], str]) -> Path:
     mut_pdb_fname : Path
         Path to the mutated pdb file.
     """
-    # Map (chain, resid) -> (target base name, discovered original name)
-    targets = {key: {"mut": mut, "ori": ""} for key, mut in mutations.items()}
+    # Map (chain, resid) -> discovered original name, target base name and the
+    # atoms-to-keep map (computed once per residue, when its original name is
+    # first seen).
+    targets = {
+        key: {"mut": mut, "ori": "", "keep": None} for key, mut in mutations.items()
+    }
     mut_pdb_l = []
     with open(pdb_f, "r") as fh:
-        for line in fh.readlines():
+        for line in fh:
             if line.startswith("ATOM"):
                 chain = line[21]
                 resid = int(line[22:26])
@@ -295,7 +227,8 @@ def _mutate_residues(pdb_f, mutations: Dict[Tuple[str, int], str]) -> Path:
                     entry = targets[key]
                     if not entry["ori"]:
                         entry["ori"] = line[17:20].strip()
-                    atoms_to_keep = get_atoms_to_keep(entry["ori"], entry["mut"])
+                        entry["keep"] = get_atoms_to_keep(entry["ori"], entry["mut"])
+                    atoms_to_keep = entry["keep"]
                     if atom_name in atoms_to_keep:
                         # DNA residue names are shorter than 3 characters, so
                         # they must be right-justified to keep the PDB columns
@@ -414,25 +347,34 @@ def find_base_pairs(
         if atom == wc_atom(resname):
             nucleotides[(chain, resid)] = (resname, np.asarray(xyz))
 
-    pairs: Dict[Tuple[str, int], Tuple[str, int, str]] = {}
+    # For every nucleotide keep the closest complementary-ring-type partner seen
+    # within the cutoff. Each unordered pair is visited once and its distance
+    # updates the running best of *both* nucleotides, halving the distance
+    # computations compared to a full pairwise sweep.
     keys = list(nucleotides.keys())
-    for key_i in keys:
+    best_dist: Dict[Tuple[str, int], float] = {key: cutoff for key in keys}
+    best_key: Dict[Tuple[str, int], Optional[Tuple[str, int]]] = {
+        key: None for key in keys
+    }
+    for i, key_i in enumerate(keys):
         resname_i, xyz_i = nucleotides[key_i]
-        best_key = None
-        best_dist = cutoff
-        for key_j in keys:
-            if key_j == key_i:
-                continue
+        for key_j in keys[i + 1 :]:
             resname_j, xyz_j = nucleotides[key_j]
             # Partners must be of complementary ring type (purine <-> pyrimidine)
             if (resname_i in PURINES) == (resname_j in PURINES):
                 continue
             dist = float(np.linalg.norm(xyz_i - xyz_j))
-            if dist < best_dist:
-                best_dist = dist
-                best_key = key_j
-        if best_key is not None:
-            pairs[key_i] = (best_key[0], best_key[1], nucleotides[best_key][0])
+            if dist < best_dist[key_i]:
+                best_dist[key_i] = dist
+                best_key[key_i] = key_j
+            if dist < best_dist[key_j]:
+                best_dist[key_j] = dist
+                best_key[key_j] = key_i
+
+    pairs: Dict[Tuple[str, int], Tuple[str, int, str]] = {}
+    for key, partner in best_key.items():
+        if partner is not None:
+            pairs[key] = (partner[0], partner[1], nucleotides[partner][0])
     return pairs
 
 
@@ -586,7 +528,7 @@ def write_scan_out(results, model_id):
     )
 
 
-class InterfaceScanner:
+class InterfaceScanner(_BaseInterfaceScanner):
     """Scan interface of a model to get target base pairs and create
     corresponding double-mutation jobs.
     """
@@ -611,24 +553,8 @@ class InterfaceScanner:
             Additional parameters for interface detection
             (list on top of dnascan/__init__.py)
         """
-        self.model = model
+        super().__init__(model, params)
         self.scan_bases = list(scan_bases) if scan_bases else list(DEFAULT_SCAN_BASES)
-        self.params = params or {}
-        self.point_mutations_jobs = []
-        self.ligand_param_fname = self.params.get("ligand_param_fname", "")
-        self.ligand_top_fname = self.params.get("ligand_top_fname", "")
-        self.filter_resdic = {
-            key[-1]: value
-            for key, value in self.params.items()
-            if key.startswith("resdic")
-        }
-        if isinstance(model, PDBFile):
-            self.model_path = model.rel_path
-            self.model_id = model.file_name.removesuffix(".pdb")
-        else:
-            # model given as a plain path
-            self.model_path = Path(model)
-            self.model_id = self.model_path.stem
 
     def _compute_native_baselines(
         self,
@@ -787,43 +713,14 @@ class InterfaceScanner:
             base_pairs = find_base_pairs(coords, cutoff=bp_cutoff)
 
             # Determine target nucleotides: get interface, then apply user filters
-            # Get all interface residues
             cutoff = self.params.get("int_cutoff", INT_CUTOFF)
             interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
+            interface = filter_interface(
+                interface, self.filter_resdic, self.params.get("chains", [])
+            )
 
-            # get user_chains for the check down the line
-            user_chains = self.params.get("chains", [])
-
-            # if user defined target residues, check they are in the interface
-            if self.filter_resdic != {"_": []}:
-                filtered_interface = {}
-                for chain in self.filter_resdic:
-                    if chain in interface:
-                        # Search for the intersection of user queried residues and interface residues
-                        user_res_valid = list(
-                            set(self.filter_resdic[chain]).intersection(
-                                set(interface[chain])
-                            )
-                        )
-                        # If at least one residue must be analyzed, add it to residues to be scanned
-                        if user_res_valid:
-                            filtered_interface[chain] = user_res_valid
-                interface = filtered_interface
-
-            # if (user defined target chains) & (no user target residues) - do use user chains
-            elif user_chains:
-                interface = {
-                    chain: res
-                    for chain, res in interface.items()
-                    if chain in user_chains
-                }
-
-            # get all atoms of the model to verify residue type down the line
-            resname_dict = {}
-            for chain, resid, _atom, resname in coords.keys():
-                key = f"{chain}-{resid}"
-                if key not in resname_dict:
-                    resname_dict[key] = resname
+            # residue type lookup used to verify residue type down the line
+            resname_dict = build_resname_dict(coords)
 
             # Create mutations
             output_mutants = self.params.get("output_mutants", False)

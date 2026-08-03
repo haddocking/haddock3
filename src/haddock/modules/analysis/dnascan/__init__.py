@@ -84,6 +84,7 @@ a one-pass baseline for same-ring-type mutants and a two-pass baseline (the wild
 type minimised and then re-scored) for cross-ring-type mutants.
 """
 
+from collections import defaultdict
 from pathlib import Path
 
 from haddock import log
@@ -91,7 +92,7 @@ from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.libs.libparallel import GenericTask
 from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
-from haddock.modules.analysis.dnascan.scan import (
+from haddock.modules.analysis.dnascan.dnascan import (
     AddDeltaBFactor,
     ClusterOutputer,
     group_scan_by_cluster,
@@ -129,15 +130,14 @@ class HaddockModule(BaseHaddockModule):
         nmodels: int
             Number of input models.
         """
-        if self.params["output_mutants"]:
-            # output mutants is only possible if there is only one model
-            if nmodels > 1:
-                log.warning(
-                    "'output_mutants' parameter is set to True, "
-                    "but more than one model was found. "
-                    "Setting 'output_mutant' parameter to False."
-                )
-                self.params["output_mutants"] = False
+        # output mutants is only possible if there is a single input model
+        if self.params["output_mutants"] and nmodels > 1:
+            log.warning(
+                "'output_mutants' parameter is set to True, "
+                "but more than one model was found. "
+                "Setting 'output_mutant' parameter to False."
+            )
+            self.params["output_mutants"] = False
 
     def _run(self):
         """Execute module."""
@@ -198,11 +198,9 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
 
         # Organize engine output by model
-        results_by_model = {}
+        results_by_model = defaultdict(list)
         for result in engine.results:
             if result and result.success:
-                if result.model_id not in results_by_model:
-                    results_by_model[result.model_id] = []
                 results_by_model[result.model_id].append(result)
 
         # Save to .tsv
@@ -218,18 +216,14 @@ class HaddockModule(BaseHaddockModule):
             update_with_bfactor_jobs = []
             for model in models:
                 model_id = model.file_name.removesuffix(".pdb")
-                try:
-                    model_results = results_by_model[model_id]
-                except KeyError:
-                    # Case when no data computed for this model
-                    model_results = []
+                # empty list when no data was computed for this model
+                model_results = results_by_model.get(model_id, [])
                 update_with_bfactor_jobs.append(
                     AddDeltaBFactor(model, self.path, model_results)
                 )
             engine = Engine(update_with_bfactor_jobs)
             engine.run()
-            models_to_export = engine.results
-            self.output_models = models_to_export
+            self.output_models = engine.results
         else:
             # Send models to the next step, no operation is done on them
             self.output_models = models

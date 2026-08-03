@@ -13,7 +13,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import add_zscores
 from haddock.modules.analysis.dnascan import DEFAULT_CONFIG
 from haddock.modules.analysis.dnascan import HaddockModule as DnascanModule
-from haddock.modules.analysis.dnascan.scan import (
+from haddock.modules.analysis.dnascan.dnascan import (
     AddDeltaBFactor,
     calc_score,
     ClusterOutputer,
@@ -280,7 +280,7 @@ def test_interface_scanner_init_default_bases():
 def test_interface_scanner_double_mutations(mocker, interface_scanner):
     """Each interface base pair yields double-mutation jobs with a WC partner."""
     mocker.patch(
-        "haddock.modules.analysis.dnascan.scan.calc_score",
+        "haddock.modules.analysis.dnascan.dnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     # A protein residue (A44) plus two DNA nucleotides that pair with each
@@ -318,13 +318,13 @@ def test_interface_scanner_skips_unpaired(mocker, dna_model_list, params):
         params=params,
     )
     mocker.patch(
-        "haddock.modules.analysis.dnascan.scan.calc_score",
+        "haddock.modules.analysis.dnascan.dnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
-    mocker.patch("haddock.modules.analysis.dnascan.scan.get_atoms")
+    mocker.patch("haddock.modules.analysis.dnascan.dnascan.get_atoms")
     # a single isolated nucleotide with no complementary partner
     mocker.patch(
-        "haddock.modules.analysis.dnascan.scan.load_coords",
+        "haddock.modules.analysis.dnascan.dnascan.load_coords",
         return_value=(
             {("B", 5, "N1", "DG"): np.array([0.0, 0.0, 0.0])},
             {},
@@ -346,7 +346,7 @@ def test_interface_scanner_restrict_scan_bases(mocker, dna_model_list, params):
         params=params,
     )
     mocker.patch(
-        "haddock.modules.analysis.dnascan.scan.calc_score",
+        "haddock.modules.analysis.dnascan.dnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch(
@@ -531,10 +531,10 @@ def test_bp_mutation_same_type_single_cns_call(mocker, monkeypatch):
             return p
 
         mocker.patch(
-            "haddock.modules.analysis.dnascan.scan.mutate", side_effect=fake_mutate
+            "haddock.modules.analysis.dnascan.dnascan.mutate", side_effect=fake_mutate
         )
         mock_calc = mocker.patch(
-            "haddock.modules.analysis.dnascan.scan.calc_score",
+            "haddock.modules.analysis.dnascan.dnascan.calc_score",
             return_value=(-90.0, -9.0, -200.0, -4.0, 900.0),
         )
         # DG->DA (purine->purine), partner DC->DT (pyrimidine->pyrimidine)
@@ -561,7 +561,7 @@ def test_bp_mutation_cross_type_two_cns_calls(mocker, monkeypatch):
             return p
 
         mocker.patch(
-            "haddock.modules.analysis.dnascan.scan._mutate_residues",
+            "haddock.modules.analysis.dnascan.dnascan._mutate_residues",
             side_effect=fake_mutate_residues,
         )
 
@@ -578,7 +578,7 @@ def test_bp_mutation_cross_type_two_cns_calls(mocker, monkeypatch):
             return next(step_scores)
 
         mock_calc = mocker.patch(
-            "haddock.modules.analysis.dnascan.scan.calc_score",
+            "haddock.modules.analysis.dnascan.dnascan.calc_score",
             side_effect=fake_calc,
         )
         # DG->DC (purine->pyrimidine), partner DC->DG (pyrimidine->purine)
@@ -613,7 +613,7 @@ def test_bp_mutation_cross_type_step_order_partner_purine(mocker, monkeypatch):
             return p
 
         mocker.patch(
-            "haddock.modules.analysis.dnascan.scan._mutate_residues",
+            "haddock.modules.analysis.dnascan.dnascan._mutate_residues",
             side_effect=fake_mutate_residues,
         )
 
@@ -623,7 +623,7 @@ def test_bp_mutation_cross_type_step_order_partner_purine(mocker, monkeypatch):
             return (-90.0, -9.0, -200.0, -4.0, 900.0)
 
         mocker.patch(
-            "haddock.modules.analysis.dnascan.scan.calc_score", side_effect=fake_calc
+            "haddock.modules.analysis.dnascan.dnascan.calc_score", side_effect=fake_calc
         )
         # primary DC->DG (pyrimidine->purine), partner DG->DC (purine->pyrimidine)
         result = _make_bp_job("DC", "DG", "DG", "DC").run()
@@ -651,7 +651,7 @@ def test_compute_native_baselines_two_passes(
             return next(scores)
 
         mock_calc = mocker.patch(
-            "haddock.modules.analysis.dnascan.scan.calc_score", side_effect=fake_calc
+            "haddock.modules.analysis.dnascan.dnascan.calc_score", side_effect=fake_calc
         )
         native, native_2step = scanner._compute_native_baselines()
 

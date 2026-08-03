@@ -24,13 +24,14 @@ delenph:
   type: boolean
   title: Keep or remove non-polar hydrogen atoms
   short:
-    If set to true, non-polar hydrogen atoms will be discarded to save computing
+    If set to true, non-polar hydrogen atoms (except the HA kept for CA improper definition) will be discarded to save computing
     time
   long:
     Since HADDOCK uses a united atom force field, the non-polar hydrogen atoms
     can be in principle discarded. This saves computing time. However this should
     not be done if you are defining distance restraints to specific hydrogen atoms
-    (e.g. when using NMR distance restraints).
+    (e.g. when using NMR distance restraints). Note the HA hydrogen atoms are kept 
+    for the definition of the CA improper dihedral angle.
   group: molecule
   explevel: easy
 hydrogen_build:

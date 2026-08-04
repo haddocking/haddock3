@@ -228,6 +228,7 @@ def setup_run(
     #. validate the config file
        * confirm modules' names are correctly spelled
        * check if requested modules are installed
+       * validate the module ordering (except for ``--extend-run``)
        * check additional validations
     #. validate modules' parameters
     #. copy input files to data/ directory
@@ -313,9 +314,7 @@ def setup_run(
     # --extend-run configs describe only the modules to append to an existing
     # run, so the full workflow order is not known here and cannot be validated.
     if extend_run is None:
-        validate_workflow_order(
-            [get_module_name(step) for step in modules_params]
-        )
+        validate_workflow_order([get_module_name(step) for step in modules_params])
     check_specific_validations(general_params)
 
     # define starting conditions

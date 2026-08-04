@@ -20,6 +20,7 @@ Rule types (see ``workflow_rules.yaml`` for the exact syntax):
 - ``required_prior``: module B must be preceded anywhere earlier by one of a set.
 - ``required_first``: the first module must be one of a set.
 """
+
 from pathlib import Path
 
 from haddock import log
@@ -141,12 +142,8 @@ def validate_workflow_order(modules, rules_file=DEFAULT_RULES):
 
     errors = []
     errors.extend(_check_required_first(modules, rules["required_first"]))
-    errors.extend(
-        _check_disallowed_sequences(modules, rules["disallowed_sequences"])
-    )
-    errors.extend(
-        _check_required_preceding(modules, rules["required_preceding"])
-    )
+    errors.extend(_check_disallowed_sequences(modules, rules["disallowed_sequences"]))
+    errors.extend(_check_required_preceding(modules, rules["required_preceding"]))
     errors.extend(_check_required_prior(modules, rules["required_prior"]))
 
     if errors:

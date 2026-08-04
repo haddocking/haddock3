@@ -1,6 +1,12 @@
 # Changelog
 
 - 2026-06-26: Removed duplicated definition in param files - Issue ##1589
+- 2026-08-02: Fixed logging/warning leaks - Issue #1647
+- 2026-07-31: Fixed D-amino acid detection - Issue #1636
+- 2026-07-31: Fixed topocg issue removing ligands - Issue #1638
+- 2026-07-27: Added `rnascan` module for mutagenesis scanning of RNA bases (mutating interface nucleotides to A, C, G, U) - Issue #1631
+- 2026-07-22: Added protein-DNA docking Jupyter notebook
+- 2026-07-21: Fixed `gen_archive=true` crash (`Directory not empty`) on non-local filesystems (NFS, gcsfuse/s3fs, overlayfs) - Issue #1626
 - 2026-07-13: Added option to select models/clusters in reverse order - Issue #1620
 - 2026-07-10: Corrected ranking in caprieval for reverse sorting - Issue #1621
 - 2026-07-09: Added `deeprank` scoring module using deeprank-gnn-esm - Issue #569

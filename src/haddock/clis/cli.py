@@ -12,6 +12,7 @@ Usage::
     haddock3 -h
     haddock3 <CONFIG FILE>
 """
+
 import argparse
 import sys
 from pathlib import Path
@@ -38,11 +39,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument(
     "workflow",
     type=arg_file_exist,
-    help=(
-        "The input configuration file path describing "
-        "the workflow to be performed"
-        ),
-    )
+    help=("The input configuration file path describing the workflow to be performed"),
+)
 
 add_restart_arg(ap)
 add_extend_run(ap)
@@ -116,13 +114,14 @@ def main(
         get_adieu,
         get_initial_greeting,
         gen_feedback_messages,
-        )
+    )
     from haddock.gear.postprocessing import archive_run
     from haddock.gear.prepare_run import setup_run
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
         add_log_for_CLI,
         add_stringio_handler,
+        close_logfile_handlers,
         log_file_name,
         log_formatters,
     )
@@ -174,7 +173,7 @@ def main(
 
     if extend_run:
         steps_folders = get_module_steps_folders(extend_run)
-        restart_step = max([int(fold.split('_')[0]) for fold in steps_folders])
+        restart_step = max([int(fold.split("_")[0]) for fold in steps_folders])
         restart_step += 1
         WorkflowManager_ = WorkflowManagerExtend
 
@@ -182,7 +181,7 @@ def main(
         restart_step = restart
         WorkflowManager_ = WorkflowManager
 
-    with (working_directory(_run_dir), log_error_and_exit()):
+    with working_directory(_run_dir), log_error_and_exit():
         workflow = WorkflowManager_(
             workflow_params=params,
             start=restart_step,
@@ -200,6 +199,12 @@ def main(
 
     # Generate archive of the run
     if other_params["gen_archive"]:
+        # Release the open file descriptor on run_dir/log before deleting the
+        # run directory. On non-local filesystems (NFS, FUSE object-store mounts
+        # such as gcsfuse or s3fs, overlayfs in containers, CIFS/SMB)
+        # deleting a still-open file might not remove it immediately,
+        # which leaves the directory non-empty and makes shutil.rmtree fail with ENOTEMPTY.
+        close_logfile_handlers(log)
         _run_archive, _analysis_archive = archive_run(_run_dir)
         log.info(f"Run archive created: {_run_archive}!")
         if _analysis_archive:

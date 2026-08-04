@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-08-04: Added workflow module ordering validation (disallowed sequences, required preceding/prior modules, required first module) driven by `gear/workflow_rules.yaml`
 - 2026-07-31: Fixed D-amino acid detection - Issue #1636
 - 2026-07-31: Fixed topocg issue removing ligands - Issue #1638
 - 2026-07-27: Added `rnascan` module for mutagenesis scanning of RNA bases (mutating interface nucleotides to A, C, G, U) - Issue #1631

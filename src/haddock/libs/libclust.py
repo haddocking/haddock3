@@ -257,21 +257,24 @@ def add_cluster_info(
     sorted_score: List[Tuple[int, float]], clt_dic: dict[int, List[PDBFile]]
 ) -> List[PDBFile]:
     """
-    Add cluster information to the models.
+    Rank clusters and models, then attach a cluster ID and rank info to each model.
 
     Parameters
     ----------
     sorted_score : :obj:`list`
         List of tuples with the cluster ID and the average score, sorted by
-        the average score.
+        the average score. ex: ``[(1, -341.2), (2, -347.5)]``
 
     clt_dic : :obj:`dict`
         Dictionary with the clusters.
+        ex: ``{1: [PDBFile, PDBFile, ...], 2: [PDBFile, PDBFile, ...]}``
+
 
     Returns
     -------
     output_models : :obj:`list`
-        List of models with the cluster information.
+        List of models with the cluster information attached, ordered by cluster rank,
+        then by model rank within each cluster.
     """
     # Add this info to the models
     output_models = []

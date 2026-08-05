@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-08-05: Harmonised running mode of test config files - Issue #1655
 - 2026-08-02: Fixed logging/warning leaks - Issue #1647
 - 2026-07-31: Fixed D-amino acid detection - Issue #1636
 - 2026-07-31: Fixed topocg issue removing ligands - Issue #1638

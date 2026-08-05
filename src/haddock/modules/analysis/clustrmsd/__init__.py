@@ -25,6 +25,10 @@ workflow through the `rmsd_matrix.json` file, thus allowing to execute several
 `clustrmsd` modules (possibly with different parameters) on the same RMSD
 matrix.
 
+Note that the output models are reordered by cluster rank and the rank within each
+cluster; this means that the order of output models of this cluster will be different
+than the input - this may be relevant for modules executed downstream.
+
 .. _scipy routines: https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
 
 For more details about this module, please `refer to the haddock3 user manual

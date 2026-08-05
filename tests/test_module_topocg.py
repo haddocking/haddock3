@@ -1,5 +1,6 @@
 """Specific tests for topocg."""
 
+import shutil
 import tempfile
 from math import isnan
 from pathlib import Path
@@ -8,8 +9,10 @@ from Bio.PDB.PDBExceptions import PDBConstructionWarning
 
 import pytest
 
+import haddock.modules.topology.topocg as topocg_mod
 from haddock.gear.yaml2cfg import read_from_yaml_config
-from haddock.libs.libontology import Format
+from haddock.libs import libpdb
+from haddock.libs.libontology import Format, PDBFile
 from haddock.modules.topology.topocg import DEFAULT_CONFIG as topocg_params
 from haddock.modules.topology.topocg import HaddockModule as Topocg
 from haddock.modules.topology.topocg import generate_topology
@@ -59,7 +62,7 @@ def test_generate_topology(topocg, protein):
     """Test generate_topology function."""
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", PDBConstructionWarning)
-        force_field=topocg.params["cgffversion"]
+        force_field = topocg.params["cgffversion"]
         observed_inp_out = generate_topology(
             input_pdb=protein,
             output_path=topocg.path,
@@ -71,10 +74,12 @@ def test_generate_topology(topocg, protein):
         )
 
     assert observed_inp_out == Path(protein.name).with_suffix(f".{Format.CNS_INPUT}")
-    
+
     # Confirm the expected output file exists
     expected_filename = topocg.path.resolve() / f"{protein.stem}_cg.pdb"
-    assert expected_filename.exists(), f"Expected CG PDB file not found: {expected_filename}"
+    assert expected_filename.exists(), (
+        f"Expected CG PDB file not found: {expected_filename}"
+    )
 
     # Check that backmapping tbl file has been created
     tbl_backmapping_fpath = topocg.path.resolve() / f"{protein.stem}_cg_to_aa.tbl"
@@ -88,6 +93,84 @@ def test_generate_topology(topocg, protein):
 
     # Check for CG-specific atom/residue names (e.g., "BB" for backbone bead)
     assert "BB" in contents, "CG markers not found in output PDB."
+
+
+def test_run_uses_presplit_models_without_splitting(monkeypatch, protein):
+    """Models from the previous (topoaa) step are already split.
+
+    ``_run`` must consume them directly and must not re-split the ensemble
+    (the redundant ``libpdb.split_ensemble`` call that was removed).
+    """
+    with tempfile.TemporaryDirectory() as tempdir:
+        root = Path(tempdir)
+        prev_dir = root / "1_topoaa"
+        cwd = root / "2_topocg"
+        prev_dir.mkdir()
+        cwd.mkdir()
+
+        # Two individual (already-split) models with their aa topologies,
+        # mimicking the output of the previous topoaa step.
+        prev_output = {}
+        expected_inputs = []
+        for idx in range(2):
+            pdb_name = f"mol_{idx + 1}.pdb"
+            shutil.copy(protein, prev_dir / pdb_name)
+            (prev_dir / f"mol_{idx + 1}.{Format.TOPOLOGY}").write_text("")
+            pdbfile = PDBFile(file_name=pdb_name, path=str(prev_dir))
+            prev_output[idx] = pdbfile
+            expected_inputs.append(pdbfile.rel_path)
+
+        monkeypatch.chdir(cwd)
+        module = Topocg(order=1, path=Path("."), initial_params=topocg_params)
+        module.envvars = {}
+
+        class _FakePreviousIO:
+            output = [prev_output]
+
+        module.previous_io = _FakePreviousIO()
+
+        # Guard against regressions: splitting must never happen here.
+        def _no_split(*args, **kwargs):
+            raise AssertionError("topocg should not call split_ensemble")
+
+        monkeypatch.setattr(libpdb, "split_ensemble", _no_split)
+
+        # Capture the model paths handed to topology generation instead of
+        # running CNS, and avoid the DSSP/martinize machinery.
+        captured_inputs = []
+
+        def _fake_generate_topology(input_pdb, *args, **kwargs):
+            captured_inputs.append(Path(input_pdb))
+            return Path(f"{Path(input_pdb).stem}.{Format.CNS_INPUT}")
+
+        monkeypatch.setattr(topocg_mod, "generate_topology", _fake_generate_topology)
+
+        # Neutralise the CNS engine.
+        class _FakeEngine:
+            def __init__(self, jobs):
+                self.jobs = jobs
+
+            def run(self):
+                return None
+
+        monkeypatch.setattr(topocg_mod, "get_engine", lambda *a, **k: _FakeEngine)
+
+        # Skip the disk-dependent export step, just capture its input.
+        exported = {}
+
+        def _fake_export(self, faulty_tolerance=0.0):
+            exported["models"] = self.output_models
+
+        monkeypatch.setattr(Topocg, "export_io_models", _fake_export)
+
+        module._run()
+
+    # The presplit model paths were used verbatim (no split, no renaming).
+    assert captured_inputs == expected_inputs
+    # One CNS job per input model was created.
+    assert len(module.output_models) == 1
+    assert len(module.output_models[0]) == 2
+    assert exported["models"] is module.output_models
 
 
 def test_get_md5(topocg, ensemble_header_w_md5, protein):

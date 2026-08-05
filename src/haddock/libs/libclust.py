@@ -13,6 +13,7 @@ from pathlib import Path
 
 import numpy as np
 from scipy.spatial.distance import squareform
+from typing import List, Tuple
 
 from haddock import log
 from haddock.core.typing import FilePath, Optional, ParamDictT, Union
@@ -252,13 +253,15 @@ def rank_clusters(clt_dic, threshold):
     return score_dic, sorted_score_dic
 
 
-def add_cluster_info(sorted_score_dic, clt_dic):
+def add_cluster_info(
+    sorted_score: List[Tuple[int, float]], clt_dic: dict[int, List[PDBFile]]
+) -> List[PDBFile]:
     """
     Add cluster information to the models.
 
     Parameters
     ----------
-    sorted_score_dic : :obj:`list`
+    sorted_score : :obj:`list`
         List of tuples with the cluster ID and the average score, sorted by
         the average score.
 
@@ -272,7 +275,7 @@ def add_cluster_info(sorted_score_dic, clt_dic):
     """
     # Add this info to the models
     output_models = []
-    for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
+    for cluster_rank, _e in enumerate(sorted_score, start=1):
         cluster_id, _ = _e
         # sort the models by score
         clt_dic[cluster_id].sort()

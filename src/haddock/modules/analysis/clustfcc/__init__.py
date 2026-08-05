@@ -9,7 +9,9 @@ For more details about this clustering method, please check
 Proteins: Struct. Funct. Bioinform.
 80, 1810–1817 (2012)*
 
-
+Note that the output models are reordered by cluster rank and the rank within each
+cluster; this means that the order of output models of this cluster will be different
+than the input - this may be relevant for modules executed downstream.
 
 For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustfcc-module>`_

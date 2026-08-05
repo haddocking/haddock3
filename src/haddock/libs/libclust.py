@@ -278,6 +278,7 @@ def add_cluster_info(
     """
     # Add this info to the models
     output_models = []
+    log.warning("Reordering by cluster rank and model rank")
     for cluster_rank, _e in enumerate(sorted_score, start=1):
         cluster_id, _ = _e
         # sort the models by score

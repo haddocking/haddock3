@@ -9,6 +9,10 @@ log = logging.getLogger(__name__)
 log.handlers.clear()
 log.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(sys.stdout)
+# Logger stays at DEBUG so `add_log_for_CLI` can raise the handler to DEBUG
+# when requested; the default handler stays at INFO so paths that never call
+# it (e.g. re-imports in worker subprocesses) don't leak DEBUG to stdout.
+handler.setLevel(logging.INFO)
 handler.setFormatter(
     logging.Formatter("[%(asctime)s %(module)s %(levelname)s] %(message)s")
 )

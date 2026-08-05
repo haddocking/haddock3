@@ -30,6 +30,7 @@ matrix.
 For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustrmsd-module>`_
 """
+
 from pathlib import Path
 
 from haddock import log
@@ -42,7 +43,7 @@ from haddock.libs.libclust import (
     plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
-    )
+)
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
@@ -54,7 +55,7 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     read_matrix,
     write_clusters,
     write_clustrmsd_file,
-    )
+)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
@@ -66,11 +67,11 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-            self,
-            order: int,
-            path: Path,
-            initial_params: Union[Path, str] = DEFAULT_CONFIG,
-            ) -> None:
+        self,
+        order: int,
+        path: Path,
+        initial_params: Union[Path, str] = DEFAULT_CONFIG,
+    ) -> None:
         super().__init__(order, path, initial_params)
 
         self.matrix_json = self._load_previous_io("rmsd_matrix.json")
@@ -96,31 +97,31 @@ class HaddockModule(BaseHaddockModule):
         # adjust the parameters
         tolerance_param_name, tolerance = clustrmsd_tolerance_params(
             self.params,
-            )
-        
+        )
+
         log.info(
             f"Clustering with {tolerance_param_name} = {tolerance}, "
             f"and criterion {self.params['criterion']}"
-            )
-        
+        )
+
         cluster_arr = get_clusters(
             dendrogram,
             tolerance,
             self.params["criterion"],
-            )
+        )
 
         # when crit == distance, apply clustering min_population
-        if self.params['criterion'] == "distance":
+        if self.params["criterion"] == "distance":
             cluster_arr, min_population = iterate_min_population(
                 cluster_arr,
-                self.params['min_population'],
-                )
-            self.params['min_population'] = min_population
-        
+                self.params["min_population"],
+            )
+            self.params["min_population"] = min_population
+
         clusters, cluster_arr = order_clusters(cluster_arr)
         log.info(f"clusters = {clusters}")
-        
-        out_filename = Path('cluster.out')
+
+        out_filename = Path("cluster.out")
         clt_dic, cluster_centers = write_clusters(
             clusters,
             cluster_arr,
@@ -128,23 +129,23 @@ class HaddockModule(BaseHaddockModule):
             rmsd_matrix,
             out_filename,
             centers=True,
-            )
+        )
 
         # ranking clusters
         score_dic, sorted_score_dic = rank_clusters(
             clt_dic,
-            self.params['min_population'],
-            )
+            self.params["min_population"],
+        )
 
         self.output_models = add_cluster_info(sorted_score_dic, clt_dic)
-        
+
         # Write unclustered structures
         write_structure_list(
             models,
             self.output_models,
             out_fname="clustrmsd.tsv",
-            )  # type: ignore
-        
+        )  # type: ignore
+
         write_clustrmsd_file(
             clusters,
             clt_dic,
@@ -152,35 +153,35 @@ class HaddockModule(BaseHaddockModule):
             score_dic,
             sorted_score_dic,
             self.params,
-            )
+        )
 
         # Draw the matrix
-        if self.params['plot_matrix']:
+        if self.params["plot_matrix"]:
             # Obtain final models indices
             final_order_idx, labels, cluster_ids = [], [], []
             for pdb in self.output_models:
                 final_order_idx.append(models.index(pdb))
-                labels.append(pdb.file_name.replace('.pdb', ''))
+                labels.append(pdb.file_name.replace(".pdb", ""))
                 cluster_ids.append(pdb.clt_id)
             # Get custom cluster data
             matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
                 cluster_ids
-                )
+            )
 
             # Define output filename
-            html_matrix_basepath = 'rmsd_matrix'
+            html_matrix_basepath = "rmsd_matrix"
             # Plot matrix
             html_matrixpath = plot_cluster_matrix(
                 get_matrix_path(self.matrix_json.input[0]),
                 final_order_idx,
                 labels,
-                dttype='RMSD(Å)',
+                dttype="RMSD(Å)",
                 reverse=True,
                 diag_fill=0,
                 output_fname=html_matrix_basepath,
                 matrix_cluster_dt=matrix_cluster_dt,
                 cluster_limits=cluster_limits,
-                )
+            )
             if html_matrixpath:
                 log.info(f"Plotting matrix in {html_matrixpath}")
             else:

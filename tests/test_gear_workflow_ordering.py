@@ -70,10 +70,10 @@ def test_required_preceding_violation_topocg():
 
 
 def test_required_prior_violation():
-    """cgtoaa requires topoaa somewhere earlier."""
+    """cgtoaa requires topocg somewhere earlier."""
     # required_first also fires here, but the prior-module message must appear
     with pytest.raises(ConfigurationError, match="earlier step"):
-        validate_workflow_order(["topocg", "rigidbody", "cgtoaa"])
+        validate_workflow_order(["rigidbody", "cgtoaa"])
 
 
 def test_multiple_violations_reported_together():

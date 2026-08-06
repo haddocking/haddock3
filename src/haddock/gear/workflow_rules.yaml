@@ -45,7 +45,7 @@ required_preceding:
 
 # Module (key) must be preceded anywhere earlier by one of the listed modules.
 required_prior:
-  cgtoaa: [topoaa]
+  cgtoaa: [topocg]
 
 # The first module of the workflow must be one of these.
 required_first:

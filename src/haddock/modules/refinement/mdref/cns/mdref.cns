@@ -122,6 +122,7 @@ evaluate ($refine.coolsteps=$watercoolsteps)
 {* Read paramters and set various force field related variables *}
 
 @MODULE:read_param.cns
+set seed $seed end
 
 parameter
     bond  (resn WAT ) (resn WAT ) 1000 TOKEN

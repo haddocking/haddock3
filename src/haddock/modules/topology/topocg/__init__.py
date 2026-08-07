@@ -32,7 +32,6 @@ from haddock.libs.libcns import (
     prepare_single_input,
 )
 from haddock.libs.libaa2cg import (
-    DEFAULT_SEED,
     martinize,
     gen_cg_filename,
     gen_cg_tbl_backmapping_fname,
@@ -53,11 +52,11 @@ def generate_topology(
     recipe_str: str,
     defaults: ParamMap,
     mol_params: ParamMap,
+    seed: int,
     default_params_path: Optional[FilePath] = None,
     write_to_disk: Optional[bool] = True,
     force_field: str = "martini2",
     shape: bool = False,
-    seed: int = DEFAULT_SEED,
 ) -> Union[Path, str]:
     """Generate a HADDOCK topology file from input_pdb.
 

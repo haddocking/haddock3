@@ -6,48 +6,60 @@ sampling explores different trajectories. A recipe that draws random velocities
 but never runs ``set seed`` silently ignores that value: CNS falls back to its
 own default seed and every replica retraces the same trajectory, so
 ``sampling_factor > 1`` costs CPU without producing new conformations.
+
+The check is per module rather than per file, because a module's stochastic step
+and its ``set seed`` usually live in different files: ``flexref`` anneals in
+``sa_ltad_*.cns`` but seeds in ``flexref.cns``, and ``rigidbody`` draws its
+rotations in ``get_random_rotation.cns``. ``cgtoaa``, which inlined its MD, is
+the exception rather than the rule.
 """
 
 import re
-from pathlib import Path
 
 import pytest
 
-from haddock import modules as modules_pkg
+from haddock.modules import modules_category, modules_folder
 
 
-MODULES_PATH = Path(modules_pkg.__file__).parent
-
-# Velocity assignment and molecular dynamics are the operations that consume
-# CNS's random number generator.
-STOCHASTIC = re.compile(r"\bmaxwell\b|^\s*dynamics\b", re.IGNORECASE | re.MULTILINE)
+# Velocity assignment, molecular dynamics and CNS's own random() are the
+# operations that consume CNS's random number generator.
+STOCHASTIC = re.compile(
+    r"\bmaxwell\b|^\s*dynamics\b|\brandom\s*\(", re.IGNORECASE | re.MULTILINE
+)
 SET_SEED = re.compile(r"^\s*set\s+seed\b", re.IGNORECASE | re.MULTILINE)
 
-
-def _main_recipes():
-    """Yield each module's top-level CNS recipe (``<module>/cns/<module>.cns``)."""
-    for cns_file in sorted(MODULES_PATH.glob("*/*/cns/*.cns")):
-        module_dir = cns_file.parent.parent
-        if cns_file.stem == module_dir.name:
-            yield pytest.param(cns_file, id=module_dir.name)
-
-
-def test_main_recipes_are_discovered():
-    """Guard the glob itself, so the checks below cannot silently pass on zero."""
-    found = list(_main_recipes())
-    assert len(found) >= 5
-    assert "cgtoaa" in {p.id for p in found}
+# Every module that ships CNS recipes, taken from the registry the workflow
+# engine itself validates against rather than from a filesystem glob.
+CNS_MODULES = sorted(
+    name
+    for name, category in modules_category.items()
+    if (modules_folder / category / name / "cns").is_dir()
+)
 
 
-@pytest.mark.parametrize("recipe", _main_recipes())
-def test_sampling_recipes_apply_the_seed(recipe):
-    """A recipe that draws random velocities must initialise the generator."""
-    text = recipe.read_text()
-    if not STOCHASTIC.search(text):
-        pytest.skip(f"{recipe.name} has no stochastic step")
+def _recipes(module_name):
+    """All CNS files shipped by a module, entry point and includes alike."""
+    category = modules_category[module_name]
+    return sorted((modules_folder / category / module_name / "cns").glob("*.cns"))
 
-    assert SET_SEED.search(text), (
-        f"{recipe.name} performs stochastic sampling but never runs "
-        "'set seed', so the seed prepared by Python is ignored and every "
-        "replica produces the same model"
+
+def test_cns_modules_are_discovered():
+    """Guard the discovery, so the checks below cannot pass on an empty set."""
+    assert {"cgtoaa", "flexref", "rigidbody", "mdref", "mdscoring"} <= set(CNS_MODULES)
+    assert all(_recipes(name) for name in CNS_MODULES)
+
+
+@pytest.mark.parametrize("module_name", CNS_MODULES)
+def test_sampling_modules_apply_the_seed(module_name):
+    """A module that draws random numbers must initialise the generator."""
+    recipes = _recipes(module_name)
+    sampling = [f for f in recipes if STOCHASTIC.search(f.read_text())]
+    if not sampling:
+        pytest.skip(f"{module_name} has no stochastic step")
+
+    assert any(SET_SEED.search(f.read_text()) for f in recipes), (
+        f"{module_name} samples in "
+        f"{', '.join(f.name for f in sampling)} but no recipe runs 'set seed', "
+        "so the seed prepared by Python is ignored and every replica produces "
+        "the same model"
     )

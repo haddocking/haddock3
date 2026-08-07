@@ -56,11 +56,9 @@ warnings.filterwarnings("ignore", category=BiopythonWarning)
 
 CRYST_LINE = "CRYST1 " + os.linesep
 
-# Fallback pseudo-random seed used to place the ``SCD*`` dummy beads.
-# Kept in sync with the ``iniseed`` default of the ``topocg`` module
-# (``modules/topology/topocg/defaults.yaml``). ``topocg`` passes its own
-# ``iniseed`` down to ``martinize()``, so this value only applies to callers that
-# have no ``iniseed`` parameter of their own (``caprieval``, ``caprifilter``).
+# Fallback seed for the ``SCD*`` dummy beads, used by callers that have no
+# ``iniseed`` parameter of their own. Kept equal to the ``topocg`` default; the
+# test suite asserts that.
 DEFAULT_SEED = 917
 
 
@@ -380,49 +378,36 @@ polar = ["GLN", "ASN", "SER", "THR"]
 charged = ["ARG", "LYS", "ASP", "GLU"]
 
 
-def add_dummy(bead_list, rng, dist=1.1, n=2):
+def add_dummy(bead_list, rng, dist, n):
     """Place the ``SCD*`` dummy beads around the last bead of a residue.
 
     The beads are laid out along a randomly oriented axis through the parent
     bead: the first at ``+dist``, the second (if any) at ``-dist``, so that a
-    pair straddles the parent symmetrically. Only the *orientation* is random;
-    the distances come from the force field (see below).
+    pair straddles the parent symmetrically. Only the *orientation* is random.
 
     Args:
         bead_list: ``(name, coordinates)`` pairs of the residue's real beads.
             The dummy beads are attached to the last one.
         rng: ``random.Random`` instance used to orient the dummy beads.
-        dist: Distance from the parent bead, **in angstrom**. Matches the
-            ``SCd`` bond lengths of ``cns/toppar/protein-CG-Martini-2-2.param``:
-            1.1 A for the parent-SCd bond, and 1.4 A for a pair, whose 2.8 A
-            separation is the ``BOND SCd SCd`` equilibrium.
-        n: Number of dummy beads (1 or 2).
+        dist: Distance from the parent bead, in angstrom (see ``map_cg``).
+        n: Number of dummy beads, 1 or 2.
 
     Returns:
         Mapping of bead name (``SCD1``, ``SCD2``) to its coordinates.
     """
-    new_bead_dic = {}
-
     # Random direction, uniform on the unit sphere. Normalising a vector drawn
     # from a cube would bias the direction towards the cube's corners; a
     # Gaussian vector is isotropic, so normalising it is unbiased.
-    while True:
-        v = [rng.gauss(0.0, 1.0) for _ in range(3)]
-        norm_v = norm(v)
-        if norm_v > 0.0:
-            break
-
-    # Rescale to the requested distance from the parent bead
-    vn = [i * dist / norm_v for i in v]
+    v = [rng.gauss(0.0, 1.0) for _ in range(3)]
+    scale = dist / norm(v)
+    vn = [i * scale for i in v]
 
     parent_coord = bead_list[-1][1]
-    for idx in range(n):
-        # Alternate the sign so a pair of beads straddles the parent bead.
-        sign = 1 if idx % 2 == 0 else -1
-        new_bead_dic[f"SCD{idx + 1}"] = [
-            coord + sign * offset for coord, offset in zip(parent_coord, vn)
-        ]
-    return new_bead_dic
+    # The signs straddle the parent bead, and cap the layout at two beads.
+    return {
+        f"SCD{idx}": [coord + sign * offset for coord, offset in zip(parent_coord, vn)]
+        for idx, sign in enumerate((1, -1)[:n], start=1)
+    }
 
 
 def map_cg(chain, rng):
@@ -910,10 +895,7 @@ def martinize(
             If False, assigns secondary structure and encodes it
             into HADDOCK-compatible B-factors.
         seed (int):
-            Pseudo-random seed used to orient the ``SCD*`` dummy beads. A fresh
-            generator is created per call, so the CG model of a given input is
-            reproducible regardless of how many structures were converted
-            before it.
+            Pseudo-random seed used to orient the ``SCD*`` dummy beads.
 
     Returns:
         tuple[str, bool]:
@@ -926,8 +908,9 @@ def martinize(
         emsg = "No input file detected"
         raise ModuleError(emsg)
 
-    # Dedicated generator: never touch the global `random` state, which would
-    # make the result depend on whatever else ran first in this interpreter.
+    # Dedicated generator, built fresh per call: never touch the global
+    # `random` state, which would make the result depend on whatever else ran
+    # first in this interpreter.
     rng = random.Random(seed)
 
     p = PDBParser()

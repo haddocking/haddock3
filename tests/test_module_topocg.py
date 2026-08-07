@@ -3,7 +3,8 @@
 import random
 import shutil
 import tempfile
-from math import isnan, sqrt
+import math
+from math import isnan
 from pathlib import Path
 import warnings
 from Bio.PDB.PDBExceptions import PDBConstructionWarning
@@ -32,6 +33,16 @@ DEFAULT_DICT = read_from_yaml_config(topocg_params)
 def test_variable_defaults_are_nan_in_mol1(param):
     """Test some variable defaults are as expected."""
     assert isnan(DEFAULT_DICT["mol1"][param])
+
+
+def test_default_seed_matches_the_topocg_default():
+    """``libaa2cg`` hardcodes the fallback seed; keep it equal to the schema.
+
+    Callers without an ``iniseed`` of their own (``caprieval``, ``caprifilter``)
+    fall back to it, and should coarse-grain a reference the same way ``topocg``
+    coarse-grains the models.
+    """
+    assert DEFAULT_SEED == DEFAULT_DICT["iniseed"]
 
 
 def test_there_is_only_one_mol():
@@ -73,6 +84,7 @@ def test_generate_topology(topocg, protein):
             mol_params=topocg.params.pop("mol1"),
             default_params_path=None,
             force_field=force_field,
+            seed=topocg.params["iniseed"],
         )
 
     assert observed_inp_out == Path(protein.name).with_suffix(f".{Format.CNS_INPUT}")
@@ -97,6 +109,62 @@ def test_generate_topology(topocg, protein):
     assert "BB" in contents, "CG markers not found in output PDB."
 
 
+class _FakeEngine:
+    """Stand-in for the CNS engine: accepts the jobs, runs nothing."""
+
+    def __init__(self, jobs):
+        self.jobs = jobs
+
+    def run(self):
+        return None
+
+
+def _prepared_topocg(monkeypatch, tempdir, protein, n_models):
+    """Wire up a topocg module over ``n_models`` presplit inputs, without CNS.
+
+    Returns ``(module, expected_inputs, captured)``, where ``captured`` collects
+    the keyword arguments handed to ``generate_topology`` for each model.
+    """
+    root = Path(tempdir)
+    prev_dir = root / "1_topoaa"
+    cwd = root / "2_topocg"
+    prev_dir.mkdir()
+    cwd.mkdir()
+
+    # Individual (already-split) models with their aa topologies, mimicking
+    # the output of the previous topoaa step.
+    prev_output = {}
+    expected_inputs = []
+    for idx in range(n_models):
+        pdb_name = f"mol_{idx + 1}.pdb"
+        shutil.copy(protein, prev_dir / pdb_name)
+        (prev_dir / f"mol_{idx + 1}.{Format.TOPOLOGY}").write_text("")
+        pdbfile = PDBFile(file_name=pdb_name, path=str(prev_dir))
+        prev_output[idx] = pdbfile
+        expected_inputs.append(pdbfile.rel_path)
+
+    monkeypatch.chdir(cwd)
+    module = Topocg(order=1, path=Path("."), initial_params=topocg_params)
+    module.envvars = {}
+
+    class _FakePreviousIO:
+        output = [prev_output]
+
+    module.previous_io = _FakePreviousIO()
+
+    # Capture what topology generation is asked for instead of running CNS,
+    # which also keeps the DSSP/martinize machinery out of these tests.
+    captured = []
+
+    def _fake_generate_topology(input_pdb, *args, **kwargs):
+        captured.append({"input_pdb": Path(input_pdb), **kwargs})
+        return Path(f"{Path(input_pdb).stem}.{Format.CNS_INPUT}")
+
+    monkeypatch.setattr(topocg_mod, "generate_topology", _fake_generate_topology)
+    monkeypatch.setattr(topocg_mod, "get_engine", lambda *a, **k: _FakeEngine)
+    return module, expected_inputs, captured
+
+
 def test_run_uses_presplit_models_without_splitting(monkeypatch, protein):
     """Models from the previous (topoaa) step are already split.
 
@@ -104,58 +172,15 @@ def test_run_uses_presplit_models_without_splitting(monkeypatch, protein):
     (the redundant ``libpdb.split_ensemble`` call that was removed).
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        root = Path(tempdir)
-        prev_dir = root / "1_topoaa"
-        cwd = root / "2_topocg"
-        prev_dir.mkdir()
-        cwd.mkdir()
-
-        # Two individual (already-split) models with their aa topologies,
-        # mimicking the output of the previous topoaa step.
-        prev_output = {}
-        expected_inputs = []
-        for idx in range(2):
-            pdb_name = f"mol_{idx + 1}.pdb"
-            shutil.copy(protein, prev_dir / pdb_name)
-            (prev_dir / f"mol_{idx + 1}.{Format.TOPOLOGY}").write_text("")
-            pdbfile = PDBFile(file_name=pdb_name, path=str(prev_dir))
-            prev_output[idx] = pdbfile
-            expected_inputs.append(pdbfile.rel_path)
-
-        monkeypatch.chdir(cwd)
-        module = Topocg(order=1, path=Path("."), initial_params=topocg_params)
-        module.envvars = {}
-
-        class _FakePreviousIO:
-            output = [prev_output]
-
-        module.previous_io = _FakePreviousIO()
+        module, expected_inputs, captured = _prepared_topocg(
+            monkeypatch, tempdir, protein, n_models=2
+        )
 
         # Guard against regressions: splitting must never happen here.
         def _no_split(*args, **kwargs):
             raise AssertionError("topocg should not call split_ensemble")
 
         monkeypatch.setattr(libpdb, "split_ensemble", _no_split)
-
-        # Capture the model paths handed to topology generation instead of
-        # running CNS, and avoid the DSSP/martinize machinery.
-        captured_inputs = []
-
-        def _fake_generate_topology(input_pdb, *args, **kwargs):
-            captured_inputs.append(Path(input_pdb))
-            return Path(f"{Path(input_pdb).stem}.{Format.CNS_INPUT}")
-
-        monkeypatch.setattr(topocg_mod, "generate_topology", _fake_generate_topology)
-
-        # Neutralise the CNS engine.
-        class _FakeEngine:
-            def __init__(self, jobs):
-                self.jobs = jobs
-
-            def run(self):
-                return None
-
-        monkeypatch.setattr(topocg_mod, "get_engine", lambda *a, **k: _FakeEngine)
 
         # Skip the disk-dependent export step, just capture its input.
         exported = {}
@@ -168,7 +193,7 @@ def test_run_uses_presplit_models_without_splitting(monkeypatch, protein):
         module._run()
 
     # The presplit model paths were used verbatim (no split, no renaming).
-    assert captured_inputs == expected_inputs
+    assert [c["input_pdb"] for c in captured] == expected_inputs
     # One CNS job per input model was created.
     assert len(module.output_models) == 1
     assert len(module.output_models[0]) == 2
@@ -217,8 +242,8 @@ def test_martinize_is_reproducible(protein):
 def test_martinize_seed_changes_dummy_beads(protein):
     """A different seed must reorient the dummy beads."""
     with tempfile.TemporaryDirectory() as tempdir:
-        first = _cg_pdb_text(protein, Path(tempdir, "a"), seed=DEFAULT_SEED)
-        other = _cg_pdb_text(protein, Path(tempdir, "b"), seed=DEFAULT_SEED + 1)
+        first = _cg_pdb_text(protein, Path(tempdir, "a"), seed=1)
+        other = _cg_pdb_text(protein, Path(tempdir, "b"), seed=2)
 
     assert first != other
     # Only the dummy beads may move: everything else is deterministic mapping.
@@ -262,47 +287,15 @@ def test_martinize_is_order_independent(protein, ensemble_header_w_md5):
 def test_run_passes_iniseed_to_generate_topology(monkeypatch, protein):
     """``_run`` must forward the ``iniseed`` parameter to the CG conversion."""
     with tempfile.TemporaryDirectory() as tempdir:
-        root = Path(tempdir)
-        prev_dir = root / "1_topoaa"
-        cwd = root / "2_topocg"
-        prev_dir.mkdir()
-        cwd.mkdir()
-
-        shutil.copy(protein, prev_dir / "mol_1.pdb")
-        (prev_dir / f"mol_1.{Format.TOPOLOGY}").write_text("")
-        prev_output = {0: PDBFile(file_name="mol_1.pdb", path=str(prev_dir))}
-
-        monkeypatch.chdir(cwd)
-        module = Topocg(order=1, path=Path("."), initial_params=topocg_params)
-        module.envvars = {}
+        module, _, captured = _prepared_topocg(
+            monkeypatch, tempdir, protein, n_models=1
+        )
         module.params["iniseed"] = 4242
-
-        class _FakePreviousIO:
-            output = [prev_output]
-
-        module.previous_io = _FakePreviousIO()
-
-        captured = {}
-
-        def _fake_generate_topology(input_pdb, *args, **kwargs):
-            captured["seed"] = kwargs.get("seed")
-            return Path(f"{Path(input_pdb).stem}.{Format.CNS_INPUT}")
-
-        monkeypatch.setattr(topocg_mod, "generate_topology", _fake_generate_topology)
-
-        class _FakeEngine:
-            def __init__(self, jobs):
-                self.jobs = jobs
-
-            def run(self):
-                return None
-
-        monkeypatch.setattr(topocg_mod, "get_engine", lambda *a, **k: _FakeEngine)
         monkeypatch.setattr(Topocg, "export_io_models", lambda self, **k: None)
 
         module._run()
 
-    assert captured["seed"] == 4242
+    assert captured[0]["seed"] == 4242
 
 
 def test_add_dummy_matches_force_field_distances():
@@ -315,18 +308,15 @@ def test_add_dummy_matches_force_field_distances():
     rng = random.Random(0)
     parent = (0.0, 0.0, 0.0)
 
-    def dist(a, b):
-        return sqrt(sum((i - j) ** 2 for i, j in zip(a, b)))
-
     pair = add_dummy([("SC1", parent)], rng, dist=1.4, n=2)
-    assert dist(parent, pair["SCD1"]) == pytest.approx(1.4)
-    assert dist(parent, pair["SCD2"]) == pytest.approx(1.4)
+    assert math.dist(parent, pair["SCD1"]) == pytest.approx(1.4)
+    assert math.dist(parent, pair["SCD2"]) == pytest.approx(1.4)
     # The pair must straddle the parent, not sit on the same side of it.
-    assert dist(pair["SCD1"], pair["SCD2"]) == pytest.approx(2.8)
+    assert math.dist(pair["SCD1"], pair["SCD2"]) == pytest.approx(2.8)
 
     single = add_dummy([("SC1", parent)], rng, dist=1.1, n=1)
     assert list(single) == ["SCD1"]
-    assert dist(parent, single["SCD1"]) == pytest.approx(1.1)
+    assert math.dist(parent, single["SCD1"]) == pytest.approx(1.1)
 
 
 def test_add_dummy_directions_are_isotropic():

@@ -32,6 +32,7 @@ from haddock.libs.libcns import (
     prepare_single_input,
 )
 from haddock.libs.libaa2cg import (
+    DEFAULT_SEED,
     martinize,
     gen_cg_filename,
     gen_cg_tbl_backmapping_fname,
@@ -56,8 +57,13 @@ def generate_topology(
     write_to_disk: Optional[bool] = True,
     force_field: str = "martini2",
     shape: bool = False,
+    seed: int = DEFAULT_SEED,
 ) -> Union[Path, str]:
-    """Generate a HADDOCK topology file from input_pdb."""
+    """Generate a HADDOCK topology file from input_pdb.
+
+    ``seed`` is the ``iniseed`` parameter; it seeds the placement of the CG
+    dummy beads so that the coarse-graining is reproducible across runs.
+    """
     # generate params headers
     general_param = load_workflow_params(**defaults)
     input_mols_params = load_workflow_params(param_header="", **mol_params)
@@ -70,7 +76,7 @@ def generate_topology(
 
     if not shape:
         # AA to CG
-        cg_pdb_name = martinize(input_pdb, output_path, False)
+        cg_pdb_name = martinize(input_pdb, output_path, False, seed=seed)
         output = prepare_output(
             output_pdb_filename=f"{Path(cg_pdb_name).stem}_{force_field}{input_pdb.suffix}",
             output_psf_filename=f"{Path(cg_pdb_name).stem}_{force_field}.{Format.TOPOLOGY}",
@@ -262,6 +268,7 @@ class HaddockModule(BaseCNSModule):
                     write_to_disk=self.params["debug"],
                     force_field=force_field,
                     shape=shape_dic[i],
+                    seed=self.params["iniseed"],
                 )
                 self.log("Topology CNS input created")
 

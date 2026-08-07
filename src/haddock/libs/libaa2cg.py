@@ -56,6 +56,13 @@ warnings.filterwarnings("ignore", category=BiopythonWarning)
 
 CRYST_LINE = "CRYST1 " + os.linesep
 
+# Fallback pseudo-random seed used to place the ``SCD*`` dummy beads.
+# Kept in sync with the ``iniseed`` default of the ``topocg`` module
+# (``modules/topology/topocg/defaults.yaml``). ``topocg`` passes its own
+# ``iniseed`` down to ``martinize()``, so this value only applies to callers that
+# have no ``iniseed`` parameter of their own (``caprieval``, ``caprifilter``).
+DEFAULT_SEED = 917
+
 
 def norm(a):
     """
@@ -373,47 +380,57 @@ polar = ["GLN", "ASN", "SER", "THR"]
 charged = ["ARG", "LYS", "ASP", "GLU"]
 
 
-def add_dummy(bead_list, dist=0.11, n=2):
-    """
+def add_dummy(bead_list, rng, dist=1.1, n=2):
+    """Place the ``SCD*`` dummy beads around the last bead of a residue.
+
+    The beads are laid out along a randomly oriented axis through the parent
+    bead: the first at ``+dist``, the second (if any) at ``-dist``, so that a
+    pair straddles the parent symmetrically. Only the *orientation* is random;
+    the distances come from the force field (see below).
 
     Args:
-        bead_list:
-        dist:
-        n:
+        bead_list: ``(name, coordinates)`` pairs of the residue's real beads.
+            The dummy beads are attached to the last one.
+        rng: ``random.Random`` instance used to orient the dummy beads.
+        dist: Distance from the parent bead, **in angstrom**. Matches the
+            ``SCd`` bond lengths of ``cns/toppar/protein-CG-Martini-2-2.param``:
+            1.1 A for the parent-SCd bond, and 1.4 A for a pair, whose 2.8 A
+            separation is the ``BOND SCd SCd`` equilibrium.
+        n: Number of dummy beads (1 or 2).
 
     Returns:
-
+        Mapping of bead name (``SCD1``, ``SCD2``) to its coordinates.
     """
     new_bead_dic = {}
 
-    # Generate a random vector in a sphere of -1 to +1, to add to the bead position
-    v = [
-        random.random() * 2.0 - 1,
-        random.random() * 2.0 - 1,
-        random.random() * 2.0 - 1,
-    ]
+    # Random direction, uniform on the unit sphere. Normalising a vector drawn
+    # from a cube would bias the direction towards the cube's corners; a
+    # Gaussian vector is isotropic, so normalising it is unbiased.
+    while True:
+        v = [rng.gauss(0.0, 1.0) for _ in range(3)]
+        norm_v = norm(v)
+        if norm_v > 0.0:
+            break
 
-    # Calculated the length of the vector and divide by the final distance of the dummy bead
-    norm_v = norm(v) / dist
+    # Rescale to the requested distance from the parent bead
+    vn = [i * dist / norm_v for i in v]
 
-    # Resize the vector
-    vn = [i / norm_v for i in v]
-
-    # m sets the direction of the added vector, currently only works when adding one or two beads.
-    m = 1
-    for j in range(n):  # create two new beads
-        bead_s = str(j + 1)
-        new_name = f"SCD{bead_s}"  # set the name of the new bead
-        new_bead_dic[new_name] = [i + (m * j) for i, j in zip(bead_list[-1][1], vn)]
-        m *= -2
+    parent_coord = bead_list[-1][1]
+    for idx in range(n):
+        # Alternate the sign so a pair of beads straddles the parent bead.
+        sign = 1 if idx % 2 == 0 else -1
+        new_bead_dic[f"SCD{idx + 1}"] = [
+            coord + sign * offset for coord, offset in zip(parent_coord, vn)
+        ]
     return new_bead_dic
 
 
-def map_cg(chain):
+def map_cg(chain, rng):
     """
 
     Args:
         chain:
+        rng: ``random.Random`` instance used to orient the dummy beads.
 
     Returns:
 
@@ -500,13 +517,17 @@ def map_cg(chain):
             m_dic[aares][bead_name] = bead_coord, code, restrain
 
     # add dummy beads whenever its needed
+    # Distances are in angstrom, matching the SCd bond lengths of
+    # cns/toppar/protein-CG-Martini-2-2.param: a pair placed at +/-1.4 A is
+    # 2.8 A apart (BOND SCd SCd), and a lone bead sits at the 1.1 A
+    # parent-SCd bond length.
     for r in m_dic:
         if r.resname in polar:
-            d = 0.14  # distance
+            d = 1.4  # distance
             n = 2  # number of dummy beads to be placed
 
         elif r.resname in charged:
-            d = 0.11  # distance
+            d = 1.1  # distance
             n = 1  # number of dummy beads to be placed
 
         else:
@@ -515,7 +536,7 @@ def map_cg(chain):
         # add to data structure
         # this special beads have no HADDOCK code
         bead_list = [(b, m_dic[r][b][0]) for b in m_dic[r]]
-        dummy_bead_dic = add_dummy(bead_list, dist=d, n=n)
+        dummy_bead_dic = add_dummy(bead_list, rng, dist=d, n=n)
         for db in dummy_bead_dic:
             db_coords = dummy_bead_dic[db]
             # code should be the same as the residue
@@ -733,66 +754,6 @@ def identify_pairing(ra, rb):
     return pair
 
 
-def output_cg_restraints(pair_list):
-    """
-
-    Args:
-        pair_list:
-
-    Returns:
-
-    """
-    out = open("dna_restraints.def", "w")
-    for i, e in enumerate(pair_list):
-        idx = i + 1
-        res_a = e[0][0]
-        segid_a = e[0][1]
-        res_b = e[1][0]
-        segid_b = e[1][1]
-        out.write(
-            f"{{===>}} base_a_{idx}=(resid {res_a} and segid {segid_a});\n"
-            f"{{===>}} base_b_{idx}=(resid {res_b} and segid {segid_b});\n\n"
-        )
-    out.close()
-
-
-def extract_groups(pair_list):
-    """
-
-    Args:
-        pair_list:
-
-    Returns:
-
-    """
-    # this will be used to define AA restraints
-    out = open("dna-aa_groups.dat", "w")
-    # extract groups
-    group_a = [a[0][0] for a in pair_list]
-    segid_a = list(set([a[0][1] for a in pair_list]))
-
-    group_b = [a[1][0] for a in pair_list]
-    segid_b = list(set([a[0][1] for a in pair_list]))
-
-    if len(segid_a) != 1:
-        emsg = "Something is wrong with SEGID A"
-        raise ModuleError(emsg)
-
-    if len(segid_b) != 1:
-        emsg = "Something is wrong with SEGID B"
-        raise ModuleError(emsg)
-
-    segid_a = segid_a[0]
-    segid_b = segid_b[0]
-
-    group_a.sort()
-    group_b.sort()
-    out.write(
-        f"{group_a[0]}:{group_a[-1]}\n{segid_a}\n{group_b[0]}:{group_b[-1]}\n{segid_b}"
-    )
-    out.close()
-
-
 def create_file_with_cryst(pdb_file: str) -> None:
     """
     This function creates a new pdb because the CRYST line is missing from the pdf file.
@@ -930,6 +891,7 @@ def martinize(
     input_pdb: str,
     output_path: str,
     skipss: bool,
+    seed: int = DEFAULT_SEED,
 ) -> tuple[str, bool]:
     """
     Converts an all-atom (AA) PDB structure into a coarse-grained (CG) model
@@ -947,6 +909,11 @@ def martinize(
             If True, skips secondary structure assignment (DSSP step).
             If False, assigns secondary structure and encodes it
             into HADDOCK-compatible B-factors.
+        seed (int):
+            Pseudo-random seed used to orient the ``SCD*`` dummy beads. A fresh
+            generator is created per call, so the CG model of a given input is
+            reproducible regardless of how many structures were converted
+            before it.
 
     Returns:
         tuple[str, bool]:
@@ -958,6 +925,10 @@ def martinize(
     if not input_pdb:
         emsg = "No input file detected"
         raise ModuleError(emsg)
+
+    # Dedicated generator: never touch the global `random` state, which would
+    # make the result depend on whatever else ran first in this interpreter.
+    rng = random.Random(seed)
 
     p = PDBParser()
     io = PDBIO()
@@ -984,10 +955,12 @@ def martinize(
     # WARNING, THIS ASSUMES THAT INPUT DNA/RNA IS 3-LETTER CODE
     rename_nucbases(aa_model)
 
-    # Assign HADDOCK code for hydrogen bonding capable nucleotides (0-1)
-    pair_list = determine_hbonds(aa_model)
-    if pair_list:
-        output_cg_restraints(pair_list)
+    # Assign HADDOCK code for hydrogen bonding capable nucleotides (0-1).
+    # The returned pair list is not used here: base-pair restraints for CG
+    # models are derived in CNS by `dna-rna_restraints.cns`. What matters is
+    # the side effect, marking the paired bases with bfactor 1 so that
+    # `patch-types-cg-hbond-dna-rna.cns` can patch their bead types.
+    determine_hbonds(aa_model)
 
     # Map CG beads to AA structure
     structure_builder = StructureBuilder()
@@ -1003,7 +976,7 @@ def martinize(
             structure_builder.init_chain(chain.id)
             structure_builder.init_seg(chain.id)
 
-            mapping_dic = map_cg(chain)
+            mapping_dic = map_cg(chain, rng)
 
             for residue in mapping_dic:
                 if residue.id[0] != " ":  # filter HETATMS

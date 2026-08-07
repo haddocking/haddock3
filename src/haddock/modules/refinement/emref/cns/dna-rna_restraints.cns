@@ -66,13 +66,38 @@ evaluate ($wc_up=0.05)
 
 
 {=========================================== Coarse-Grained ===========================================================}
-{* Is the DNA/RNA molecule CG? *}
+{* Is the DNA/RNA molecule CG?
+   Leave at false to auto-detect: a CG nucleic acid is recognised by its
+   BB1/BB2/BB3 backbone beads. Set to true to force CG treatment. *}
 evaluate ($dna_cg=false)
+
+{* Distance cutoff used to detect a base pair in a CG model.
+   The all-atom code pairs bases on a donor-acceptor contact within $hbcut
+   (3.5 A). In the CG model that contact becomes a bead-bead distance:
+   A/DA SC3 - T/DT/U SC2, and C/DC SC2 - G/DG SC3. Measured over 158 base
+   pairs, those sit at 3.9-4.15 A in regular B-DNA, so 4.5 A captures them
+   with margin. Candidates beyond it are simply not paired; if more than one
+   candidate falls inside, no restraint is generated for that base. *}
+evaluate ($hbcut_cg=4.5)
 
 {=========================================================================================================}
 {                        things below this line do not normally need to be changed                        }
 {=========================================================================================================}
 
+
+{- detect a coarse-grained nucleic acid -}
+! CG nucleotides carry BB1/BB2/BB3 backbone beads and SC1..SC4 base beads
+! instead of the all-atom phosphate/sugar/base atoms. All nucleic acids in a
+! run share one representation, so a single global flag is enough.
+if ($dna_cg=false) then
+    show sum(1) ( name BB1 and
+                  (resn DA or resn A or resn DG or resn G or resn DT or
+                   resn T or resn DC or resn C or resn U) )
+    if ( $result > 0 ) then
+        evaluate ($dna_cg=true)
+        display DNA/RNA: coarse-grained model detected, using CG restraints
+    end if
+end if
 
 {- find max and min residue numbers -}
 evaluate ($min_resid = 99999)
@@ -96,20 +121,44 @@ if ($dna_bases_planar=true) then
         evaluate ($resid=decode($result))
         evaluate ($plweight = 20)
 
-        restraints plane
-            group
-                selection=( segid $segid and resid $resid and
-                          (resn T   or resn C   or resn G   or resn A   or resn U or
-                           resn DT  or resn DC  or resn DG  or resn DA) and
-                           not (name c#' or name h#' or name h#'' or name o#p or
-                           name h7# or name o#' or name p or name h#t or name o#t))
-                weight=$plweight
+        if ($dna_cg=true) then
+            ! The CG base is SC1..SC4. Only purines (A, DA, G, DG) have four
+            ! base beads; pyrimidines have three, and CNS aborts on a plane
+            ! group of fewer than four atoms. Test for the fourth bead rather
+            ! than listing residue names, so the check follows the mapping.
+            show sum(1) ( segid $segid and resid $resid and name SC4 )
+            if ( $result > 0 ) then
+                restraints plane
+                    group
+                        selection=( segid $segid and resid $resid and
+                                  (resn G or resn A or resn DG or resn DA) and
+                                   name SC# )
+                        weight=$plweight
+                    end
+                end
+            end if
+        else
+            restraints plane
+                group
+                    selection=( segid $segid and resid $resid and
+                              (resn T   or resn C   or resn G   or resn A   or resn U or
+                               resn DT  or resn DC  or resn DG  or resn DA) and
+                               not (name c#' or name h#' or name h#'' or name o#p or
+                               name h7# or name o#' or name p or name h#t or name o#t))
+                    weight=$plweight
+                end
             end
-        end
+        end if
     end loop plan
 end if
 
 {- Dihedral restraints for the sugar pucker -}
+
+! Not available for CG models: the sugar ring (C1'-C2'-C3'-C4'-O4') is
+! absorbed into the BB2/BB3 beads, so these dihedrals have no counterpart.
+if ($dna_cg=true) then
+    evaluate ($dna_pick_pucdih=false)
+end if
 
 if ($dna_pick_pucdih=true) then
     show sum(1) ( (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) and tag )
@@ -164,6 +213,12 @@ if ($dna_pick_pucdih=true) then
 end if
 
 {- Dihedral restraints for the phosphate backbone -}
+
+! Not available for CG models: alpha..zeta are defined over P, O5', C5', C4',
+! C3' and O3', which are absorbed into the BB1/BB2/BB3 beads.
+if ($dna_cg=true) then
+    evaluate ($dna_pick_bacdih=false)
+end if
 
 if ($dna_pick_bacdih=true) then
     show sum(1) ( (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) and tag )
@@ -329,7 +384,50 @@ if ($dna_pick_wc = true) then
             end if
             
             if ($ares_name = ADE) then
-                show sum(1) ( ((resn DT or resn T or resn U) and not (resid $presid or resid $fresid) and name N3) 
+              if ($dna_cg=true) then
+                ! CG: the A N1...T N3 contact becomes the A SC3...T SC2 contact.
+                ! Unlike the all-atom atom names used below, the SC# bead names
+                ! are shared with CG protein side chains, so every selection has
+                ! to be segid-aware or a protein bead with a matching resid gets
+                ! pulled in. The stacked neighbours are excluded on the current
+                ! strand only, so a partner that happens to carry resid +/-1 on
+                ! the opposite strand is still found.
+                show sum(1) ( ((resn DT or resn T or resn U) and
+                               not (segid $segid and (resid $presid or resid $fresid)) and name SC2)
+                               and (segid $segid and resid $resid and name SC3) around $hbcut_cg)
+                if ($result = 1) then
+                    show (resid) ( ((resn DT or resn T or resn U) and
+                                   not (segid $segid and (resid $presid or resid $fresid)) and name SC2)
+                                  and (segid $segid and resid $resid and name SC3) around $hbcut_cg)
+                    evaluate ($rpair = $result)
+                    show (segid) ( ((resn DT or resn T or resn U) and
+                                   not (segid $segid and (resid $presid or resid $fresid)) and name SC2)
+                                  and (segid $segid and resid $resid and name SC3) around $hbcut_cg)
+                    evaluate ($psegid = $result)
+                    ! A N6...T O4 maps onto SC3...SC3, A N1...T N3 onto SC3...SC2.
+                    ! The N1...O4 and N1...O2 pairs of the all-atom code collapse
+                    ! onto those same two bead pairs and are therefore dropped.
+                    pick bond
+                        (segid $segid and resid $resid and name SC3)
+                        (segid $psegid and resid $rpair and name SC3)
+                        geometry
+                    evaluate ($sc3sc3=$result)
+                    pick bond
+                        (segid $segid and resid $resid and name SC3)
+                        (segid $psegid and resid $rpair and name SC2)
+                        geometry
+                    evaluate ($sc3sc2=$result)
+                    noe
+                        assign (segid $segid and resid $resid and name SC3)
+                               (segid $psegid and resid $rpair and name SC3)
+                               $sc3sc3 $wc_low $wc_up
+                        assign (segid $segid and resid $resid and name SC3)
+                               (segid $psegid and resid $rpair and name SC2)
+                               $sc3sc2 $wc_low $wc_up
+                    end
+                end if
+              else
+                show sum(1) ( ((resn DT or resn T or resn U) and not (resid $presid or resid $fresid) and name N3)
                                and (resid $resid and name N1) around $hbcut)
                 if ($result = 1) then
                     show (resid) ( ((resn DT or resn T or resn U) and not (resid $presid or resid $fresid) and name N3) 
@@ -370,11 +468,56 @@ if ($dna_pick_wc = true) then
                                $n1o2 $wc_low $wc_up
                     end
                 end if
+              end if
             end if
 
             !find possible pairing for DC/C with DG/G
             if ($ares_name = CYT) then
-                show sum(1) ( ((resn DG or resn G) and not (resid $presid or resid $fresid) and name N1) 
+              if ($dna_cg=true) then
+                ! CG: the C N3...G N1 contact becomes the C SC2...G SC3 contact.
+                ! Segid-aware for the same reason as the A/T branch above.
+                show sum(1) ( ((resn DG or resn G) and
+                               not (segid $segid and (resid $presid or resid $fresid)) and name SC3)
+                               and (segid $segid and resid $resid and name SC2) around $hbcut_cg)
+                if ($result = 1) then
+                    show (resid) ( ((resn DG or resn G) and
+                                   not (segid $segid and (resid $presid or resid $fresid)) and name SC3)
+                                  and (segid $segid and resid $resid and name SC2) around $hbcut_cg)
+                    evaluate ($rpair = $result)
+                    show (segid) ( ((resn DG or resn G) and
+                                   not (segid $segid and (resid $presid or resid $fresid)) and name SC3)
+                                  and (segid $segid and resid $resid and name SC2) around $hbcut_cg)
+                    evaluate ($psegid = $result)
+                    ! C N3...G N1 maps onto SC2...SC3, C N4...G O6 onto SC3...SC3
+                    ! and C O2...G N2 onto SC2...SC2. The N3...O6 and N3...N2
+                    ! pairs of the all-atom code collapse onto those same bead
+                    ! pairs and are therefore dropped.
+                    pick bond
+                        (segid $segid and resid $resid and name SC2)
+                        (segid $psegid and resid $rpair and name SC3)
+                        geometry
+                    evaluate ($sc2sc3=$result)
+                    pick bond
+                        (segid $segid and resid $resid and name SC3)
+                        (segid $psegid and resid $rpair and name SC3)
+                        geometry
+                    evaluate ($sc3sc3=$result)
+                    pick bond
+                        (segid $segid and resid $resid and name SC2)
+                        (segid $psegid and resid $rpair and name SC2)
+                        geometry
+                    evaluate ($sc2sc2=$result)
+                    noe
+                        assign (segid $segid and resid $resid and name SC2)
+                               (segid $psegid and resid $rpair and name SC3) $sc2sc3 $wc_low $wc_up
+                        assign (segid $segid and resid $resid and name SC3)
+                               (segid $psegid and resid $rpair and name SC3) $sc3sc3 $wc_low $wc_up
+                        assign (segid $segid and resid $resid and name SC2)
+                               (segid $psegid and resid $rpair and name SC2) $sc2sc2 $wc_low $wc_up
+                    end
+                end if
+              else
+                show sum(1) ( ((resn DG or resn G) and not (resid $presid or resid $fresid) and name N1)
                                and (resid $resid and name N3) around $hbcut)
                 if ($result = 1) then
                     show (resid) ( ((resn DG or resn G) and not (resid $presid or resid $fresid) and name N1) 
@@ -418,6 +561,7 @@ if ($dna_pick_wc = true) then
                                (resid $rpair and name N2) $n3n2 $wc_low $wc_up
                     end
                 end if
+              end if
             end if
         end loop resid
     end if

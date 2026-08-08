@@ -204,7 +204,7 @@ PROT_SIDE_CHAINS_DICT_all = {
     "martini3" : PROT_SIDE_CHAINS_DICT_MARTINI3
 }
 
-# Bases
+# For DNA, we use nucleo-bases as default atom selection
 DNA_ATOMS = [
     "C5",
     "N9",
@@ -223,14 +223,15 @@ DNA_ATOMS = [
     "C4",
     "O6",
 ]
-DNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
-
+DNA_ATOMS_MARTINI2 = ["SC1", "SC2", "SC3", "SC4"]
+DNA_ATOMS_MARTINI3 = ["SC1", "SC2", "SC3", "SC4"]
 DNA_ATOMS_all = {
     "aa" : DNA_ATOMS,
     "martini2" : DNA_ATOMS_MARTINI2,
-    "martini3" : DNA_ATOMS_MARTINI2
+    "martini3" : DNA_ATOMS_MARTINI3,
 }
 
+# Definition of all atoms in DNA
 DNA_FULL_DICT = {
     "DA": [
         "P",
@@ -356,13 +357,15 @@ DNA_FULL_DICT_MARTINI2 = {
     "DG" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
     "DT" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
 }
-
+DNA_FULL_DICT_MARTINI3 = DNA_FULL_DICT_MARTINI2
 DNA_FULL_DICT_all = {
     "aa" : DNA_FULL_DICT,
     "martini2" : DNA_FULL_DICT_MARTINI2,
-    "martini3" : DNA_FULL_DICT_MARTINI2
+    "martini3" : DNA_FULL_DICT_MARTINI3,
 }
 
+# RNA definitions
+# Backbone
 RNA_RES = ["A", "G", "C", "U"]
 RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
 RNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
@@ -373,6 +376,7 @@ RNA_ATOMS_all = {
     "martini3" : RNA_ATOMS_MARTINI2
 }
 
+# All atoms in RNA
 RNA_FULL_DICT = {
     "A": [
         "P",
@@ -477,11 +481,11 @@ RNA_FULL_DICT_MARTINI2 = {
     "G" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
     "U" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
 }
-
+RNA_FULL_DICT_MARTINI3 = RNA_FULL_DICT_MARTINI2
 RNA_FULL_DICT_all = {
     "aa" : RNA_FULL_DICT,
     "martini2" : RNA_FULL_DICT_MARTINI2,
-    "martini3" : RNA_FULL_DICT_MARTINI2
+    "martini3" : RNA_FULL_DICT_MARTINI3,
 }
 
 

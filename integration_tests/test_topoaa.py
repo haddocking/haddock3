@@ -744,6 +744,33 @@ def test_topoaa_module_dna_5_oh(topoaa_module):
     assert "H5T" in five_prime
 
 
+def test_topoaa_D_amino_acids(topoaa_module):
+    """Test the topoaa module to detect D-amino acids."""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "PPCIVSMLPPDFLYAYS.pdb"),
+    ]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "PPCIVSMLPPDFLYAYS.inp")
+    expected_psf = Path(topoaa_module.path, "PPCIVSMLPPDFLYAYS_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "PPCIVSMLPPDFLYAYS_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "PPCIVSMLPPDFLYAYS.out.gz")
+
+    assert expected_inp.exists(), f"{expected_inp} does not exist"
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_gz.exists(), f"{expected_gz} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    with open(expected_pdb, encoding="utf-8", mode="r") as f:
+        file_content = f.read()
+
+    assert "REMARK D-amino acid detected for PRO 1 of chain" in file_content
+    assert "REMARK D-amino acid detected for PRO 9 of chain" in file_content
+
+
 def test_topoaa_with_ensemble_ligand_files(topoaa_module):
     """Test topoaa module with ensemble containing different ligand files."""
     prot_src = Path(GOLDEN_DATA, "prot.pdb")

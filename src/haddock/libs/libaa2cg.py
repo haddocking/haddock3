@@ -37,6 +37,7 @@ import warnings
 from pathlib import Path
 from io import StringIO
 
+from Bio import BiopythonWarning
 from Bio.PDB import Entity, PDBIO, PDBParser
 from Bio.PDB.Structure import Structure
 from Bio.PDB.StructureBuilder import StructureBuilder
@@ -46,7 +47,12 @@ from haddock.core.exceptions import ModuleError
 from haddock.core.typing import Optional
 from haddock.libs.libontology import Format
 
-warnings.filterwarnings("ignore")
+# Silence only Biopython's own (noisy) PDB-parsing warnings. A blanket
+# ``warnings.filterwarnings("ignore")`` here would suppress *every* Python
+# warning process-wide (DeprecationWarning, numpy RuntimeWarning, ...) as a
+# side effect of importing this module, which is imported by common modules
+# such as `caprieval`.
+warnings.filterwarnings("ignore", category=BiopythonWarning)
 
 CRYST_LINE = "CRYST1 " + os.linesep
 
@@ -836,7 +842,8 @@ def determine_ss(structure: Structure, skipss: bool, pdbf_path: str) -> Structur
             )
             dssp_raw, _ = p.communicate()
             dssp_raw = dssp_raw.split("#")[1].split("\n")[1:-1]
-        except:  # TODO: think about making this exception more specific
+        except Exception:
+            # dssp missing/failed or its output could not be parsed:
             # no secondary structure detected for this model
             log.warning("SS could not be assigned, assigning code 1 to all residues")
             continue

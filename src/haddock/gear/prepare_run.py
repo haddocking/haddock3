@@ -62,6 +62,7 @@ from haddock.gear.validations import (
     v_rundir,
     validate_defaults_yaml,
 )
+from haddock.gear.workflow_ordering import validate_workflow_order
 from haddock.gear.yaml2cfg import (
     read_from_yaml_config,
     find_incompatible_parameters,
@@ -227,6 +228,7 @@ def setup_run(
     #. validate the config file
        * confirm modules' names are correctly spelled
        * check if requested modules are installed
+       * validate the module ordering (except for ``--extend-run``)
        * check additional validations
     #. validate modules' parameters
     #. copy input files to data/ directory
@@ -309,6 +311,10 @@ def setup_run(
         general_params[RUNDIR] = extend_run
 
     check_if_modules_are_installed(modules_params)
+    # --extend-run configs describe only the modules to append to an existing
+    # run, so the full workflow order is not known here and cannot be validated.
+    if extend_run is None:
+        validate_workflow_order([get_module_name(step) for step in modules_params])
     check_specific_validations(general_params)
 
     # define starting conditions

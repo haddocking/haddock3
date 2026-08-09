@@ -1,6 +1,6 @@
 """Backmapping of Coarse-Grained structures into All-atom structures with CNS.
 
-The ``[cgtoaa]`` module translate the CG conformations into AA representations, 
+The ``[cgtoaa]`` module translate the CG conformations into AA representations,
 implemented in CNS.
 
 For this module to be functional, it needs to be run in a workflow where ``[topocg]``

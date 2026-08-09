@@ -167,7 +167,7 @@ PROT_ATOMS_MARTINI2 = ["BB"]
 PROT_ATOMS_all = {
     "aa": PROT_ATOMS,
     "martini2": PROT_ATOMS_MARTINI2,
-    "martini3": PROT_ATOMS_MARTINI2, # The backbone particle is identical between MARTINI 2 and 3
+    "martini3": PROT_ATOMS_MARTINI2,  # The backbone particle is identical between MARTINI 2 and 3
 }
 
 # Side chains
@@ -285,13 +285,13 @@ PROT_SIDE_CHAINS_DICT_MARTINI3 = {
     "HIP": ["BB", "SC1", "SC2", "SC3"],
     "PHE": ["BB", "SC1", "SC2", "SC3"],
     "TYR": ["BB", "SC1", "SC2", "SC3", "SC4"],
-    "TRP": ["BB", "SC1", "SC2", "SC3", "SC4", 'SC5'],    
+    "TRP": ["BB", "SC1", "SC2", "SC3", "SC4", "SC5"],    
 }
 
 PROT_SIDE_CHAINS_DICT_all = {
     "aa": PROT_SIDE_CHAINS_DICT,
     "martini2": PROT_SIDE_CHAINS_DICT_MARTINI2,
-    "martini3": PROT_SIDE_CHAINS_DICT_MARTINI3
+    "martini3": PROT_SIDE_CHAINS_DICT_MARTINI3,
 }
 
 # For DNA, we use nucleo-bases as default atom selection
@@ -445,7 +445,7 @@ DNA_FULL_DICT_MARTINI2 = {
     "DA": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
     "DC": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
     "DG": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
-    "DT": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
+    "DT": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
 }
 DNA_FULL_DICT_MARTINI3 = DNA_FULL_DICT_MARTINI2
 DNA_FULL_DICT_all = {
@@ -459,11 +459,11 @@ DNA_FULL_DICT_all = {
 RNA_RES = ["A", "G", "C", "U"]
 RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
 RNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
-
+RNA_ATOMS_MARTINI3 = RNA_ATOMS_MARTINI2
 RNA_ATOMS_all = {
     "aa": RNA_ATOMS,
     "martini2": RNA_ATOMS_MARTINI2,
-    "martini3": RNA_ATOMS_MARTINI2
+    "martini3": RNA_ATOMS_MARTINI3,
 }
 
 # All atoms in RNA
@@ -569,7 +569,7 @@ RNA_FULL_DICT_MARTINI2 = {
     "A": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
     "C": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
     "G": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
-    "U": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
+    "U": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
 }
 RNA_FULL_DICT_MARTINI3 = RNA_FULL_DICT_MARTINI2
 RNA_FULL_DICT_all = {
@@ -978,8 +978,7 @@ def align_strct(
     """
     if lovoalign_exec is None:
         log.error(
-            "Structural alignment needs LovoAlign "
-            "get it at github.com/m3g/lovoalign"
+            "Structural alignment needs LovoAlign get it at github.com/m3g/lovoalign"
         )
         raise ALIGNError("Path to LovoAlign executable required.")
 
@@ -1040,8 +1039,7 @@ def align_strct(
         if not alignment_pass:
             # This alignment failed, move on to the next
             log.warning(
-                f"Skipping alignment of chain {chain}, "
-                "used sequential matching"
+                f"Skipping alignment of chain {chain}, used sequential matching"
             )
             continue
 
@@ -1070,8 +1068,7 @@ def align_strct(
             )
         else:
             log.info(
-                f'"Structural" identity of chain {chain} '
-                f"is {identity:.2f}%"
+                f'"Structural" identity of chain {chain} is {identity:.2f}%'
             )
 
         # logging.debug("Reading alignment and matching numbering")
@@ -1402,8 +1399,7 @@ def dump_as_izone(fname, numbering_dic, model2ref_chain_dict=None):
                     unb_chain = model2ref_chain_dict[chain]
                 #
                 izone_str = (
-                    "ZONE "
-                    f"{chain}{bound_res}:{unb_chain}{unbound_res}{os.linesep}"
+                    f"ZONE {chain}{bound_res}:{unb_chain}{unbound_res}{os.linesep}"
                 )
                 fh.write(izone_str)
 

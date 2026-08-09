@@ -1,0 +1,52 @@
+# =============================================================================
+# HADDOCK3 workflow ordering rules
+# =============================================================================
+#
+# Individual module- and parameter-level validation (see gear/prepare_run.py)
+# confirms that each requested module exists and that its parameters are valid.
+# It does *not* enforce constraints on the *sequence* in which modules appear.
+#
+# This file declares those sequence constraints as data, so that they can be
+# reviewed and extended without touching the validation logic in
+# `gear/workflow_ordering.py`. Module names below are the module folder names
+# (e.g. `topoaa`, `clustrmsd`), i.e. the keys used in a workflow config file
+# without their `.N` occurrence suffix.
+#
+# Four rule types are supported:
+#
+#   disallowed_sequences  a pair [A, B]: module B must NOT come directly
+#                         after module A (guards against meaningless repeats).
+#
+#   required_preceding    B: [A1, A2, ...]: module B must be immediately
+#                         preceded by one of A1, A2, ...
+#
+#   required_prior        B: [A1, A2, ...]: module B must be preceded
+#                         somewhere earlier in the workflow (not necessarily
+#                         directly) by at least one of A1, A2, ...
+#
+#   required_first        [M1, M2, ...]: the very first module of a workflow
+#                         must be one of M1, M2, ...
+#
+# All checks are skipped for entries whose "trigger" module is not present in
+# the workflow, so adding a rule never breaks unrelated workflows.
+# -----------------------------------------------------------------------------
+
+# Module B must not directly follow module A. Each entry is a [A, B] pair.
+disallowed_sequences:
+  - [clustrmsd, clustrmsd]
+  - [clustfcc, clustfcc]
+  - [seletop, seletop]
+  - [seletopclusts, seletopclusts]
+
+# Module (key) must be immediately preceded by one of the listed modules.
+required_preceding:
+  clustrmsd: [rmsdmatrix, ilrmsdmatrix]
+  topocg: [topoaa]
+
+# Module (key) must be preceded anywhere earlier by one of the listed modules.
+required_prior:
+  cgtoaa: [topocg]
+
+# The first module of the workflow must be one of these.
+required_first:
+  - topoaa

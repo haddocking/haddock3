@@ -20,10 +20,13 @@ Four parameters can be defined in this context:
 * `min_population` : set the minimum number of models that should be present
   in a cluster to consider it. If criterion is `maxclust`, the value is ignored.
 
-This module passes the path to the RMSD matrix is to the next step of the
-workflow through the `rmsd_matrix.json` file, thus allowing to execute several
-`clustrmsd` modules (possibly with different parameters) on the same RMSD
-matrix.
+This module passes the path to the RMSD matrix to the next step of the
+workflow through the `rmsd_matrix.json` file. Note that this does **not**
+mean several `clustrmsd` modules can be chained (possibly with different
+parameters) on the same RMSD matrix within a single continuous workflow run
+- doing so leads to a mismatched model-cluster mapping. To re-cluster an
+already computed matrix with different parameters without recomputing it,
+use `haddock3-re` or the `--restart` option instead.
 
 Note that the output models are reordered by cluster rank and the rank within each
 cluster; this means that the order of output models of this cluster will be different

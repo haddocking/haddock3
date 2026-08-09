@@ -285,7 +285,7 @@ PROT_SIDE_CHAINS_DICT_MARTINI3 = {
     "HIP": ["BB", "SC1", "SC2", "SC3"],
     "PHE": ["BB", "SC1", "SC2", "SC3"],
     "TYR": ["BB", "SC1", "SC2", "SC3", "SC4"],
-    "TRP": ["BB", "SC1", "SC2", "SC3", "SC4", "SC5"],    
+    "TRP": ["BB", "SC1", "SC2", "SC3", "SC4", "SC5"],
 }
 
 PROT_SIDE_CHAINS_DICT_all = {
@@ -1067,9 +1067,7 @@ def align_strct(
                 ", please check the results carefully"
             )
         else:
-            log.info(
-                f'"Structural" identity of chain {chain} is {identity:.2f}%'
-            )
+            log.info(f'"Structural" identity of chain {chain} is {identity:.2f}%')
 
         # logging.debug("Reading alignment and matching numbering")
         for element in alignment:

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-08-05: Harmonised running mode of test config files - Issue #1655
 - 2026-08-10: Added missing improper for HYP - Issue #1662
 - 2026-08-05: Removed identical duplicate `ANGLe` statements from `protein-allhdg5-4.param` and `protein-CG-Martini-2-2.param` - Issue #1589
 - 2026-08-04: Added workflow module ordering validation - related to Issue #1530

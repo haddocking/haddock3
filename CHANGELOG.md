@@ -1,6 +1,6 @@
 # Changelog
 
-- 2026-08-04: Fixed nucleobase selection for DNA default caprieval - Issue #1658
+- 2026-08-10: Fixed nucleobase selection for DNA default caprieval - Issue #1658
 - 2026-08-04: Added workflow module ordering validation - related to Issue #1530
 - 2026-08-02: Fixed logging/warning leaks - Issue #1647
 - 2026-07-31: Fixed D-amino acid detection - Issue #1636

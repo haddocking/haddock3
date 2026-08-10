@@ -42,6 +42,18 @@ eval ($shape_parameter_infile="TOPPAR:shape.param")
 {* cofactors parameter file *}
 eval ($cofactors_parameter_infile="TOPPAR:cofactors.param")
 
+
+! check for the presence of a CG model
+do (store4 = 0) (all)
+do (store4 = 1) (name BB or name BB#)
+show sum (store4) (all)
+if ($result > 0) then
+    eval ($cgmodel = true)
+else
+    eval ($cgmodel = false)
+end if
+
+
 parameter
     @@$prot_parameter_infile
     @@$ion_parameter_infile
@@ -58,8 +70,10 @@ parameter
             @@$ligand_param_fname
         end if
     end if
-    @@$protcg_parameter_infile
-    @@$nuclcg_parameter_infile
+    if ($cgmodel eq true) then
+        @@$protcg_parameter_infile
+        @@$nuclcg_parameter_infile
+    end if
 end
 
 parameter

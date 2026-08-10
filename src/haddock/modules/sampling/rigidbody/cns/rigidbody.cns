@@ -141,6 +141,7 @@ evaluate ($refine.keepwater = false)
 !==================================================================!
 
 @MODULE:read_param.cns
+set seed $seed end
 
 igroup
     interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))

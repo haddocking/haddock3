@@ -112,6 +112,7 @@ evaluate ($refine.keepwater = false)
 {* Read paramters and set various force field related variables *}
 
 @MODULE:read_param.cns
+set seed $seed end
 
 parameter
     bond  (all) (all) 1000 TOKEN

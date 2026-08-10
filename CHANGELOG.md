@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-08-10: Added missing improper for HYP - Issue #1662
 - 2026-08-04: Added workflow module ordering validation - related to Issue #1530
 - 2026-08-02: Fixed logging/warning leaks - Issue #1647
 - 2026-07-31: Fixed D-amino acid detection - Issue #1636

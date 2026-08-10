@@ -9,6 +9,10 @@ For more details about this clustering method, please check
 Proteins: Struct. Funct. Bioinform.
 80, 1810–1817 (2012)*
 
+Note that the output models are reordered by cluster rank and the rank within each
+cluster; this means that the order of output models of this cluster will be different
+than the input - this may be relevant for modules executed downstream.
+
 For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustfcc-module>`_
 """
@@ -26,14 +30,14 @@ from haddock.libs.libclust import (
     plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
-    )
+)
 from haddock.libs.libfcc import (
-    calculate_pairwise_matrix,
     Cluster,
     Element,
-    parse_contact_file,
+    calculate_pairwise_matrix,
     create_elements,
-    )
+    parse_contact_file,
+)
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
@@ -42,8 +46,7 @@ from haddock.modules.analysis.clustfcc.clustfcc import (
     iterate_clustering,
     write_clusters,
     write_clustfcc_file,
-    )
-
+)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
@@ -69,7 +72,7 @@ class HaddockModule(BaseHaddockModule):
         if not CONTACT_FCC_EXEC.exists():
             raise ModuleError(
                 f"CONTACT FCC execultable not found at: {CONTACT_FCC_EXEC}"
-                )
+            )
 
     def _run(self) -> None:
         """Execute module."""
@@ -111,9 +114,7 @@ class HaddockModule(BaseHaddockModule):
         # Check if any contact file could not be retrieved
         if not_found:
             # No contacts were calculated, we cannot cluster
-            self.finish_with_error(
-                f"Several files were not generated: {not_found}"
-                )
+            self.finish_with_error(f"Several files were not generated: {not_found}")
 
         log.info("Calculating the FCC matrix")
         parsed_contacts = parse_contact_file(
@@ -168,8 +169,9 @@ class HaddockModule(BaseHaddockModule):
 
             # ranking clusters
             _scores, sorted_score_dic = rank_clusters(
-                clt_dic, self.params["min_population"],
-                )
+                clt_dic,
+                self.params["min_population"],
+            )
 
             # Add this info to the models
             self.output_models = add_cluster_info(sorted_score_dic, clt_dic)

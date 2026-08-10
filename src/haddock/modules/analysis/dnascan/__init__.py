@@ -1,14 +1,19 @@
 """
-HADDOCK3 module for RNA base scan.
+HADDOCK3 module for DNA base-pair scan.
 
-This module performs a mutagenesis scan of RNA bases for the model(s)
-generated in the previous step of the workflow. For each model, every selected
-interface nucleic acid residue is mutated into each of the four RNA bases
-(A, C, G and U) and the differences in the haddock score and its individual
-components between the wild type and each mutant are calculated, thus providing
-a measure of the impact of such mutations. By default, all four possible bases
-are tested for every selected interface nucleotide (the wild-type base is
-skipped). Such difference (delta_score) is always calculated as:
+This module performs a mutagenesis scan of DNA base pairs for the model(s)
+generated in the previous step of the workflow. DNA is double stranded and its
+bases are engaged in Watson-Crick base pairs (A:T and G:C). Mutating a single
+base in isolation would break the base pair and is not physically meaningful,
+so every mutation performed by this module is a *double* mutation: for each
+selected interface nucleotide, the nucleotide is mutated into a target base and
+its base-pairing partner on the complementary strand is simultaneously mutated
+into the complementary base, so that a valid Watson-Crick pair is preserved
+(e.g. A:T -> G:C). The differences in the haddock score and its individual
+components between the wild type and each mutant base pair are calculated, thus
+providing a measure of the impact of such mutations. By default, all four
+possible bases are tested for each selected interface nucleotide (the wild-type
+base is skipped). Such difference (delta_score) is always calculated as:
 
     delta_score = score_wildtype - score_mutant
 
@@ -26,21 +31,23 @@ a Z score is calculated as:
 where mean and std are the mean and standard deviation of the delta_score over
 all the mutations.
 
-The module will also generate plots of the RNA scan data, showing the
-distribution of the delta_score (and every component) for each mutation at the
-interface.
+The module will also generate plots of the DNA scan data, showing the
+distribution of the delta_score (and every component) for each base-pair
+mutation at the interface.
 
 You can use the parameters below to customize the behavior of the module:
 
     * `scan_bases`: list of target bases to be tested for each nucleotide.
-      By default all four RNA bases (A, C, G, U) are tested.
-    * `chains`: list of chains to be considered for the RNA scan. In some
+      By default all four DNA bases (DA, DC, DG, DT) are tested.
+    * `bp_cutoff`: distance cutoff (Å) used to detect Watson-Crick base pairs
+      from the distance between the hydrogen-bonding ring nitrogens.
+    * `chains`: list of chains to be considered for the DNA scan. In some
       cases you may want to limit the analysis to a single chain.
     * `output_mutants`: if True, the module will output the models with the
       mutations applied (only possible if there is only one model)
     * `output_bfactor`: if True, the module will output the non-mutated models
       with the rescaled delta_score in the B-factor column
-    * `plot`: if True, the module will generate plots of the RNA scan data
+    * `plot`: if True, the module will generate plots of the DNA scan data
     * `splitplot`: if True, the scan plot shows one panel per energy component;
       if False (default) all components are overlaid in a single panel
     * `resdic`: list of residues to be used for the scanning. An example is:
@@ -48,20 +55,36 @@ You can use the parameters below to customize the behavior of the module:
     >>> resdic_A = [1,2,3,4]
     >>> resdic_B = [2,3,4]
 
-Only nucleic acid (RNA) residues at the interface are mutated; protein and
-other residues are ignored.
+Only nucleic acid (DNA) residues at the interface are mutated; protein and
+other residues are ignored. Interface nucleotides for which no base-pairing
+partner can be found are skipped, since a double (base-pair) mutation cannot
+be constructed for them.
 
-When applying a mutation, the ribose-phosphate backbone is always kept. For
-mutations between bases of the same ring type (purine <-> purine, i.e.
-A <-> G, or pyrimidine <-> pyrimidine, i.e. C <-> U), the shared base ring
-atoms are also kept so that the base orientation is preserved and CNS only
-rebuilds the differing substituents. For cross-type mutations (purine <->
-pyrimidine), the three glycosidic-region anchor atoms are kept and renamed to
-their counterpart in the target ring system (pyrimidine N1/C2/C6 <-> purine
-N9/C4/C8), so that the base orientation is preserved and CNS rebuilds the rest
-of the new base.
+When applying a mutation, the deoxyribose-phosphate backbone is always kept for
+both nucleotides of the pair. For mutations between bases of the same ring type
+(purine <-> purine, i.e. DA <-> DG, or pyrimidine <-> pyrimidine, i.e.
+DC <-> DT), the shared base ring atoms are also kept so that the base
+orientation is preserved and CNS only rebuilds the differing substituents; the
+whole base pair is then scored in a single CNS call. For cross-type mutations,
+the two nucleotides swap ring type (one purine -> pyrimidine and its partner
+pyrimidine -> purine). Rebuilding a whole purine ring from its three anchor
+atoms in the same pass as the partner mutation is unreliable, so such a base pair
+is
+mutated in two sequential, CNS-regularised steps: first the purine ->
+pyrimidine mutation is applied and energy-minimised by CNS, then the
+pyrimidine -> purine mutation is applied to that minimised intermediate and
+scored by CNS. The score and energies of the second (final) CNS call are the
+ones reported and plotted. In both cases the glycosidic-region anchor atoms are
+kept and, for cross-type mutations, renamed to their counterpart in the target
+ring system (pyrimidine N1/C2/C6 <-> purine N9/C4/C8).
+
+To keep the delta_score comparison consistent, each mutant is compared against a
+wild-type baseline that went through the same number of CNS minimisation passes:
+a one-pass baseline for same-ring-type mutants and a two-pass baseline (the wild
+type minimised and then re-scored) for cross-ring-type mutants.
 """
 
+from collections import defaultdict
 from pathlib import Path
 
 from haddock import log
@@ -69,7 +92,7 @@ from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.libs.libparallel import GenericTask
 from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
-from haddock.modules.analysis.rnascan.rnascan import (
+from haddock.modules.analysis.dnascan.dnascan import (
     AddDeltaBFactor,
     ClusterOutputer,
     group_scan_by_cluster,
@@ -84,7 +107,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):
-    """HADDOCK3 module for RNA base scan."""
+    """HADDOCK3 module for DNA base-pair scan."""
 
     name = RECIPE_PATH.name
 
@@ -107,19 +130,18 @@ class HaddockModule(BaseHaddockModule):
         nmodels: int
             Number of input models.
         """
-        if self.params["output_mutants"]:
-            # output mutants is only possible if there is only one model
-            if nmodels > 1:
-                log.warning(
-                    "'output_mutants' parameter is set to True, "
-                    "but more than one model was found. "
-                    "Setting 'output_mutant' parameter to False."
-                )
-                self.params["output_mutants"] = False
+        # output mutants is only possible if there is a single input model
+        if self.params["output_mutants"] and nmodels > 1:
+            log.warning(
+                "'output_mutants' parameter is set to True, "
+                "but more than one model was found. "
+                "Setting 'output_mutant' parameter to False."
+            )
+            self.params["output_mutants"] = False
 
     def _run(self):
         """Execute module."""
-        # Validate and normalise the requested target RNA bases
+        # Validate and normalise the requested target DNA bases
         try:
             self.params["scan_bases"] = validate_scan_bases(self.params["scan_bases"])
         except Exception as e:
@@ -137,7 +159,7 @@ class HaddockModule(BaseHaddockModule):
         # Validate `output_mutant` parameter
         self.validate_ouput_mutant_parameter(nmodels)
 
-        # Step1: "get mutations" i.e. get target interface nucleotides per input model
+        # Step1: "get mutations" i.e. get target interface base pairs per input model
         # 1 scan_obj per input model, merged into scan_objects to give to Engine
         scan_objects = [
             InterfaceScanner(
@@ -148,24 +170,24 @@ class HaddockModule(BaseHaddockModule):
             for model in models
         ]
 
-        log.info(f"Scanning {nmodels} models for possible mutations")
+        log.info(f"Scanning {nmodels} models for possible base-pair mutations")
         exec_mode = get_analysis_exec_mode(self.params["mode"])
         Engine = get_engine(exec_mode, self.params)
         engine = Engine(scan_objects)
         engine.run()
 
         # Step2: perform mutations
-        # Collect all point mutations to be performed
+        # Collect all base-pair mutations to be performed
         mutation_objects = []
         for mutations_to_perform in engine.results:
             if mutations_to_perform:
                 mutation_objects.extend(mutations_to_perform)
 
         total_mutations = len(mutation_objects)
-        log.info(f"Found {total_mutations} mutations")
+        log.info(f"Found {total_mutations} base-pair mutations")
 
         if not mutation_objects:
-            log.info("No interface nucleotides found - skipping mutation analysis")
+            log.info("No interface base pairs found - skipping mutation analysis")
             # Send models to the next step, no operation is done on them
             self.output_models = models
             self.export_io_models()
@@ -176,11 +198,9 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
 
         # Organize engine output by model
-        results_by_model = {}
+        results_by_model = defaultdict(list)
         for result in engine.results:
             if result and result.success:
-                if result.model_id not in results_by_model:
-                    results_by_model[result.model_id] = []
                 results_by_model[result.model_id].append(result)
 
         # Save to .tsv
@@ -196,37 +216,33 @@ class HaddockModule(BaseHaddockModule):
             update_with_bfactor_jobs = []
             for model in models:
                 model_id = model.file_name.removesuffix(".pdb")
-                try:
-                    model_results = results_by_model[model_id]
-                except KeyError:
-                    # Case when no data computed for this model
-                    model_results = []
+                # empty list when no data was computed for this model
+                model_results = results_by_model.get(model_id, [])
                 update_with_bfactor_jobs.append(
                     AddDeltaBFactor(model, self.path, model_results)
                 )
             engine = Engine(update_with_bfactor_jobs)
             engine.run()
-            models_to_export = engine.results
-            self.output_models = models_to_export
+            self.output_models = engine.results
         else:
             # Send models to the next step, no operation is done on them
             self.output_models = models
 
         # Cluster-based analysis
         clt_scan, clt_pops = group_scan_by_cluster(models, results_by_model)
-        rnascan_cluster_jobs = [
+        dnascan_cluster_jobs = [
             ClusterOutputer(
                 clt_data,
                 clt_id,
                 clt_pops[clt_id],
-                scan_residue="RNA base",
+                scan_residue="DNA base pair",
                 generate_plot=self.params["plot"],
                 offline=self.params["offline"],
                 splitplot=self.params["splitplot"],
             )
             for clt_id, clt_data in clt_scan.items()
         ]
-        engine = Engine(rnascan_cluster_jobs)
+        engine = Engine(dnascan_cluster_jobs)
         engine.run()
 
         self.export_io_models()

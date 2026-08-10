@@ -52,11 +52,11 @@ def generate_topology(
     recipe_str: str,
     defaults: ParamMap,
     mol_params: ParamMap,
-    seed: int,
-    default_params_path: Optional[FilePath] = None,
-    write_to_disk: Optional[bool] = True,
-    force_field: str = "martini2",
-    shape: bool = False,
+default_params_path: Optional[FilePath] = None,
+write_to_disk: Optional[bool] = True,
+force_field: str = "martini2",
+shape: bool = False,
+seed: int = 916,
 ) -> Union[Path, str]:
     """Generate a HADDOCK topology file from input_pdb.
 

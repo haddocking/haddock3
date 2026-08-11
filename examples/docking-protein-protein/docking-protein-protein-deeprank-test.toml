@@ -2,8 +2,14 @@
 # Protein-protein docking example with NMR-derived ambiguous 
 #  interaction restraints
 # ====================================================================
+
+# directory for the run
 run_dir = "run1-deeprank-test"
-ncores = 16
+
+# execution mode
+mode = 'local'
+ncores = 10
+
 molecules = ["data/e2aP_1F3G.pdb", "data/hpr_ensemble.pdb"]
 #####################################################################
 [topoaa]

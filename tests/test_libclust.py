@@ -3,6 +3,7 @@
 import os
 import random
 import tempfile
+import numpy as np
 from pathlib import Path
 from typing import cast
 
@@ -122,26 +123,29 @@ def test_plot_cluster_matrix(small_distance_matrix_data):
 
 
 def test_add_cluster_info(protprot_input_models):
+
+    # first 5 -> pdbs_cluster_2 (worse cluster), last 5 -> pdbs_cluster_1 (better cluster)
+    scores = [+10.0, +20.0, +30.0, +40.0, +50.0, -410.0, -420.0, -430.0, -440.0, -450.0]
+    input_pdbs = [
+        PDBFile(file_name=f"{i}.pdb", score=score) for i, score in enumerate(scores)
+    ]
+
+    # split so we get two sets of models
+    mid = len(input_pdbs) // 2
+    pdbs_cluster_1 = input_pdbs[mid:]
+    avg_1 = float(np.average(scores[mid:]))
+    pdbs_cluster_2 = input_pdbs[:mid]
+    avg_2 = np.average(scores[:mid])
+
     # create cluster information
     # [(cluster_id, average-score)]
-    input_l = [(1, +1.0), (2, -1.0)]
-
-    # Create some PDBs
-    input_pdbs = [
-        PDBFile(file_name=f"{i}.pdb", score=float(random.randint(-500, 0)))
-        for i in range(10)
-    ]
+    input_l = [(1, avg_1), (2, avg_2)]
 
     # Make sure the PDBFiles are not created with any cluster information
     for p in input_pdbs:
         assert p.clt_id is None
         assert p.clt_rank is None
         assert p.clt_model_rank is None
-
-    # split so we get two sets of models
-    mid = len(input_pdbs) // 2
-    pdbs_cluster_1 = input_pdbs[mid:]
-    pdbs_cluster_2 = input_pdbs[:mid]
 
     observed = add_cluster_info(input_l, clt_dic={1: pdbs_cluster_1, 2: pdbs_cluster_2})
 
@@ -152,7 +156,7 @@ def test_add_cluster_info(protprot_input_models):
         assert p.clt_model_rank is not None
 
     # assert the order has changed
-    assert observed[0] != input_pdbs[0]
+    assert observed[0] is not input_pdbs[0]
 
     # check they were properly sorted
     assert cast(float, observed[0].score) < cast(float, observed[-1].score)

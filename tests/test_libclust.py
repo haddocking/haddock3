@@ -3,10 +3,10 @@
 import os
 import random
 import tempfile
-import numpy as np
 from pathlib import Path
 from typing import cast
 
+import numpy as np
 import pytest
 
 from haddock.libs.libclust import (
@@ -123,7 +123,6 @@ def test_plot_cluster_matrix(small_distance_matrix_data):
 
 
 def test_add_cluster_info(protprot_input_models):
-
     # first 5 -> pdbs_cluster_2 (worse cluster), last 5 -> pdbs_cluster_1 (better cluster)
     scores = [+10.0, +20.0, +30.0, +40.0, +50.0, -410.0, -420.0, -430.0, -440.0, -450.0]
     input_pdbs = [

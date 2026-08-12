@@ -134,7 +134,7 @@ def test_add_cluster_info(protprot_input_models):
     pdbs_cluster_1 = input_pdbs[mid:]
     avg_1 = float(np.average(scores[mid:]))
     pdbs_cluster_2 = input_pdbs[:mid]
-    avg_2 = np.average(scores[:mid])
+    avg_2 = float(np.average(scores[:mid]))
 
     # create cluster information
     # [(cluster_id, average-score)]

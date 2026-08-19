@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from haddock.core.exceptions import HaddockTaskExecutionError
 from haddock.libs.libparallel import (
     GenericTask,
     Scheduler,
@@ -50,7 +51,12 @@ class TaskWithException:
         pass
 
     def run(self):
-        raise ValueError("Test error")
+        raise HaddockTaskExecutionError("Test error")
+
+
+class TaskWithUnexpectedException:
+    def run(self):
+        raise ValueError("Unexpected test error")
 
 
 @pytest.fixture
@@ -171,6 +177,12 @@ def test_scheduler_with_exception(scheduler_with_exception):
     assert scheduler_with_exception.results[0] == 2
     assert scheduler_with_exception.results[1] is None
     assert scheduler_with_exception.results[2] == 4
+
+
+def test_worker_propagates_unexpected_exception():
+    worker = Worker(tasks=[TaskWithUnexpectedException()], results=Queue())
+    with pytest.raises(ValueError, match="Unexpected test error"):
+        worker.run()
 
 
 def test_generic_task_init():

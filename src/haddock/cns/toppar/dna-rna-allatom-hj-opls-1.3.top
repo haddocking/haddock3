@@ -9,6 +9,7 @@ remarks  all-hydrogen dna/rna topology using the OPLS force field
 !CREATED 2/24/96-- JASON P. RIFE AND PETER B. MOORE
 !CHANGED TO OPLSX CHARGES 6/2/07 -- HENRY JONKER 
 !ADAPTED/CLEANED FOR HADDOCK - ALEXANDRE BONVIN
+!ADAPTED/CHANGED FOR RNA-MODIFICATION 23-06-2026  - SHANTANU KHATRI
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
 set message=off echo=off end
@@ -105,6 +106,13 @@ MASS   C5T    12.011! (prev CS)
 MASS   C6T    12.011! (prev CF)
 MASS   CC3E   12.01100! (prev CF)
 
+!   6MZ
+MASS   CZZ    12.01100
+MASS   HZZ     1.0080
+!   1MA / 5MC / A2M  (methyl carbons; methyl H reuses HZZ)
+MASS   C1M    12.01100
+MASS   C5M    12.01100
+MASS   COM    12.01100
 !  basej
 MASS   C3J     12.010
 MASS   OSJ     16.000
@@ -419,6 +427,462 @@ RESIdue A ! RNA ADE
  IMPRoper     H5'  O5'  H5'' C4' !C5'
 
 END {A}
+
+! ---------------------------------------------------------------------
+
+RESIdue 6MZ ! RNA N6-methyladenosine
+
+ GROUp
+  ATOM P    TYPE=P     CHARGE=0.78    END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
+  ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
+ GROUp
+  ATOM C5'  TYPE=C5R   CHARGE=0.00    END
+  ATOM H5'  TYPE=HR    CHARGE=0.10    END
+  ATOM H5'' TYPE=HR    CHARGE=0.10    END
+ GROUp
+  ATOM C4'  TYPE=C4R   CHARGE=0.15    END
+  ATOM H4'  TYPE=HR    CHARGE=0.10    END
+  ATOM O4'  TYPE=O4R   CHARGE=-0.50   END
+  ATOM C1'  TYPE=C1R   CHARGE=0.50    END
+  ATOM H1'  TYPE=HR    CHARGE=0.10    END
+
+ GROUp
+  ATOM N9   TYPE=N9A   CHARGE=-0.50   END
+  ATOM C4   TYPE=C4A   CHARGE=0.38    EXCLusion=( N1 )  END
+ GROUp
+  ATOM N3   TYPE=N3A   CHARGE=-0.55   EXCLusion=( C6 )  END
+  ATOM C2   TYPE=C2A   CHARGE=0.22    EXCLusion=( C5 )  END
+  ATOM H2   TYPE=HR    CHARGE=0.20    END
+ GROUp
+  ATOM N1   TYPE=NC    CHARGE=-0.53   END
+  ATOM C6   TYPE=C6A   CHARGE=0.44    END
+ GROUp
+  ATOM N6   TYPE=N6A   CHARGE=-0.81   END
+  ATOM H61  TYPE=H2    CHARGE=0.355   END
+  ATOM C10  TYPE=CZZ   CHARGE=0.0707 END
+  ATOM H20  TYPE=HZZ   CHARGE=0.0966  END
+  ATOM H21  TYPE=HZZ   CHARGE=0.0966  END
+  ATOM H22  TYPE=HZZ   CHARGE=0.0966  END 
+ GROUp
+  ATOM C5   TYPE=C5A   CHARGE=0.15    END
+  ATOM N7   TYPE=N7A   CHARGE=-0.49   END
+  ATOM C8   TYPE=C8A   CHARGE=0.20    END
+  ATOM H8   TYPE=HR    CHARGE=0.20    END
+
+ GROUP
+  ATOM C2'  TYPE=C2R   CHARGE=0.165   END
+  ATOM H2'  TYPE=HR    CHARGE=0.10    END
+  ATOM O2'  TYPE=O2R   CHARGE=-0.70   END
+  ATOM HO2' TYPE=HO    CHARGE=0.435   END
+ GROUP
+  ATOM C3'  TYPE=C3R    CHARGE=0.10   END
+  ATOM H3'  TYPE=HR     CHARGE=0.10   END
+ GROUP
+  ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
+
+ BOND P    OP1              BOND P    OP2              BOND P    O5'
+ BOND O5'  C5'              BOND C5'  C4'              BOND C4'  O4'
+ BOND C4'  C3'              BOND O4'  C1'              BOND C1'  N9
+ BOND C1'  C2'              BOND N9   C4               BOND N9   C8
+ BOND C4   N3               BOND C4   C5               BOND N3   C2
+ BOND C2   N1               BOND N1   C6               BOND C6   N6  
+
+ BOND N6   H61              BOND N6   C10              BOND C6   C5
+ BOND C10  H20              BOND C10  H21              BOND C10  H22
+   
+ BOND C5   N7               BOND N7   C8               BOND C2'  C3'
+ BOND C2'  O2'              BOND C3'  O3'
+ BOND C8   H8               BOND C2   H2 
+ BOND O2'  HO2'
+ BOND C5'  H5'         BOND C5'  H5''          BOND C4'  H4'
+ BOND C3'  H3'         BOND C2'  H2'           BOND C1'  H1'
+ 
+ !
+ IMPRoper C5   C6   N6   H61             IMPRoper C1'  C4   C8   N9
+ IMPRoper N9   C4   C5   N7              IMPRoper C4   C5   N7   C8  
+ IMPRoper C5   N7   C8   N9              IMPRoper N7   C8   N9   C4 
+ IMPRoper C8   N9   C4   C5              IMPRoper N6   N1   C5   C6  
+ IMPRoper C10  C6   H61  N6              IMPRoper C4   N3   C2   N1      
+ IMPRoper N3   C2   N1   C6              IMPRoper C2   N1   C6   C5
+ IMPRoper N1   C6   C5   C4              IMPRoper C6   C5   C4   N3
+ IMPRoper C5   C4   N3   C2              
+ IMPRoper H2   N1   N3   C2              IMPRoper H8   N7   N9   C8
+ ! IMPRoper to keep the two purine rings parallel:
+ IMPRoper C8   C4   C5   N1              IMPRoper C8   C5   C4   C2
+ IMPRoper N3   C4   C5   N7              IMPRoper C6   C5   C4   N9
+ 
+
+ !RIBOSE IMPROPERS
+ IMPRoper     H1'  C2'  O4'  N9  !C1'
+ IMPRoper     H2'  C3'  C1'  O2' !C2'
+ IMPRoper     H3'  C4'  C2'  O3' !C3'
+ IMPRoper     H4'  C5'  C3'  O4' !C4'
+ IMPRoper     H5'  O5'  H5'' C4' !C5'
+
+END {6MZ}
+
+
+! ---------------------------------------------------------------------
+
+RESIdue 1MA ! RNA 1-methyladenosine
+
+ GROUp
+  ATOM P    TYPE=P     CHARGE=0.78    END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
+  ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
+ GROUp
+  ATOM C5'  TYPE=C5R   CHARGE=0.00    END
+  ATOM H5'  TYPE=HR    CHARGE=0.10    END
+  ATOM H5'' TYPE=HR    CHARGE=0.10    END
+ GROUp
+  ATOM C4'  TYPE=C4R   CHARGE=0.15    END
+  ATOM H4'  TYPE=HR    CHARGE=0.10    END
+  ATOM O4'  TYPE=O4R   CHARGE=-0.50   END
+  ATOM C1'  TYPE=C1R   CHARGE=0.50    END
+  ATOM H1'  TYPE=HR    CHARGE=0.10    END
+
+ GROUp
+  ATOM N9   TYPE=N9A   CHARGE=-0.50   END
+  ATOM C4   TYPE=C4A   CHARGE=0.38    EXCLusion=( N1 )  END
+ GROUp
+  ATOM N3   TYPE=N3A   CHARGE=-0.55   EXCLusion=( C6 )  END
+  ATOM C2   TYPE=C2A   CHARGE=0.22    EXCLusion=( C5 )  END
+  ATOM H2   TYPE=HR    CHARGE=0.20    END
+ GROUp
+  ATOM N1   TYPE=NC    CHARGE=-0.53   END
+  ATOM C6   TYPE=C6A   CHARGE=0.44    END
+  ATOM CM1  TYPE=C1M   CHARGE=0.0239  END
+  ATOM HM11 TYPE=HZZ   CHARGE=0.1057  END
+  ATOM HM12 TYPE=HZZ   CHARGE=0.1057  END
+  ATOM HM13 TYPE=HZZ   CHARGE=0.1057  END
+ GROUp
+  ATOM N6   TYPE=N6A   CHARGE=-0.81   END
+  ATOM H61  TYPE=H2    CHARGE=0.355   END
+  ATOM H62  TYPE=H2    CHARGE=0.385   END
+ GROUp
+  ATOM C5   TYPE=C5A   CHARGE=0.15    END
+  ATOM N7   TYPE=N7A   CHARGE=-0.49   END
+  ATOM C8   TYPE=C8A   CHARGE=0.20    END
+  ATOM H8   TYPE=HR    CHARGE=0.20    END
+
+ GROUP
+  ATOM C2'  TYPE=C2R   CHARGE=0.165   END
+  ATOM H2'  TYPE=HR    CHARGE=0.10    END
+  ATOM O2'  TYPE=O2R   CHARGE=-0.70   END
+  ATOM HO2' TYPE=HO    CHARGE=0.435   END
+ GROUP
+  ATOM C3'  TYPE=C3R    CHARGE=0.10   END
+  ATOM H3'  TYPE=HR     CHARGE=0.10   END
+ GROUP
+  ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
+
+ BOND P    OP1              BOND P    OP2              BOND P    O5'
+ BOND O5'  C5'              BOND C5'  C4'              BOND C4'  O4'
+ BOND C4'  C3'              BOND O4'  C1'              BOND C1'  N9
+ BOND C1'  C2'              BOND N9   C4               BOND N9   C8
+ BOND C4   N3               BOND C4   C5               BOND N3   C2
+ BOND C2   N1               BOND N1   C6               BOND C6   N6  
+
+ BOND N6   H61              BOND N6   H62              BOND C6   C5   
+
+ BOND C5   N7               BOND N7   C8               BOND C2'  C3'
+ BOND C2'  O2'              BOND C3'  O3'
+ BOND C8   H8               BOND C2   H2 
+ BOND O2'  HO2'
+ BOND N1   CM1              BOND CM1  HM11             BOND CM1  HM12
+ BOND CM1  HM13
+ BOND C5'  H5'         BOND C5'  H5''          BOND C4'  H4'
+ BOND C3'  H3'         BOND C2'  H2'           BOND C1'  H1'
+ 
+ !
+ IMPRoper C5   C6   N6   H61             IMPRoper C1'  C4   C8   N9
+ IMPRoper N9   C4   C5   N7              IMPRoper C4   C5   N7   C8  
+ IMPRoper C5   N7   C8   N9              IMPRoper N7   C8   N9   C4 
+ IMPRoper C8   N9   C4   C5              IMPRoper N6   N1   C5   C6  
+ IMPRoper H62  C6   H61  N6              IMPRoper C4   N3   C2   N1      
+ IMPRoper N3   C2   N1   C6              IMPRoper C2   N1   C6   C5
+ IMPRoper N1   C6   C5   C4              IMPRoper C6   C5   C4   N3
+ IMPRoper C5   C4   N3   C2              
+ IMPRoper H2   N1   N3   C2              IMPRoper H8   N7   N9   C8
+ IMPRoper C6   N1   CM1  C2
+ ! IMPRoper to keep the two purine rings parallel:
+ IMPRoper C8   C4   C5   N1              IMPRoper C8   C5   C4   C2
+ IMPRoper N3   C4   C5   N7              IMPRoper C6   C5   C4   N9
+ 
+
+ !RIBOSE IMPROPERS
+ IMPRoper     H1'  C2'  O4'  N9  !C1'
+ IMPRoper     H2'  C3'  C1'  O2' !C2'
+ IMPRoper     H3'  C4'  C2'  O3' !C3'
+ IMPRoper     H4'  C5'  C3'  O4' !C4'
+ IMPRoper     H5'  O5'  H5'' C4' !C5'
+
+END {1MA}
+
+
+! ---------------------------------------------------------------------
+
+RESIdue 5MC ! RNA 5-methylcytidine
+
+ GROUp
+  ATOM P    TYPE=P     CHARGE=0.78    END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
+  ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
+ GROUp
+  ATOM C5'  TYPE=C5R   CHARGE=0.00    END
+  ATOM H5'  TYPE=HR    CHARGE=0.10    END
+  ATOM H5'' TYPE=HR    CHARGE=0.10    END
+ GROUp
+  ATOM C4'  TYPE=C4R   CHARGE=0.15    END
+  ATOM H4'  TYPE=HR    CHARGE=0.10    END
+  ATOM O4'  TYPE=O4R   CHARGE=-0.50   END
+  ATOM C1'  TYPE=C1R   CHARGE=0.53    END
+  ATOM H1'  TYPE=HR    CHARGE=0.10    END
+
+ GROUp
+  ATOM N1   TYPE=N1C   CHARGE=-0.56   EXCLUSION=( C4 )  END
+  ATOM C6   TYPE=C6C   CHARGE=0.10    EXCLUSION=( N3 )  END
+  ATOM H6   TYPE=HR    CHARGE=0.10    END
+ GROUp
+  ATOM C2   TYPE=C2C   CHARGE=0.55    EXCLUSION=( C5 )  END
+  ATOM O2   TYPE=ON    CHARGE=-0.48   END
+ GROUp
+  ATOM N3   TYPE=NC    CHARGE=-0.54   END
+  ATOM C4   TYPE=C4C   CHARGE=0.46    END
+ GROUp
+  ATOM N4   TYPE=N4C   CHARGE=-0.79   END
+  ATOM H41  TYPE=H2    CHARGE=0.355   END
+  ATOM H42  TYPE=H2    CHARGE=0.385   END
+ GROUp
+  ATOM C5   TYPE=C5C   CHARGE=-0.06   END
+  ATOM CM5  TYPE=C5M   CHARGE=-0.1684 END
+  ATOM HM51 TYPE=HZZ   CHARGE=0.0953  END
+  ATOM HM52 TYPE=HZZ   CHARGE=0.0953  END
+  ATOM HM53 TYPE=HZZ   CHARGE=0.0953  END
+
+ GROUP
+  ATOM C2'  TYPE=C2R   CHARGE=0.165   END
+  ATOM H2'  TYPE=HR    CHARGE=0.10    END
+  ATOM O2'  TYPE=O2R   CHARGE=-0.70   END
+  ATOM HO2' TYPE=HO    CHARGE=0.435   END
+ GROUP
+  ATOM C3'  TYPE=C3R    CHARGE=0.10   END
+  ATOM H3'  TYPE=HR     CHARGE=0.10   END
+ GROUP
+  ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
+
+ BOND P    OP1             BOND P    OP2             BOND P    O5'
+ BOND O5'  C5'             BOND C5'  C4'             BOND C4'  O4'
+ BOND C4'  C3'             BOND O4'  C1'             BOND C1'  N1
+ BOND C1'  C2'             BOND N1   C2              BOND N1   C6
+                           BOND C2   N3              BOND N3   C4
+ BOND C4   N4              BOND N4   H41             BOND N4   H42 
+ BOND C2   O2
+ BOND C4   C5              BOND C5   C6              BOND C2'  C3'
+ BOND C3'  O3'             BOND C2'  O2'             
+ BOND C6   H6              BOND C5   CM5
+ BOND CM5  HM51            BOND CM5  HM52            BOND CM5  HM53
+ BOND O2'  HO2' 
+ BOND C5'  H5'         BOND C5'  H5''          BOND C4'  H4'
+ BOND C3'  H3'         BOND C2'  H2'           BOND C1'  H1'
+
+ IMPRoper C5   C4   N4   H41               IMPRoper C1'  C2   C6   N1
+ IMPRoper O2   N1   N3   C2                IMPRoper N4   N3   C5   C4
+ IMPRoper N1   C2   N3   C4                IMPRoper C2   N3   C4   C5
+ IMPRoper N3   C4   C5   C6                IMPRoper C4   C5   C6   N1
+ IMPRoper C5   C6   N1   C2                IMPRoper C6   N1   C2   N3
+ IMPRoper H42  C4   H41  N4               
+ IMPRoper CM5 C4  C6   C5                  IMPRoper  H6   N1   C5   C6
+ 
+ !RIBOSE IMPROPERS
+ IMPRoper     H1'  C2'  O4'  N1  !C1'
+ IMPRoper     H2'  C3'  C1'  O2' !C2'
+ IMPRoper     H3'  C4'  C2'  O3' !C3'
+ IMPRoper     H4'  C5'  C3'  O4' !C4'
+ IMPRoper     H5'  O5'  H5'' C4' !C5'
+
+ END {5MC}
+
+
+! ---------------------------------------------------------------------
+
+RESIdue A2M ! RNA 2'-O-methyladenosine
+
+ GROUp
+  ATOM P    TYPE=P     CHARGE=0.78    END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
+  ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
+ GROUp
+  ATOM C5'  TYPE=C5R   CHARGE=0.00    END
+  ATOM H5'  TYPE=HR    CHARGE=0.10    END
+  ATOM H5'' TYPE=HR    CHARGE=0.10    END
+ GROUp
+  ATOM C4'  TYPE=C4R   CHARGE=0.15    END
+  ATOM H4'  TYPE=HR    CHARGE=0.10    END
+  ATOM O4'  TYPE=O4R   CHARGE=-0.50   END
+  ATOM C1'  TYPE=C1R   CHARGE=0.50    END
+  ATOM H1'  TYPE=HR    CHARGE=0.10    END
+
+ GROUp
+  ATOM N9   TYPE=N9A   CHARGE=-0.50   END
+  ATOM C4   TYPE=C4A   CHARGE=0.38    EXCLusion=( N1 )  END
+ GROUp
+  ATOM N3   TYPE=N3A   CHARGE=-0.55   EXCLusion=( C6 )  END
+  ATOM C2   TYPE=C2A   CHARGE=0.22    EXCLusion=( C5 )  END
+  ATOM H2   TYPE=HR    CHARGE=0.20    END
+ GROUp
+  ATOM N1   TYPE=NC    CHARGE=-0.53   END
+  ATOM C6   TYPE=C6A   CHARGE=0.44    END
+ GROUp
+  ATOM N6   TYPE=N6A   CHARGE=-0.81   END
+  ATOM H61  TYPE=H2    CHARGE=0.355   END
+  ATOM H62  TYPE=H2    CHARGE=0.385   END
+ GROUp
+  ATOM C5   TYPE=C5A   CHARGE=0.15    END
+  ATOM N7   TYPE=N7A   CHARGE=-0.49   END
+  ATOM C8   TYPE=C8A   CHARGE=0.20    END
+  ATOM H8   TYPE=HR    CHARGE=0.20    END
+
+ GROUP
+  ATOM C2'  TYPE=C2R   CHARGE=0.165   END
+  ATOM H2'  TYPE=HR    CHARGE=0.10    END
+  ATOM O2'  TYPE=O2R   CHARGE=-0.70   END
+  ATOM CM'  TYPE=COM   CHARGE=-0.0565 END
+  ATOM HM'1 TYPE=HZZ   CHARGE=0.0968  END
+  ATOM HM'2 TYPE=HZZ   CHARGE=0.0968  END
+  ATOM HM'3 TYPE=HZZ   CHARGE=0.0968  END
+ GROUP
+  ATOM C3'  TYPE=C3R    CHARGE=0.10   END
+  ATOM H3'  TYPE=HR     CHARGE=0.10   END
+ GROUP
+  ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
+
+ BOND P    OP1              BOND P    OP2              BOND P    O5'
+ BOND O5'  C5'              BOND C5'  C4'              BOND C4'  O4'
+ BOND C4'  C3'              BOND O4'  C1'              BOND C1'  N9
+ BOND C1'  C2'              BOND N9   C4               BOND N9   C8
+ BOND C4   N3               BOND C4   C5               BOND N3   C2
+ BOND C2   N1               BOND N1   C6               BOND C6   N6  
+
+ BOND N6   H61              BOND N6   H62              BOND C6   C5   
+
+ BOND C5   N7               BOND N7   C8               BOND C2'  C3'
+ BOND C2'  O2'              BOND C3'  O3'
+ BOND C8   H8               BOND C2   H2 
+ BOND O2'  CM'
+ BOND CM'  HM'1             BOND CM'  HM'2             BOND CM'  HM'3
+ BOND C5'  H5'         BOND C5'  H5''          BOND C4'  H4'
+ BOND C3'  H3'         BOND C2'  H2'           BOND C1'  H1'
+ 
+ !
+ IMPRoper C5   C6   N6   H61             IMPRoper C1'  C4   C8   N9
+ IMPRoper N9   C4   C5   N7              IMPRoper C4   C5   N7   C8  
+ IMPRoper C5   N7   C8   N9              IMPRoper N7   C8   N9   C4 
+ IMPRoper C8   N9   C4   C5              IMPRoper N6   N1   C5   C6  
+ IMPRoper H62  C6   H61  N6              IMPRoper C4   N3   C2   N1      
+ IMPRoper N3   C2   N1   C6              IMPRoper C2   N1   C6   C5
+ IMPRoper N1   C6   C5   C4              IMPRoper C6   C5   C4   N3
+ IMPRoper C5   C4   N3   C2              
+ IMPRoper H2   N1   N3   C2              IMPRoper H8   N7   N9   C8
+ ! IMPRoper to keep the two purine rings parallel:
+ IMPRoper C8   C4   C5   N1              IMPRoper C8   C5   C4   C2
+ IMPRoper N3   C4   C5   N7              IMPRoper C6   C5   C4   N9
+ 
+
+ !RIBOSE IMPROPERS
+ IMPRoper     H1'  C2'  O4'  N9  !C1'
+ IMPRoper     H2'  C3'  C1'  O2' !C2'
+ IMPRoper     H3'  C4'  C2'  O3' !C3'
+ IMPRoper     H4'  C5'  C3'  O4' !C4'
+ IMPRoper     H5'  O5'  H5'' C4' !C5'
+
+END {A2M}
+
+
+! ---------------------------------------------------------------------
+
+RESIdue PSU ! RNA pseudouridine
+  
+ GROUp
+  ATOM P    TYPE=P     CHARGE=0.78    END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
+  ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
+ GROUp
+  ATOM C5'  TYPE=C5R   CHARGE=0.00    END
+  ATOM H5'  TYPE=HR    CHARGE=0.10    END
+  ATOM H5'' TYPE=HR    CHARGE=0.10    END
+ GROUp
+  ATOM C4'  TYPE=C4R   CHARGE=0.15    END
+  ATOM H4'  TYPE=HR    CHARGE=0.10    END
+  ATOM O4'  TYPE=O4R   CHARGE=-0.50   END
+  ATOM C1'  TYPE=C1R   CHARGE=0.56    END
+  ATOM H1'  TYPE=HR    CHARGE=0.10    END
+
+ GROUp
+  ATOM N1   TYPE=N1U   CHARGE=-0.60   EXCLUSION=( C4 )  END
+  ATOM HN1  TYPE=HN    CHARGE=0.5176  END
+  ATOM C6   TYPE=C6U   CHARGE=0.08    EXCLUSION=( N3 )  END
+  ATOM H6   TYPE=HR    CHARGE=0.10    END
+ GROUp
+  ATOM C2   TYPE=C2U   CHARGE=0.50    EXCLUSION=( C5 )  END
+  ATOM O2   TYPE=ON    CHARGE=-0.40   END
+ GROUp
+  ATOM N3   TYPE=N3U   CHARGE=-0.51   END
+  ATOM H3   TYPE=HN    CHARGE=0.36    END
+ GROUp
+  ATOM C4   TYPE=C4U   CHARGE=0.45    END
+  ATOM O4   TYPE=ON    CHARGE=-0.42   END
+ GROUp
+  ATOM C5   TYPE=C5U   CHARGE=-0.07   END
+
+ GROUP
+  ATOM C2'  TYPE=C2R   CHARGE=0.165   END
+  ATOM H2'  TYPE=HR    CHARGE=0.10    END
+  ATOM O2'  TYPE=O2R   CHARGE=-0.70   END
+  ATOM HO2' TYPE=HO    CHARGE=0.435   END
+ GROUP
+  ATOM C3'  TYPE=C3R    CHARGE=0.10   END
+  ATOM H3'  TYPE=HR     CHARGE=0.10   END
+ GROUP
+  ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
+
+ BOND P    OP1                BOND P    OP2              BOND P    O5'
+ BOND O5'  C5'                BOND C5'  C4'              BOND C4'  O4'
+ BOND C4'  C3'                BOND O4'  C1'              BOND C1'  C5
+ BOND C1'  C2'                BOND N1   C2               BOND N1   C6
+ BOND C2   O2                 BOND C2   N3               BOND N3   H3
+ BOND N3   C4                 BOND C4   O4               BOND C4   C5  
+
+ BOND C5   C6                 BOND C2'  C3'              BOND C3'  O3'
+ BOND C2'  O2'                
+ BOND N1   HN1                BOND C6   H6
+ 
+ BOND O2'  HO2' 
+ BOND C5'  H5'         BOND C5'  H5''          BOND C4'  H4'
+ BOND C3'  H3'         BOND C2'  H2'           BOND C1'  H1'
+
+ IMPRoper C4   C5   C1'  C6
+ IMPRoper O2   N1   N3   C2                 IMPRoper H3   C2   C4   N3
+ IMPRoper O4   N3   C5   C4                 IMPRoper N1   C2   N3   C4
+ IMPRoper C2   N3   C4   C5                 IMPRoper N3   C4   C5   C6
+ IMPRoper C4   C5   C6   N1                 IMPRoper C5   C6   N1   C2
+ IMPRoper C6   N1   C2   N3                 
+ IMPRoper HN1  N1   C6   C2                 IMPRoper H6   N1   C5   C6
+
+ !GENERAL RIBOSE IMPROPERS
+ IMPRoper     H1'  C2'  O4'  C5  !C1'
+ IMPRoper     H2'  C3'  C1'  O2' !C2'
+ IMPRoper     H3'  C4'  C2'  O3' !C3'
+ IMPRoper     H4'  C5'  C3'  O4' !C4'
+ IMPRoper     H5'  O5'  H5'' C4' !C5'
+
+END {PSU}
 
 ! ---------------------------------------------------------------------
 

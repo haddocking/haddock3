@@ -91,7 +91,7 @@ Here are the guidelines to create a new release:
  - Create a new release from [https://github.com/haddocking/haddock3/releases](https://github.com/haddocking/haddock3/releases)
  - The new version will automatically be published on PyPI thanks to the `.github/workflows/publish.yml`
 2. On the `haddock3-user-manual` repository:
- - Create a new release/tag with the same version name, so both are matching 
+ - Create a new [release/tag](https://github.com/haddocking/haddock3-user-manual/releases) with the same version name, so both are matching 
 
 ## Use of AI tools
 

@@ -81,6 +81,18 @@ for how to build the docs locally and how docstrings should be formatted.
 4. **Version**: Update `pyproject.toml` if applicable
 5. **Code Review**: Address all feedback
 
+## Create a new release
+
+Here are the guidelines to create a new release:
+
+1. On the `haddock3` repository:
+ - Update the release version in the `pyproject.toml` file: `version = "YYYY.M.0"` (e.g.: version = "2026.8.0")
+ - Create a pull request and merge it
+ - Create a new release from [https://github.com/haddocking/haddock3/releases](https://github.com/haddocking/haddock3/releases)
+ - The new version will automatically be published on PyPI thanks to the `.github/workflows/publish.yml`
+2. On the `haddock3-user-manual` repository:
+ - Create a new release/tag with the same version name, so both are matching 
+
 ## Use of AI tools
 
 See [AI-POLICY.md](https://github.com/haddocking/haddock3/blob/main/AI-POLICY.md) for guidance on how AI coding assistants

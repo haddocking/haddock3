@@ -59,6 +59,90 @@ link  nuc  head - U  tail + C end
 link  nuc  head - U  tail + G end
 link  nuc  head - U  tail + U end
 
+!6MZ
+link  nuc  head - A    tail + 6MZ end
+link  nuc  head - C    tail + 6MZ end
+link  nuc  head - G    tail + 6MZ end
+link  nuc  head - U    tail + 6MZ end
+
+link  nuc  head - 6MZ  tail + A end
+link  nuc  head - 6MZ  tail + C end
+link  nuc  head - 6MZ  tail + G end
+link  nuc  head - 6MZ  tail + U end
+
+link  nuc  head - 6MZ  tail + 6MZ end
+
+first 5ter tail + 6MZ end
+
+last  3ter head - 6MZ end
+
+!1MA
+link  nuc  head - A    tail + 1MA end
+link  nuc  head - C    tail + 1MA end
+link  nuc  head - G    tail + 1MA end
+link  nuc  head - U    tail + 1MA end
+
+link  nuc  head - 1MA  tail + A end
+link  nuc  head - 1MA  tail + C end
+link  nuc  head - 1MA  tail + G end
+link  nuc  head - 1MA  tail + U end
+
+link  nuc  head - 1MA  tail + 1MA end
+
+first 5ter tail + 1MA end
+
+last  3ter head - 1MA end
+
+!5MC
+link  nuc  head - A    tail + 5MC end
+link  nuc  head - C    tail + 5MC end
+link  nuc  head - G    tail + 5MC end
+link  nuc  head - U    tail + 5MC end
+
+link  nuc  head - 5MC  tail + A end
+link  nuc  head - 5MC  tail + C end
+link  nuc  head - 5MC  tail + G end
+link  nuc  head - 5MC  tail + U end
+
+link  nuc  head - 5MC  tail + 5MC end
+
+first 5ter tail + 5MC end
+
+last  3ter head - 5MC end
+
+!A2M
+link  nuc  head - A    tail + A2M end
+link  nuc  head - C    tail + A2M end
+link  nuc  head - G    tail + A2M end
+link  nuc  head - U    tail + A2M end
+
+link  nuc  head - A2M  tail + A end
+link  nuc  head - A2M  tail + C end
+link  nuc  head - A2M  tail + G end
+link  nuc  head - A2M  tail + U end
+
+link  nuc  head - A2M  tail + A2M end
+
+first 5ter tail + A2M end
+
+last  3ter head - A2M end
+
+!PSU
+link  nuc  head - A    tail + PSU end
+link  nuc  head - C    tail + PSU end
+link  nuc  head - G    tail + PSU end
+link  nuc  head - U    tail + PSU end
+
+link  nuc  head - PSU  tail + A end
+link  nuc  head - PSU  tail + C end
+link  nuc  head - PSU  tail + G end
+link  nuc  head - PSU  tail + U end
+
+link  nuc  head - PSU  tail + PSU end
+
+first 5ter tail + PSU end
+
+last  3ter head - PSU end
 
 
 first 5ter tail + a end

@@ -218,6 +218,24 @@ BOND       C5U    C6U         1370.370    1.337 !0.009  B
 BOND       C5U    HR          $kchbond    1.09               
 BOND       C6U    HR          $kchbond    1.09               
 
+!6MZ
+BOND       CZZ    N6A         337.0       1.4490
+BOND       CZZ    HZZ    375.9    1.0970
+! === Modified-RNA additions (1MA/5MC/A2M/PSU) : BONDS ===
+! 1MA
+BOND       NC     C1M          337.0      1.4750
+BOND       HZZ    C1M    375.9    1.0970
+! 5MC
+BOND       C5C    C5M          317.0      1.5100
+BOND       HZZ    C5M    375.9    1.0970
+! A2M
+BOND       O2R    COM          320.0      1.4100
+BOND       HZZ    COM    375.9    1.0970
+! PSU
+BOND       C5U    C1R          317.0      1.5100
+BOND       HN     N1U          434.0      1.0100
+
+
 !Phos.
 !the ANGLe s were taken from param11.dna with 3*kq
 ANGLe       HO     OH     C5R        139.500  107.300 
@@ -564,6 +582,34 @@ ANGLe       C5U    C6U    HR        $kchangle  119.38
 ANGLe       C4U    C5U    HR        $kchangle  119.56          
 ANGLe       C6U    C5U    HR        $kchangle  119.56          
 
+!6MZ
+ANGLE  C6A  N6A  CZZ    50.0  118.0
+ANGLE  H2   N6A  CZZ    38.0  118.4
+ANGLE  N6A  CZZ  HZZ    35.0  109.5
+ANGLE  HZZ  CZZ  HZZ    38.8    108.46
+! === Modified-RNA additions (1MA/5MC/A2M/PSU) : ANGLES ===
+! 1MA
+ANGLE  C1M  NC   C2A    63.0   112.40
+ANGLE  C1M  NC   C6A    63.0   112.40
+ANGLE  NC   C1M  HZZ    35.0   109.50
+ANGLE  HZZ  C1M  HZZ    38.8    108.46
+! 5MC
+ANGLE  C5M  C5C  C4C    70.0   124.00
+ANGLE  C5M  C5C  C6C    70.0   124.00
+ANGLE  C5C  C5M  HZZ    35.0   109.50
+ANGLE  HZZ  C5M  HZZ    38.8    108.46
+! A2M
+ANGLE  COM  O2R  C2R    60.0   109.50
+ANGLE  O2R  COM  HZZ    35.0   109.50
+ANGLE  HZZ  COM  HZZ    38.8    108.46
+! PSU
+ANGLE  O4R  C1R  C5U    50.0   109.50
+ANGLE  C1R  C5U  C6U    70.0   124.00
+ANGLE  C1R  C5U  C4U    70.0   119.70
+ANGLE  C6U  N1U  HN     35.0   119.20
+ANGLE  C5U  C1R  C2R    63.0   111.10
+ANGLE  C2U  N1U  HN     35.0   116.80
+ANGLE  C5U  C1R  HR     35.0   109.50
 
 !IMPRopers to keep the two purine rings parallel:
 !guanine
@@ -806,6 +852,22 @@ IMPRoper    H2   H2   C2G  N2G  250.0  0    0.000
 IMPRoper    HN   C2G  C6G  NNA 2000.0  0    0.000
 IMPRoper    N3G  C2G  N2G  H2  2000.0  0    0.000
 
+!6MZ
+IMPRoper  CZZ  C6A  H2   N6A     2.5  2   180.0
+! === Modified-RNA additions (1MA/5MC/A2M/PSU) : IMPROPERS ===
+! 1MA
+IMPRoper  C6A  NC   C1M  C2A     0.00000 2 180.00000
+IMPRoper  HZZ  C1M  NC   HZZ     0.00000 2 180.00000
+! 5MC
+IMPRoper  C5M  C4C  C6C  C5C     2.50000 2 180.00000
+IMPRoper  HZZ  C5M  C5C  HZZ     0.00000 2 180.00000
+! A2M
+IMPRoper  HZZ  COM  O2R  HZZ     0.00000 2 180.00000
+! PSU
+IMPRoper  C4U  C5U  C1R  C6U     2.50000 2 180.00000
+IMPRoper  C2R  C1R  O4R  C5U     0.00000 2 180.00000
+IMPRoper  HR   C2R  O4R  C5U      0.00000 2 180.00000
+IMPRoper  HN   N1U  C6U  C2U     2.50000 2 180.00000
 !dihedrals baseJ
 DIHEdral  X    C3J   OSJ   X      2.0  3   0.0
 
@@ -1068,6 +1130,13 @@ NONBonded  HN      0.016   1.069       0.008    1.069
 NONBonded  H4J     0.016   2.511       0.008    2.511
 NONBonded  HCJ     0.016   2.650       0.008    2.650
 
+!6MZ
+NONBonded  CZZ    0.107800    3.397710    0.053900    3.397710
+NONBonded  HZZ    0.020800    2.421997    0.010400    2.421997
+! === Modified-RNA additions : new sp3 methyl carbons ===
+NONBonded  C1M    0.107800    3.397710    0.053900    3.397710
+NONBonded  C5M    0.107800    3.397710    0.053900    3.397710
+NONBonded  COM    0.107800    3.397710    0.053900    3.397710
 
 else
 !                   Lennard-Jones parameters

@@ -25,7 +25,6 @@ evaluate ($ini_count    =1)
 
 evaluate ($data.ncomponents=$ncomponents)
 
-
 ! non-bonded parameter set to use
 evaluate ($toppar.par_nonbonded = "OPLSX" )
 
@@ -90,6 +89,8 @@ else
     set message=off echo=off end
 end if
 
+! initialize random number generator
+set seed $seed end
 
 {* Change segid of CG model and read AA pdb, psf files =========== *}
 

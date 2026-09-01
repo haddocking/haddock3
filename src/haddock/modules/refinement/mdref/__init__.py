@@ -28,7 +28,11 @@ from pathlib import Path
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
-from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
+from haddock.libs.libcns import (
+    derive_seed,
+    prepare_cns_input,
+    prepare_expected_pdb,
+)
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
@@ -105,7 +109,8 @@ class HaddockModule(BaseCNSModule):
                 ambig_fname = self.params["ambig_fname"]
             model_idx += 1
 
-            for _ in range(sampling_factor):
+            for replica in range(sampling_factor):
+                seed = derive_seed(self.params["iniseed"], model, replica)
                 mdref_input = prepare_cns_input(
                     idx,
                     model,
@@ -116,13 +121,14 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     debug=self.params["debug"],
-                    seed=model.seed if isinstance(model, PDBFile) else None,
+                    seed=seed,
                 )
                 out_file = f"mdref_{idx}.out"
                 err_fname = f"mdref_{idx}.cnserr"
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", "mdref")
+                expected_pdb.seed = seed
                 expected_pdb.restr_fname = ambig_fname
                 try:
                     expected_pdb.ori_name = model.file_name

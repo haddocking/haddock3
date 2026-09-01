@@ -64,7 +64,6 @@ class HaddockModule(CNSScoringModule):
                 self.name,
                 native_segid=True,
                 debug=self.params["debug"],
-                seed=model.seed if isinstance(model, PDBFile) else None,
             )
 
             scoring_out = f"{self.name}_{model_num}.out"

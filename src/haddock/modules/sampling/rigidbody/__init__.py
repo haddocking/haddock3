@@ -37,7 +37,7 @@ from pathlib import Path
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath, Optional, Sequence, Union
 from haddock.gear.haddockmodel import HaddockModel
-from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
+from haddock.libs.libcns import derive_seed, prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import GenericTask
 from haddock.libs.libpdb import check_combination_chains
@@ -100,14 +100,14 @@ class HaddockModule(BaseCNSModule):
         _l = []
         idx = 1
         for combination in models_to_dock:
-            for _ in range(sampling_factor):
+            for repeat in range(sampling_factor):
                 # assign ambig_fname
                 if ambig_fnames:
                     ambig_fname = ambig_fnames[idx - 1]
                 else:
                     ambig_fname = self.params["ambig_fname"]
                 # prepare cns input
-                seed = self.params["iniseed"] + idx
+                seed = derive_seed(self.params["iniseed"], combination, repeat)
                 rigidbody_input = prepare_cns_input(
                     idx,
                     combination,
@@ -137,13 +137,13 @@ class HaddockModule(BaseCNSModule):
         idx: int = 1
         for ci, combination in enumerate(models_to_dock):
             check_combination_chains(combination)
-            for _ in range(sampling_factor):
+            for repeat in range(sampling_factor):
                 ambig_fname = (
                     ambig_fnames[idx - 1]
                     if ambig_fnames
                     else self.params["ambig_fname"]
                 )
-                seed = self.params["iniseed"] + idx
+                seed = derive_seed(self.params["iniseed"], combination, repeat)
                 task = GenericTask(
                     function=prepare_cns_input,
                     model_number=idx,

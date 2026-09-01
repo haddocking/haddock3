@@ -12,8 +12,11 @@ from pathlib import Path
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
-from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
-from haddock.libs.libontology import PDBFile
+from haddock.libs.libcns import (
+    derive_seed,
+    prepare_cns_input,
+    prepare_expected_pdb,
+)
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.scoring import CNSScoringModule
@@ -56,6 +59,7 @@ class HaddockModule(CNSScoringModule):
         # Prepare all CNS runs
         self.output_models = []
         for model_num, model in enumerate(models_to_score, start=1):
+            seed = derive_seed(self.params["iniseed"], model)
             scoring_inpyt = prepare_cns_input(
                 model_num,
                 model,
@@ -65,7 +69,7 @@ class HaddockModule(CNSScoringModule):
                 self.name,
                 native_segid=True,
                 debug=self.params["debug"],
-                seed=model.seed if isinstance(model, PDBFile) else None,
+                seed=seed,
             )
 
             scoring_out = f"{self.name}_{model_num}.out"
@@ -73,6 +77,7 @@ class HaddockModule(CNSScoringModule):
 
             # create the expected PDBobject
             expected_pdb = prepare_expected_pdb(model, model_num, ".", self.name)
+            expected_pdb.seed = seed
             # fill the ori_name field of expected_pdb
             expected_pdb.ori_name = model.file_name
             expected_pdb.md5 = model.md5

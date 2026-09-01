@@ -183,7 +183,7 @@ Stateless or near-stateless helpers used across modules and gears.
 | [libmpi.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libmpi.py) | `MPIScheduler` — MPI execution |
 | [libgrid.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libgrid.py) | `GRIDScheduler` — DIRAC grid execution |
 | [libpdb.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libpdb.py), [libstructure.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libstructure.py) | Parse and manipulate PDB structures |
-| [libalign.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libalign.py), [libmath.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libmath.py) | Alignment and RMSD/geometry maths |
+| [libalign.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libalign.py) | Alignment and RMSD/geometry maths |
 | [libclust.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libclust.py), [libfcc.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libfcc.py) | Clustering helpers |
 | [librestraints.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/librestraints.py) | Restraint (`.tbl`) handling |
 | [libaa2cg.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libaa2cg.py), [libligand.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/libs/libligand.py) | Coarse-grain mapping, ligand topology |

@@ -152,6 +152,20 @@ eval ($count=1)
     assert observed_cns_input == expected_cns_input
 
 
+def test_prepare_cns_input_omits_seed_when_one_is_not_declared(pdbfile):
+    observed_cns_input = prepare_cns_input(
+        model_number=1,
+        input_element=pdbfile,
+        step_path=Path("."),
+        recipe_str="",
+        defaults={},
+        identifier="model",
+        seed=None,
+    )
+
+    assert "$seed" not in observed_cns_input
+
+
 def test_cg_backmapping_keeps_psf_tbl_pairs_aligned_with_shapes(tmp_path):
     """A leading shape component must not shift CG-to-AA file pairings."""
     model = PDBFile(file_name="complex.pdb", path=tmp_path)
@@ -246,3 +260,84 @@ def test_prepare_cns_input_with_ligand_files():
         assert "ligand.param" in cns_input
         assert 'eval ($ligand_top_fname="ligand.top")' in cns_input
         assert 'eval ($ligand_param_fname="ligand.param")' in cns_input
+
+
+def _seeded_model(directory: Path, name: str, content: str) -> PDBFile:
+    """A model whose bytes are on disk, so its seed can be derived."""
+    path = Path(directory, name)
+    path.write_text(content, encoding="utf-8")
+    return PDBFile(file_name=name, path=directory)
+
+
+def test_derive_seed_ignores_the_job_position_and_name(tmp_path, monkeypatch):
+    """The same structure yields the same seed wherever it is scheduled."""
+    monkeypatch.chdir(tmp_path)
+    first = _seeded_model(tmp_path, "rigidbody_1.pdb", "ATOM  one\n")
+    renamed = _seeded_model(tmp_path, "rank_37.pdb", "ATOM  one\n")
+
+    assert libcns.derive_seed(917, first) == libcns.derive_seed(917, renamed)
+
+
+def test_derive_seed_follows_the_content_it_reads(tmp_path, monkeypatch):
+    """A changed structure is a different computation and gets a new seed."""
+    monkeypatch.chdir(tmp_path)
+    original = _seeded_model(tmp_path, "model.pdb", "ATOM  one\n")
+    changed = _seeded_model(tmp_path, "other.pdb", "ATOM  two\n")
+
+    assert libcns.derive_seed(917, original) != libcns.derive_seed(917, changed)
+
+
+def test_derive_seed_separates_repeats_of_one_job(tmp_path, monkeypatch):
+    """Repeats of one job are additional sampling, not duplicates of it."""
+    monkeypatch.chdir(tmp_path)
+    model = _seeded_model(tmp_path, "model.pdb", "ATOM  one\n")
+
+    seeds = [libcns.derive_seed(917, model, repeat) for repeat in range(8)]
+
+    assert len(set(seeds)) == len(seeds)
+
+
+def test_derive_seed_still_follows_iniseed(tmp_path, monkeypatch):
+    """``iniseed`` keeps its meaning: changing it changes every seed."""
+    monkeypatch.chdir(tmp_path)
+    model = _seeded_model(tmp_path, "model.pdb", "ATOM  one\n")
+
+    assert libcns.derive_seed(917, model) != libcns.derive_seed(4242, model)
+
+
+def test_derive_seed_binds_the_inputs_in_order(tmp_path, monkeypatch):
+    """Two molecules in the other order is a different docking job."""
+    monkeypatch.chdir(tmp_path)
+    receptor = _seeded_model(tmp_path, "receptor.pdb", "ATOM  receptor\n")
+    ligand = _seeded_model(tmp_path, "ligand.pdb", "ATOM  ligand\n")
+
+    assert libcns.derive_seed(917, [receptor, ligand]) != libcns.derive_seed(
+        917, [ligand, receptor]
+    )
+
+
+def test_derive_seed_stays_in_the_range_cns_represents_exactly(tmp_path, monkeypatch):
+    """CNS holds numbers as doubles; a derived seed must be an exact integer."""
+    monkeypatch.chdir(tmp_path)
+
+    for index in range(200):
+        model = _seeded_model(tmp_path, f"model_{index}.pdb", f"ATOM  {index}\n")
+        seed = libcns.derive_seed(9999999999999999, model, index)
+        assert 1 <= seed < libcns.SEED_CEILING
+        assert float(seed) == seed
+
+
+def test_derive_seed_reads_a_compressed_model(tmp_path, monkeypatch):
+    """A cleaned step holds ``model.pdb.gz``; that is the same content."""
+    import gzip
+
+    monkeypatch.chdir(tmp_path)
+    plain = _seeded_model(tmp_path, "model.pdb", "ATOM  one\n")
+    expected = libcns.derive_seed(917, plain)
+
+    Path(tmp_path, "model.pdb.gz").write_bytes(
+        gzip.compress(b"ATOM  one\n", mtime=0)
+    )
+    Path(tmp_path, "model.pdb").unlink()
+
+    assert libcns.derive_seed(917, plain) == expected

@@ -73,7 +73,6 @@ reference:
   libs.libinteractive: "libinteractive: functions related to interactive tasks"
   libs.libio: "libio: I/O helping functions"
   libs.liblog: "liblog: Logging helping functions"
-  libs.libmath: "libmath: Math helping functions"
   libs.libmpi: "libmpi: MPI execution functions"
   libs.libontology: "libontology: module communication"
   libs.libparallel: "libparallel: multiprocessing helping functions"

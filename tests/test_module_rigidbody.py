@@ -140,6 +140,19 @@ def test_rigidbody_make_cns_jobs_with_toppar(rigidbody_module):
     assert rigidbody_module.output_models[0].ligand_param_fname == "param"
 
 
+def _models_on_disk() -> tuple[PDBFile, PDBFile]:
+    """Two models whose bytes exist, because a job's seed is read from them."""
+    topology = Persistent(file_name="topology.psf", path=".", file_type=Format.TOPOLOGY)
+    models = []
+    for index, restraints in enumerate(("ambig1.tbl", "ambig2.tbl"), start=1):
+        name = f"model{index}.pdb"
+        Path(name).write_text(f"ATOM  model {index}\n", encoding="utf-8")
+        models.append(
+            PDBFile(Path(name), path=".", restr_fname=restraints, topology=topology)
+        )
+    return models[0], models[1]
+
+
 def test_prepare_cns_input_sequential(mocker, rigidbody_module):
     """???"""
 
@@ -148,13 +161,7 @@ def test_prepare_cns_input_sequential(mocker, rigidbody_module):
         return_value="cns_input",
     )
 
-    topology = Persistent(file_name="topology.psf", path=".", file_type=Format.TOPOLOGY)
-    input_pdb_1 = PDBFile(
-        Path("model1.pdb"), path=".", restr_fname="ambig1.tbl", topology=topology
-    )
-    input_pdb_2 = PDBFile(
-        Path("model2.pdb"), path=".", restr_fname="ambig2.tbl", topology=topology
-    )
+    input_pdb_1, input_pdb_2 = _models_on_disk()
     observed_cns_input_list = rigidbody_module.prepare_cns_input_sequential(
         models_to_dock=[
             [
@@ -184,13 +191,7 @@ def test_prepare_cns_input_parallel(mocker, rigidbody_module):
         return_value="cns_input",
     )
 
-    topology = Persistent(file_name="topology.psf", path=".", file_type=Format.TOPOLOGY)
-    input_pdb_1 = PDBFile(
-        Path("model1.pdb"), path=".", restr_fname="ambig1.tbl", topology=topology
-    )
-    input_pdb_2 = PDBFile(
-        Path("model2.pdb"), path=".", restr_fname="ambig2.tbl", topology=topology
-    )
+    input_pdb_1, input_pdb_2 = _models_on_disk()
     observed_cns_input_list = rigidbody_module.prepare_cns_input_sequential(
         models_to_dock=[
             [

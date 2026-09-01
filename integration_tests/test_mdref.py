@@ -132,4 +132,8 @@ def test_mdref_mutliple_fle(mdref_module, calc_fnat):
         native=Path(GOLDEN_DATA, "2oob.pdb"),
     )
 
-    assert fnat == pytest.approx(0.8, abs=0.1)
+    # The same band as the two tests above. It was centred lower when the
+    # seed a job received depended on where it sat in the schedule; with
+    # the seed derived from the model being refined, this run lands at the
+    # same quality as its siblings.
+    assert fnat == pytest.approx(0.9, abs=0.1)

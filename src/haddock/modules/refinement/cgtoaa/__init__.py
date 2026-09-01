@@ -16,7 +16,6 @@ from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
-from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -71,9 +70,6 @@ class HaddockModule(BaseCNSModule):
         jobs: list[CNSJob] = []
         idx = 1
         for model in models_to_refine:
-            if isinstance(model, PDBFile):
-                if not model.seed:
-                    model.seed = self.params["iniseed"]
             for s_ind in range(sampling_factor):
                 # Prepare CNS input
                 cgtoaa_input = prepare_cns_input(
@@ -85,7 +81,6 @@ class HaddockModule(BaseCNSModule):
                     self.name,
                     native_segid=True,
                     debug=self.params["debug"],
-                    seed=(model.seed + s_ind) if isinstance(model, PDBFile) else None,
                     cgtoaa=True,
                 )
                 # Build CNS Job

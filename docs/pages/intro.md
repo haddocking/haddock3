@@ -98,6 +98,8 @@ ambig_fname = "data/e2a-hpr_air.tbl"
 
 In this example only very few parameters are defined as most correspond to the default ones defined for each module. The sampling in this case would be 1000 rigidbody models and 200 for the refinement stages. Clustering is based on the fraction of common contacts and the final clusters are analysed using the best model generated as a reference (the `caprieval` module).
 
+Every CNS random seed is derived from the job itself: from `iniseed`, from the content of the models the job starts from, and from which repeat of that job it is. A job therefore keeps its seed when the run around it grows, shrinks or is reordered, and changing `iniseed` still changes every seed in the run.
+
 Detailed explanations on how to configure a workflow through the configuration files can be found
 <a href="https://github.com/haddocking/haddock3/blob/main/docs/tutorials/user_config.rst">here</a>.
 

@@ -1,23 +1,109 @@
 """CNS scripts util functions."""
 
+import gzip
+import hashlib
 import itertools
 import math
+import re
 from functools import partial
 from os import linesep
 from pathlib import Path
 
 from haddock import EmptyPath, log
 from haddock.core import cns_paths
-from haddock.core.typing import Any, FilePath, FilePathT, Optional, Union
+from haddock.core.typing import Any, FilePath, FilePathT, Optional, Sequence, Union
 from haddock.libs import libpdb
 from haddock.libs.libfunc import false, true
-from haddock.libs.libmath import RandomNumberGenerator
-from haddock.libs.libontology import PDBFile
+from haddock.libs.libontology import PDBFile, Persistent
 from haddock.libs.libpdb import check_combination_chains
 from haddock.libs.libutil import transform_to_list
 
 
-RND = RandomNumberGenerator()
+#: Ceiling for a derived CNS seed.
+#:
+#: CNS holds numbers as double-precision floats, so an integer above 2**53
+#: stops being exactly representable by the time a recipe reads it.
+#: ``iniseed`` accepts values past that point, which is a separate matter --
+#: it is the user's number and is used as given -- but a *derived* seed is
+#: ours to choose, and 2**31 leaves four orders of magnitude of margin while
+#: staying inside the range CNS has always been handed.
+SEED_CEILING = 2**31
+
+#: Memo for :func:`content_checksum`, keyed by path, size and mtime.
+_CONTENT_CHECKSUMS: dict[tuple[str, int, int], str] = {}
+
+
+def content_checksum(path: FilePath) -> str:
+    """Checksum a file by its content, transparently to gzip storage.
+
+    Memoized for the life of the process.  A run hashes the same topology
+    once per sampling job that docks it, and the files concerned are written
+    once and then only read; the memo is keyed on size and modification time
+    as well as on the path, so a file that is rewritten in place is hashed
+    again rather than remembered wrongly.
+    """
+    resolved = Path(path).resolve()
+    stat = resolved.stat()
+    key = (str(resolved), stat.st_size, stat.st_mtime_ns)
+    checksum = _CONTENT_CHECKSUMS.get(key)
+    if checksum is None:
+        data = resolved.read_bytes()
+        if resolved.name.endswith(".gz"):
+            data = gzip.decompress(data)
+        checksum = hashlib.sha256(data).hexdigest()
+        _CONTENT_CHECKSUMS[key] = checksum
+    return checksum
+
+
+def model_path(model: Persistent) -> Path:
+    """Where a model's bytes can be read from, now.
+
+    A model records both an absolute location and a step-relative one, and
+    the absolute one goes stale as soon as a run directory is copied or
+    moved.  Both spellings are tried, and each of them compressed, because a
+    cleaned step holds ``model.pdb.gz`` where an uncleaned one holds
+    ``model.pdb`` and the two are the same content.
+    """
+    candidates = (Path(model.rel_path), Path(model.path, model.file_name))
+    for candidate in candidates:
+        for spelling in (candidate, Path(f"{candidate}.gz")):
+            if spelling.is_file():
+                return spelling
+    raise FileNotFoundError(
+        f"cannot read {model.file_name}: tried "
+        + ", ".join(str(candidate) for candidate in candidates)
+    )
+
+
+def derive_seed(
+    iniseed: int,
+    inputs: Union[Persistent, Sequence[Persistent]],
+    repeat: int = 0,
+) -> int:
+    """Return a CNS job's random seed as a function of the job itself.
+
+    The seed depends on ``iniseed``, on the content of the models the job
+    starts from, and on which repeat of that job this is.  It depends on
+    nothing else: not on the job's index in the schedule, not on the
+    schedule's length, and not on how many molecules or conformers the run
+    happens to contain.  A job therefore keeps its seed when the run around
+    it grows, shrinks, or is reordered, which is the property that lets the
+    same computation be recognised as the same computation.
+
+    ``iniseed`` keeps its meaning exactly: changing it changes every seed in
+    the run.
+
+    Seeds need not be unique, and this function does not try to make them so.
+    Two unrelated jobs drawing the same number is harmless -- they start from
+    different structures and compute different things.  What must never
+    collide is two repeats of *one* job, which would make them duplicates
+    rather than additional sampling, and ``repeat`` is what separates those.
+    """
+    digest = hashlib.blake2b(digest_size=8)
+    digest.update(f"iniseed={int(iniseed)}\nrepeat={int(repeat)}\n".encode())
+    for model in transform_to_list(inputs):
+        digest.update(f"{content_checksum(model_path(model))}\n".encode())
+    return 1 + int.from_bytes(digest.digest(), "big") % (SEED_CEILING - 1)
 
 
 def generate_default_header(
@@ -29,9 +115,7 @@ def generate_default_header(
         link = load_link(Path(path, cns_paths.LINK_FILE))
         scatter = load_scatter(Path(path, cns_paths.SCATTER_LIB))
         tensor = load_tensor(**cns_paths.get_tensors(path))
-        trans_vec = load_trans_vectors(
-            **cns_paths.get_translation_vectors(path)
-        )
+        trans_vec = load_trans_vectors(**cns_paths.get_translation_vectors(path))
         water_box = load_boxtyp20(cns_paths.get_water_box(path)["boxtyp20"])
 
     else:
@@ -245,10 +329,7 @@ def load_boxtyp20(waterbox_param: Path) -> str:
 
 
 # This is used by docking
-def prepare_multiple_input(
-    pdb_input_list: list[str], 
-    psf_input_list: list[str]
-) -> str:
+def prepare_multiple_input(pdb_input_list: list[str], psf_input_list: list[str]) -> str:
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
@@ -307,15 +388,12 @@ def prepare_single_input(
     for i, segid in enumerate(chainsegs, start=1):
         input_str += write_eval_line(f"prot_segid_{i}", segid)
 
-    seed = RND.randint(100, 99999)
-    input_str += write_eval_line("seed", seed)
-
     return input_str
 
 
 def _add_cg_backmapping_arguments(
-        input_element: Union[PDBFile, list[PDBFile]],
-        ) -> str:
+    input_element: Union[PDBFile, list[PDBFile]],
+) -> str:
     """Build CG backmapping CNS arguments string.
 
     Args:
@@ -504,10 +582,10 @@ def prepare_cns_input(
 
     output += write_eval_line("count", model_number)
 
-    # Set pseudo-random seed
-    if seed is None:
-        seed = RND.randint(100, 99999)
-    seed_str = write_eval_line("seed", seed)
+    # A seed is emitted only for recipes which are explicitly given one, and
+    # the caller derives it from the job rather than drawing it.  See
+    # `derive_seed`.
+    seed_str = write_eval_line("seed", seed) if seed is not None else ""
 
     # Combine all input parts
     inp = default_params + input_str + seed_str + output + segid_str + recipe_str
@@ -547,7 +625,6 @@ def prepare_expected_pdb(
     # Single model / complex
     else:
         pdb.topology = model_obj.topology
-        pdb.seed = model_obj.seed
         pdb.aa_topology = model_obj.aa_topology
         pdb.cgtoaa_tbl = model_obj.cgtoaa_tbl
         pdb.restr_fname = model_obj.restr_fname

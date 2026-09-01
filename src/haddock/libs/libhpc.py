@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 from haddock import log, modules_defaults_path
+from haddock.core.exceptions import CNSRunningError
 from haddock.core.typing import Any, Container, FilePath, Optional
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libsubprocess import CNSJob
@@ -95,9 +96,25 @@ class HPCWorker:
         )
 
         job_file_contents += f"cd {self.moddir}{os.linesep}"
-        for job in self.tasks:
+        self.partial_inputs: list[Path] = []
+        for index, job in enumerate(self.tasks, start=1):
+            input_path = (
+                job._output_path(job.input_file)
+                if isinstance(job.input_file, Path)
+                else None
+            )
+            if input_path is not None and not input_path.exists():
+                # Leave the shell's normal missing-input diagnostic intact. This
+                # also keeps job-file construction useful for dry-run callers.
+                job_file_contents += (
+                    f"{job.cns_exec} < {job.input_file} > {job.output_file}{os.linesep}"
+                )
+                continue
+            partial_input = Path(self.moddir, f"{self.job_num}_{index}.partial.inp")
+            partial_input.write_text(job.prepare_execution_input(), encoding="utf-8")
+            self.partial_inputs.append(partial_input)
             cmd = (
-                f"{job.cns_exec} < {job.input_file} > {job.output_file}" f"{os.linesep}"
+                f"{job.cns_exec} < {partial_input.name} > {job.output_file}{os.linesep}"
             )
             job_file_contents += cmd
 
@@ -125,6 +142,18 @@ class HPCWorker:
 
         return self.job_status
 
+    def normalize_outputs(self) -> None:
+        """Publish each successful task without overriding module tolerance."""
+        try:
+            for task in self.tasks:
+                try:
+                    task.publish_outputs(check_output_log=True)
+                except CNSRunningError as error:
+                    log.warning(f"CNS batch task did not produce output: {error}")
+        finally:
+            for partial_input in getattr(self, "partial_inputs", []):
+                partial_input.unlink(missing_ok=True)
+
     def cancel(self, bypass_statuses: Container[str] = ("finished", "failed")) -> None:
         """Cancel the execution."""
         if self.update_status() not in bypass_statuses:
@@ -149,9 +178,7 @@ class HPCScheduler:
 
         # split tasks according to concat level
         if concat > 1:
-            log.info(
-                f"Concatenating, each .job will produce {concat} " "(or less) models"
-            )
+            log.info(f"Concatenating, each .job will produce {concat} (or less) models")
         job_list = [task_list[i : i + concat] for i in range(0, len(task_list), concat)]
 
         self.worker_list = [HPCWorker(t, j) for j, t in enumerate(job_list, start=1)]
@@ -190,9 +217,7 @@ class HPCScheduler:
                         worker.update_status()
                         # Log status if not finished
                         if worker.job_status != "finished":
-                            log.info(
-                                f">> {worker.job_fname.name}" f" {worker.job_status}"
-                            )
+                            log.info(f">> {worker.job_fname.name} {worker.job_status}")
                         # Increment number of terminated works
                         if worker.job_status in TERMINATED_STATUS:
                             terminated_count += 1
@@ -215,6 +240,12 @@ class HPCScheduler:
                         time.sleep(sleep_timer)
 
                 per = (float(batch_num) / float(total_batches)) * 100
+                for worker in worker_list:
+                    # A failed concatenated worker can still contain successful
+                    # tasks. Validate and publish each task independently; the
+                    # module's tolerance setting decides whether missing models
+                    # make the overall step fail.
+                    worker.normalize_outputs()
                 log.info(
                     f">> Batch {batch_num}/{total_batches} took "
                     f"{elapsed:.2f}s to finish, {per:.2f}% complete"

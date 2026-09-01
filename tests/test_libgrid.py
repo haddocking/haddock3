@@ -3,6 +3,7 @@ import pytest
 from haddock.libs.libgrid import (
     GridJob,
     CompositeGridJob,
+    GRIDScheduler,
     JobStatus,
     Tag,
     ping_dirac,
@@ -107,6 +108,41 @@ def test_clean_removes_tmpdir(dummy_paths):
     assert loc.exists()
     job.clean()
     assert not loc.exists()
+
+
+def test_retrieve_output_normalizes_cns_artifacts(tmp_path, dummy_paths, monkeypatch):
+    toppar, module = dummy_paths
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    job.id = 42
+    job.wd = tmp_path / "work"
+    job.wd.mkdir()
+    output_dir = job.loc / str(job.id)
+    output_dir.mkdir()
+    (output_dir / "model.pdb").write_text("REMARK DATE: volatile\nATOM\n")
+    job.expected_outputs = ["model.pdb"]
+    monkeypatch.setattr(
+        "subprocess.run",
+        lambda *args, **kwargs: type("Result", (), {"returncode": 0})(),
+    )
+
+    job.retrieve_output()
+
+    assert (job.wd / "model.pdb").read_text() == "ATOM\n"
+
+
+def test_grid_completion_propagates_worker_exceptions(mocker):
+    """Failures raised while retrieving a grid result must reach the caller."""
+    scheduler = object.__new__(GRIDScheduler)
+    scheduler.ncores = 1
+    scheduler.workload = [mocker.Mock(status=JobStatus.RUNNING)]
+    mocker.patch.object(
+        scheduler,
+        "process_job",
+        side_effect=RuntimeError("incomplete transfer"),
+    )
+
+    with pytest.raises(RuntimeError, match="incomplete transfer"):
+        scheduler.wait_for_completion()
 
 
 def test_ping_and_validate_dirac(monkeypatch):

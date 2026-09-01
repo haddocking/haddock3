@@ -34,7 +34,7 @@ def cnsjob(mocker):
 
     Here we create a temporary file and set it as the mock CNS executable.
     """
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile() as f, tempfile.TemporaryDirectory() as tempdir:
         f.file.write(b"")
         f.file.flush()
         f.file.seek(0)
@@ -42,9 +42,11 @@ def cnsjob(mocker):
 
         mocker.patch("haddock.libs.libsubprocess.global_cns_exec", f.name)
 
+        input_file = Path(tempdir, "input")
+        input_file.write_text("stop\n", encoding="utf-8")
         yield CNSJob(
-            input_file=Path("input"),
-            output_file=Path("output"),
+            input_file=input_file,
+            output_file=Path(tempdir, "output"),
             cns_exec=Path(f.name),
         )
 

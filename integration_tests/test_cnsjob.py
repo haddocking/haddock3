@@ -6,6 +6,7 @@ import tempfile
 from pathlib import Path
 from typing import Generator
 
+from haddock.core.exceptions import CNSRunningError
 from haddock.gear.known_cns_errors import KNOWN_ERRORS
 from haddock.libs.libsubprocess import CNSJob
 
@@ -75,7 +76,7 @@ coor @@{GOLDEN_DATA}/prot.pdb
 write coordinates format=pdbo output={cns_output_pdb_filename} end
 
 set display={cns_seed_filename} end
-display evaluate($seed=42)
+display 42
 close {cns_seed_filename} end
 
 stop"""
@@ -143,12 +144,13 @@ def test_cnsjob_run_uncompressed_err(
         "haddock.libs.libsubprocess.subprocess.Popen.communicate",
         return_value=(bytes(random_error, encoding="utf-8"), b""),
         )
-    cnsjob.run(
-        compress_inp=False,
-        compress_out=False,
-        compress_err=False,
-        compress_seed=False,
-    )
+    with pytest.raises(CNSRunningError):
+        cnsjob.run(
+            compress_inp=False,
+            compress_out=False,
+            compress_err=False,
+            compress_seed=False,
+        )
     # Check that error file was created
     assert Path(f"{cns_error_filename}").exists()
     assert Path(f"{cns_error_filename}").stat().st_size > 0
@@ -166,12 +168,13 @@ def test_cnsjob_run_compress_err(
         "haddock.libs.libsubprocess.subprocess.Popen.communicate",
         return_value=(bytes(random_error, encoding="utf-8"), b""),
         )
-    cnsjob.run(
-        compress_inp=False,
-        compress_out=False,
-        compress_err=True,
-        compress_seed=False,
-    )
+    with pytest.raises(CNSRunningError):
+        cnsjob.run(
+            compress_inp=False,
+            compress_out=False,
+            compress_err=True,
+            compress_seed=False,
+        )
     # Check that error file was created and compressed !
     assert Path(f"{cns_error_filename}.gz").exists()
     assert Path(f"{cns_error_filename}.gz").stat().st_size > 0

@@ -18,6 +18,11 @@ from haddock.libs.libcnsoutput import normalize_cns_pdb, normalize_cns_psf
 from haddock.libs.libio import gzip_files
 
 
+CNS_DENORMAL_STDERR = (
+    b"Note: The following floating-point exceptions are signalling: IEEE_DENORMAL\n"
+)
+
+
 class BaseJob:
     """Base class for a subprocess job."""
 
@@ -159,6 +164,7 @@ class CNSJob:
         for output_pdb_file in self.output_pdb_files:
             if output_pdb_file not in self.output_files:
                 self.output_files.append(output_pdb_file)
+        self._pending_partial_outputs: dict[Path, Path] = {}
         self._assert_declared_output_bindings()
         self._declared_input_script = self._input_script()
 
@@ -232,61 +238,60 @@ class CNSJob:
             ``False``.
         """
 
-        if isinstance(self.input_file, str):
-            p = subprocess.Popen(
-                self.cns_exec,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                close_fds=True,
-                env=self.envvars,
-            )
-            out, error = p.communicate(input=self.input_file.encode())
-            p.kill()
+        script = self.prepare_execution_input()
 
-        elif isinstance(self.input_file, Path) and self.output_file is not None:
-            with open(self.input_file) as inp:
-                p = subprocess.Popen(
-                    self.cns_exec,
-                    stdin=inp,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    close_fds=True,
-                    env=self.envvars,
-                )
-                out, error = p.communicate()
-                p.kill()
-                # Write out file
-                with open(self.output_file, "wb+") as outf:
-                    outf.write(out)
+        p = subprocess.Popen(
+            self.cns_exec,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            close_fds=True,
+            env=self.envvars,
+            cwd=self.work_dir,
+        )
+        out, error = p.communicate(input=script.encode())
+        p.kill()
 
-            if compress_inp:
-                gzip_files(self.input_file, remove_original=True)
-
-            if compress_out:
-                gzip_files(self.output_file, remove_original=True)
-
-            if compress_seed:
-                with suppress(FileNotFoundError):
-                    gzip_files(
-                        Path(Path(self.output_file).stem).with_suffix(".seed"),
-                        remove_original=True,
-                    )
-
-        # If undetected error or detect an error in the STDOUT
-        if error or self.contains_cns_stdout_error(out):
+        # GNU Fortran emits this note for otherwise complete CNS calculations.
+        error = (error or b"").replace(CNS_DENORMAL_STDERR, b"").strip()
+        failed = bool(error) or self.contains_cns_stdout_error(out)
+        if isinstance(p.returncode, int) and p.returncode != 0:
+            failed = True
+            error = error or f"CNS exited with status {p.returncode}".encode()
+        if failed:
             # Write .err file (only if an error file was provided, otherwise
             # the diagnostic raise below would be masked by a TypeError)
             if self.error_file is not None:
-                with open(self.error_file, "wb+") as errf:
+                error_file = self._output_path(Path(self.error_file))
+                with open(error_file, "wb+") as errf:
                     errf.write(out)
                 # Compress it
                 if compress_err:
-                    gzip_files(self.error_file, remove_original=True)
-            if error:
-                raise CNSRunningError(error)
+                    gzip_files(
+                        error_file,
+                        remove_original=True,
+                    )
+            self._discard_partial_outputs()
+            raise CNSRunningError(error or out)
 
-        self.normalize_outputs()
+        self.publish_outputs()
+
+        if isinstance(self.input_file, Path) and compress_inp:
+            gzip_files(self._output_path(self.input_file), remove_original=True)
+        if isinstance(self.input_file, Path) and self.output_file is not None:
+            output_file = self._output_path(Path(self.output_file))
+            output_file.write_bytes(out)
+            if compress_out:
+                gzip_files(output_file, remove_original=True)
+            if compress_seed:
+                with suppress(FileNotFoundError):
+                    seed_file = output_file.with_suffix(".seed")
+                    if not seed_file.exists():
+                        seed_file = self.work_dir / seed_file.name
+                    gzip_files(
+                        seed_file,
+                        remove_original=True,
+                    )
 
         # Return STDOUT
         return out
@@ -360,6 +365,86 @@ class CNSJob:
                     "CNS input does not bind every declared output: "
                     + ", ".join(missing)
                 )
+
+    def _partial_output_script(self) -> tuple[str, dict[Path, Path]]:
+        """Direct CNS to same-directory staging outputs until they are complete."""
+        script = self._declared_input_script or self._input_script()
+        if script is None:
+            raise ValueError(f"CNS input {self.input_file!r} does not exist")
+        self._declared_input_script = script
+        partial_outputs: dict[Path, Path] = {}
+        for variable in ("output_pdb_filename", "output_psf_filename"):
+            match = re.search(rf'\${variable}\s*=\s*"(?P<path>[^"]+)"', script)
+            if match is None:
+                continue
+            public = self._output_path(Path(match.group("path"))).resolve()
+            partial = public.with_name(f"{public.stem}.partial{public.suffix}")
+            partial_outputs[public] = partial
+            partial_name = str(Path(match.group("path")).with_name(partial.name))
+            script = (
+                script[: match.start("path")]
+                + partial_name
+                + script[match.end("path") :]
+            )
+        return script, partial_outputs
+
+    def prepare_execution_input(self) -> str:
+        """Return and retain the exact CNS script that will be executed.
+
+        Batch backends call this before writing their temporary input file; the
+        matching :meth:`publish_outputs` call then validates and publishes the
+        complete output set after the process has succeeded. Path-backed inputs
+        are updated so the retained ``.inp`` and CNS stdout describe the same
+        execution.
+        """
+        script, partial_outputs = self._partial_output_script()
+        for partial in partial_outputs.values():
+            partial.unlink(missing_ok=True)
+        self._pending_partial_outputs = partial_outputs
+        if isinstance(self.input_file, Path):
+            self._output_path(self.input_file).write_text(script, encoding="utf-8")
+        return script
+
+    def publish_outputs(self, check_output_log: bool = False) -> None:
+        """Publish a prepared complete output set, or normalize legacy outputs."""
+        if check_output_log and self.output_file is not None:
+            output_file = self._output_path(Path(self.output_file))
+            if output_file.exists() and self.contains_cns_stdout_error(
+                output_file.read_bytes()
+            ):
+                self._discard_partial_outputs()
+                raise CNSRunningError(f"CNS reported an error in {output_file}")
+        if self._pending_partial_outputs:
+            self._publish_partial_outputs(self._pending_partial_outputs)
+            self._pending_partial_outputs = {}
+        else:
+            self.normalize_outputs()
+
+    def _publish_partial_outputs(self, partial_outputs: dict[Path, Path]) -> None:
+        """Validate and atomically publish a complete normalized output set."""
+        missing = [
+            path
+            for path in partial_outputs.values()
+            if not path.is_file() or path.stat().st_size == 0
+        ]
+        if missing:
+            self._discard_partial_outputs(partial_outputs)
+            raise CNSRunningError(
+                "CNS did not produce complete outputs: "
+                + ", ".join(str(path) for path in missing)
+            )
+        self._normalize_paths(partial_outputs.values())
+        for public, partial in partial_outputs.items():
+            os.replace(partial, public)
+
+    def _discard_partial_outputs(
+        self, partial_outputs: Optional[dict[Path, Path]] = None
+    ) -> None:
+        """Remove unpublished CNS artifacts after a failed or retried job."""
+        pending = partial_outputs or self._pending_partial_outputs
+        for partial in pending.values():
+            partial.unlink(missing_ok=True)
+        self._pending_partial_outputs = {}
 
     def _output_path(self, output_file: Path) -> Path:
         """Resolve job outputs relative to the directory that created the job."""

@@ -1,0 +1,207 @@
+# Axis 12 -- artifact-store resolution.
+#
+# The store is `result checksum -> bytes`.  Location-independent, verifiable on
+# read, plural.  A path here is a locator, not part of identity: bytes found at
+# *any* location that hash correctly are correct; bytes that hash wrongly are
+# rejected wherever they came from.
+#
+# That collapses the whole "integrity" family into exactly two outcomes, both
+# safe by construction -- bytes not found, and bytes found but wrong checksum.
+# Both are MUST-DEGRADE.  There is no third case, and in particular there is no
+# case in which a bad locator yields a wrong result.
+#
+# Every fixture here is derived by damaging a copy of the tiny base run, so
+# the whole file costs no CNS time beyond the misses it deliberately forces.
+# Each lesion targets rigidbody_1.pdb and leaves the rest of the run intact,
+# so each case asserts a boundary rather than a blanket outcome: one job
+# degrades, seven still hit.
+
+- case: axis12.1-artifact-deleted
+  common: true
+  taxonomy: "12.1"
+  title: The artifact was deleted
+  why: >
+    The simplest thing that goes wrong with an old run: someone cleaned
+    up. The missing model is recomputed, and the seven that are still
+    there are still reused.
+  base: tiny
+  sources: [deleted]
+  perturb: []
+  expect:
+    default: hit
+    paths: {"1_rigidbody/rigidbody_1.pdb": null}
+  misses: {rigidbody: 1}
+
+- case: axis12.2-artifact-modified-in-place
+  taxonomy: "12.2"
+  title: The artifact was modified in place
+  why: >
+    Same name, same length, different bytes. Verification is by checksum on
+    every read, so this is indistinguishable from any other wrong-bytes case
+    and must degrade rather than be served.
+  base: tiny
+  sources: [modified]
+  perturb: []
+  expect:
+    default: hit
+    paths: {"1_rigidbody/rigidbody_1.pdb": null}
+  misses: {rigidbody: 1}
+
+- case: axis12.3-artifact-truncated
+  taxonomy: "12.3"
+  title: The artifact was truncated
+  why: >
+    A file cut short -- what a crash mid-write leaves behind. It has the
+    right name and the right location and is not a usable result, so it
+    must be recomputed rather than served.
+  base: tiny
+  sources: [truncated]
+  perturb: []
+  expect:
+    default: hit
+    paths: {"1_rigidbody/rigidbody_1.pdb": null}
+  misses: {rigidbody: 1}
+
+- case: axis12.4-artifact-replaced-by-a-same-size-file
+  taxonomy: "12.4"
+  title: The artifact was replaced by a file of the same size
+  why: >
+    Same name, same size, different bytes. Anything that checks only that
+    a file of about the right shape is present would be fooled; verifying
+    the content is what makes this safe.
+  base: tiny
+  sources: [same-size]
+  perturb: []
+  expect:
+    default: hit
+    paths: {"1_rigidbody/rigidbody_1.pdb": null}
+  misses: {rigidbody: 1}
+
+- case: axis12.5a-artifact-replaced-by-a-directory
+  taxonomy: "12.5"
+  title: The artifact was replaced by a directory
+  why: >
+    Not a file at all any more. It must be treated as a missing result,
+    not as an error that stops the run.
+  base: tiny
+  sources: [replaced-dir]
+  perturb: []
+  expect:
+    default: hit
+    paths: {"1_rigidbody/rigidbody_1.pdb": null}
+  misses: {rigidbody: 1}
+
+- case: axis12.5b-artifact-replaced-by-a-symlink
+  taxonomy: "12.5"
+  title: The artifact was replaced by a symlink to a sibling artifact
+  why: >
+    The nastiest of the family: the link resolves, the bytes are a valid PDB,
+    and they are the *wrong job's* result. Only checksum verification tells
+    them apart, and a hit here would be a silently wrong model.
+  base: tiny
+  sources: [replaced-symlink]
+  perturb: []
+  expect:
+    default: hit
+    paths: {"1_rigidbody/rigidbody_1.pdb": null}
+  misses: {rigidbody: 1}
+
+- case: axis12.5c-artifact-replaced-by-a-dangling-symlink
+  taxonomy: "12.5"
+  title: The artifact was replaced by a dangling symlink
+  why: >
+    A link that points nowhere. Same outcome as a deleted file, reached a
+    different way.
+  base: tiny
+  sources: [dangling-symlink]
+  perturb: []
+  expect:
+    default: hit
+    paths: {"1_rigidbody/rigidbody_1.pdb": null}
+  misses: {rigidbody: 1}
+
+- case: axis12.6-artifact-unreadable
+  taxonomy: "12.6"
+  title: The artifact is unreadable
+  why: >
+    The file is there and cannot be read -- a permissions problem, or
+    someone else's run directory. Recompute it; do not abandon the whole
+    run.
+  base: tiny
+  sources: [unreadable]
+  perturb: []
+  expect:
+    default: hit
+    paths: {"1_rigidbody/rigidbody_1.pdb": null}
+  misses: {rigidbody: 1}
+
+- case: axis12.7-artifact-compressed
+  taxonomy: "12.7"
+  title: The artifact was compressed
+  why: >
+    MUST-HIT: content, not encoding. The same claim as 1.7, made about the
+    store rather than about the source run.
+  base: tiny
+  sources: [compressed]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis12.9-two-stores-one-holding-the-bytes
+  taxonomy: "12.9"
+  title: Two stores, only one of which holds the bytes
+  why: >
+    One previous run knows the answers but no longer has the files;
+    another has them. Between them the new run needs to compute nothing.
+  base: tiny
+  sources: [no-store, tiny]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis12.10-two-stores-one-poisoned
+  taxonomy: "12.10"
+  title: Two stores, one holding wrong bytes under the right checksum
+  why: >
+    A poisoned store must be rejected, and must not deny service: the job is
+    still resolvable from the healthy one. Rejecting the whole run because one
+    store is bad would make a shared cache a single point of failure.
+  base: tiny
+  sources: [poisoned, tiny]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis12.11-record-exists-but-no-store-holds-the-bytes
+  taxonomy: "12.11"
+  title: The record exists and no store holds the bytes
+  why: >
+    MUST-DEGRADE, not an error. A cache whose store has been cleared is a
+    normal state, not corruption, and the correct response is to recompute.
+  base: tiny
+  sources: [no-store]
+  perturb: []
+  expect: {default: miss}
+  misses: {topoaa: 4, rigidbody: 4}
+
+- case: axis12.12-store-on-a-different-filesystem
+  taxonomy: "12.12"
+  title: The store is on a different filesystem, which forces a copy
+  why: >
+    Files cannot be hardlinked across a filesystem boundary, so they have
+    to be copied instead. The results must be the same; only the delivery
+    differs.
+  base: tiny
+  sources: [crossfs]
+  needs_other_filesystem: true
+  env: {HADDOCK_CACHE_HARDLINK: "0"}
+  degraded: "Copy mode: Gate 1 is blind; carried by Gate 2 and Gate 3."
+  perturb: []
+  expect: {default: hit}
+
+- case: axis12.8-artifact-outside-the-producing-run-directory
+  taxonomy: "12.8"
+  title: Bytes held somewhere other than the run that produced them
+  skip: >
+    Requires the artifact store to be addressable separately from a run
+    directory. The --cache API takes a run directory, so a shared store, a
+    hardlink farm or an archive on another disk cannot be named. The nearest
+    reachable statement is axis1.2, a whole run relocated, which does pass
+    through the same code.

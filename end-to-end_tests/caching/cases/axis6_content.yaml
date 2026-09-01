@@ -1,0 +1,414 @@
+# Axis 6 -- input content.
+#
+# Content that CNS reads changes.  MUST-MISS for every job reading the changed
+# file; MUST-HIT for every job that does not.  The test asserts the *precise
+# boundary*, not merely that something missed -- which is why almost every
+# case here declares a pattern rather than a blanket verdict.
+
+- case: axis6.1-one-molecule-changed
+  common: true
+  taxonomy: "6.1"
+  title: One input molecule's coordinates changed
+  why: >
+    The topology job for the *other* molecule reads nothing that changed and
+    must still hit. That half of the assertion is the valuable one: a key that
+    invalidates everything on any input change is safe but useless.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: edit_input, file: "1LMQ_l_u.pdb", how: coordinate}
+  expect:
+    default: miss
+    patterns:
+      - {match: "*_topoaa/1LMQ_r_u_haddock.*", expect: hit}
+
+- case: axis6.2a-distinct-ensemble-member-added
+  taxonomy: "6.2"
+  title: A new conformer added to an ensemble
+  why: >
+    Each member gets its own topology job, so the existing members' jobs are
+    untouched and only the new conformer is new work. The rigidbody stage
+    samples from a larger ensemble, so the combinations that include the new
+    member are new work too and the rest are not.
+
+    Its twin is 6.2b immediately below, which adds a member that is a copy of
+    an existing one. The two look like the same edit -- "an ensemble member
+    added" -- and have opposite verdicts for the added member. What separates
+    them is not that one file grew but whether the added member is a
+    computation nobody has done.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: edit_input, file: "hpr_ensemble.pdb", how: models, models: add_distinct}
+  expect: {default: auto}
+
+- case: axis6.2b-duplicate-ensemble-member-added
+  taxonomy: "6.2"
+  title: A byte-identical ensemble member added
+  why: >
+    The added member is a copy of member 1, so its topology job reads exactly
+    the bytes member 1's job read. It is the same computation and must be
+    served from member 1's entry -- two outputs correctly delivered from one
+    source file.
+
+    Declaring this one a miss would be worse than a missing test. The only way
+    to satisfy such a declaration is to make a job's identity depend on
+    something other than what it reads -- its index in the ensemble, say --
+    and that is precisely the property every other case on this axis exists to
+    forbid.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: edit_input, file: "hpr_ensemble.pdb", how: models, models: add}
+  expect: {default: auto}
+
+- case: axis6.3-ensemble-member-removed
+  taxonomy: "6.3"
+  title: An ensemble member removed
+  why: >
+    Dropping one conformer from the *middle* of an ensemble. The remaining
+    conformers are untouched and their topologies must be reused; the sampling
+    stage now has a different set to combine.
+
+    The member removed is a middle one on purpose. Dropping the last member
+    would leave every remaining member's name aligned with the content it had
+    before, so the case would pass without exercising the renumbering it is
+    named after. Removing a middle member shifts every name after it, and only
+    then does the assertion mean anything.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: edit_input, file: "hpr_ensemble.pdb", how: models, models: remove}
+  expect: {default: auto}
+
+- case: axis6.4-ensemble-members-reordered
+  taxonomy: "6.4"
+  title: Ensemble members reordered within one PDB
+  why: >
+    Every member's own topology job is unchanged -- same bytes, same role --
+    even though the member now arrives at a different index. The sampling
+    stage binds members to combinations by position, so its jobs may move.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: edit_input, file: "hpr_ensemble.pdb", how: models, models: reorder}
+  expect: {default: auto}
+
+- case: axis6.5-molecule-order-changed
+  taxonomy: "6.5"
+  title: The order of molecules in the config changed
+  why: "The binding half of axis0b.1, reached from the config rather than the pins."
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: molecules, reverse: true}
+  expect:
+    modules: {topoaa: hit, rigidbody: miss}
+
+- case: axis6.6-restraint-content-changed
+  common: true
+  taxonomy: "6.6"
+  title: A restraint file's content changed
+  why: >
+    Changing the restraints changes the science, so every job that reads
+    them must be redone -- and the topology jobs, which never see the
+    restraint file, must not be.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: edit_input, file: "ambig.tbl", how: restraint}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_rigidbody/*", expect: miss}
+  misses: {rigidbody: 4}
+
+- case: axis6.7-restraint-swapped-for-an-identical-file
+  taxonomy: "6.7"
+  title: A restraint file swapped for a different file with identical content
+  why: >
+    Content, not path. The adjacent MUST-HIT that keeps 6.6 from being
+    satisfied by a key that watches filenames.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: copy_input, file: "ambig.tbl", as: "a-completely-different-name.tbl"}
+  expect: {default: hit}
+
+- case: axis6.8a-topology-force-field-file-changed
+  taxonomy: "6.8"
+  title: A force-field file only the topology stage reads changed
+  why: >
+    A residue topology file is read when topologies are built and never again.
+    `topoaa/cns/generate-topology.cns` includes it; `rigidbody` reads `.param`
+    files and no `.top` file at all (`rigidbody/cns/read_param.cns`). So the
+    blast radius of this edit is the topology jobs, and it stops there -- the
+    sampling jobs read the topologies produced, which come out of the
+    recomputation unchanged, and must still be reused.
+
+    That second half is the valuable one, and it is why this is the pair to
+    6.8b rather than a case on its own. An edit costing exactly the jobs that
+    read the edited file, and nothing beyond them, is the single most useful
+    thing this feature does: it is what makes an upgrade or a force-field
+    correction cheap instead of total. A key that invalidated everything
+    downstream of any changed file would be safe and worthless.
+
+    Alone, this case cannot tell "correctly outside the read set" from "the
+    key never looked at the force field", because both show as a hit. 6.8b
+    closes that, in the way 6.7 closes 6.6.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - op: install
+      edit: {"cns/toppar/protein-allhdg5-4.top": append-comment}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_topoaa/1LMQ_r_u_haddock.*", expect: miss}
+      # The glycan-only topology job may or may not read the protein topology
+      # file. Which it is depends on what generate-topology.cns includes, and
+      # asserting it here would restate the implementation rather than test
+      # it. Left unasserted on purpose, and recorded as such.
+      - {match: "*_topoaa/1LMQ_l_u_haddock.*", expect: ignore}
+  # An upper bound for the stopwatch, not a claim: the unasserted glycan
+  # topology job may or may not miss with it.
+  misses: {topoaa: 4}
+
+- case: axis6.8b-sampling-force-field-file-changed
+  taxonomy: "6.8"
+  title: A force-field file the sampling stage reads changed
+  why: >
+    The same edit, moved to a file `rigidbody` genuinely reads: the parameter
+    file reached through `rigidbody/cns/read_param.cns`. Both stages must
+    miss.
+
+    This is the half that gives 6.8a its meaning. Together they say that the
+    boundary follows the read set and not the folder a file happens to live
+    in: two files in the same `toppar` directory, one edit each, and opposite
+    verdicts for the sampling stage.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - op: install
+      edit: {"cns/toppar/protein-allhdg5-4.param": append-comment}
+  expect:
+    default: miss
+    patterns:
+      - {match: "*_topoaa/1LMQ_l_u_haddock.*", expect: ignore}
+  misses: {topoaa: 4, rigidbody: 4}
+
+- case: axis6.9-module-cns-template-changed
+  taxonomy: "6.9"
+  title: One module's CNS template changed
+  why: >
+    The precise-boundary case for code rather than data: only the jobs of the
+    module whose script changed may miss. Topology is upstream of the edited
+    template and must still hit.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - op: install
+      edit: {"modules/sampling/rigidbody/cns/rigidbody.cns": append-comment}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_rigidbody/*", expect: miss}
+  misses: {rigidbody: 4}
+
+- case: axis6.10-cns-executable-changed
+  taxonomy: "6.10"
+  title: The CNS executable changed
+  why: >
+    MUST-HIT, and this is the one case on this axis where that is a policy
+    rather than a consequence. The executable is not an input to the
+    computation; it is the machine that evaluates it. What a job declares is
+    its script together with the data that script reads, and the binary is the
+    interpreter of that declaration.
+
+    The cost of any other answer is what settles it. Two HADDOCK3
+    installations never hold the same binary -- nobody compiles or downloads
+    the same bytes twice -- so a result keyed on the executable can never be
+    shared between them. That is not a corner case: sharing between
+    installations is the principal use. A lab-wide store, a store published
+    alongside a paper, a result computed on a workstation and reused on a
+    cluster: under an executable-keyed identity none of them ever reuses
+    anything.
+
+    Nor would keying on it buy safety. It cannot detect a CNS build that
+    computes *different* results; it only stops two builds that agree from
+    being recognised as agreeing, which is the overwhelmingly common case.
+    Which build produced a result is worth recording as provenance, where a
+    mixture is visible and auditable, and that is a different thing from
+    identity.
+
+    State the cost plainly rather than burying it: pointing `cns_exec` at a
+    genuinely different engine and expecting different numbers is a user error
+    this feature will not catch. Whether that deserves an opt-in strict mode
+    is a fair question for the reviewers of this suite, and this case does not
+    answer it.
+
+    The fixture is a shell wrapper that execs the real binary, because only
+    one CNS binary runs on this platform. It is a different executable by
+    every test the filesystem can apply -- different path, different bytes,
+    different inode -- and it must not cost a single job. It is also the only
+    case here that stands in for a second, independently installed HADDOCK3:
+    axis1.3 moves one tree, so the binary's bytes travel with it and the case
+    would pass under either policy.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: cns_wrapper}
+  expect: {default: hit}
+
+- case: axis6.11-ligand-topology-changed
+  taxonomy: "6.11"
+  title: A ligand topology or parameter file changed
+  skip: >
+    Needs a system with custom ligand top/param files, which the corpus does
+    not contain. Structurally the same assertion as 6.8 with a smaller blast
+    radius; add a ligand base run to close it.
+
+- case: axis6.12-pdb-remark-changed
+  taxonomy: "6.12"
+  title: A PDB REMARK line changed
+  why: >
+    MUST-HIT, and not as a policy choice. HADDOCK3 strips REMARK records from
+    an input molecule on the way into the run: the file CNS actually opens --
+    run_dir/data/<step>/<molecule>.pdb -- contains none of them, with or
+    without preprocess (which defaults to false and is not what does the
+    stripping). The declared read-set is therefore byte-identical and the key
+    cannot differ. Nothing has to decide that a comment "does not matter":
+    the comment never reaches the computation at all.
+
+    The taxonomy groups this with the semantically-null edits and deliberately
+    leaves it unclassified, saying only that MUST-MISS and ACCEPTED-MISS
+    collide there. Neither applies here. Axis 6 is about content *that CNS
+    reads*, and this content does not reach CNS -- so the general rule
+    answers it without a special case, exactly as it does for 6.7.
+
+    Contrast axis6.13 immediately below, where the restraint table is copied
+    byte-for-byte into the run, so a whitespace edit *does* reach CNS and must
+    miss. The two cases look like the same kind of edit and have opposite
+    verdicts, and the thing that separates them is not how meaningful the edit
+    looks but whether it survives into the read-set.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: edit_input, file: "1LMQ_l_u.pdb", how: remark}
+  expect: {default: hit}
+
+- case: axis6.13-restraint-whitespace-changed
+  taxonomy: "6.13"
+  title: Whitespace and line endings changed in a restraint file
+  why: "Same classification as 6.12, and the same reasoning."
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: edit_input, file: "ambig.tbl", how: whitespace}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_rigidbody/*", expect: miss}
+  misses: {rigidbody: 4}
+
+- case: axis6.14-segid-renamed
+  taxonomy: "6.14"
+  title: A chain/segid renamed consistently throughout
+  why: >
+    Not semantically null at all: restraints and topology are written in terms
+    of segids, so this changes the science. MUST-MISS without hesitation.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: edit_input, file: "1LMQ_l_u.pdb", how: segid, from: "B", to: "Z"}
+  expect:
+    default: miss
+    patterns:
+      - {match: "*_topoaa/1LMQ_r_u_haddock.*", expect: hit}
+
+- case: axis6.15-input-recompressed
+  taxonomy: "6.15"
+  title: An input file recompressed -- different bytes, same content
+  skip: >
+    haddock3 does not accept compressed input molecules, so the perturbation
+    is not expressible on the input side. The same claim on the artifact side
+    is axis12.7, which does run.
+
+- case: axis6.16a-upgrade-that-changes-nothing-downstream
+  taxonomy: "6.16"
+  title: A HADDOCK3 upgrade whose edit turns out to be inert
+  why: >
+    Not a separate kind of perturbation and not an integrity concern. A
+    HADDOCK3 upgrade is a bundle of Axis 6 and Axis 7 changes applied at once:
+    some CNS templates changed, some toppar files changed, and most of the
+    tree did not. Its verdict is therefore a precise partition derived
+    automatically from content -- and the miss set *is* the blast radius of
+    the upgrade, which is the useful result. A version stamp in the key would
+    destroy exactly this, replacing a content-derived answer with a proxy.
+    Simulated here by editing one module template and leaving the rest alone.
+
+    The edit is a comment appended to `emref.cns`. Its readers must miss:
+    emref's script changed, and nothing here tries to decide that a comment
+    "does not matter". But mdref reads a different script, the same
+    parameters, and the same input models, so mdref must hit -- and the reason
+    it may is that emref recomputes to the very same bytes.
+
+    That middle step is worth asserting rather than assuming, because it is
+    the only end-to-end check this suite has on artifact normalization. It was
+    measured: emref on the `refine` inputs produces `66428dc0` both before and
+    after the appended comment, byte for byte. If run-volatile provenance ever
+    leaked back into a CNS output, that equality would break, mdref's hit
+    would silently evaporate, and this case would start failing for a reason
+    it does not name.
+
+    Its twin is 6.16b, which makes the upgrade substantive.
+  base: refine
+  sources: [refine]
+  perturb:
+    - op: install
+      edit: {"modules/refinement/emref/cns/emref.cns": append-comment}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_emref/*", expect: miss}
+  misses: {emref: 2}
+
+- case: axis6.16b-upgrade-that-changes-the-science
+  taxonomy: "6.16"
+  title: A HADDOCK3 upgrade whose edit changes what a module computes
+  why: >
+    The same upgrade shape as 6.16a with one difference: the edit to
+    `emref.cns` changes what emref computes. The harmonic restraint applied to
+    backbone atoms during the second minimisation round is raised from 1 to 5,
+    so emref's models come out different -- and mdref, which refines those
+    models, must now miss as well.
+
+    The cascade is the point, and so is where it comes from. mdref misses
+    because the structures it starts from are different, not because
+    something upstream of it was declared changed. 6.16a is the same workflow
+    with the same edited file and the opposite verdict for mdref, and the only
+    thing that separates them is whether the recomputed emref models came out
+    the same.
+
+    The fixture is verified rather than assumed, because a substantive-looking
+    edit that turned out inert would silently become a second copy of 6.16a
+    asserting the opposite verdict. Measured on the `refine` inputs: emref
+    produces `66428dc0` unedited and `e93b46c6` with this substitution. The
+    substitution is also required to match exactly once, so a future rewording
+    of `emref.cns` fails the fixture loudly instead of quietly reducing it to
+    a no-op.
+  base: refine
+  sources: [refine]
+  perturb:
+    - op: install
+      edit:
+        "modules/refinement/emref/cns/emref.cns":
+          replace:
+            - "do (harm = 1)  (name CA or name BB or name BB# or name C or name N or name P or name C# or name C##)"
+            - "do (harm = 5)  (name CA or name BB or name BB# or name C or name N or name P or name C# or name C##)"
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_emref/*", expect: miss}
+      - {match: "*_mdref/*", expect: miss}
+  misses: {emref: 2, mdref: 2}

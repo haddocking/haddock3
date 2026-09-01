@@ -1,0 +1,143 @@
+# Axis 13 -- job-shape coverage.
+#
+# Orthogonal to every axis above: each of Axes 0b-8 should be exercised against
+# each distinct job shape, because a shape-specific defect hides in a
+# shape-agnostic test set.  This is a multiplier, and the budget is what limits
+# it -- so each shape gets the two cases that matter most: a pure locator
+# change that must hit everything, and a content change that must miss exactly
+# the jobs of that shape.
+#
+# Shapes:
+#   topoaa/topocg   two outputs (PDB + PSF), one input molecule
+#   rigidbody       many input molecules, per-job restraints, per-job seed
+#   flexref/emref/mdref   one input model, one refined model, per-replica seed
+#   emscoring/mdscoring   scoring rather than sampling
+#   cgtoaa          coarse-grained to all-atom conversion
+#
+# One of those lines carries an obligation, and it is worth stating where the
+# coverage decision is made rather than where the code is.
+#
+#   `flexref`, `emref` and `mdref` are ONE job shape, and this axis tests it
+#   through ONE representative. Axis 4.3 perturbs sampling_factor on flexref
+#   alone; 13.2 below changes a weight on flexref alone. No case exercises the
+#   same claim on emref or mdref, and none should be added -- testing one of
+#   them IS testing the shape.
+#
+#   That is sound only while they stay one shape. So: a change to the job
+#   emission, seeding, indexing or cache participation of one of the three
+#   must be applied to all three, or the divergence must be deliberate and
+#   written down.
+#
+#   Breaking that rule does not turn any test red. The suite stays green while
+#   two of the three modules carry the defect, because the representative has
+#   quietly stopped representing. That is strictly worse than a coverage gap:
+#   a gap is visible in the case list, and this is visible nowhere. It binds
+#   the implementation just as tightly and less obviously -- anything decided
+#   per module in the cache path, any short-circuit or special case keyed on a
+#   module name, is this same defect one layer down and equally green.
+
+- case: axis13.1-refinement-shapes-location-invariant
+  taxonomy: "13 (flexref/emref/mdref x Axis 1)"
+  title: The refinement shapes survive a run_dir rename
+  why: >
+    The same claim as axis1.1, made about the refinement stages rather
+    than about sampling. Refinement is the expensive part, so it is also
+    where reuse is worth the most -- and where a shape-specific mistake
+    would cost the most.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: top, set: {run_dir: "{tmp}/renamed-refinement-run"}}
+  expect: {default: hit}
+
+- case: axis13.2-refinement-shapes-content-sensitive
+  taxonomy: "13 (flexref/emref/mdref x Axis 7)"
+  title: A weight changed on one refinement module misses only that module
+  why: >
+    Changing a weight on one refinement module changes what it computes,
+    so its models must be recomputed -- and so must everything downstream,
+    because those steps now start from different structures. The boundary,
+    not the direction, is the claim.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: module, module: flexref, set: {w_vdw: 0.5}}
+  expect:
+    default: auto
+    patterns:
+      - {match: "*_flexref/*", expect: miss}
+
+- case: axis13.3-scoring-shapes-location-invariant
+  taxonomy: "13 (emscoring/mdscoring x Axis 1)"
+  title: The scoring shapes survive a run_dir rename
+  why: >
+    Scoring rather than sampling: no seed, no restraints, one model in and one
+    model out. A shape with fewer moving parts is where an over-general key
+    construction is most likely to have taken a shortcut.
+  base: scoring
+  sources: [scoring]
+  perturb:
+    - {op: top, set: {run_dir: "{tmp}/renamed-scoring-run"}}
+  expect: {default: hit}
+
+- case: axis13.4-scoring-shapes-content-sensitive
+  taxonomy: "13 (emscoring/mdscoring x Axis 7)"
+  title: A weight changed on emscoring misses emscoring and what follows it
+  why: >
+    The same boundary claim for the scoring modules, which have no seed
+    and no restraints and so exercise a different code path.
+  base: scoring
+  sources: [scoring]
+  perturb:
+    - {op: module, module: emscoring, set: {w_vdw: 0.5}}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_emscoring/*", expect: miss}
+      - {match: "*_mdscoring/*", expect: miss}
+
+- case: axis13.5-coarse-grained-shapes-location-invariant
+  taxonomy: "13 (topocg/cgtoaa x Axis 1)"
+  title: The coarse-grained shapes survive a run_dir rename
+  why: >
+    topocg produces two outputs like topoaa; cgtoaa converts back to all-atom
+    and reads a cg-to-aa restraint table that no other shape uses. Both are
+    reachable only through this base run.
+  base: cg
+  sources: [cg]
+  perturb:
+    - {op: top, set: {run_dir: "{tmp}/renamed-cg-run"}}
+  expect: {default: hit}
+
+- case: axis13.6-coarse-grained-shapes-content-sensitive
+  taxonomy: "13 (topocg/cgtoaa x Axis 6)"
+  title: A restraint change misses the sampling stage and everything after it
+  why: >
+    A restraint change in a coarse-grained workflow must invalidate the
+    sampling stage and everything after it, including the conversion back
+    to all-atom.
+  base: cg
+  sources: [cg]
+  perturb:
+    - {op: edit_input, file: "ambig-shape.tbl", how: restraint}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_rigidbody/*", expect: miss}
+      - {match: "*_flexref/*", expect: miss}
+      - {match: "*_cgtoaa/*", expect: miss}
+      - {match: "*_emref/*", expect: miss}
+
+- case: axis13.7-topology-shape-both-outputs-from-one-source
+  taxonomy: "13 (topoaa output shape)"
+  title: A coarse-grained topology hit delivers both its outputs
+  why: >
+    A topology step produces two files -- coordinates and a topology --
+    and both must come from the same previous job. Delivering one and
+    recomputing the other would pair a model with a topology it was not
+    built with.
+  base: cg
+  sources: [cg]
+  perturb:
+    - {op: top, set: {ncores: 2}}
+  expect: {default: hit}

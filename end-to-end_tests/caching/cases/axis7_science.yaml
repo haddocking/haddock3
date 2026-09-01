@@ -1,0 +1,105 @@
+# Axis 7 -- scientific parameters.
+#
+# Parameters that reach the .inp.  MUST-MISS, localised to the modules that
+# read them.  The localisation is the claim: a parameter changed on one module
+# must not invalidate another module's jobs.
+
+- case: axis7.1-parameter-read-by-one-module
+  common: true
+  taxonomy: "7.1"
+  title: A weight read by exactly one CNS module
+  why: >
+    A weight that only the sampling stage reads. Exactly that stage must
+    be recomputed and nothing else, which is the localisation claim rather
+    than a blanket one.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: rigidbody, set: {w_vdw: 0.5}}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_rigidbody/*", expect: miss}
+  misses: {rigidbody: 4}
+
+- case: axis7.2-parameter-read-by-several-modules
+  taxonomy: "7.2"
+  title: The same parameter changed on several CNS modules
+  why: >
+    Exactly the modules it was set on must miss; the ones it was not set on
+    must hit, even though they have the same parameter available to them.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: module, module: emref, set: {dielec: "rdie"}}
+    - {op: module, module: mdref, set: {dielec: "rdie"}}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_emref/*", expect: miss}
+      - {match: "*_mdref/*", expect: miss}
+
+- case: axis7.3-global-scientific-parameter
+  taxonomy: "7.3"
+  title: iniseed changed
+  why: >
+    A global scientific parameter: every job that carries a seed is a
+    different computation. Run on the tiny base run precisely because it
+    invalidates so much -- on a large run it would be unaffordable.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: topoaa, set: {iniseed: 9091}}
+    - {op: module, module: rigidbody, set: {iniseed: 9091}}
+  expect: {default: miss}
+  misses: {topoaa: 4, rigidbody: 4}
+
+- case: axis7.3b-iniseed-on-an-expensive-module
+  taxonomy: "7.3"
+  title: iniseed changed, probed against a refinement module
+  why: >
+    The same claim on a module where running to completion costs minutes per
+    job. Instead of paying for the recomputation, the run is given a
+    deliberately short deadline and the assertion is that it was still alive
+    at it: a job that genuinely missed is inside CNS, a job that wrongly hit
+    would have finished in milliseconds. The witness in an earlier step proves
+    the run actually got that far, and the all-hit calibration of the
+    unperturbed config proves the deadline is not simply shorter than the
+    workflow.
+  base: refine
+  sources: [refine]
+  mode: timeout-floor
+  floor: 25
+  witness: "*_topoaa/*.pdb"
+  perturb:
+    - {op: module, module: flexref, set: {iniseed: 9091}}
+    - {op: module, module: emref, set: {iniseed: 9091}}
+    - {op: module, module: mdref, set: {iniseed: 9091}}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_flexref/*", expect: miss}
+      - {match: "*_emref/*", expect: miss}
+      - {match: "*_mdref/*", expect: miss}
+
+- case: axis7.4-parameter-changed-and-changed-back
+  taxonomy: "7.4"
+  title: A scientific parameter changed and restored
+  why: >
+    Changed and restored in the same config, so nothing is actually
+    different.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: rigidbody, set: {w_vdw: 0.5}}
+    - {op: module, module: rigidbody, set: {w_vdw: 1}}
+  expect: {default: hit}
+
+- case: axis7.5-a-default-changed-under-a-fixed-config
+  taxonomy: "7.5"
+  title: A parameter's default changed while the config stayed byte-identical
+  skip: >
+    Follows from 6.16 and needs nothing special: if the default reaches the
+    .inp, the canonical script differs and it is an ordinary MUST-MISS; if it
+    does not, nothing changed. axis6.16 exercises the mechanism. Recorded here
+    so that the absence is a decision rather than an oversight.

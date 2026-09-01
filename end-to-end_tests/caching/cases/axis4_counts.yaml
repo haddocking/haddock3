@@ -1,0 +1,178 @@
+# Axis 4 -- job-count perturbations (prefix stability).
+#
+# The schedule grows or shrinks; the retained jobs must be untouched.
+# MUST-HIT on the intersection, NO-JOB or MUST-MISS on the difference.
+#
+# The property under test is *prefix stability*: whether the job schedule is
+# generated so that job k is a function of k alone, independent of the total.
+# A schedule that distributes work by, say, sampling / n_combinations breaks
+# it -- changing the total renumbers everything, and every job misses.
+
+- case: axis4.1-sampling-increased
+  common: true
+  taxonomy: "4.1"
+  title: sampling raised from 4 to 6
+  why: >
+    The first four jobs are the same four jobs. Only the two new ones are new
+    work. If all six miss, the schedule is not prefix-stable and raising
+    sampling throws away every model already computed -- the single most
+    expensive way for this feature to fail.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: rigidbody, set: {sampling: 6}}
+  expect:
+    default: hit
+    paths:
+      "1_rigidbody/rigidbody_5.pdb": null
+      "1_rigidbody/rigidbody_6.pdb": null
+  misses: {rigidbody: 2}
+
+- case: axis4.2-sampling-decreased
+  common: true
+  taxonomy: "4.2"
+  title: sampling lowered from 4 to 2
+  why: "All remaining jobs hit; the dropped ones simply do not exist in B."
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: rigidbody, set: {sampling: 2}}
+  expect: {default: hit}
+
+- case: axis4.3a-sampling-factor-raised
+  taxonomy: "4.3"
+  title: sampling_factor raised in a refinement module
+  why: >
+    Asking a refinement stage for more models per input structure. The first
+    replica of each input is the model already computed for that input and
+    must be reused; every later replica is a different computation of the
+    same structure and must be run.
+
+    Both halves need saying. The reuse half is the ordinary expectation --
+    "give me a few more models" should not re-refine the ones I have. The
+    recompute half is what `sampling_factor` is *for*: a second replica that
+    came back identical to the first would be a duplicate rather than more
+    sampling, and would be indistinguishable from the feature refusing to do
+    the work. Each replica carries its own seed, so it is genuinely new work
+    and cannot be served from anywhere.
+
+    The replicas are also emitted in rounds, so the models already computed
+    keep their numbers instead of every input after the first being
+    renumbered.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: module, module: flexref, set: {sampling_factor: 2}}
+  expect:
+    default: auto
+
+- case: axis4.3b-sampling-factor-lowered-back
+  taxonomy: "4.3"
+  title: sampling_factor raised and lowered again in the same config
+  why: >
+    B must be identical to A. The net effect of the two edits is nothing, and
+    a key that accumulated history rather than describing state would notice.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: module, module: flexref, set: {sampling_factor: 4}}
+    - {op: module, module: flexref, set: {sampling_factor: 1}}
+  expect: {default: hit}
+
+- case: axis4.4a-seletop-select-raised
+  taxonomy: "4.4"
+  title: seletop select raised from 5 to 8
+  why: >
+    The five models already refined are still selected, at the same ranks.
+    Three more join them. The interest is as much in what this renumbers
+    downstream as in the count itself.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: module, module: seletop, set: {select: 8}}
+  expect:
+    default: auto
+
+- case: axis4.4b-seletop-select-lowered
+  taxonomy: "4.4"
+  title: seletop select lowered from 5 to 3
+  why: >
+    Refining fewer of the top models. The ones still selected were already
+    refined and must not be refined again.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: module, module: seletop, set: {select: 3}}
+  expect:
+    default: auto
+
+- case: axis4.5a-seletopclusts-top-models-raised
+  taxonomy: "4.5"
+  title: seletopclusts top_models raised from 2 to 3
+  why: >
+    Taking more models from each cluster. The ones already taken are
+    unchanged; only the additions are new work.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: module, module: seletopclusts, set: {top_models: 3}}
+  expect:
+    default: auto
+
+- case: axis4.5b-seletopclusts-top-models-lowered
+  taxonomy: "4.5"
+  title: seletopclusts top_models lowered from 2 to 1
+  why: >
+    Taking fewer models from each cluster. Everything that remains was
+    already computed.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: module, module: seletopclusts, set: {top_models: 1}}
+  expect:
+    default: auto
+
+- case: axis4.6-max-nmodels
+  taxonomy: "4.6"
+  title: max_nmodels raised in a refinement module
+  why: >
+    A cap on how many models a refinement stage will produce. It changes
+    how much work there is, not what any individual piece of work is.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: module, module: flexref, set: {max_nmodels: 500}}
+  expect:
+    default: auto
+
+- case: axis4.7-increased-then-decreased-back
+  taxonomy: "4.7"
+  title: sampling raised and then restored, so B equals A exactly
+  why: >
+    Two edits whose net effect is nothing at all. B is character-for-
+    character the same calculation as A, and anything that accumulated the
+    history of the edits rather than describing the final state would
+    notice.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: rigidbody, set: {sampling: 12}}
+    - {op: module, module: rigidbody, set: {sampling: 4}}
+  expect: {default: hit}
+
+- case: axis4.8-iniseed-changed-instead
+  taxonomy: "4 (adjacent MUST-MISS probe)"
+  title: sampling unchanged but iniseed changed
+  why: >
+    The schedule is exactly the same length and the jobs sit at exactly the
+    same indices, and yet every one of them is a different computation. A key
+    that tracked position rather than content would hit them all.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: rigidbody, set: {iniseed: 4242}}
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_rigidbody/*", expect: miss}
+  misses: {rigidbody: 4}

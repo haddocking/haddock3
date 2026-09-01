@@ -1,0 +1,104 @@
+# Composed cases.
+#
+# Real modifications are rarely single-axis.  Once the single-axis matrix
+# passes, a small number of composed cases is worth more than more single-axis
+# ones -- they are the cases where a per-axis fix that happens to be
+# position-dependent stops working.
+#
+# Run last, and only meaningful once the matrix above is green.
+
+- case: composed.4x5-more-sampling-reshuffles-ranks
+  taxonomy: "Composition (4 + 5)"
+  title: Raise sampling, which reshuffles every downstream rank
+  why: >
+    The prefix of the sampling stage must be untouched, and the refinement
+    stage must follow the *structures* through the reshuffling that the new
+    models cause. Neither half is interesting alone; together they are the
+    everyday case of "I want a few more models".
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: module, module: rigidbody, set: {sampling: 44}}
+  expect: {default: auto}
+
+- case: composed.2x5-insert-a-module-and-change-clustering
+  taxonomy: "Composition (2 + 5)"
+  title: Insert a module and change the clustering at the same time
+  why: >
+    Two independent changes at once -- an added analysis step, which
+    renumbers the folders, and a retuned clustering, which reorders the
+    models. Each is harmless alone; a fix for one that happens to depend
+    on positions breaks under the other.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: insert, module: caprieval, after: rigidbody, params: {}}
+    - {op: module, module: clustfcc, set: {clust_cutoff: 0.55}}
+  expect: {default: auto}
+
+- case: composed.6x5-change-one-conformer
+  taxonomy: "Composition (6 + 5)"
+  title: Change one conformer, which moves both the job and the order
+  why: >
+    Everything that reads the changed conformer must miss, and everything
+    downstream is reordered as well -- so a content-derived miss set and a
+    name-derived one are hardest to tell apart here.
+
+    The edit is applied to one member of the ensemble rather than to the
+    molecule every combination shares. That is what makes the composition
+    real: exactly one conformer changes, so its topology job misses and the
+    docking jobs that use it miss, while the other nine members' jobs survive
+    -- and it is those survivors that the clustering downstream reshuffles.
+    Changing the shared molecule instead would leave no survivors at all: the
+    run would miss from the changed topology job downward, and the reordering
+    half of the composition would have nothing to bite on.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: edit_input, file: "hpr_ensemble.pdb", how: coordinate}
+  expect: {default: auto}
+
+- case: composed.9x4-resume-with-larger-sampling
+  taxonomy: "Composition (9 + 4)"
+  title: Interrupt A, then resume with a larger sampling in B
+  why: >
+    Resume and reuse are the same operation. Whatever the interrupted run
+    finished must be reused even though the schedule it belonged to no longer
+    exists at that length.
+  base: tiny
+  sources: [interrupted-mid-step-int]
+  perturb:
+    - {op: module, module: rigidbody, set: {sampling: 8}}
+  expect: {default: auto}
+
+- case: composed.6.16x5-upgrade-across-a-reordering
+  taxonomy: "Composition (6.16 + 5)"
+  title: A partial invalidation applied across a reordering
+  why: >
+    The hardest composed case in the taxonomy: one module's template changed
+    (so its jobs must miss) while the selection was reordered (so the
+    surviving jobs must hit under different names). A key that got Axis 5
+    right by tracking position would fail here even though it passed both
+    halves separately.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: module, module: clustfcc, set: {clust_cutoff: 0.55}}
+    - op: install
+      edit: {"modules/refinement/emref/cns/emref.cns": append-comment}
+  expect:
+    default: auto
+    patterns:
+      - {match: "*_emref/*", expect: miss}
+
+- case: composed.11x12-complete-records-partial-store
+  taxonomy: "Composition (11 + 12)"
+  title: Records complete, store populated from several places
+  why: >
+    The topology of a shared cache in real use: one source knows every answer
+    but holds no bytes, another holds half of them, a third holds the rest and
+    is partly poisoned. The union must still serve every job, correctly.
+  base: tiny
+  sources: [no-store, tiny-topoaa, rigidbody-only]
+  perturb: []
+  expect: {default: hit}

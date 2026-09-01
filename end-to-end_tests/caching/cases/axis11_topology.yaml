@@ -1,0 +1,199 @@
+# Axis 11 -- result-cache topology.
+#
+# The result cache is `job checksum -> result checksum`: pure metadata,
+# path-free, tiny, and meaningful with no bytes present at all.  It merges by
+# set union.  So the questions here are about **coverage**, not about lineage
+# or provenance of runs.
+#
+# Malformed records belong here too, and are strictly a parsing question with
+# nothing to do with artifacts.
+
+- case: axis11.1-one-cache-full-coverage
+  taxonomy: "11.1"
+  title: One cache covering every job
+  why: >
+    The baseline for the whole topology axis: one previous run that covers
+    everything the new run needs. Nothing should be computed twice.
+  base: tiny
+  sources: [tiny]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis11.2-two-caches-disjoint-coverage
+  common: true
+  taxonomy: "11.2"
+  title: Two caches whose coverage does not overlap
+  why: >
+    Neither source alone can serve the run; their union can. Coverage is a set
+    union, and nothing about which run a record came from matters.
+
+    The two sources are produced independently -- a topology-only run, and a
+    full run with its topology outputs removed -- because that is what
+    combining two caches actually looks like. It requires topology to be
+    reproducible: the topology a user computed on Tuesday has to be the same
+    answer as the one they computed on Monday, or nothing downstream of it can
+    ever be shared between runs.
+
+    That currently does not hold. Two runs of identical topology produce
+    byte-identical PDBs but PSFs differing in an embedded DATE line, and
+    sampling reads the PSF. Axis 0 reports the non-reproducibility directly;
+    this case is where it costs something. The case is deliberately *not*
+    rearranged to avoid it -- for instance by deriving both sources from one
+    run, which would pass while testing less -- because a suite that adapts
+    itself to a defect stops being able to see it.
+  base: tiny
+  sources: [tiny-topoaa, rigidbody-only]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis11.3-two-caches-overlapping-and-agreeing
+  taxonomy: "11.3"
+  title: Two caches that overlap and agree
+  why: >
+    Two previous runs that both know the answer to the same jobs, and
+    agree. Offering both must be no worse than offering either -- a
+    duplicate is not a conflict.
+  base: tiny
+  sources: [tiny, moved]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis11.4-cache-from-an-unrelated-workflow
+  taxonomy: "11.4"
+  title: A cache produced by a different workflow that happens to contain matching jobs
+  why: >
+    The refine base run is a different workflow with a different config and a
+    different length, which happens to compute the same topology jobs and the
+    first two rigidbody jobs. Those must hit. Workflow relationship is
+    irrelevant; only key presence matters. This is the case that states most
+    plainly that reuse is not scoped to "the same workflow", or even to
+    HADDOCK3.
+  base: tiny
+  sources: [refine]
+  perturb: []
+  expect: {default: auto}
+
+- case: axis11.5-cache-from-a-superset-workflow
+  taxonomy: "11.5"
+  title: B is a prefix of A
+  why: >
+    The new workflow is a strict prefix of the old one: it stops where the
+    old run kept going. Everything it does need is there, and the extra
+    steps in the old run are simply irrelevant.
+  base: tiny-topoaa
+  sources: [tiny]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis11.7-zero-overlap
+  taxonomy: "11.7"
+  title: A cache with nothing in common with this run
+  why: >
+    All MUST-MISS, and -- much more importantly -- no *spurious* hits. A cache
+    from an entirely different molecular system must serve nothing here, and a
+    single hit would mean two different computations share a key.
+  base: tiny
+  sources: [scoring]
+  perturb: []
+  expect: {default: miss}
+  misses: {topoaa: 4, rigidbody: 4}
+
+- case: axis11.6-producer-that-is-not-a-workflow-run
+  taxonomy: "11.6"
+  title: A cache from a producer that is not a HADDOCK3 workflow run
+  skip: >
+    The --cache API takes a run directory, and haddock3-score does not leave
+    one behind. The claim -- that any producer of a bit-identical canonical
+    transformation is a legitimate source -- is exercised by 11.4 as far as
+    this instrument can reach it.
+
+- case: axis11.8-own-cache-as-source
+  taxonomy: "11.8"
+  title: The current run's own cache used as a source
+  skip: >
+    This is resume, which is Axis 9 with one bit flipped, and is tested there.
+    The API forbids naming the current run directory as its own --cache
+    source, so it cannot be expressed here.
+
+- case: axis11.9-cache-with-no-artifact-store
+  taxonomy: "11.9"
+  title: A cache whose records are complete and whose store is empty
+  skip: >
+    Explicitly out of scope for this suite. The state exists and is valid --
+    the names of the answers are known, their content is not -- but supporting
+    cost preview and job-level run diffing is not this instrument's concern.
+    The resolution behaviour it implies *is* tested, as axis12.11.
+
+- case: axis11.10-cache-published-separately
+  taxonomy: "11.10"
+  title: A cache published or transported without its run directory
+  skip: >
+    Requires the result cache to be separable from the run directory that
+    produced it. The --cache API takes a run directory, so this topology is
+    not expressible against the current interface.
+
+- case: axis11.11a-truncated-record
+  taxonomy: "11.11"
+  title: The record file ends mid-record
+  why: >
+    A parsing question, entirely separate from artifacts. The requirement is
+    that it is detected, not that it is tolerated: a half-written record whose
+    remaining fields are guessed at is how a wrong result gets served.
+  base: tiny
+  sources: [records-truncated]
+  perturb: []
+  expect_failure: true
+  expect: {default: miss}
+
+- case: axis11.11b-blank-record
+  taxonomy: "11.11"
+  title: The record file contains a blank line
+  why: >
+    A blank line in the record file. Like the other malformed-record
+    cases, the requirement is that it is noticed rather than skipped over:
+    silently ignoring a line you cannot parse is how a half-written record
+    becomes a wrong answer.
+  base: tiny
+  sources: [records-blank]
+  perturb: []
+  expect_failure: true
+  expect: {default: miss}
+
+- case: axis11.11c-wrong-arity-record
+  taxonomy: "11.11"
+  title: A record has the wrong number of fields
+  why: >
+    A record with a field missing. Guessing which field is absent is
+    exactly the kind of helpfulness that produces wrong results.
+  base: tiny
+  sources: [records-arity]
+  perturb: []
+  expect_failure: true
+  expect: {default: miss}
+
+- case: axis11.12-non-checksum-shaped-key
+  taxonomy: "11.12"
+  title: A record key that is not checksum-shaped
+  why: >
+    A key that is not a checksum cannot have come from this system.
+    Accepting it means accepting whatever else is in that file.
+  base: tiny
+  sources: [records-nonchecksum]
+  perturb: []
+  expect_failure: true
+  expect: {default: miss}
+
+- case: axis11.14-transitive-reuse-does-not-decay
+  taxonomy: "11 (transitivity)"
+  title: A cache that was itself produced by reading a cache
+  why: >
+    Records are a set, and reuse does not decay across generations. One case
+    proves the non-decay; a family of them would be a run-directory-lineage
+    assumption rather than a content-addressed one. The calibration run in the
+    corpus is exactly such a second-generation directory -- every one of its
+    outputs was itself installed from the tiny base run.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: top, set: {run_dir: "{tmp}/third-generation"}}
+  expect: {default: hit}

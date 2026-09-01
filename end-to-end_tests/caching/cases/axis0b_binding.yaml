@@ -1,0 +1,108 @@
+# Axis 0b -- canonicalization and input binding.
+#
+# Axis 0 asks *is the computation stable?*; this asks *is the identity
+# function well-founded and stable?*  Until both hold, no verdict elsewhere
+# in the matrix means anything -- which is why this axis is tested first.
+#
+# Binding is part of identity: the same bytes used in a different role are a
+# different computation.  This is the category that keeps locator-erasure
+# ("names never matter") from over-shooting into "a molecule swap should hit".
+
+- case: axis0b.1-molecules-swapped-between-pins
+  taxonomy: "0b.1"
+  title: Two input molecules swapped between pins, same bytes
+  why: >
+    Nothing about the bytes changed, only which pin each molecule binds to.
+    A rigidbody job takes several molecules bound to ordered pins, so swapping
+    two of them rebinds them: that is genuine science, not renaming, and it
+    must miss.  The topology jobs are per-molecule and unaffected, so they
+    must still hit -- which is what makes this a boundary assertion rather
+    than a blanket one.  This case has to sit next to axis5.3, because a test
+    set that only checks "the reordered job hit" would pass equally well
+    against a key that ignores binding altogether.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: molecules, swap: [0, 1]}
+  expect:
+    modules: {topoaa: hit, rigidbody: miss}
+
+- case: axis0b.4-restraint-role-changed
+  taxonomy: "0b.4"
+  title: A restraint file's role changes from ambiguous to unambiguous
+  why: >
+    Identical bytes, different pin.  The restraints are read either way, so a
+    key built only from content -- without the pin name -- cannot tell these
+    apart and would serve the wrong result.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - op: module
+      module: rigidbody
+      unset: [ambig_fname]
+      set: {unambig_fname: "{data}/ambig.tbl"}
+  expect:
+    modules: {topoaa: hit, rigidbody: miss}
+
+- case: axis0b.5-topology-delivers-both-outputs
+  taxonomy: "0b.5"
+  title: A topoaa hit must deliver the PDB and the PSF from the same source job
+  why: >
+    The output shape is part of the transformation, not a detail of what gets
+    written afterwards.  This suite declares both of topoaa's outputs, so
+    partial delivery -- .pdb linked, .psf recomputed -- is visible.  Against a
+    complete cache both must be hardlinks into the same source step.
+  base: tiny
+  sources: [tiny]
+  perturb: []
+  expect:
+    default: hit
+
+- case: axis0b.2-same-file-on-two-pins
+  taxonomy: "0b.2"
+  title: The same file bound to two pins within one job
+  skip: >
+    Structural, not behavioural: it asks what the pin table looks like, and
+    the haddock3 CLI exposes no pin table.  Belongs to the companion suite,
+    which dumps each job as a self-contained command and inspects the key
+    directly.
+
+- case: axis0b.6-ambiguous-reference-role
+  taxonomy: "0b.6"
+  title: A reference whose role is genuinely ambiguous
+  skip: >
+    Requires seeing the classification rule's output, not the run's.
+    Companion suite.
+
+- case: axis0b.7-canonicalization-rule-drift
+  taxonomy: "0b.7"
+  title: The canonicalization rule itself changes
+  skip: >
+    Every key in the system changes though no file content changed, no
+    read-set changed and no science changed -- so it is invisible to every
+    black-box observable here.  The cheap, high-value test is a golden
+    canonical form frozen in the repository, which is a unit test over the
+    canonical mapping, not an end-to-end run.
+
+- case: axis0b.8-incidental-pin-reshuffle
+  taxonomy: "0b.8"
+  title: Pin assignment perturbed by something incidental
+  skip: "Pin table not user-observable. Companion suite."
+
+- case: axis0b.9-unclassifiable-reference
+  taxonomy: "0b.9"
+  title: An unclassifiable reference must be a hard error, not a fallback
+  skip: >
+    A fallback bucket that embeds an absolute path is the mechanism by which
+    the key silently becomes location-dependent, and its symptom surfaces
+    here as Axis 1 failing wholesale.  The defect itself is only visible at
+    key-construction time.
+
+- case: axis0b.10-canonical-script-completeness
+  taxonomy: "0b.10"
+  title: No run path, install path or step token survives into the canonical form
+  skip: >
+    A leak converts Axes 1 and 2 from MUST-HIT into silent false misses that
+    read as cache inefficiency rather than as a defect -- so its symptoms are
+    covered by axis1 and axis2 here, but the assertion itself belongs at
+    key-construction time.

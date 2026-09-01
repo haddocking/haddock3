@@ -1,0 +1,140 @@
+# Axis 1 -- location and naming of the run.
+#
+# Nothing about the computation changes; only where it sits and what it is
+# called.  The whole axis is MUST-HIT, for 100% of jobs.  A path is a locator;
+# a checksum is an identity.
+
+- case: axis1.1-different-run-dir-name
+  common: true
+  taxonomy: "1.1"
+  title: A different run_dir name
+  why: >
+    The cheapest possible statement of the whole principle. If this misses,
+    a run-directory path is inside the key and every other MUST-HIT in the
+    suite is unreachable.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: top, set: {run_dir: "{tmp}/a-completely-different-name"}}
+  expect: {default: hit}
+
+- case: axis1.2-source-relocated-after-the-fact
+  taxonomy: "1.2"
+  title: The cache source was moved and renamed after run A finished
+  why: >
+    Where the bytes live is not part of what a result *is*. A source that has
+    been moved since it was produced is the same source.
+  base: tiny
+  sources: [moved]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis1.3-different-installation-path
+  taxonomy: "1.3"
+  title: HADDOCK3 installed at a different path
+  why: >
+    The CNS templates, the force field and the executable are byte-identical;
+    only the directory holding them moved. The canonical form names them by
+    role, so nothing about the computation changed. A miss here means an
+    install path leaked into the key -- which also silently invalidates every
+    cache the moment a user reinstalls.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: install}
+  expect: {default: hit}
+
+- case: axis1.4-different-working-directory
+  taxonomy: "1.4"
+  title: Invoked from a different current working directory
+  why: >
+    run_dir and every input are absolute, so only the process's cwd moves.
+    Anything the job reads relative to cwd would change with it.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: cwd, path: "{tmp}/an/unrelated/working/directory"}
+  expect: {default: hit}
+
+- case: axis1.5-deeply-nested-run-directory
+  taxonomy: "1.5"
+  title: A much deeper absolute path
+  why: >
+    Distinct from 1.1: it changes the *length* and depth of every path in the
+    run, which is where a fixed-width or truncating canonicalization breaks.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - op: top
+      set:
+        run_dir: "{tmp}/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/deeply-nested-run"
+  expect: {default: hit}
+
+- case: axis1.6-input-molecule-renamed
+  taxonomy: "1.6"
+  title: An input molecule moved and renamed, content unchanged
+  why: >
+    An input's path is not merely ignored -- it is erased and replaced by a
+    canonical pin name that is itself in the key. Same content on the same
+    pin is the same computation, wherever the file sits.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: move_input, file: "1LMQ_l_u.pdb", to: "{tmp}/elsewhere/renamed-ligand.pdb"}
+  expect:
+    default: hit
+    # Renaming the input renames topoaa's *output* too, so these two cannot be
+    # matched by filename and the mapping is declared instead. That is what
+    # makes this the strongest assertion in the file rather than the weakest:
+    # the new run's renamed-ligand_haddock.pdb must be the very same file on
+    # disk as the old run's 1LMQ_l_u_haddock.pdb.
+    paths:
+      "0_topoaa/renamed-ligand_haddock.pdb": "tiny:0_topoaa/1LMQ_l_u_haddock.pdb"
+      "0_topoaa/renamed-ligand_haddock.psf": "tiny:0_topoaa/1LMQ_l_u_haddock.psf"
+
+- case: axis1.6b-input-renamed-and-one-atom-moved
+  taxonomy: "1.6 (adjacent MUST-MISS probe)"
+  title: The same rename, but with one atom moved as well
+  why: >
+    The probe that keeps 1.6 honest. A key too invariant to notice a moved
+    atom passes every MUST-HIT case in this file perfectly, and that is the
+    failure that costs correctness rather than time.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: move_input, file: "1LMQ_l_u.pdb", to: "{tmp}/elsewhere/renamed-ligand.pdb"}
+    - {op: edit_input, file: "renamed-ligand.pdb", how: coordinate}
+  expect:
+    default: miss
+    patterns:
+      - {match: "*_topoaa/1LMQ_r_u_haddock.*", expect: hit}
+
+- case: axis1.7-compressed-source
+  taxonomy: "1.7"
+  title: The cache source was cleaned and compressed after A finished
+  why: >
+    Compression is an encoding, not an identity. Which regime this runs in is
+    settled by Phase 0's P0.8: if the .gz can be hardlinked as such, Gate 1
+    stays live and this is an ordinary strong-regime case.
+  base: tiny
+  sources: [compressed]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis1.8-source-on-another-filesystem
+  taxonomy: "1.8"
+  title: A and B on different filesystems, which forces a copy
+  why: >
+    Hardlinking is impossible across a filesystem boundary, so this case
+    leaves the strong regime by construction and runs in copy mode, where
+    Gate 1 is blind and only the clock and the bytes remain.
+  base: tiny
+  sources: [crossfs]
+  needs_other_filesystem: true
+  degraded: >
+    Copy mode: Gate 1 cannot see hits here, so this case is carried by Gate 2
+    (duration) and Gate 3 (content). Its assertion power is structurally lower
+    than every other case in this file.
+  env: {HADDOCK_CACHE_HARDLINK: "0"}
+  perturb: []
+  expect: {default: hit}

@@ -1,0 +1,69 @@
+# Axis 10 -- conflict discrimination.
+#
+# Two records claiming the same job key with different results.  This is not a
+# bookkeeping nuisance to be resolved by precedence or by erroring out.  It is
+# evidence, and it is the only evidence the system gets for free.
+#
+# job -> result is supposed to be a function.  Two results mean exactly one of
+# two things, with opposite implications: either the computation is
+# nondeterministic (the artifact is at fault -- Axis 0) or the key is
+# under-specified (the key is at fault -- Axis 8, and every past hit is
+# suspect).  Collapsing them is wrong in both directions.
+#
+# Whether the system *classified* a conflict correctly is not user-observable,
+# so most of this axis belongs to the companion suite.  What is observable
+# from here is that a conflict never produces a wrong result.
+
+- case: axis10.5-agreeing-duplicate-is-accepted
+  taxonomy: "10.5 / 11.13"
+  title: A duplicated record that agrees with itself
+  why: >
+    Must be accepted silently. Every agreeing duplicate is a passed
+    reproducibility test arriving free of charge during ordinary use -- the
+    caching feature is, incidentally, a continuously-running reproducibility
+    monitor, and a design that suppresses duplicates throws away its own
+    witness data.
+  base: tiny
+  sources: [records-duplicate]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis10.6-conflict-across-merged-caches
+  taxonomy: "10.6"
+  title: Two sources disagreeing about one job
+  why: >
+    Whichever record wins, the result the user ends up with must be the result
+    their configuration actually computes. That is checkable without seeing
+    the conflict at all: run B against the caches and again with no cache, and
+    compare the bytes.
+  mode: read-set
+  base: tiny
+  sources: [tiny, poisoned]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis10.1-conflict-from-a-volatile-field
+  taxonomy: "10.1"
+  title: A conflict caused by nondeterminism in the computation
+  skip: >
+    Constructing it requires a genuinely nondeterministic artifact, and
+    telling it apart from 10.2 requires seeing the classification. Companion
+    suite; the precondition is the Axis 0 determinism study.
+
+- case: axis10.2-conflict-from-an-undeclared-dependency
+  taxonomy: "10.2"
+  title: A conflict caused by an under-specified key
+  skip: >
+    The *symptom* is covered by the read-set cases in axis8, which catch the
+    wrong result without needing to classify why. The classification itself
+    is not user-observable.
+
+- case: axis10.3-agree-at-witness-level-differ-bitwise
+  taxonomy: "10.3"
+  title: Two results that agree scientifically and differ bitwise
+  skip: "Needs witness-level comparison, which this instrument does not have."
+
+- case: axis10.4-success-versus-failure-for-one-key
+  taxonomy: "10.4"
+  title: One key recorded as both a success and a failure
+  skip: "Needs a fixture with recorded CNS failures; see axis9.9."

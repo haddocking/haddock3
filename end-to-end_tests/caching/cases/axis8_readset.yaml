@@ -1,0 +1,118 @@
+# Axis 8 -- completeness of the declared read-set.
+#
+# The axis that under-declaration hides in, and the substance behind the fear
+# usually misfiled as "old version".  If some influence on the result is not in
+# the checksummed read-set, the key is unsound -- not across versions, but
+# *within a single version*, and every hit it has ever served was already
+# suspect.  A hit here is the catastrophic failure.
+#
+# A pairwise MUST-HIT/MUST-MISS assertion cannot see this: the perturbation
+# reaches the result without reaching the key, so the job hits and the hit
+# looks correct.  These cases therefore run B twice -- once against the cache
+# and once with no cache at all -- and assert that what the cache served is
+# byte-identical to what the perturbation actually computes.  If they differ,
+# something influenced the result that no checksum saw.
+#
+# The *strong* form of this axis is not a perturbation pair at all: execute a
+# job in an environment containing only its declared dependencies.  That needs
+# the job dumped as a self-contained command, which the haddock3 CLI does not
+# offer, so it belongs to the companion suite.
+
+- case: axis8.1-ambient-environment-variable
+  taxonomy: "8.1"
+  title: An ambient environment variable is set
+  why: >
+    An environment variable that has nothing to do with the calculation.
+    The check is not just that everything is reused, but that reusing it
+    was *safe*: the run is done twice, once with the cache and once
+    without, and the results must be identical. If they are not, something
+    reached the answer without anyone noticing.
+  mode: read-set
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: env, set: {HADDOCK3_CACHE_SUITE_AMBIENT: "an-arbitrary-value"}}
+  expect: {default: hit}
+
+- case: axis8.6a-locale
+  taxonomy: "8.6"
+  title: A different locale
+  why: >
+    Number formatting is the classic way a locale reaches a scientific result.
+    If CNS or HADDOCK3 writes a decimal comma anywhere the cache did not look,
+    the cached answer and the fresh answer diverge.
+  mode: read-set
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: env, set: {LC_ALL: "C.UTF-8", LANG: "C.UTF-8", LC_NUMERIC: "C.UTF-8"}}
+  expect: {default: hit}
+
+- case: axis8.6b-timezone
+  taxonomy: "8.6"
+  title: A different timezone
+  why: >
+    A different timezone. Same double-run check as the locale case: dates
+    leak into output files easily, and anything that leaks into a result
+    must be accounted for.
+  mode: read-set
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: env, set: {TZ: "Pacific/Kiritimati"}}
+  expect: {default: hit}
+
+- case: axis8.7-working-directory-relative-reads
+  taxonomy: "8.7"
+  title: Invoked from a different working directory
+  why: >
+    Anything a job reads relative to the process's working directory rather
+    than to its own job directory is an undeclared dependency, and moving the
+    working directory is the cheapest way to find out.
+  mode: read-set
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: cwd, path: "{tmp}/somewhere/else/entirely"}
+  expect: {default: hit}
+
+- case: axis8.8-input-reached-through-a-symlink
+  taxonomy: "8.8"
+  title: An input reached through a symlink whose target changed
+  why: >
+    The path is identical in both runs; the bytes behind it are not. A key
+    that recorded the link rather than what it points at would hit and serve
+    the old result.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: copy_input, file: "1LMQ_l_u.pdb", as: "ligand-via-link.pdb"}
+    - {op: edit_input, file: "ligand-via-link.pdb", how: coordinate}
+  expect:
+    default: miss
+    patterns:
+      - {match: "*_topoaa/1LMQ_r_u_haddock.*", expect: hit}
+
+- case: axis8.2-include-path-not-followed
+  taxonomy: "8.2"
+  title: A file reached by an include path the scanner does not follow
+  skip: >
+    Requires knowing what the scanner claims to have read, which no black-box
+    observable reconstructs. The strong form -- execute the job with only its
+    declared dependencies present -- converts this from a silent key defect
+    into a loud one, and belongs to the companion suite.
+
+- case: axis8.3-conditional-branch-not-scanned
+  taxonomy: "8.3"
+  title: A file reached only under a conditional branch
+  skip: "Same reason as 8.2. Companion suite."
+
+- case: axis8.4-dynamically-constructed-name
+  taxonomy: "8.4"
+  title: A file reached by a dynamically constructed name
+  skip: "Same reason as 8.2. Companion suite."
+
+- case: axis8.5-optional-guarded-reference
+  taxonomy: "8.5"
+  title: An optional reference present in one run and absent in another
+  skip: "Same reason as 8.2. Companion suite."

@@ -1,0 +1,169 @@
+# Axis 3 -- orchestration parameters.
+#
+# Parameters consumed by Python, never by CNS.  Whole axis is MUST-HIT.
+#
+# The direction that matters here is the *other* one: the CNS parameter set
+# should be built by explicit inclusion rather than by copying the module
+# parameters and deleting the known-irrelevant ones, so that a newly added
+# orchestration parameter cannot leak into the key by default.  Each of these
+# is one instance of that; the adjacent MUST-MISS probe at the end is what
+# stops the axis from being satisfied by a key that ignores parameters
+# altogether.
+
+- case: axis3.1-ncores
+  common: true
+  taxonomy: "3.1"
+  title: A different number of cores
+  why: >
+    How many jobs run at once is a property of the machine, not of the
+    science. If this changed the answer, results would depend on the
+    computer that produced them.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: top, set: {ncores: 2}}
+  expect: {default: hit}
+
+- case: axis3.2a-clean
+  taxonomy: "3.2"
+  title: clean = true
+  why: >
+    clean rewrites and compresses the outputs *of the new run* after it
+    finishes, which destroys Gate 1: the hardlink is replaced by a fresh
+    compressed file, so inode identity is gone by the time the test looks.
+    The main suite therefore runs with clean, postprocess and gen_archive all
+    off, and they get these dedicated cases carried by Gate 2 and content.
+  base: tiny
+  sources: [tiny]
+  degraded: >
+    clean rewrites the outputs after the run, so Gate 1 is blind here by
+    construction. Carried by Gate 2 (duration) and Gate 3 (content).
+  perturb:
+    - {op: top, set: {clean: true}}
+  expect: {default: hit}
+
+- case: axis3.2b-postprocess
+  taxonomy: "3.2"
+  title: postprocess = true
+  why: >
+    postprocess adds the analysis folder after the run. It happens after
+    every CNS job is finished and cannot affect any of them.
+  base: tiny
+  sources: [tiny]
+  degraded: "postprocess adds an analysis folder and may rewrite outputs."
+  known_unrelated: >
+    On this checkout postprocess = true does not finish: haddock3-analyse
+    raises numpy.linalg.LinAlgError in a worker and the parent then blocks
+    forever. That reproduces with no --cache at all, so a failure here is a
+    postprocessing defect, not a caching one.
+  perturb:
+    - {op: top, set: {postprocess: true}}
+  expect: {default: hit}
+
+- case: axis3.2c-gen-archive
+  taxonomy: "3.2"
+  title: gen_archive = true
+  why: >
+    gen_archive packs the finished run up. Same reasoning as postprocess:
+    it runs after all the science is done.
+  base: tiny
+  sources: [tiny]
+  degraded: "gen_archive compresses the run after it finishes."
+  known_unrelated: >
+    Depends on postprocess, and inherits the same unrelated hang; see
+    axis3.2b-postprocess.
+  perturb:
+    - {op: top, set: {postprocess: true, gen_archive: true}}
+  expect: {default: hit}
+
+- case: axis3.2d-offline
+  taxonomy: "3.2"
+  title: offline = true
+  why: >
+    offline only stops HADDOCK3 from fetching things over the network.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: top, set: {offline: true}}
+  expect: {default: hit}
+
+- case: axis3.3-debug
+  taxonomy: "3.3"
+  title: debug = true
+  why: >
+    debug keeps the intermediate CNS files. It changes what is left on disk,
+    never what CNS computes.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: top, set: {debug: true}}
+  expect: {default: hit}
+
+- case: axis3.4-tolerance
+  taxonomy: "3.4"
+  title: A different failure tolerance
+  why: >
+    tolerance decides how many failed models the *workflow* will accept. It
+    is read by HADDOCK3, not by CNS.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: rigidbody, set: {tolerance: 40}}
+  expect: {default: hit}
+
+- case: axis3.5-config-cosmetics
+  taxonomy: "3.5"
+  title: Comments, whitespace and parameter ordering
+  why: >
+    The config file is not a participant in the computation -- it is the
+    machinery that authors it. Two configs that author the same jobs are the
+    same jobs.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: cosmetic}
+  expect: {default: hit}
+
+- case: axis3.6-parameter-written-at-its-default
+  taxonomy: "3.6"
+  title: A parameter written out explicitly at its own default value
+  why: >
+    A key built by copying the module parameters would see a config that
+    mentions one more key; a key built from what actually reaches the .inp
+    cannot tell the two configs apart, because they author the same script.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: explicit_default, module: rigidbody, param: randremoval}
+  expect: {default: hit}
+
+- case: axis3.7-parameter-for-another-module
+  taxonomy: "3.7"
+  title: A global execution parameter set inside one module's block
+  why: >
+    ncores inside [rigidbody] is read by the scheduler for that step and by
+    nothing in CNS. It is the clearest available instance of a parameter that
+    sits in a module block without reaching that module's science.
+  base: tiny
+  sources: [tiny]
+  perturb:
+    - {op: module, module: rigidbody, set: {ncores: 2}}
+  expect: {default: hit}
+
+- case: axis3.8-looks-orchestrational-but-reaches-cns
+  taxonomy: "3 (adjacent MUST-MISS probe)"
+  title: A parameter that looks like a knob but reaches the .inp
+  why: >
+    nemsteps reads like an execution setting -- how many steps to take -- and
+    is in fact a scientific parameter written into the CNS script. The
+    boundary between "Python-only" and "reaches CNS" is per-module and is
+    exactly where an over-invariant key gets introduced by accident, so it is
+    worth an individual case rather than a blanket statement.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: module, module: emref, set: {nemsteps: 50}}
+  expect:
+    default: auto
+    patterns:
+      - {match: "*_emref/*", expect: miss}

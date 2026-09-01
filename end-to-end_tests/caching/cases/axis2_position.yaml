@@ -1,0 +1,96 @@
+# Axis 2 -- step position within the workflow.
+#
+# The job is unchanged; its step folder's ordinal is not.  Whole axis is
+# MUST-HIT.  A step ordinal is a locator for a folder, and HADDOCK3's step
+# numbering is outside the computation entirely.
+
+- case: axis2.1-insert-non-cns-module-upstream
+  common: true
+  taxonomy: "2.1"
+  title: Insert an analysis module ahead of a CNS module
+  why: >
+    Every later step's folder is renumbered, and no CNS job's inputs change.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: insert, module: caprieval, after: rigidbody, params: {}}
+  expect: {default: hit}
+
+- case: axis2.2-append-cns-module
+  taxonomy: "2.2"
+  title: Add a CNS module to the workflow
+  why: >
+    The taxonomy asks for a CNS module inserted *upstream* of another. In a
+    linear pipeline that is not a position change at all: the inserted module
+    consumes and re-emits the models, so every downstream job reads different
+    content and must miss -- an Axis 6 change wearing an Axis 2 costume. The
+    position-only version of the perturbation is therefore an append, which
+    leaves every existing job's read-set untouched. Recorded here because the
+    distinction is easy to get wrong in both directions.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: insert, module: emref, at: 99, params: {tolerance: 20}}
+  expect:
+    default: auto
+
+- case: axis2.3-remove-a-module
+  taxonomy: "2.3"
+  title: Remove an analysis module
+  why: >
+    Deleting an analysis step renumbers every folder after it. Nothing
+    about what CNS computes has changed.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: remove, module: caprieval}
+  expect: {default: hit}
+
+- case: axis2.4-reorder-two-independent-modules
+  taxonomy: "2.4"
+  title: Swap two analysis modules that do not feed each other
+  why: >
+    caprieval and rmsdmatrix both only observe the models they are given, so
+    swapping them changes the folder numbering and nothing else.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: swap_steps, a: caprieval, b: rmsdmatrix}
+  expect: {default: hit}
+
+- case: axis2.5-cross-the-zero-fill-boundary
+  taxonomy: "2.5"
+  title: The workflow grows past ten steps, so 1_topoaa becomes 01_topoaa
+  why: >
+    Distinct from 2.1 -- it changes the folder name of *every* step,
+    including ones not otherwise touched. The pp base run has exactly ten
+    steps for this reason, so one added module crosses the boundary.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: insert, module: caprieval, after: rigidbody, params: {}}
+  expect: {default: hit}
+
+- case: axis2.6-same-module-repeated
+  taxonomy: "2.6"
+  title: The same analysis module appears twice
+  why: >
+    Checks that a job's identity does not absorb its step's occurrence index.
+  base: refine
+  sources: [refine]
+  perturb:
+    - {op: duplicate, module: caprieval}
+  expect: {default: hit}
+
+- case: axis2.7-cns-module-at-a-different-position
+  taxonomy: "2.7"
+  title: The same CNS module doing identical work at a different ordinal
+  why: >
+    The same refinement, doing exactly the same work, sitting at a
+    different step number. Its position in the workflow is a label, not a
+    property of the calculation.
+  base: pp
+  sources: [pp]
+  perturb:
+    - {op: remove, module: caprieval, occurrence: 0}
+  expect: {default: hit}

@@ -1,0 +1,203 @@
+# Axis 5 -- selection membership and ordering.
+#
+# Clustering and selection modules *choose* structures; they do not transform
+# them.  A structure surviving into B's refinement stage is bit-identical to
+# the one in A -- but it may arrive under a different filename, at a different
+# index, in a different cluster, at a different rank.  This axis tests whether
+# job identity tracks **content** or **name/position**.
+#
+# It is where the largest reuse is available: refinement is the most expensive
+# stage, and a moderate clustering change retains most of the selected set.
+#
+# These are gated MUST-HITs, not accepted misses. Every miss on this axis is a
+# locator leaking into the key -- a specification violation, not a scope
+# boundary.
+#
+# The apparent crux is not one. A reorder looks like it could be either
+# cosmetic (same structure, same restraints, same seed) or genuinely different
+# science (the reorder changed which restraint file the model is refined
+# against). Under content addressing the distinction is automatic: in the
+# first case the read-set is unchanged, in the second it is not. Nothing needs
+# to detect intent -- which is why axis5.10 and axis5.11 below, the identical
+# and distinct per-model restraint archives, have opposite verdicts from the
+# *same* perturbation.
+#
+# The expected source of every result in this suite is found by content: a
+# job is identified by what it read and by its seed, never by the name of the
+# file it produced. That is what lets a case here say "this model must come
+# from *that* earlier job" while every name around it has moved. Matching on
+# the output's own content instead would be circular -- a wrongly served
+# output has the wrong entry's bytes by definition.
+
+- case: axis5.1-baseline-nothing-changed
+  taxonomy: "5.1"
+  title: Same structure, same rank, same filename
+  why: "The trivial baseline. If this fails, nothing else on this axis means anything."
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb: []
+  expect: {default: hit}
+
+- case: axis5.2-clustering-cutoff-moved
+  common: true
+  taxonomy: "5.2 / 5.3 / 5.4"
+  title: The clustering cutoff moves slightly, so names and ranks shift
+  why: >
+    A small cutoff change reshuffles cluster membership. The same structures
+    survive into refinement, but under different cluster ids, at different
+    ranks and therefore under different filenames. Every one of them is the
+    same computation. This case is required to produce at least a few hits
+    whose source file has a *different name* -- otherwise the perturbation
+    reshuffled nothing and the case proves nothing.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: module, module: clustfcc, set: {clust_cutoff: 0.55}}
+  expect: {default: auto}
+
+- case: axis5.3-min-population-changed
+  taxonomy: "5.3"
+  title: min_population changed, which renumbers the clusters
+  why: >
+    Changing how big a cluster has to be to count renumbers the clusters,
+    so the same structures arrive under different cluster ids. They are
+    still the same structures.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: module, module: clustfcc, set: {min_population: 1}}
+  expect: {default: auto}
+
+- case: axis5.5-6-clustering-swapped-for-rmsd
+  taxonomy: "5.5 / 5.6"
+  title: clustfcc swapped for clustrmsd, so the selected set changes
+  why: >
+    A different clustering algorithm keeps some structures and drops others.
+    The kept ones must hit (5.5's complement); the newly selected ones have no
+    entry anywhere and must miss (5.6). Both halves are asserted from the same
+    run, which is what makes the boundary rather than the direction the claim.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: insert, module: rmsdmatrix, before: clustfcc, params: {}}
+    - {op: remove, module: clustfcc}
+    - op: insert
+      module: clustrmsd
+      after: rmsdmatrix
+      params: {criterion: maxclust, n_clusters: 3}
+  expect: {default: auto}
+
+- case: axis5.7-different-selection-route
+  taxonomy: "5.7"
+  title: The same structure reached via seletop in A and seletopclusts in B
+  why: >
+    The two base runs share a system, a restraint file and a sampling count,
+    so their rigidbody stages compute exactly the same forty models. They then
+    select from those models by completely different routes, under completely
+    different filenames. Any structure both routes happen to select is the
+    same refinement job, and reuse across the two is the plainest statement in
+    this whole suite that reuse is not scoped to "the same workflow".
+  base: pp-cluster
+  sources: [pp]
+  perturb: []
+  expect: {default: auto}
+
+- case: axis5.8-clusters-ranked-by-a-different-criterion
+  taxonomy: "5.8"
+  require_renamed_hits: 3
+  title: The same structures arrive under different cluster numbers and ranks
+  why: >
+    The purest available form of the axis. Ranking the clusters by size rather
+    than by score, and keeping all of them, means every structure the original
+    run refined is still refined -- but under a different cluster number and a
+    different rank. Verified on this corpus: all six of the original models
+    come back renamed, for example cluster_2_model_1 as cluster_1_model_1 and
+    cluster_1_model_1 as cluster_3_model_1, byte-identical in every case.
+
+    Note what this case is *not*: reversing sort_ascending, which the taxonomy
+    suggests, is a no-op here because true is already its default -- and
+    truncating to the top three clusters means any reordering also changes
+    which structures are selected, so a pure reorder is not expressible
+    against this corpus at all. Keeping every cluster is what separates the
+    renaming from the selection.
+
+    This is the case the require_renamed_hits guard exists for: if the
+    perturbation ever stops renaming anything, the case silently stops
+    testing rank invariance, and the guard says so rather than passing.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - op: module
+      module: seletopclusts
+      set: {top_clusters: 20, sortby: size}
+  expect: {default: auto}
+
+- case: axis5.9-one-structure-inserted-near-the-top
+  taxonomy: "5.9"
+  title: One extra structure shifts every subsequent rank by one
+  why: "The maximum-damage version of a rank change."
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: module, module: seletopclusts, set: {top_clusters: 4}}
+  expect: {default: auto}
+
+- case: axis5.10-per-model-restraints-identical
+  taxonomy: "5 (per-model restraint variant, MUST-HIT half)"
+  title: Every model gets its own restraint table, and they are all identical
+  why: >
+    HADDOCK3 assigns the members of a restraint archive to models **by
+    position**. When the members are byte-identical, a rank shift changes
+    which table a model is handed but not what that table says -- the
+    read-set is unchanged and every job must hit. A miss here is the exact
+    failure the taxonomy warns about: keeping the index alongside the
+    identity lets the locator invalidate a key the identity says is
+    unchanged.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - op: restraints_archive
+      file: "e2a-hpr_air.tbl"
+      members: identical
+      count: 12
+      modules: [flexref, emref]
+  expect: {default: auto}
+
+- case: axis5.11-per-model-restraints-distinct
+  taxonomy: "5 (per-model restraint variant, MUST-MISS half)"
+  title: Every model gets its own restraint table, and they all differ
+  why: >
+    Same perturbation shape as axis5.10, opposite verdict, and nothing in the
+    implementation has to detect the difference. Here the tables genuinely
+    differ, so a model refined at a different rank reads a different table's
+    content: the read-set differs, the key differs, the job misses. This is
+    the pair that proves the restraint *content* is in the key and the
+    restraint *position* is not.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - op: restraints_archive
+      file: "e2a-hpr_air.tbl"
+      members: distinct
+      count: 12
+      modules: [flexref, emref]
+  expect:
+    default: hit
+    patterns:
+      - {match: "*_flexref/*", expect: miss}
+      - {match: "*_emref/*", expect: miss}
+
+- case: axis5.12-seed-provenance
+  taxonomy: "5 (seed provenance)"
+  title: A seed must travel with the model, not with its downstream position
+  why: >
+    A seed derived from downstream position rather than inherited from the
+    originating model would make every reorder a miss -- silently, and looking
+    entirely correct. This case reorders the selection and requires the
+    refinement jobs to hit anyway, which they cannot do if the seed moved
+    with the rank.
+  base: pp-cluster
+  sources: [pp-cluster]
+  perturb:
+    - {op: module, module: seletopclusts, set: {sortby: score, sort_ascending: true}}
+  expect: {default: auto}

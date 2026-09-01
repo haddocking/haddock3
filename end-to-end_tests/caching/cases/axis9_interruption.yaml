@@ -1,0 +1,115 @@
+# Axis 9 -- interruption state of the source.
+#
+# Here the perturbation is applied to A, not to B: A is left incomplete, and B
+# is the same config run to completion against it.  The variable is *where the
+# knife fell*.
+#
+# MUST-HIT for every job whose result is complete and recorded; MUST-DEGRADE
+# for every job in a partial state.  No interruption point may produce a hit
+# on an incomplete artifact.  This is the axis where a correctness failure is
+# most likely, because the failure states are transient and hard to reach on
+# purpose -- it needs fault injection, not luck.
+#
+# B's assertions are ordinary two-sided complete-mode assertions: B runs to
+# completion and every job is reached.  What is uncertain here is the
+# *fixture*, since the kill lands where it lands.  So these cases use the
+# `auto` verdict, which derives the expected mapping from what the interrupted
+# fixture actually contains rather than declaring it a priori.
+#
+# Under the layer separation, resume and reuse are the same operation,
+# differing only in whether the cache being read is also being written. This
+# axis is Axis 11 with that one bit flipped.
+
+- case: axis9.1a-sigint-between-steps
+  taxonomy: "9.1 / 9.7"
+  title: A was interrupted cleanly between steps, with SIGINT
+  why: >
+    The kindest possible interruption: Ctrl-C between two steps, with
+    nothing half-written. Everything the run finished must be reusable.
+  base: tiny
+  sources: [interrupted-between-steps-int]
+  perturb: []
+  expect: {default: auto}
+
+- case: axis9.1b-sigkill-between-steps
+  taxonomy: "9.1 / 9.7"
+  title: A was killed between steps, with SIGKILL
+  why: >
+    A hard kill flushes less than a graceful one, so anything buffered at the
+    moment of the kill is lost. Whatever survived must be reusable and
+    whatever did not must not be served.
+  base: tiny
+  sources: [interrupted-between-steps-kill]
+  perturb: []
+  expect: {default: auto}
+
+- case: axis9.2a-sigint-mid-step
+  common: true
+  taxonomy: "9.2"
+  title: A was interrupted mid-step, with some jobs already complete
+  why: >
+    Recovery must be per *job*, not per step. A step that was half finished
+    still contains completed, correct results, and refusing to reuse them
+    because their step did not finish is the difference between a cache that
+    helps after a crash and one that does not.
+  base: tiny
+  sources: [interrupted-mid-step-int]
+  perturb: []
+  expect: {default: auto}
+
+- case: axis9.2b-sigkill-mid-step
+  taxonomy: "9.2 / 9.6"
+  title: A was killed mid-step, so the record write may itself be torn
+  why: >
+    The harshest interruption: killed outright, partway through a step,
+    with no chance to finish writing anything. Whatever survived intact
+    must be reusable and whatever did not must not be served.
+  base: tiny
+  sources: [interrupted-mid-step-kill]
+  perturb: []
+  expect: {default: auto}
+
+- case: axis9.3-torn-output-file
+  taxonomy: "9.3"
+  title: CNS was killed while writing its output, leaving a truncated file
+  why: >
+    Reached by damage rather than by timing, because hitting the write window
+    on purpose is not reliably reproducible. The state is identical either
+    way: a file that exists, has the right name, and is incomplete. It must
+    degrade to recomputation, never be served.
+  base: tiny
+  sources: [truncated]
+  perturb: []
+  expect:
+    default: hit
+    paths:
+      "1_rigidbody/rigidbody_1.pdb": null
+  misses: {rigidbody: 1}
+
+- case: axis9.10-a-never-completed-b-extends-past-it
+  taxonomy: "9.10"
+  title: A never completed; B runs the full workflow against it
+  why: >
+    The everyday shape of this axis: a run that died overnight, restarted the
+    next morning. Everything A finished must be reused and everything it did
+    not must be computed.
+  base: refine
+  sources: [interrupted-mid-step-int]
+  perturb: []
+  expect: {default: auto}
+
+- case: axis9.8-faulty-tolerance-exceeded
+  taxonomy: "9.8"
+  title: A ended by exceeding its faulty tolerance
+  skip: >
+    Needs a fixture in which CNS jobs genuinely fail, which the corpus does
+    not build. Structurally it is 9.9 with the workflow aborting rather than
+    continuing.
+
+- case: axis9.9-individually-failed-jobs
+  taxonomy: "9.9"
+  title: A contains individually-failed CNS jobs alongside successful ones
+  skip: >
+    Needs a deliberately failing CNS job to build the fixture. The successful
+    half is already covered by 9.2; what is untested is whether a recorded
+    *failure* is reused as a failure, which is also 10.4.

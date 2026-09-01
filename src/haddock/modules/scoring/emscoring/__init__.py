@@ -54,13 +54,14 @@ class HaddockModule(CNSScoringModule):
 
         # Itereate over models to prepare CNS inputs
         self.output_models = []
+        cns_params = self.cns_params()
         for model_num, model in enumerate(models_to_score, start=1):
             scoring_input = prepare_cns_input(
                 model_num,
                 model,
                 self.path,
                 self.recipe_str,
-                self.params,
+                cns_params,
                 self.name,
                 native_segid=True,
                 debug=self.params["debug"],

@@ -48,7 +48,6 @@ class HaddockModule(BaseCNSModule):
     """HADDOCK3 module for water refinement."""
 
     name = RECIPE_PATH.name
-
     def __init__(
         self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
     ) -> None:
@@ -99,6 +98,7 @@ class HaddockModule(BaseCNSModule):
             prev_ambig_fnames = [None for mod in models_to_refine]
 
         ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
+        cns_params = self.cns_params()
 
         # Replicas are emitted in rounds -- every model gets its first replica
         # before any model gets its second -- so raising `sampling_factor`
@@ -119,7 +119,7 @@ class HaddockModule(BaseCNSModule):
                 model,
                 self.path,
                 self.recipe_str,
-                self.params,
+                cns_params,
                 "mdref",
                 ambig_fname=ambig_fname,
                 native_segid=True,

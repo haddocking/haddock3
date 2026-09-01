@@ -261,7 +261,7 @@ class HaddockModule(BaseCNSModule):
                     model,
                     self.path.resolve().parent,
                     self.recipe_str,
-                    self.params,
+                    self.cns_params(),
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
                     write_to_disk=self.params["debug"],

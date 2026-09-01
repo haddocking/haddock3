@@ -48,6 +48,32 @@ def test_prev_fnames(flexref, protdna_input_list):
         obs_ambig_fnames = flexref.get_ambig_fnames(prev_ambig_fnames)
 
 
+def test_cns_params_excludes_global_and_python_loop_controls(flexref):
+    """CNS inputs should receive only the module schema parameter view."""
+    flexref.params.update(
+        {
+            "ncores": 99,
+            "debug": True,
+            "sampling_factor": 3,
+            "nfle ": 1,
+            "fle_sta_2": 1,
+            "fle_end_2": 2,
+            "fle_seg_2": "A",
+        }
+    )
+
+    cns_params = flexref.cns_params()
+
+    assert "ncores" not in cns_params
+    assert "debug" not in cns_params
+    assert "sampling_factor" not in cns_params
+    assert cns_params["ambig_fname"] == flexref.params["ambig_fname"]
+    assert cns_params["nfle "] == 1
+    assert cns_params["fle_sta_2"] == 1
+    assert cns_params["fle_end_2"] == 2
+    assert cns_params["fle_seg_2"] == "A"
+
+
 def test_multiple_ambigs(flexref):
     """Test usage of multiple ambigs."""
     # Copy ambig.tbl.tgz

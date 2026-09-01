@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+import haddock.modules
 from haddock import EmptyPath
 from haddock.libs import libcns
 from haddock.libs.libcns import (
@@ -166,6 +167,42 @@ def test_prepare_cns_input_omits_seed_when_one_is_not_declared(pdbfile):
     assert "$seed" not in observed_cns_input
 
 
+def test_prepare_cns_input_replaces_archive_restraint_assignment(pdbfile):
+    observed_cns_input = prepare_cns_input(
+        model_number=1,
+        input_element=pdbfile,
+        step_path=Path("."),
+        recipe_str="",
+        defaults={"ambig_fname": Path("ambig.tbl.tgz")},
+        identifier="model",
+        ambig_fname=Path("ambig_1.tbl"),
+    )
+
+    assert "ambig.tbl.tgz" not in observed_cns_input
+    assert observed_cns_input.count("$ambig_fname") == 1
+    assert 'eval ($ambig_fname="ambig_1.tbl")' in observed_cns_input
+
+
+def test_prepare_cns_input_expands_molecule_defaults_for_direct_call(pdbfile, mocker):
+    """Direct callers receive one molecule-family value per component."""
+    mocker.patch(
+        "haddock.libs.libpdb.identify_chainseg",
+        return_value=(["A"], []),
+    )
+
+    observed = prepare_cns_input(
+        model_number=1,
+        input_element=[pdbfile, pdbfile],
+        step_path=Path("."),
+        recipe_str="",
+        defaults={"mol_shape_1": False},
+        identifier="model",
+    )
+
+    assert "eval ($mol_shape_1=false)" in observed
+    assert "eval ($mol_shape_2=false)" in observed
+
+
 def test_cg_backmapping_keeps_psf_tbl_pairs_aligned_with_shapes(tmp_path):
     """A leading shape component must not shift CG-to-AA file pairings."""
     model = PDBFile(file_name="complex.pdb", path=tmp_path)
@@ -255,11 +292,17 @@ def test_prepare_cns_input_with_ligand_files():
             seed=pdb.seed,
         )
 
-        # Check that ligand files are included in the CNS input
-        assert "ligand.top" in cns_input
+        # The per-model ligand *parameter* file is included: every recipe
+        # reached through `prepare_cns_input` reads it.
         assert "ligand.param" in cns_input
-        assert 'eval ($ligand_top_fname="ligand.top")' in cns_input
         assert 'eval ($ligand_param_fname="ligand.param")' in cns_input
+
+        # The ligand *topology* file is not.  Only the two topology recipes
+        # read it, and neither of them comes through here, so emitting it
+        # would leave a step-folder path in the generated input that CNS never
+        # opens.  The topology it describes is already in the PSF by now.
+        assert "ligand.top" not in cns_input
+        assert "$ligand_top_fname" not in cns_input
 
 
 def _seeded_model(directory: Path, name: str, content: str) -> PDBFile:
@@ -357,3 +400,27 @@ def test_refinement_schedule_is_prefix_stable_in_sampling_factor():
         assert len(schedule) == 4 * factor
         for smaller in range(1, factor + 1):
             assert schedule[: 4 * smaller] == libcns.refinement_schedule(4, smaller)
+
+
+def test_no_prepare_cns_input_module_reads_the_ligand_topology_variable():
+    """`prepare_cns_input` omits `$ligand_top_fname`; this pins why that is safe.
+
+    The per-model assignment is a step-folder path.  Being unread it is not a
+    declared dependency, so nothing rewrites it and it would leak a locator
+    into the job's canonical form.  Only the two topology recipes read it, and
+    neither reaches CNS through `prepare_cns_input`.  If that ever changes,
+    this fails rather than the omission silently dropping a real input.
+    """
+    modules_dir = Path(haddock.modules.__file__).parent
+    offenders = sorted(
+        module_dir.name
+        for module_dir in modules_dir.glob("*/*")
+        if (module_dir / "cns").is_dir()
+        and "prepare_cns_input"
+        in (module_dir / "__init__.py").read_text(encoding="utf-8")
+        and any(
+            "$ligand_top_fname" in recipe.read_text(encoding="utf-8", errors="ignore")
+            for recipe in (module_dir / "cns").rglob("*.cns")
+        )
+    )
+    assert offenders == []

@@ -1,6 +1,7 @@
 """Functionalities related to CNS modules."""
 
 import os
+import re
 import shutil
 import tarfile
 from pathlib import Path
@@ -8,10 +9,14 @@ from pathlib import Path
 from haddock import log
 from haddock import toppar_path as global_toppar
 from haddock.core.defaults import cns_exec as global_cns_exec
-from haddock.core.typing import Any, FilePath, Optional, Union
+from haddock.core.typing import Any, FilePath, Optional, ParamDict, Union
 from haddock.gear.expandable_parameters import populate_mol_parameters_in_module
 from haddock.libs.libio import working_directory
 from haddock.modules import BaseHaddockModule
+
+
+_CNS_VARIABLE_PATTERN = re.compile(r"\$([A-Za-z0-9_]+)")
+_CNS_SPLICED_VARIABLE_PREFIX_PATTERN = re.compile(r"\$([A-Za-z][A-Za-z0-9_]*?)(?=\$)")
 
 
 class BaseCNSModule(BaseHaddockModule):
@@ -20,6 +25,10 @@ class BaseCNSModule(BaseHaddockModule):
 
     Contains additional functionalities excusive for CNS modules.
     """
+
+    # ``ncs_*`` values are consumed by CNS' built-in NCS data structure rather
+    # than referenced directly by the module recipe tree.
+    CNS_PARAM_INCLUDE_PREFIXES = ("mol_", "fle_", "ncs_")
 
     def __init__(
         self, order: int, path: Path, initial_params: FilePath, cns_script: FilePath
@@ -38,6 +47,28 @@ class BaseCNSModule(BaseHaddockModule):
         self.cns_protocol_path = Path(cns_script)
         self.toppar_path = global_toppar
         self.recipe_str = self.cns_protocol_path.read_text()
+        recipe_texts = tuple(
+            recipe.read_text(encoding="utf-8")
+            for recipe in self.cns_folder_path.rglob("*.cns")
+        )
+        self._cns_recipe_variables = frozenset(
+            variable
+            for recipe_text in recipe_texts
+            for variable in _CNS_VARIABLE_PATTERN.findall(recipe_text)
+        )
+        self._cns_spliced_variable_prefixes = tuple(
+            sorted(
+                {
+                    prefix
+                    for recipe_text in recipe_texts
+                    for prefix in _CNS_SPLICED_VARIABLE_PREFIX_PATTERN.findall(
+                        recipe_text
+                    )
+                },
+                key=len,
+                reverse=True,
+            )
+        )
 
     def run(self, **params: Any) -> None:
         """Execute the module."""
@@ -73,6 +104,30 @@ class BaseCNSModule(BaseHaddockModule):
         }
 
         return default_envvars
+
+    def cns_params(self, params: Optional[ParamDict] = None) -> ParamDict:
+        """Return only parameters that a CNS recipe can consume.
+
+        The inclusion rule is deliberately derived from the module's CNS recipe
+        tree rather than maintained as a deny-list of Python orchestration
+        settings.  New scheduler or module-control parameters therefore cannot
+        silently become part of a CNS job identity.
+        """
+        source = self.params if params is None else params
+        return {
+            key: value
+            for key, value in source.items()
+            if key.rstrip() in self._cns_recipe_variables
+            or key.startswith(self.CNS_PARAM_INCLUDE_PREFIXES)
+            or self._matches_cns_spliced_variable(key.rstrip())
+        }
+
+    def _matches_cns_spliced_variable(self, parameter: str) -> bool:
+        """Return whether a parameter can be assembled by a CNS symbol splice."""
+        return any(
+            re.fullmatch(rf"{re.escape(prefix)}\d+(?:_\d+)*", parameter)
+            for prefix in self._cns_spliced_variable_prefixes
+        )
 
     def save_envvars(self, filename: FilePath = "envvars") -> None:
         """Save envvars needed for CNS to a file in the module's folder."""

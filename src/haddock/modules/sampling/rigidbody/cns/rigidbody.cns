@@ -31,8 +31,6 @@ evaluate ($saprotocol.ntrials=$ntrials)
 evaluate ($saprotocol.inter_rigid=$inter_rigid)
 evaluate ($saprotocol.rotate180=$rotate180)
 
-evaluate ($ini_count    =1)
-evaluate ($structures   =$sampling)
 evaluate ($w_vdw        =$w_vdw)
 evaluate ($w_elec       =$w_elec)
 evaluate ($w_air        =$w_air)

@@ -47,6 +47,24 @@ def test_prev_fnames(monkeypatch):
         assert diff_ambig_fnames is None
 
 
+def test_cns_params_include_spliced_parameter_families(rigidbody_module):
+    """Parameters assembled from loop variables must reach CNS."""
+    expected = {
+        "nrair_1": 3,
+        "rair_sta_1_1": 10,
+        "rair_end_1_1": 20,
+        "int_1_2": 2.5,
+        "c2sym_sta1_1": 1,
+        "s3sym_end3_1": 30,
+    }
+    rigidbody_module.params.update({**expected, "ncores": 99})
+
+    cns_params = rigidbody_module.cns_params()
+
+    assert {name: cns_params[name] for name in expected} == expected
+    assert "ncores" not in cns_params
+
+
 def test_sample_models_to_dock_is_prefix_stable(rigidbody_module):
     """Increasing sampling must only append scheduled combinations."""
     combinations = [[object()], [object()], [object()]]

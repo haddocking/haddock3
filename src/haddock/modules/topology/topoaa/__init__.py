@@ -282,7 +282,7 @@ class HaddockModule(BaseCNSModule):
                         overwrite=True,
                         custom_topology=custom_top,
                     )
-                    _params = self.params
+                    _params = self.cns_params()
 
                 elif self.params["autotoppar"]:
                     # No `ligand_top_fname` was provided, check if there are any unknown molecules
@@ -302,7 +302,7 @@ class HaddockModule(BaseCNSModule):
                             )
                         # Inject the automated toppar into the params for module
                         _params = {
-                            **self.params,
+                            **self.cns_params(),
                             "ligand_top_fname": top_path,
                             "ligand_param_fname": par_path,
                         }
@@ -326,10 +326,10 @@ class HaddockModule(BaseCNSModule):
                     else:
                         self.log("No unknown atoms found")
                         libpdb.sanitize(model, overwrite=True)
-                        _params = self.params
+                        _params = self.cns_params()
                 else:
                     libpdb.sanitize(model, overwrite=True)
-                    _params = self.params
+                    _params = self.cns_params()
 
                 # Prepare generation of topologies jobs
                 topoaa_input = generate_topology(

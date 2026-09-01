@@ -817,7 +817,7 @@ sampling:
   max: 50000
   title: Number of models to generate
   short: Number of rigidbody docking models to generate
-  long: Number of rigidbody docking models to generate
+  long: Number of rigidbody docking models to generate. Models are assigned round-robin across input combinations; exactly this many jobs are run.
   group: 'sampling'
   explevel: easy
 crossdock:

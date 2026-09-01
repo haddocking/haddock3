@@ -12,6 +12,10 @@ from haddock.modules.sampling.rigidbody import (
     DEFAULT_CONFIG as DEFAULT_RIGIDBODY_PARAMS,
 )
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
+from haddock.modules.sampling.rigidbody import (
+    _chainids_for_sampled_combinations,
+    _repeats_of_sampled_combinations,
+)
 
 
 @pytest.fixture(name="rigidbody_module")
@@ -41,6 +45,49 @@ def test_prev_fnames(monkeypatch):
         prev_ambig_fnames = [None for md in range(rigidbody.params["sampling"])]
         diff_ambig_fnames = rigidbody.get_ambig_fnames(prev_ambig_fnames)  # type: ignore
         assert diff_ambig_fnames is None
+
+
+def test_sample_models_to_dock_is_prefix_stable(rigidbody_module):
+    """Increasing sampling must only append scheduled combinations."""
+    combinations = [[object()], [object()], [object()]]
+
+    for sampling in range(1, 9):
+        scheduled = rigidbody_module._sample_models_to_dock(combinations, sampling)
+        assert len(scheduled) == sampling
+        for prefix_length in range(1, sampling + 1):
+            assert scheduled[:prefix_length] == rigidbody_module._sample_models_to_dock(
+                combinations, prefix_length
+            )
+
+
+def test_repeats_count_per_combination_not_per_job():
+    """A job's repeat index counts its own combination, not the schedule.
+
+    This is what keeps a seed out of the schedule's numbering: combination 2
+    is on its first repeat at job 2 of a three-combination run and at job 2
+    of a four-combination one alike, so both jobs are the same computation
+    and receive the same seed.
+    """
+    first, second, third = [object()], [object()], [object()]
+    schedule = [first, second, third, first, second, third, first]
+
+    assert _repeats_of_sampled_combinations(schedule) == [0, 0, 0, 1, 1, 1, 2]
+    assert _repeats_of_sampled_combinations(schedule[:4]) == [0, 0, 0, 1]
+
+
+def test_chainids_are_checked_once_per_distinct_combination(mocker):
+    """Repeated samples reuse the source combination's checked chain IDs."""
+    combinations = [[object()], [object()]]
+    sampled = [combinations[0], combinations[1], combinations[0]]
+    check = mocker.patch(
+        "haddock.modules.sampling.rigidbody.check_combination_chains",
+        side_effect=[["A"], ["B"]],
+    )
+
+    observed = _chainids_for_sampled_combinations(combinations, sampled)
+
+    assert observed == [["A"], ["B"], ["A"]]
+    assert check.call_count == len(combinations)
 
 
 def test_rigidbody_make_cns_jobs(rigidbody_module):
@@ -169,7 +216,6 @@ def test_prepare_cns_input_sequential(mocker, rigidbody_module):
                 input_pdb_2,
             ]
         ],
-        sampling_factor=1,
         ambig_fnames=["ambig1.tbl"],
     )
 
@@ -186,20 +232,20 @@ def test_prepare_cns_input_parallel(mocker, rigidbody_module):
     )
     mock_prepare_engine = mock_engine_cls.return_value
     mock_prepare_engine.run.return_value = None
+    mock_prepare_engine.results = ["cns_input"]
     mocker.patch(
         "haddock.modules.sampling.rigidbody.prepare_cns_input",
         return_value="cns_input",
     )
 
     input_pdb_1, input_pdb_2 = _models_on_disk()
-    observed_cns_input_list = rigidbody_module.prepare_cns_input_sequential(
+    observed_cns_input_list = rigidbody_module.prepare_cns_input_parallel(
         models_to_dock=[
             [
                 input_pdb_1,
                 input_pdb_2,
             ]
         ],
-        sampling_factor=1,
         ambig_fnames=["ambig1.tbl"],
     )
 

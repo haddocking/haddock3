@@ -50,6 +50,41 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
+def _chainids_for_sampled_combinations(
+    combinations: Sequence[list[PDBFile]],
+    sampled_combinations: Sequence[list[PDBFile]],
+) -> list[list[str]]:
+    """Resolve chain IDs once for each distinct source combination."""
+    chainids_by_combination = {
+        id(combination): check_combination_chains(combination)
+        for combination in combinations
+    }
+    return [
+        chainids_by_combination[id(combination)] for combination in sampled_combinations
+    ]
+
+
+def _repeats_of_sampled_combinations(
+    sampled_combinations: Sequence[list[PDBFile]],
+) -> list[int]:
+    """How many times each sampled combination has already been scheduled.
+
+    A job's seed is derived from the combination it docks and from which
+    repeat of that combination it is, never from where it sits in the
+    schedule, so this is counted per combination rather than taken from the
+    job index.  Counting it from the schedule itself rather than computing
+    ``index // n_combinations`` keeps the two in step by construction if the
+    round-robin is ever replaced by another prefix-stable order.
+    """
+    seen: dict[int, int] = {}
+    repeats = []
+    for combination in sampled_combinations:
+        repeat = seen.get(id(combination), 0)
+        repeats.append(repeat)
+        seen[id(combination)] = repeat + 1
+    return repeats
+
+
 class HaddockModule(BaseCNSModule):
     """HADDOCK3 module for rigid body sampling."""
 
@@ -91,87 +126,108 @@ class HaddockModule(BaseCNSModule):
             jobs.append(job)
         return jobs
 
+    @staticmethod
+    def _sample_models_to_dock(
+        models_to_dock: list[list[PDBFile]],
+        sampling: int,
+    ) -> list[list[PDBFile]]:
+        """Return a prefix-stable model-combination schedule."""
+        return [
+            models_to_dock[model_idx % len(models_to_dock)]
+            for model_idx in range(sampling)
+        ]
+
     def prepare_cns_input_sequential(
         self,
         models_to_dock: list[list[PDBFile]],
-        sampling_factor: int,
         ambig_fnames: Union[list, None],
+        chainid_lists: Optional[list[list[str]]] = None,
     ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None], int]]:
         _l = []
+        repeats = _repeats_of_sampled_combinations(models_to_dock)
         idx = 1
-        for combination in models_to_dock:
-            for repeat in range(sampling_factor):
-                # assign ambig_fname
-                if ambig_fnames:
-                    ambig_fname = ambig_fnames[idx - 1]
-                else:
-                    ambig_fname = self.params["ambig_fname"]
-                # prepare cns input
-                seed = derive_seed(self.params["iniseed"], combination, repeat)
-                rigidbody_input = prepare_cns_input(
-                    idx,
-                    combination,
-                    self.path,
-                    self.recipe_str,
-                    self.params,
-                    self.name,
-                    ambig_fname=ambig_fname,
-                    default_params_path=self.toppar_path,
-                    native_segid=True,
-                    debug=self.params["debug"],
-                    seed=seed,
-                )
-                _l.append((combination, rigidbody_input, ambig_fname, seed))
-
-                idx += 1
+        for combination_index, combination in enumerate(models_to_dock):
+            # assign ambig_fname
+            if ambig_fnames:
+                ambig_fname = ambig_fnames[idx - 1]
+            else:
+                ambig_fname = self.params["ambig_fname"]
+            # prepare cns input
+            seed = derive_seed(
+                self.params["iniseed"],
+                combination,
+                repeats[combination_index],
+            )
+            rigidbody_input = prepare_cns_input(
+                idx,
+                combination,
+                self.path,
+                self.recipe_str,
+                self.params,
+                self.name,
+                ambig_fname=ambig_fname,
+                default_params_path=self.toppar_path,
+                native_segid=True,
+                debug=self.params["debug"],
+                seed=seed,
+                chainid_list=(
+                    chainid_lists[combination_index] if chainid_lists else None
+                ),
+            )
+            _l.append((combination, rigidbody_input, ambig_fname, seed))
+            idx += 1
         return _l
 
     def prepare_cns_input_parallel(
         self,
         models_to_dock: list[list[PDBFile]],
-        sampling_factor: int,
         ambig_fnames: Union[list, None],
+        chainid_lists: Optional[list[list[str]]] = None,
     ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None], int]]:
         prepare_tasks = []
         _l = []
+        repeats = _repeats_of_sampled_combinations(models_to_dock)
         idx: int = 1
-        for ci, combination in enumerate(models_to_dock):
-            check_combination_chains(combination)
-            for repeat in range(sampling_factor):
-                ambig_fname = (
-                    ambig_fnames[idx - 1]
-                    if ambig_fnames
-                    else self.params["ambig_fname"]
-                )
-                seed = derive_seed(self.params["iniseed"], combination, repeat)
-                task = GenericTask(
-                    function=prepare_cns_input,
-                    model_number=idx,
-                    input_element=combination,
-                    step_path=self.path,
-                    recipe_str=self.recipe_str,
-                    defaults=self.params,
-                    identifier=self.name,
-                    ambig_fname=ambig_fname,
-                    native_segid=True,
-                    default_params_path=self.toppar_path,
-                    debug=self.params["debug"],
-                    seed=seed,
-                )
+        for combination_index, combination in enumerate(models_to_dock):
+            ambig_fname = (
+                ambig_fnames[idx - 1] if ambig_fnames else self.params["ambig_fname"]
+            )
+            seed = derive_seed(
+                self.params["iniseed"],
+                combination,
+                repeats[combination_index],
+            )
+            task = GenericTask(
+                function=prepare_cns_input,
+                model_number=idx,
+                input_element=combination,
+                step_path=self.path,
+                recipe_str=self.recipe_str,
+                defaults=self.params,
+                identifier=self.name,
+                ambig_fname=ambig_fname,
+                native_segid=True,
+                default_params_path=self.toppar_path,
+                debug=self.params["debug"],
+                seed=seed,
+                chainid_list=(
+                    chainid_lists[combination_index] if chainid_lists else None
+                ),
+            )
 
-                prepare_tasks.append(task)
-                _l.append((combination, task, ambig_fname, seed))
-                idx += 1
+            prepare_tasks.append(task)
+            _l.append((combination, task, ambig_fname, seed))
+            idx += 1
         Engine = get_engine(self.params["mode"], self.params)
         prepare_engine = Engine(prepare_tasks)
         prepare_engine.run()
 
         # Replace the task with the result of the task
-        l = []
+        prepared_inputs = []
         for element, task_result in zip(_l, prepare_engine.results):
-            l.append((element[0], task_result, element[2], element[3]))
+            prepared_inputs.append((element[0], task_result, element[2], element[3]))
 
-        return l
+        return prepared_inputs
 
     def restraints_guardrail(self, ambig_fnames: Optional[list[str]]) -> None:
         """Makes sure any restraints are available for the docking."""
@@ -212,16 +268,24 @@ class HaddockModule(BaseCNSModule):
         except Exception as e:
             self.finish_with_error(e)
 
-        # How many times each combination should be sampled,
-        #  cannot be smaller than 1
-        sampling_factor = int(self.params["sampling"] / len(models_to_dock))
-        if sampling_factor < 1:
+        # Each model combination should be sampled at least once. The global
+        # sampling sequence itself is prefix-stable: lowering sampling by one
+        # keeps all preceding CNS job inputs and seeds unchanged.
+        if self.params["sampling"] < len(models_to_dock):
             self.finish_with_error(
                 "Sampling is smaller than the number"
                 " of model combinations "
                 f"#model_combinations={len(models_to_dock)},"
                 f" sampling={self.params['sampling']}."
             )
+        sampled_models_to_dock = self._sample_models_to_dock(
+            models_to_dock,
+            self.params["sampling"],
+        )
+        sampled_chainid_lists = _chainids_for_sampled_combinations(
+            models_to_dock,
+            sampled_models_to_dock,
+        )
 
         # get all the different ambig files
         prev_ambig_fnames = [None for _model in range(self.params["sampling"])]
@@ -241,15 +305,15 @@ class HaddockModule(BaseCNSModule):
         if self.params["mode"] != "local":
             # Note: `batch` and (pseudo)-`mpi` mode uses files to communicate and cannot extract the information from the task object.
             cns_input = self.prepare_cns_input_sequential(
-                models_to_dock,
-                sampling_factor,
+                sampled_models_to_dock,
                 ambig_fnames,  # type: ignore
+                sampled_chainid_lists,
             )
         else:
             cns_input = self.prepare_cns_input_parallel(
-                models_to_dock,
-                sampling_factor,
+                sampled_models_to_dock,
                 ambig_fnames,  # type: ignore
+                sampled_chainid_lists,
             )
 
         self.output_models: list[PDBFile] = []

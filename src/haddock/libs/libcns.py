@@ -488,6 +488,7 @@ def prepare_cns_input(
     default_params_path: Optional[Path] = None,
     debug: Optional[bool] = False,
     seed: Optional[int] = None,
+    chainid_list: Optional[list[str]] = None,
 ) -> Union[Path, str]:
     """
     Generate the .inp file needed by the CNS engine.
@@ -564,7 +565,8 @@ def prepare_cns_input(
     segid_str = ""
     if native_segid:
         if isinstance(input_element, (list, tuple)):
-            chainid_list = check_combination_chains(input_element)
+            if chainid_list is None:
+                chainid_list = check_combination_chains(input_element)
 
             for i, _chainseg in enumerate(chainid_list, start=1):
                 segid_str += write_eval_line(f"prot_segid_{i}", _chainseg)

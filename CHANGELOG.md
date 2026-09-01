@@ -2,6 +2,7 @@
 
 - 2026-09-01: Fixed a pre-existing parallel scheduler ordering defect exposed by reproducible CNS job identity work; task results now retain submission order rather than completion order.
 - 2026-09-01: Made coarse-grained topology generation reproducible from `iniseed`.
+- 2026-09-01: Made rigid-body sampling prefix-stable: it now schedules exactly `sampling` jobs round-robin across model combinations, so raising `sampling` appends jobs instead of renumbering them.
 - 2026-09-01: Derived every CNS random seed from the job itself - from `iniseed`, from the content of the models the job starts from, and from which repeat of that job it is - rather than from its position in the schedule or from process-wide random-number draw order. `iniseed` keeps its meaning: changing it changes every seed in the run. Results change for every run of `rigidbody`, `flexref`, `emref`, `mdref` and `mdscoring`, and `sampling_factor` now buys additional sampling rather than duplicate models.
 - 2026-08-02: Fixed logging/warning leaks - Issue #1647
 - 2026-07-31: Fixed D-amino acid detection - Issue #1636

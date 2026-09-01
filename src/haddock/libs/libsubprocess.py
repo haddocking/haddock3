@@ -452,6 +452,12 @@ class CNSJob:
             return output_file
         return self.work_dir / output_file
 
+    def canonical_mapping(self):
+        """Return the canonical CNS input representation for this job."""
+        from haddock.libs.libcnscanonical import canonical_mapping_for_job
+
+        return canonical_mapping_for_job(self)
+
     @staticmethod
     def contains_cns_stdout_error(out: bytes) -> bool:
         # Decode end of STDOUT

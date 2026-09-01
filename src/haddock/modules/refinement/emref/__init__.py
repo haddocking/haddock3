@@ -92,7 +92,7 @@ class HaddockModule(BaseCNSModule):
                 ambig_fname = self.params["ambig_fname"]
             model_idx += 1
 
-            for _ in range(self.params["sampling_factor"]):
+            for _ in range(sampling_factor):
                 emref_input = prepare_cns_input(
                     idx,
                     model,

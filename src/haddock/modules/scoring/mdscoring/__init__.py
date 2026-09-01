@@ -85,7 +85,13 @@ class HaddockModule(CNSScoringModule):
 
             self.output_models.append(expected_pdb)
 
-            job = CNSJob(scoring_inpyt, scoring_out, err_fname, envvars=self.envvars)
+            job = CNSJob(
+                scoring_inpyt,
+                scoring_out,
+                err_fname,
+                envvars=self.envvars,
+                output_pdb_files=[expected_pdb.file_name],
+            )
 
             jobs.append(job)
 

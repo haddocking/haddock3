@@ -149,6 +149,7 @@ def test_rigidbody_make_cns_jobs(rigidbody_module):
     assert rigidbody_module.output_models[0].seed == seed
     assert rigidbody_module.output_models[0].ligand_top_fname is None
     assert rigidbody_module.output_models[0].ligand_param_fname is None
+    assert observed_jobs[0].output_pdb_files == [Path(output_pdb_name)]
 
 
 def test_rigidbody_make_cns_jobs_with_toppar(rigidbody_module):

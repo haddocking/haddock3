@@ -86,9 +86,6 @@ class HaddockModule(BaseCNSModule):
                 # Build CNS Job
                 out_file = f"{self.name}_{idx}.out"
                 err_fname = f"{self.name}_{idx}.cnserr"
-                job = CNSJob(cgtoaa_input, out_file, err_fname, envvars=self.envvars)
-                jobs.append(job)
-
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", self.name)
                 expected_pdb.topology = expected_pdb.aa_topology
@@ -97,6 +94,15 @@ class HaddockModule(BaseCNSModule):
                 except AttributeError:
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
+
+                job = CNSJob(
+                    cgtoaa_input,
+                    out_file,
+                    err_fname,
+                    envvars=self.envvars,
+                    output_pdb_files=[expected_pdb.file_name],
+                )
+                jobs.append(job)
 
                 idx += 1
 

@@ -346,12 +346,15 @@ class HaddockModule(BaseCNSModule):
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
                 err_fname = f"{model.stem}.cnserr"
+                output_pdb = Path(f"{model.stem}_haddock.{Format.PDB}")
+                output_topology = Path(f"{model.stem}_haddock.{Format.TOPOLOGY}")
                 job = CNSJob(
                     topoaa_input,
                     output_filename,
                     err_fname,
                     envvars=self.envvars,
                     cns_exec=cns_exec,
+                    output_files=[output_pdb, output_topology],
                 )
 
                 jobs.append(job)

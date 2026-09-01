@@ -373,7 +373,7 @@ polar = ["GLN", "ASN", "SER", "THR"]
 charged = ["ARG", "LYS", "ASP", "GLU"]
 
 
-def add_dummy(bead_list, dist=0.11, n=2):
+def add_dummy(bead_list, dist=0.11, n=2, rng=None):
     """
 
     Args:
@@ -387,11 +387,8 @@ def add_dummy(bead_list, dist=0.11, n=2):
     new_bead_dic = {}
 
     # Generate a random vector in a sphere of -1 to +1, to add to the bead position
-    v = [
-        random.random() * 2.0 - 1,
-        random.random() * 2.0 - 1,
-        random.random() * 2.0 - 1,
-    ]
+    rng = rng or random.Random()
+    v = [rng.random() * 2.0 - 1 for _ in range(3)]
 
     # Calculated the length of the vector and divide by the final distance of the dummy bead
     norm_v = norm(v) / dist
@@ -409,7 +406,7 @@ def add_dummy(bead_list, dist=0.11, n=2):
     return new_bead_dic
 
 
-def map_cg(chain):
+def map_cg(chain, rng=None):
     """
 
     Args:
@@ -515,7 +512,7 @@ def map_cg(chain):
         # add to data structure
         # this special beads have no HADDOCK code
         bead_list = [(b, m_dic[r][b][0]) for b in m_dic[r]]
-        dummy_bead_dic = add_dummy(bead_list, dist=d, n=n)
+        dummy_bead_dic = add_dummy(bead_list, dist=d, n=n, rng=rng)
         for db in dummy_bead_dic:
             db_coords = dummy_bead_dic[db]
             # code should be the same as the residue
@@ -930,6 +927,7 @@ def martinize(
     input_pdb: str,
     output_path: str,
     skipss: bool,
+    seed: Optional[int] = None,
 ) -> tuple[str, bool]:
     """
     Converts an all-atom (AA) PDB structure into a coarse-grained (CG) model
@@ -960,6 +958,7 @@ def martinize(
         raise ModuleError(emsg)
 
     p = PDBParser()
+    rng = random.Random(seed)
     io = PDBIO()
 
     # Parse PDB and run DSSP
@@ -1003,7 +1002,7 @@ def martinize(
             structure_builder.init_chain(chain.id)
             structure_builder.init_seg(chain.id)
 
-            mapping_dic = map_cg(chain)
+            mapping_dic = map_cg(chain, rng=rng)
 
             for residue in mapping_dic:
                 if residue.id[0] != " ":  # filter HETATMS

@@ -1,10 +1,11 @@
 """Specific tests for topocg."""
 
+import random
 import shutil
 import tempfile
+import warnings
 from math import isnan
 from pathlib import Path
-import warnings
 from Bio.PDB.PDBExceptions import PDBConstructionWarning
 
 import pytest
@@ -12,6 +13,7 @@ import pytest
 import haddock.modules.topology.topocg as topocg_mod
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs import libpdb
+from haddock.libs.libaa2cg import add_dummy
 from haddock.libs.libontology import Format, PDBFile
 from haddock.modules.topology.topocg import DEFAULT_CONFIG as topocg_params
 from haddock.modules.topology.topocg import HaddockModule as Topocg
@@ -93,6 +95,17 @@ def test_generate_topology(topocg, protein):
 
     # Check for CG-specific atom/residue names (e.g., "BB" for backbone bead)
     assert "BB" in contents, "CG markers not found in output PDB."
+
+
+def test_dummy_bead_placement_uses_the_supplied_seed():
+    beads = [("SC1", [1.0, 2.0, 3.0])]
+
+    first = add_dummy(beads, rng=random.Random(494))
+    second = add_dummy(beads, rng=random.Random(494))
+    different = add_dummy(beads, rng=random.Random(495))
+
+    assert first == second
+    assert first != different
 
 
 def test_run_uses_presplit_models_without_splitting(monkeypatch, protein):

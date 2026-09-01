@@ -70,7 +70,12 @@ def generate_topology(
 
     if not shape:
         # AA to CG
-        cg_pdb_name = martinize(input_pdb, output_path, False)
+        cg_pdb_name = martinize(
+            input_pdb,
+            output_path,
+            False,
+            seed=defaults["iniseed"],
+        )
         output = prepare_output(
             output_pdb_filename=f"{Path(cg_pdb_name).stem}_{force_field}{input_pdb.suffix}",
             output_psf_filename=f"{Path(cg_pdb_name).stem}_{force_field}.{Format.TOPOLOGY}",

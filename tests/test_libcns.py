@@ -10,6 +10,7 @@ import pytest
 from haddock import EmptyPath
 from haddock.libs import libcns
 from haddock.libs.libcns import (
+    _add_cg_backmapping_arguments,
     prepare_cns_input,
     prepare_expected_pdb,
     prepare_multiple_input,
@@ -149,6 +150,23 @@ eval ($count=1)
 """
 
     assert observed_cns_input == expected_cns_input
+
+
+def test_cg_backmapping_keeps_psf_tbl_pairs_aligned_with_shapes(tmp_path):
+    """A leading shape component must not shift CG-to-AA file pairings."""
+    model = PDBFile(file_name="complex.pdb", path=tmp_path)
+    model.aa_topology = [
+        Persistent("shape.psf", Format.TOPOLOGY, tmp_path),
+        Persistent("protein.psf", Format.TOPOLOGY, tmp_path),
+    ]
+    model.cgtoaa_tbl = [None, Path("protein.tbl")]
+    model.shape = [True, False]
+
+    observed = _add_cg_backmapping_arguments(model)
+
+    assert "shape.psf" not in observed
+    assert f'input_aa_psf_filename_1="{model.aa_topology[1].rel_path}"' in observed
+    assert 'input_cgtbl_filename_1="protein.tbl"' in observed
 
 
 def test_prepare_multiple_input(mocker):

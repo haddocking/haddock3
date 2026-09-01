@@ -334,24 +334,32 @@ def _add_cg_backmapping_arguments(
     cgtoaa_tbl_list: list[Path] = []
     input_str: str = ""
     # Structure composed of multiple entries
-    if isinstance(input_element.aa_topology, (list, tuple,)):
-        for psf in input_element.aa_topology:
+    if isinstance(
+        input_element.aa_topology,
+        (
+            list,
+            tuple,
+        ),
+    ):
+        for psf, tbl, is_shape in zip(
+            input_element.aa_topology,
+            input_element.cgtoaa_tbl,
+            input_element.shape,
+        ):
             if psf is None:
                 raise ValueError(
                     f"All-Atom Topology not found {input_element.rel_path}. "
                     "Conversion to all-atom requires a topology generated "
                     "with [topoaa] and [topocg]."
-                    )
-            else:
-                aa_psf_list.append(psf.rel_path.as_posix())
-        for i, tbl in enumerate(input_element.cgtoaa_tbl):
-            if tbl is None and not input_element.shape[i]:
+                )
+            if tbl is None and not is_shape:
                 raise ValueError(
-                    f"Coarse-Crain to All-Atom restraint file not found "
+                    "Coarse-Grain to All-Atom restraint file not found "
                     f"{input_element.rel_path}. Conversion to all-atom "
                     "requires a restraint file generated with [topocg]."
-                    )
-            elif not input_element.shape[i]:
+                )
+            if not is_shape:
+                aa_psf_list.append(psf.rel_path.as_posix())
                 cgtoaa_tbl_list.append(tbl.as_posix())
     # Structure composed of only one entry
     else:
@@ -362,24 +370,28 @@ def _add_cg_backmapping_arguments(
                 f"All-Atom Topology not found {input_element.rel_path}."
                 "Conversion to all-atom requires a topology generated with"
                 " [topoaa] and [topocg]."
-                )
-        aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
+            )
         if pdb.cgtoaa_tbl is None and not shape:
             raise ValueError(
                 "Coarse-Crain to All-Atom restraint file not found for"
                 f" entry: {input_element.rel_path}. Conversion to all-atom"
                 " requires a restraint file generated with [topocg]."
-                )
-        cgtoaa_tbl_list.append(pdb.cgtoaa_tbl.as_posix())
+            )
+        if not shape:
+            aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
+            cgtoaa_tbl_list.append(pdb.cgtoaa_tbl.as_posix())
 
     # Loop over all the files that need to be added
-    for ind, (aa_psf, cg2aa_tbl) in enumerate(zip(aa_psf_list, cgtoaa_tbl_list), start=1):
+    for ind, (aa_psf, cg2aa_tbl) in enumerate(
+        zip(aa_psf_list, cgtoaa_tbl_list),
+        start=1,
+    ):
         # eval line for psf
         input_str += write_eval_line(f"input_aa_psf_filename_{ind}", aa_psf)
         # eval line for pdb
         input_str += write_eval_line(
             f"input_aa_pdb_filename_{ind}", f"{aa_psf[:-4]}.pdb"
-            )
+        )
         # eval line for tbl
         input_str += write_eval_line(f"input_cgtbl_filename_{ind}", cg2aa_tbl)
     return input_str

@@ -1,4 +1,5 @@
 import uuid
+import time
 from multiprocessing import Queue
 from pathlib import Path
 
@@ -51,6 +52,18 @@ class TaskWithException:
 
     def run(self):
         raise ValueError("Test error")
+
+
+class DelayedTask(Task):
+    """Task that lets a later worker finish before the first one."""
+
+    def __init__(self, input, delay):
+        super().__init__(input)
+        self.delay = delay
+
+    def run(self) -> int:
+        time.sleep(self.delay)
+        return super().run()
 
 
 @pytest.fixture
@@ -171,6 +184,22 @@ def test_scheduler_with_exception(scheduler_with_exception):
     assert scheduler_with_exception.results[0] == 2
     assert scheduler_with_exception.results[1] is None
     assert scheduler_with_exception.results[2] == 4
+
+
+def test_scheduler_returns_results_in_submission_order_despite_worker_skew():
+    scheduler = Scheduler(
+        ncores=2,
+        tasks=[
+            DelayedTask(0, 0.1),
+            DelayedTask(1, 0.1),
+            DelayedTask(2, 0),
+            DelayedTask(3, 0),
+        ],
+    )
+
+    scheduler.run()
+
+    assert scheduler.results == [1, 2, 3, 4]
 
 
 def test_generic_task_init():

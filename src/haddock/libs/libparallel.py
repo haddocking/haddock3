@@ -79,23 +79,29 @@ class GenericTask:
 class Worker(Process):
     """Work on tasks."""
 
-    def __init__(self, tasks: Sequence[SupportsRunT], results: Queue) -> None:
+    def __init__(
+        self,
+        tasks: Sequence[SupportsRunT],
+        results: Queue,
+        task_indices: Optional[Sequence[int]] = None,
+    ) -> None:
         super(Worker, self).__init__()
         self.tasks = tasks
         self.result_queue = results
+        self.task_indices = list(task_indices or range(len(tasks)))
         log.debug(f"Worker ready with {len(self.tasks)} tasks")
 
     def run(self) -> None:
         """Execute tasks."""
         results = []
-        for task in self.tasks:
+        for task_index, task in zip(self.task_indices, self.tasks):
             r = None
             try:
                 r = task.run()
             except Exception as e:
                 log.warning(f"Exception in task execution: {e}")
 
-            results.append(r)
+            results.append((task_index, r))
 
         # Put results into the queue
         self.result_queue.put(results)
@@ -149,8 +155,16 @@ class Scheduler:
         else:
             sorted_task_list = tasks
 
-        job_list = split_tasks(sorted_task_list, self.num_processes)
-        self.worker_list = [Worker(jobs, self.queue) for jobs in job_list]
+        indexed_tasks = list(enumerate(sorted_task_list))
+        job_list = split_tasks(indexed_tasks, self.num_processes)
+        self.worker_list = [
+            Worker(
+                [task for _, task in jobs],
+                self.queue,
+                [task_index for task_index, _ in jobs],
+            )
+            for jobs in job_list
+        ]
 
         log.info(f"Using {self.num_processes} cores")
         log.debug(f"{self.num_tasks} tasks ready.")
@@ -191,7 +205,15 @@ class Scheduler:
             for w in self.worker_list:
                 w.join()
 
-            self.results = [item for sublist in all_results for item in sublist]
+            # Workers finish independently, so queue arrival order is not submission
+            # order.  Several callers pair these values with their submitted jobs.
+            self.results = [
+                result
+                for _, result in sorted(
+                    (item for sublist in all_results for item in sublist),
+                    key=lambda item: item[0],
+                )
+            ]
 
             log.info(f"{self.num_tasks} tasks finished")
 

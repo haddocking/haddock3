@@ -1,0 +1,373 @@
+# The canonical form of one real generated CNS job, in reviewable pieces.
+#
+# [pins] binds each canonical name to the file that occupies it, by basename
+# and content checksum.  Both halves are identity: which pin an input occupies
+# and what that input contains.  A change to a file a recipe includes moves a
+# checksum here, which is the only place it would otherwise be invisible.
+#
+# [outputs] is the declared output shape.
+#
+# [recipe rewrites] is everything canonicalization does to the module's CNS
+# recipe, as before/after pairs with the number of places each occurs.  The
+# recipe itself is not copied here -- it is in the tree already, and copying it
+# would mirror every edit to it into a file that has no opinion about the
+# change.  Editing a recipe therefore leaves this section alone unless it
+# changes what canonicalization has to do.
+#
+# [canonical parameter header] is the generated part of the input -- the
+# parameter set, the seed, the pin references, the erasures -- which exists
+# nowhere else, so it is kept verbatim.
+#
+# Regenerate with HADDOCK_UPDATE_CNS_GOLDENS=1; the diff is the review.
+
+[pins]
+canonical-input-1.pdb <- e2aP_1F3G_haddock.pdb  d2c5082f8d461803a84c3ecc9b02f25948fff8dddf25d98690f93b023313c240
+canonical-input-1.psf <- e2aP_1F3G_haddock.psf  f74d4a039db9a47975bb295f9e73042d6328d78f5baa0cf6b0a883cb25b42fb0
+canonical-input-2.pdb <- hpr_ensemble_1_haddock.pdb  6f839075ff31b639994fe20bf42809c3a552c3a83230d16294171ce4a1a2d587
+canonical-input-2.psf <- hpr_ensemble_1_haddock.psf  936207d36b8b0987ddcd29008d0960fd173b9a95e2300685cecd1b2903bc7e08
+module/calc_free-ene.cns  a225c98d84a71b6de78b304cbf50fa61b788f9ce240dd41a851b2eab4ae7db0d
+module/charge-beads-interactions.cns  18635b66a5bb3b0078125265d1ff41f1708641e030d8a76bc93babd5e6b084d3
+module/check_coordinates.cns  7622d4673dd7c4c31bd6da3039a79694646248d87bd9d801e685fab55e7bb458
+module/contactairs.cns  2ed3199b7dd2704027344d49e4713e890f7947c0ada534c29dee05db7c3b9a87
+module/def_solv_param.cns  851c8b5f06e79bbce80a2762fc47b3b6af8dbc18d28962097f1a3d597711ccfa
+module/dna-rna_restraints.cns  82496362bbfb02a3f7c7dba37234185529a11fabe49ea5b418a9aac82047f926
+module/flex_segment_back.cns  65c5111559a51085c7c3de8f499f863e633f232ac28af1b903ff002a8b6e490c
+module/flexauto-neighbors.cns  4f2b0c8e7d7dedb359d603d2b72f9fd37e35b797c773e2be238684bdf136f830
+module/print_coorheader.cns  01d46e002099e53216c013ee4955d5bd0843ebbdbcac8531870b4de3288b5a6c
+module/protein-ss-restraints-all.cns  360ee4fd1a12ace4488fbec415420fb90e712f0a8c91c4f0f1bc8317a7adb3bd
+module/protein-ss-restraints-alpha-beta.cns  bf4dafb5de2dccc0efa0bafdb5080092229a876c89181509d2e7cef3ef2bd881
+module/protein-ss-restraints-alpha.cns  ce9fdf8def4a954930aea37d0ba455a17b40a3aef81848faf4098000bb8bcf8f
+module/read_data.cns  e6d8a60e330f779fdc4c0f1d8d08ee2f1a0804184e03079f76514e8fe044ea6b
+module/read_noes.cns  9cb0030057158db27e58df19cdae6681864592f64d95d2fd7de5227504553752
+module/read_param.cns  24b9bb87e923b9411f7335599c84328fd376fc391c889951b28b26113f9e6552
+module/restrain-ions.cns  6c6a3ab0fb6f764fe9e4d3d7e6413dc2b359c331e34124894fd008f6da0cb1c9
+module/scale_inter_final.cns  58f9dc67fd51a7be7b1b23992fd605a7438d01fa48cd5ed65ba2efae1cb82cd4
+module/scale_intra_only.cns  04803d9391136284acc188995d39d5684e60e8dee4d134c88611be026a2ddd0f
+module/setflags.cns  05609308453eee2eab0ec02b8d9fc458977aa5efac8f6ef9a61983f4426cd04b
+module/symmultimer.cns  ccb44eb5abe88c4ca4532dac5b35c4073376f75af230c8e1f7716c4e4ea06313
+toppar/carbohydrate.param  a2796cd04f3957c4f3ba078daf7a6e5afb0e14f1c820ae5adf6dfa8d4ba00007
+toppar/cofactors.param  cec99dbdf652fcce524294f6c4e3da0add37997a8ce18d14320ef192d9f1d7c5
+toppar/dna-rna-CG-MARTINI-2-1p.param  95a46c3d71a64ebff2244896cfd7faa705fa6780445d6b56e0f04c00d877854b
+toppar/dna-rna-allatom-hj-opls-1.3.param  e56e4f1c0f6f245bebcdb0d6ae70a5f0bd9af08869f4f4f784d1194f29044cdd
+toppar/fragment_probes.param  5a48c187fef139db509e70b988c4f714074c0be84f023ce1c79b226e5dc2c3d4
+toppar/hemes-allhdg.param  b5678c12c376ec118d9bb4b121f3494462e453702c739d4b5098527053ca2aa5
+toppar/ion.param  86fd006434fdfb5a0d6bc9903759d127a0aa92de603f0d57deefd0c2715593ee
+toppar/protein-CG-Martini-2-2.param  4ec92ffa79d3a5a1a7315485fdaa3ff18d4efe1dba6e2368b2ffe760955a48cf
+toppar/protein-allhdg5-4.param  0f8cc2a24cb44363c23b53f4107a881929eefa2a1afda62fad35c9816455b175
+toppar/shape.param  dcdb35ed2e1247a5aa5cbaba854d7ec9bd520d59782f58b8a397a3b001cb8185
+toppar/solvent-allhdg5-4.param  05a6a9b961b4a9495342352f6200794198db12b9d154723edc7b898b8783434c
+
+[outputs] pdb
+canonical-output.pdb
+
+[recipe rewrites] haddock/modules/refinement/emref/cns/emref.cns
+2x  - elseif ( $log_level = "normal" ) then
+    + elseif ( $log_level = "canonical-log-level" ) then
+2x  - if ( $log_level = "verbose" ) then
+    + if ( $log_level = "canonical-log-level" ) then
+
+[canonical parameter header]
+
+! Parameters
+eval ($mol_fix_origin_1=false)
+eval ($mol_shape_1=false)
+eval ($unambig_fname="")
+eval ($hbond_fname="")
+eval ($ambig_scale=50)
+eval ($unambig_scale=50)
+eval ($hbond_scale=50)
+eval ($randremoval=true)
+eval ($npart=2)
+eval ($contactairs=false)
+eval ($kcont=1.0)
+eval ($dihe_fname="")
+eval ($dihedrals_on=false)
+eval ($dihedrals_scale=200)
+eval ($ssdihed="none")
+eval ($error_dih=10)
+eval ($dnarest_on=false)
+eval ($sym_on=false)
+eval ($ksym=10.0)
+eval ($symtbl_fname="")
+eval ($nc2sym=0)
+eval ($nc3sym=0)
+eval ($nc4sym=0)
+eval ($nc5sym=0)
+eval ($nc6sym=0)
+eval ($ns3sym=0)
+eval ($ncs_on=false)
+eval ($kncs=1.0)
+eval ($nncs=0)
+eval ($w_air=0.1)
+eval ($w_bsa=0.0)
+eval ($w_cdih=0.0)
+eval ($w_dani=0.1)
+eval ($w_desolv=1.0)
+eval ($w_elec=0.2)
+eval ($w_lcc=-10000.0)
+eval ($w_rg=1.0)
+eval ($w_sani=0.1)
+eval ($w_sym=0.1)
+eval ($w_vdw=1.0)
+eval ($w_vean=0.1)
+eval ($w_xpcs=0.1)
+eval ($ligand_param_fname="")
+eval ($elecflag=true)
+eval ($dielec="cdie")
+eval ($epsilon=1.0)
+eval ($epsilon_cg=10.0)
+eval ($nemsteps=200)
+eval ($log_level="canonical-log-level")
+eval ($nseg1=-1)
+eval ($nseg2=-1)
+eval ($nseg3=-1)
+eval ($nseg4=-1)
+eval ($nseg5=-1)
+eval ($nseg6=-1)
+eval ($nseg7=-1)
+eval ($nseg8=-1)
+eval ($nseg9=-1)
+eval ($nseg10=-1)
+eval ($nseg11=-1)
+eval ($nseg12=-1)
+eval ($nseg13=-1)
+eval ($nseg14=-1)
+eval ($nseg15=-1)
+eval ($nseg16=-1)
+eval ($nseg17=-1)
+eval ($nseg18=-1)
+eval ($nseg19=-1)
+eval ($nseg20=-1)
+eval ($nfle=0)
+eval ($fle_seg_1="none")
+eval ($int_1_1=1.0)
+eval ($int_1_2=1.0)
+eval ($int_1_3=1.0)
+eval ($int_1_4=1.0)
+eval ($int_1_5=1.0)
+eval ($int_1_6=1.0)
+eval ($int_1_7=1.0)
+eval ($int_1_8=1.0)
+eval ($int_1_9=1.0)
+eval ($int_1_10=1.0)
+eval ($int_1_11=1.0)
+eval ($int_1_12=1.0)
+eval ($int_1_13=1.0)
+eval ($int_1_14=1.0)
+eval ($int_1_15=1.0)
+eval ($int_1_16=1.0)
+eval ($int_1_17=1.0)
+eval ($int_1_18=1.0)
+eval ($int_1_19=1.0)
+eval ($int_1_20=1.0)
+eval ($int_2_2=1.0)
+eval ($int_2_3=1.0)
+eval ($int_2_4=1.0)
+eval ($int_2_5=1.0)
+eval ($int_2_6=1.0)
+eval ($int_2_7=1.0)
+eval ($int_2_8=1.0)
+eval ($int_2_9=1.0)
+eval ($int_2_10=1.0)
+eval ($int_2_11=1.0)
+eval ($int_2_12=1.0)
+eval ($int_2_13=1.0)
+eval ($int_2_14=1.0)
+eval ($int_2_15=1.0)
+eval ($int_2_16=1.0)
+eval ($int_2_17=1.0)
+eval ($int_2_18=1.0)
+eval ($int_2_19=1.0)
+eval ($int_2_20=1.0)
+eval ($int_3_3=1.0)
+eval ($int_3_4=1.0)
+eval ($int_3_5=1.0)
+eval ($int_3_6=1.0)
+eval ($int_3_7=1.0)
+eval ($int_3_8=1.0)
+eval ($int_3_9=1.0)
+eval ($int_3_10=1.0)
+eval ($int_3_11=1.0)
+eval ($int_3_12=1.0)
+eval ($int_3_13=1.0)
+eval ($int_3_14=1.0)
+eval ($int_3_15=1.0)
+eval ($int_3_16=1.0)
+eval ($int_3_17=1.0)
+eval ($int_3_18=1.0)
+eval ($int_3_19=1.0)
+eval ($int_3_20=1.0)
+eval ($int_4_4=1.0)
+eval ($int_4_5=1.0)
+eval ($int_4_6=1.0)
+eval ($int_4_7=1.0)
+eval ($int_4_8=1.0)
+eval ($int_4_9=1.0)
+eval ($int_4_10=1.0)
+eval ($int_4_11=1.0)
+eval ($int_4_12=1.0)
+eval ($int_4_13=1.0)
+eval ($int_4_14=1.0)
+eval ($int_4_15=1.0)
+eval ($int_4_16=1.0)
+eval ($int_4_17=1.0)
+eval ($int_4_18=1.0)
+eval ($int_4_19=1.0)
+eval ($int_4_20=1.0)
+eval ($int_5_5=1.0)
+eval ($int_5_6=1.0)
+eval ($int_5_7=1.0)
+eval ($int_5_8=1.0)
+eval ($int_5_9=1.0)
+eval ($int_5_10=1.0)
+eval ($int_5_11=1.0)
+eval ($int_5_12=1.0)
+eval ($int_5_13=1.0)
+eval ($int_5_14=1.0)
+eval ($int_5_15=1.0)
+eval ($int_5_16=1.0)
+eval ($int_5_17=1.0)
+eval ($int_5_18=1.0)
+eval ($int_5_19=1.0)
+eval ($int_5_20=1.0)
+eval ($int_6_6=1.0)
+eval ($int_6_7=1.0)
+eval ($int_6_8=1.0)
+eval ($int_6_9=1.0)
+eval ($int_6_10=1.0)
+eval ($int_6_11=1.0)
+eval ($int_6_12=1.0)
+eval ($int_6_13=1.0)
+eval ($int_6_14=1.0)
+eval ($int_6_15=1.0)
+eval ($int_6_16=1.0)
+eval ($int_6_17=1.0)
+eval ($int_6_18=1.0)
+eval ($int_6_19=1.0)
+eval ($int_6_20=1.0)
+eval ($int_7_7=1.0)
+eval ($int_7_8=1.0)
+eval ($int_7_9=1.0)
+eval ($int_7_10=1.0)
+eval ($int_7_11=1.0)
+eval ($int_7_12=1.0)
+eval ($int_7_13=1.0)
+eval ($int_7_14=1.0)
+eval ($int_7_15=1.0)
+eval ($int_7_16=1.0)
+eval ($int_7_17=1.0)
+eval ($int_7_18=1.0)
+eval ($int_7_19=1.0)
+eval ($int_8_8=1.0)
+eval ($int_8_9=1.0)
+eval ($int_7_20=1.0)
+eval ($int_8_10=1.0)
+eval ($int_8_11=1.0)
+eval ($int_8_12=1.0)
+eval ($int_8_13=1.0)
+eval ($int_8_14=1.0)
+eval ($int_8_15=1.0)
+eval ($int_8_16=1.0)
+eval ($int_8_17=1.0)
+eval ($int_8_18=1.0)
+eval ($int_8_19=1.0)
+eval ($int_8_20=1.0)
+eval ($int_9_11=1.0)
+eval ($int_9_12=1.0)
+eval ($int_9_13=1.0)
+eval ($int_9_14=1.0)
+eval ($int_9_15=1.0)
+eval ($int_9_16=1.0)
+eval ($int_9_17=1.0)
+eval ($int_9_18=1.0)
+eval ($int_9_19=1.0)
+eval ($int_9_20=1.0)
+eval ($int_9_9=1.0)
+eval ($int_9_10=1.0)
+eval ($int_10_10=1.0)
+eval ($int_10_11=1.0)
+eval ($int_10_12=1.0)
+eval ($int_10_13=1.0)
+eval ($int_10_14=1.0)
+eval ($int_10_15=1.0)
+eval ($int_10_16=1.0)
+eval ($int_10_17=1.0)
+eval ($int_10_18=1.0)
+eval ($int_10_19=1.0)
+eval ($int_10_20=1.0)
+eval ($int_11_11=1.0)
+eval ($int_11_12=1.0)
+eval ($int_11_13=1.0)
+eval ($int_11_14=1.0)
+eval ($int_11_15=1.0)
+eval ($int_11_16=1.0)
+eval ($int_11_17=1.0)
+eval ($int_11_18=1.0)
+eval ($int_11_19=1.0)
+eval ($int_11_20=1.0)
+eval ($int_12_12=1.0)
+eval ($int_12_13=1.0)
+eval ($int_12_14=1.0)
+eval ($int_12_15=1.0)
+eval ($int_12_16=1.0)
+eval ($int_12_17=1.0)
+eval ($int_12_18=1.0)
+eval ($int_12_19=1.0)
+eval ($int_12_20=1.0)
+eval ($int_13_13=1.0)
+eval ($int_13_14=1.0)
+eval ($int_13_15=1.0)
+eval ($int_13_16=1.0)
+eval ($int_13_17=1.0)
+eval ($int_13_18=1.0)
+eval ($int_13_19=1.0)
+eval ($int_13_20=1.0)
+eval ($int_14_14=1.0)
+eval ($int_14_15=1.0)
+eval ($int_14_16=1.0)
+eval ($int_14_17=1.0)
+eval ($int_14_18=1.0)
+eval ($int_14_19=1.0)
+eval ($int_14_20=1.0)
+eval ($int_15_15=1.0)
+eval ($int_15_16=1.0)
+eval ($int_15_17=1.0)
+eval ($int_15_18=1.0)
+eval ($int_15_19=1.0)
+eval ($int_15_20=1.0)
+eval ($int_16_16=1.0)
+eval ($int_16_17=1.0)
+eval ($int_16_18=1.0)
+eval ($int_16_19=1.0)
+eval ($int_16_20=1.0)
+eval ($int_17_17=1.0)
+eval ($int_17_18=1.0)
+eval ($int_17_19=1.0)
+eval ($int_17_20=1.0)
+eval ($int_18_18=1.0)
+eval ($int_18_19=1.0)
+eval ($int_18_20=1.0)
+eval ($int_19_19=1.0)
+eval ($int_19_20=1.0)
+eval ($int_20_20=1.0)
+eval ($mol_fix_origin_2=false)
+eval ($mol_shape_2=false)
+eval ($ambig_fname="")
+
+! Input structure
+structure
+  @@canonical-input-1.psf
+end
+structure
+  @@canonical-input-2.psf
+end
+coor @@canonical-input-1.pdb
+eval ($input_pdb_filename_1="canonical-input-1.pdb")
+coor @@canonical-input-2.pdb
+eval ($input_pdb_filename_2="canonical-input-2.pdb")
+eval ($ncomponents=2)
+eval ($seed=1694244009)
+
+! Output structure
+eval ($output_pdb_filename="canonical-output.pdb")
+eval ($count=canonical-count)

@@ -1,0 +1,162 @@
+# The canonical form of one real generated CNS job, in reviewable pieces.
+#
+# [pins] binds each canonical name to the file that occupies it, by basename
+# and content checksum.  Both halves are identity: which pin an input occupies
+# and what that input contains.  A change to a file a recipe includes moves a
+# checksum here, which is the only place it would otherwise be invisible.
+#
+# [outputs] is the declared output shape.
+#
+# [recipe rewrites] is everything canonicalization does to the module's CNS
+# recipe, as before/after pairs with the number of places each occurs.  The
+# recipe itself is not copied here -- it is in the tree already, and copying it
+# would mirror every edit to it into a file that has no opinion about the
+# change.  Editing a recipe therefore leaves this section alone unless it
+# changes what canonicalization has to do.
+#
+# [canonical parameter header] is the generated part of the input -- the
+# parameter set, the seed, the pin references, the erasures -- which exists
+# nowhere else, so it is kept verbatim.
+#
+# Regenerate with HADDOCK_UPDATE_CNS_GOLDENS=1; the diff is the review.
+
+[pins]
+canonical-input-1.pdb <- e2aP_1F3G_haddock.pdb  d2c5082f8d461803a84c3ecc9b02f25948fff8dddf25d98690f93b023313c240
+module/auto-his.cns  b1dcea30172f407301d6d32d6e443f64a3a65a8a59b55be6d2936a38a28825d6
+module/bondglycans.cns  0a691f27b8a660c4c52839a425cddb694fb5b78150d656c8a06daaf5bd0a6099
+module/build-missing.cns  06699840d0d32c51b00241c97aba2355bfe59f02ba0baed20b327f01a8bd3434
+module/check_coordinates.cns  7622d4673dd7c4c31bd6da3039a79694646248d87bd9d801e685fab55e7bb458
+module/coval-ace-cys.cns  303bacf49c68b75c1527ec003a609f4faa82cd7fdd0c49bacbe1501bbede576e
+module/covalheme.cns  3ed3e92284c11455187a0e7e990e2cd3c579ed27af60513c8e0e051624d807f3
+module/dna_break.cns  6017cc86641520583f6d947b205a7a2b2085d2e6e10684372525d6fbceec8451
+module/prot_break.cns  0d9caaf320c3df27e72f481f586098bfa84430d709f6d72b655df857ed8c6dd7
+toppar/carbohydrate.param  a2796cd04f3957c4f3ba078daf7a6e5afb0e14f1c820ae5adf6dfa8d4ba00007
+toppar/carbohydrate.top  7b5b0d01b79de88e53248da90beb2c0675107bd6c96f485f5fe3beedbf36f46a
+toppar/cofactors.param  cec99dbdf652fcce524294f6c4e3da0add37997a8ce18d14320ef192d9f1d7c5
+toppar/cofactors.top  5b17d7b98dbd1195467d1959a86e996f37792ef33315f92bd944120fed805de9
+toppar/dna-rna-1.3.link  16e80159790c62b73a9b4c26a6daf4d5b28b08f0bc2a64b98e6b750488f7ca55
+toppar/dna-rna-allatom-hj-opls-1.3.param  e56e4f1c0f6f245bebcdb0d6ae70a5f0bd9af08869f4f4f784d1194f29044cdd
+toppar/dna-rna-allatom-hj-opls-1.3.top  04a0026d1e5d9a8df207fa2bff32ccffb03a7ab20b81d8b0c92747251a4cdb10
+toppar/dna_break.top  8cd5a4f7c3088a2b9502ff83ee76ec0b3e154496f2c5703b98e79f39897427bf
+toppar/hemes-allhdg.param  b5678c12c376ec118d9bb4b121f3494462e453702c739d4b5098527053ca2aa5
+toppar/hemes-allhdg.top  dcd467d6bc003a74bd31e56b436ff6f02eb297796b691efe80bd8fa4a3c1aad5
+toppar/ion.param  86fd006434fdfb5a0d6bc9903759d127a0aa92de603f0d57deefd0c2715593ee
+toppar/ion.top  b5458992669f361e2af6d8839eb7c674080c4fef3b449f065509f37d597bfdfc
+toppar/protein-allhdg5-4-noter.link  d6d88ae174352edd8ee62a5d33ac36841410cde0e9efe27e95e3e191d3cdacb0
+toppar/protein-allhdg5-4.param  0f8cc2a24cb44363c23b53f4107a881929eefa2a1afda62fad35c9816455b175
+toppar/protein-allhdg5-4.top  d5cdfb0574bab46009088309cb6472d8771efa3eda05f46c0d33e7cddc571651
+toppar/shape.param  dcdb35ed2e1247a5aa5cbaba854d7ec9bd520d59782f58b8a397a3b001cb8185
+toppar/shape.top  7b8577dbf235defb4d3c67492e2856821fa558dcc548a296374267b1c81d64d4
+toppar/solvent-allhdg5-4.param  05a6a9b961b4a9495342352f6200794198db12b9d154723edc7b898b8783434c
+toppar/solvent-allhdg5-4.top  4b3546f0a8ab278eb45874b4612680b96ab1460ee48afb47aebd44ac4723bb8e
+
+[outputs] pdb+psf
+canonical-output.pdb
+canonical-output.psf
+
+[recipe rewrites] haddock/modules/topology/topoaa/cns/generate-topology.cns
+1x  - elseif ( $log_level = "normal") then
+    + elseif ( $log_level = "canonical-log-level") then
+1x  - if ( $log_level = "verbose" ) then
+    + if ( $log_level = "canonical-log-level" ) then
+
+[canonical parameter header]
+
+! Parameters
+eval ($autohis=true)
+eval ($delenph=true)
+eval ($hydrogen_build="all")
+eval ($log_level="canonical-log-level")
+eval ($iniseed=917)
+eval ($ligand_param_fname="")
+eval ($ligand_top_fname="")
+eval ($set_bfactor=true)
+eval ($cyclicpept_dist=2.0)
+eval ($disulphide_dist=2.2)
+eval ($acecys_dist=4.0)
+eval ($cyclicpept=false)
+eval ($nhisd=0)
+eval ($nhise=0)
+eval ($prot_link_infile="TOPPAR:protein-allhdg5-4-noter.link")
+eval ($nucl_link_infile="TOPPAR:dna-rna-1.3.link")
+
+! Input structure
+eval ($file="canonical-input-1.pdb")
+eval ($ncomponents=1)
+eval ($prot_segid_1="A")
+
+! Output structure
+eval ($output_pdb_filename="canonical-output.pdb")
+eval ($output_psf_filename="canonical-output.psf")
+
+! Translation vectors
+eval ($trans_vector_0="TOPPAR:initial_positions/trans_vector_0")
+eval ($trans_vector_1="TOPPAR:initial_positions/trans_vector_1")
+eval ($trans_vector_2="TOPPAR:initial_positions/trans_vector_2")
+eval ($trans_vector_3="TOPPAR:initial_positions/trans_vector_3")
+eval ($trans_vector_4="TOPPAR:initial_positions/trans_vector_4")
+eval ($trans_vector_5="TOPPAR:initial_positions/trans_vector_5")
+eval ($trans_vector_6="TOPPAR:initial_positions/trans_vector_6")
+eval ($trans_vector_7="TOPPAR:initial_positions/trans_vector_7")
+eval ($trans_vector_8="TOPPAR:initial_positions/trans_vector_8")
+eval ($trans_vector_9="TOPPAR:initial_positions/trans_vector_9")
+eval ($trans_vector_10="TOPPAR:initial_positions/trans_vector_10")
+eval ($trans_vector_11="TOPPAR:initial_positions/trans_vector_11")
+eval ($trans_vector_12="TOPPAR:initial_positions/trans_vector_12")
+eval ($trans_vector_13="TOPPAR:initial_positions/trans_vector_13")
+eval ($trans_vector_14="TOPPAR:initial_positions/trans_vector_14")
+eval ($trans_vector_15="TOPPAR:initial_positions/trans_vector_15")
+eval ($trans_vector_16="TOPPAR:initial_positions/trans_vector_16")
+eval ($trans_vector_17="TOPPAR:initial_positions/trans_vector_17")
+eval ($trans_vector_18="TOPPAR:initial_positions/trans_vector_18")
+eval ($trans_vector_19="TOPPAR:initial_positions/trans_vector_19")
+eval ($trans_vector_20="TOPPAR:initial_positions/trans_vector_20")
+eval ($trans_vector_21="TOPPAR:initial_positions/trans_vector_21")
+eval ($trans_vector_22="TOPPAR:initial_positions/trans_vector_22")
+eval ($trans_vector_23="TOPPAR:initial_positions/trans_vector_23")
+eval ($trans_vector_24="TOPPAR:initial_positions/trans_vector_24")
+eval ($trans_vector_25="TOPPAR:initial_positions/trans_vector_25")
+eval ($trans_vector_26="TOPPAR:initial_positions/trans_vector_26")
+eval ($trans_vector_27="TOPPAR:initial_positions/trans_vector_27")
+eval ($trans_vector_28="TOPPAR:initial_positions/trans_vector_28")
+eval ($trans_vector_29="TOPPAR:initial_positions/trans_vector_29")
+eval ($trans_vector_30="TOPPAR:initial_positions/trans_vector_30")
+eval ($trans_vector_31="TOPPAR:initial_positions/trans_vector_31")
+eval ($trans_vector_32="TOPPAR:initial_positions/trans_vector_32")
+eval ($trans_vector_33="TOPPAR:initial_positions/trans_vector_33")
+eval ($trans_vector_34="TOPPAR:initial_positions/trans_vector_34")
+eval ($trans_vector_35="TOPPAR:initial_positions/trans_vector_35")
+eval ($trans_vector_36="TOPPAR:initial_positions/trans_vector_36")
+eval ($trans_vector_37="TOPPAR:initial_positions/trans_vector_37")
+eval ($trans_vector_38="TOPPAR:initial_positions/trans_vector_38")
+eval ($trans_vector_39="TOPPAR:initial_positions/trans_vector_39")
+eval ($trans_vector_40="TOPPAR:initial_positions/trans_vector_40")
+eval ($trans_vector_41="TOPPAR:initial_positions/trans_vector_41")
+eval ($trans_vector_42="TOPPAR:initial_positions/trans_vector_42")
+eval ($trans_vector_43="TOPPAR:initial_positions/trans_vector_43")
+eval ($trans_vector_44="TOPPAR:initial_positions/trans_vector_44")
+eval ($trans_vector_45="TOPPAR:initial_positions/trans_vector_45")
+eval ($trans_vector_46="TOPPAR:initial_positions/trans_vector_46")
+eval ($trans_vector_47="TOPPAR:initial_positions/trans_vector_47")
+eval ($trans_vector_48="TOPPAR:initial_positions/trans_vector_48")
+eval ($trans_vector_49="TOPPAR:initial_positions/trans_vector_49")
+eval ($trans_vector_50="TOPPAR:initial_positions/trans_vector_50")
+
+! Tensors
+eval ($tensor_psf="TOPPAR:tensor.psf")
+eval ($tensor_pdb="TOPPAR:tensor.pdb")
+eval ($tensor_para_psf="TOPPAR:tensor_para.psf")
+eval ($tensor_para_pdb="TOPPAR:tensor_para.pdb")
+eval ($tensor_dani_psf="TOPPAR:tensor_dani.psf")
+eval ($tensor_dani_pdb="TOPPAR:tensor_dani.pdb")
+
+! Scatter lib
+eval ($scatter_lib="TOPPAR:scatter.lib")
+
+! Axis
+eval ($top_axis="TOPPAR:top_axis.pro")
+eval ($par_axis="TOPPAR:par_axis.pro")
+eval ($top_axis_dani="TOPPAR:top_axis_dani.pro")
+
+! Water box
+eval ($boxtyp20="TOPPAR:boxtyp20.pdb")

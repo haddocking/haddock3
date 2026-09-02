@@ -11,8 +11,8 @@ they hold, and how long the run took.  That is deliberate.  The implementation
 is expected to be rewritten, and a suite phrased in terms of a record format,
 a file layout or an internal API dies with it.
 
-Four items in the taxonomy cannot be expressed that way, because they are
-*about* the record format rather than about caching behaviour:
+Four claims cannot be made that way, because they are *about* the record
+format rather than about caching behaviour:
 
 * 11.11 -- a truncated, blank or wrong-arity record
 * 11.12 -- a record key that is not checksum-shaped

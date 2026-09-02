@@ -44,7 +44,7 @@ def pytest_configure(config):
         ("phase2", "the suite proper; requires a corpus built by Phase 1"),
         ("timing", "asserts a Gate 2 wall-clock budget; machine-dependent"),
         ("slow", "runs CNS to completion rather than killing it at a floor"),
-        ("axis", "axis(name): which taxonomy axis a case belongs to"),
+        ("axis", "axis(name): which axis of the case set a case belongs to"),
     ):
         config.addinivalue_line("markers", f"{marker}: {description}")
 

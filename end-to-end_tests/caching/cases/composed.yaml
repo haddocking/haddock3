@@ -75,11 +75,11 @@
   taxonomy: "Composition (6.16 + 5)"
   title: A partial invalidation applied across a reordering
   why: >
-    The hardest composed case in the taxonomy: one module's template changed
-    (so its jobs must miss) while the selection was reordered (so the
-    surviving jobs must hit under different names). A key that got Axis 5
-    right by tracking position would fail here even though it passed both
-    halves separately.
+    The hardest case here, and the reason is worth stating: one module's
+    template changed (so its jobs must miss) while the selection was
+    reordered (so the surviving jobs must hit under different names). A key
+    that got Axis 5 right by tracking position would fail here even though it
+    passed both halves separately.
   base: pp-cluster
   sources: [pp-cluster]
   perturb:

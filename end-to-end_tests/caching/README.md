@@ -314,6 +314,7 @@ order to decide any verdict.
 | `corpus/` | generated; not in git |
 
 Why this suite exists, who reviews it and when, is
-[`caching-publication-plan.md`](../../caching-publication-plan.md). The design
-documents behind the content are `caching-use-cases.md` (what must be reused
-and why) and `caching-test-suite-plan.md` (how that is observed).
+[`caching-publication-plan.md`](../../caching-publication-plan.md). What must
+be reused and why, and how that is observed, is this directory: the axis files
+in [`cases/`](cases/) each open by saying what their axis is, and every case
+states its own reasoning.

@@ -142,10 +142,10 @@ def resolve(
 
         verdict = _verdict_for(artifact, default, patterns, module_expect)
         if verdict == "ignore":
-            # Deliberately unasserted. Used where the taxonomy's boundary is
-            # real but this suite cannot know on which side a particular job
-            # falls without re-deriving what CNS reads -- which would make the
-            # test a restatement of the implementation. Recorded, not hidden.
+            # Deliberately unasserted. Used where a case's boundary is real
+            # but this suite cannot know on which side a particular job falls
+            # without re-deriving what CNS reads -- which would make the test
+            # a restatement of the implementation. Recorded, not hidden.
             continue
         if verdict == "miss":
             expectations.append(

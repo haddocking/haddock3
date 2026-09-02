@@ -114,12 +114,12 @@
     come back renamed, for example cluster_2_model_1 as cluster_1_model_1 and
     cluster_1_model_1 as cluster_3_model_1, byte-identical in every case.
 
-    Note what this case is *not*: reversing sort_ascending, which the taxonomy
-    suggests, is a no-op here because true is already its default -- and
-    truncating to the top three clusters means any reordering also changes
-    which structures are selected, so a pure reorder is not expressible
-    against this corpus at all. Keeping every cluster is what separates the
-    renaming from the selection.
+    Note what this case is *not*. The obvious way to reorder a selection is
+    to reverse sort_ascending, and it does nothing here: true is already its
+    default. Truncating to the top three clusters is no better, because then
+    any reordering also changes which structures are selected, and a pure
+    reorder stops being expressible against this corpus at all. Keeping every
+    cluster is what separates the renaming from the selection.
 
     This is the case the require_renamed_hits guard exists for: if the
     perturbation ever stops renaming anything, the case silently stops
@@ -149,9 +149,9 @@
     HADDOCK3 assigns the members of a restraint archive to models **by
     position**. When the members are byte-identical, a rank shift changes
     which table a model is handed but not what that table says -- the
-    read-set is unchanged and every job must hit. A miss here is the exact
-    failure the taxonomy warns about: keeping the index alongside the
-    identity lets the locator invalidate a key the identity says is
+    read-set is unchanged and every job must hit. A miss here is the precise
+    failure this axis exists to catch: keeping the index alongside the
+    identity lets a locator invalidate a job the identity says is
     unchanged.
   base: pp-cluster
   sources: [pp-cluster]

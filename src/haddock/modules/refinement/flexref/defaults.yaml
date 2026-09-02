@@ -1697,7 +1697,7 @@ sampling_factor:
   max: 500
   title: Sampling factor for each starting model
   short: This paramater controls how many times a model will be refined.
-  long: This paramater controls how many times a model will be refined. 
+  long: This paramater controls how many times a model will be refined. The replicas are emitted in rounds - every model is refined once before any model is refined a second time - so raising this value appends model numbers rather than renumbering them. Each replica carries its own seed, so it is additional sampling of the same starting structure rather than a repeat of the same calculation.
   group: 'sampling'
   explevel: expert
 max_nmodels:

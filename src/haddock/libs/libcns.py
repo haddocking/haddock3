@@ -106,6 +106,38 @@ def derive_seed(
     return 1 + int.from_bytes(digest.digest(), "big") % (SEED_CEILING - 1)
 
 
+def refinement_schedule(
+    n_models: int,
+    sampling_factor: int,
+) -> list[tuple[int, int]]:
+    """Return ``(model index, replica index)`` for every refinement job.
+
+    Replicas are emitted in rounds: every input model gets its first replica
+    before any model gets its second.  The alternative -- all of one model's
+    replicas, then all of the next model's -- makes a model's number depend
+    on ``sampling_factor``, so raising it renumbers every job belonging to an
+    input after the first.
+
+    This is a numbering property, not a reuse property.  Seeds are derived
+    from content (see :func:`derive_seed`), so the order in which jobs are
+    emitted changes neither what any of them computes nor whether it can be
+    recognised again.  What it changes is whether ``flexref_3.pdb`` means the
+    same thing in two runs that differ only in ``sampling_factor`` -- for a
+    person comparing two runs, and for every downstream step that carries a
+    model's number.
+
+    The three refinement modules share this schedule.  They are one job shape
+    and are tested through one representative, so a change applied to one of
+    them and not the others would leave the representative representing
+    nothing while every test stayed green.
+    """
+    return [
+        (model_index, replica)
+        for replica in range(sampling_factor)
+        for model_index in range(n_models)
+    ]
+
+
 def generate_default_header(
     path: Optional[FilePath] = None,
 ) -> tuple[str, str, str, str, str, str]:

@@ -19,6 +19,7 @@ from haddock.libs.libcns import (
     derive_seed,
     prepare_cns_input,
     prepare_expected_pdb,
+    refinement_schedule,
 )
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
@@ -85,48 +86,49 @@ class HaddockModule(BaseCNSModule):
 
         ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
 
-        model_idx = 0
-        idx = 1
-        for model in models_to_refine:
+        # Replicas are emitted in rounds -- every model gets its first replica
+        # before any model gets its second -- so raising `sampling_factor`
+        # appends model numbers instead of renumbering the models of every
+        # input after the first.
+        schedule = refinement_schedule(len(models_to_refine), sampling_factor)
+        for idx, (model_idx, replica) in enumerate(schedule, start=1):
+            model = models_to_refine[model_idx]
             # assign ambig_fname
             if ambig_fnames:
                 ambig_fname = ambig_fnames[model_idx]
             else:
                 ambig_fname = self.params["ambig_fname"]
-            model_idx += 1
 
-            for replica in range(sampling_factor):
-                seed = derive_seed(self.params["iniseed"], model, replica)
-                emref_input = prepare_cns_input(
-                    idx,
-                    model,
-                    self.path,
-                    self.recipe_str,
-                    self.params,
-                    "emref",
-                    ambig_fname=ambig_fname,
-                    native_segid=True,
-                    debug=self.params["debug"],
-                    seed=seed,
-                )
-                out_file = f"emref_{idx}.out"
-                err_fname = f"emref_{idx}.cnserr"
+            seed = derive_seed(self.params["iniseed"], model, replica)
+            emref_input = prepare_cns_input(
+                idx,
+                model,
+                self.path,
+                self.recipe_str,
+                self.params,
+                "emref",
+                ambig_fname=ambig_fname,
+                native_segid=True,
+                debug=self.params["debug"],
+                seed=seed,
+            )
 
-                # create the expected PDBobject
-                expected_pdb = prepare_expected_pdb(model, idx, ".", "emref")
-                expected_pdb.seed = seed
-                expected_pdb.restr_fname = ambig_fname
-                try:
-                    expected_pdb.ori_name = model.file_name
-                except AttributeError:
-                    expected_pdb.ori_name = None
-                self.output_models.append(expected_pdb)
+            out_file = f"emref_{idx}.out"
+            err_fname = f"emref_{idx}.cnserr"
 
-                job = CNSJob(emref_input, out_file, err_fname, envvars=self.envvars)
+            # create the expected PDBobject
+            expected_pdb = prepare_expected_pdb(model, idx, ".", "emref")
+            expected_pdb.seed = seed
+            expected_pdb.restr_fname = ambig_fname
+            try:
+                expected_pdb.ori_name = model.file_name
+            except AttributeError:
+                expected_pdb.ori_name = None
+            self.output_models.append(expected_pdb)
 
-                jobs.append(job)
+            job = CNSJob(emref_input, out_file, err_fname, envvars=self.envvars)
 
-                idx += 1
+            jobs.append(job)
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")

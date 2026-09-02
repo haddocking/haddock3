@@ -341,3 +341,19 @@ def test_derive_seed_reads_a_compressed_model(tmp_path, monkeypatch):
     Path(tmp_path, "model.pdb").unlink()
 
     assert libcns.derive_seed(917, plain) == expected
+
+
+def test_refinement_schedule_emits_replicas_in_rounds():
+    """Every model gets its first replica before any model gets its second."""
+    schedule = libcns.refinement_schedule(3, 2)
+
+    assert schedule == [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1)]
+
+
+def test_refinement_schedule_is_prefix_stable_in_sampling_factor():
+    """Raising ``sampling_factor`` appends jobs and renumbers none of them."""
+    for factor in range(1, 6):
+        schedule = libcns.refinement_schedule(4, factor)
+        assert len(schedule) == 4 * factor
+        for smaller in range(1, factor + 1):
+            assert schedule[: 4 * smaller] == libcns.refinement_schedule(4, smaller)

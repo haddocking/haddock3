@@ -102,6 +102,8 @@ For `rigidbody`, `sampling` is the exact number of jobs. When several input-mode
 
 Every CNS random seed is derived from the job itself: from `iniseed`, from the content of the models the job starts from, and from which repeat of that job it is. A job therefore keeps its seed when the run around it grows, shrinks or is reordered, and changing `iniseed` still changes every seed in the run.
 
+For `flexref`, `emref` and `mdref`, the `sampling_factor` replicas of the input models are emitted in rounds: every model is refined once before any model is refined a second time, so raising `sampling_factor` appends model numbers rather than renumbering them. Each replica carries its own seed and is genuinely additional sampling.
+
 Detailed explanations on how to configure a workflow through the configuration files can be found
 <a href="https://github.com/haddocking/haddock3/blob/main/docs/tutorials/user_config.rst">here</a>.
 

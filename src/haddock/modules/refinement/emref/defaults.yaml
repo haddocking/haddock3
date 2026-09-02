@@ -1360,7 +1360,7 @@ sampling_factor:
   max: 500
   title: Sampling factor for each starting model
   short: This parameter control how many times a model will be refined.
-  long: This parameter control how many times a model will be refined. For EM refinement only it does not make sense to increase it unless random removal of restraints is turned on. If not then the energy minimisation will lead to the same final conformation. 
+  long: This parameter control how many times a model will be refined. For EM refinement only it does not make sense to increase it unless random removal of restraints is turned on. If not then the energy minimisation will lead to the same final conformation. The replicas are emitted in rounds - every model is refined once before any model is refined a second time - so raising this value appends model numbers rather than renumbering them. Each replica carries its own seed.
   group: 'sampling'
   explevel: expert
 max_nmodels:

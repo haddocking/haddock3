@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-09-02: Emitted the `sampling_factor` replicas of `flexref`, `emref` and `mdref` in rounds - every model is refined once before any model is refined a second time - so raising `sampling_factor` appends model numbers instead of renumbering the models of every input after the first.
 - 2026-09-01: Fixed a pre-existing parallel scheduler ordering defect exposed by reproducible CNS job identity work; task results now retain submission order rather than completion order.
 - 2026-09-01: Made coarse-grained topology generation reproducible from `iniseed`.
 - 2026-09-01: Made rigid-body sampling prefix-stable: it now schedules exactly `sampling` jobs round-robin across model combinations, so raising `sampling` appends jobs instead of renumbering them.

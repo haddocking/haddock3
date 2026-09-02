@@ -182,6 +182,17 @@ def resolve(
     return expectations
 
 
+#: Provenance a finished HADDOCK3 run strips from every artifact it publishes.
+#:
+#: Their presence means the opposite of what it looks like.  An artifact
+#: carrying them was written by CNS and never published: the run died between
+#: CNS closing the file and HADDOCK3 normalizing it.  It is raw output, not a
+#: result -- it still names its own filename, the step folders it read from,
+#: and the wall-clock minute it was written -- so serving it would inject a
+#: timestamp and a pair of step paths into the run that reused it.
+_UNPUBLISHED_MARKERS = (b"\nREMARK FILENAME=", b"\nREMARK DATE:")
+
+
 def plausible(path: Path) -> bool:
     """Whether a source artifact looks complete enough to be reusable.
 
@@ -189,6 +200,12 @@ def plausible(path: Path) -> bool:
     damaged fixture from being *expected* to serve a job it visibly cannot.
     A torn PDB is present on disk but has no terminating record; expecting a
     hit from it would turn correct MUST-DEGRADE behaviour into a test failure.
+
+    Completeness is not enough on its own.  An interrupted run can leave a
+    *whole* artifact that was never published, and that one is the more
+    interesting case precisely because nothing about its length or its final
+    record gives it away -- it is detected by the provenance a published
+    artifact no longer has.
     """
     for candidate in (path, Path(f"{path}.gz"), Path(f"{path}.zst")):
         if not candidate.exists():
@@ -197,8 +214,10 @@ def plausible(path: Path) -> bool:
             if candidate.stat().st_size == 0:
                 return False
             if candidate.suffix == ".pdb":
-                tail = candidate.read_bytes()[-4096:]
-                return b"END" in tail
+                data = candidate.read_bytes()
+                if any(marker in data for marker in _UNPUBLISHED_MARKERS):
+                    return False
+                return b"END" in data[-4096:]
             return True
         except OSError:
             return False

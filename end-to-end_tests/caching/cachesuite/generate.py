@@ -631,6 +631,18 @@ def build(
         if directory.is_dir():
             freeze(directory)
 
+    # A note carried over from an earlier build describes that build, not this
+    # one. A base run that failed then and succeeds now leaves a COVERAGE HOLE
+    # behind claiming its job shapes are untested, which is exactly the kind of
+    # false statement a reviewer would act on. Drop the notes this build has
+    # disproved.
+    usable = {name for name, fixture in manifest.fixtures.items() if fixture.path}
+    manifest.notes = [
+        note
+        for note in manifest.notes
+        if not any(f"base run {name!r}" in note for name in usable)
+    ]
+
     manifest.write(root)
     log(f"done: {len(manifest.fixtures)} fixtures")
     return manifest

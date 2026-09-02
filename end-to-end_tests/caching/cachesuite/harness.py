@@ -169,6 +169,29 @@ def _resolve_run_dir(config: Path, cwd: Path) -> Path:
 # --------------------------------------------------------------------------
 
 
+def materialize_run_dir(run_dir: Path) -> Path:
+    """Unpack a run that `gen_archive` packed away, so it can be inspected.
+
+    `gen_archive = true` tars the finished run and removes the directory, so
+    there is nothing left to look at.  That is the feature working, not
+    failing, and the case that exercises it is already declared `degraded`
+    because hardlinks do not survive a tarball -- Gate 1 is blind either way.
+    What is still worth asserting is the miss direction and the bytes, and
+    both need the files back.
+    """
+    run_dir = Path(run_dir)
+    if run_dir.is_dir():
+        return run_dir
+    archive = Path(f"{run_dir}.tgz")
+    if not archive.is_file():
+        return run_dir
+    import tarfile
+
+    with tarfile.open(archive, "r:gz") as handle:
+        handle.extractall(run_dir.parent, filter="data")
+    return run_dir
+
+
 def inode(path: Path) -> tuple[int, int]:
     """``(st_dev, st_ino)``.  Both fields; ``st_ino`` alone is not identity."""
     stat = path.stat()

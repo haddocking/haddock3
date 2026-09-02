@@ -34,6 +34,7 @@ from cachesuite.expectations import (
 )
 from cachesuite.harness import (
     COMPRESSED_SUFFIXES,
+    materialize_run_dir,
     cacheable_artifacts,
     content_checksum,
     exists_any,
@@ -155,6 +156,7 @@ def _run_complete(case, prepared, record_property, timing_enabled):
         f"{case.case}: haddock3 exited {result.returncode}\n{result.tail(40)}"
     )
 
+    result.run_dir = materialize_run_dir(result.run_dir)
     assert_cacheable_modules_present(result.run_dir)
     try:
         expectations = resolve(result.run_dir, prepared.sources, case.expect)

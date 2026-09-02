@@ -148,6 +148,14 @@ class BaseHaddockModule(ABC):
         #  so somewhere in the `topoaa` module we need to set: `self._output_params[VALUE] = VAR`
         # IMPORANT: This will be propagated to ALL modules and can have unexpected effects
         self._output_params: dict = {}
+        # Runtime-only state: never mix it into validated/saved configuration.
+        self.cache_context = None
+        self._cache_schedulers: list[Scheduler] = []
+
+    def register_cache_scheduler(self, scheduler: object) -> None:
+        """Register a local scheduler for the final cache-export cycle."""
+        if isinstance(scheduler, Scheduler) and scheduler.cache_writer is not None:
+            self._cache_schedulers.append(scheduler)
 
     @property
     def params(self) -> ParamDict:
@@ -292,6 +300,11 @@ class BaseHaddockModule(ABC):
         """
         self.output_models: Union[list[PDBFile], dict[int, PDBFile]]
         assert self.output_models, "`self.output_models` cannot be empty."
+        # The regular writer exits when workers finish.  Classify everything
+        # still outstanding immediately before the normal missing-model check.
+        for scheduler in self._cache_schedulers:
+            scheduler.finalize_cache_records()
+        self._cache_schedulers.clear()
         io = ModuleIO()
         # add the input models
         io.add(self.previous_io.output, "i")
@@ -405,6 +418,7 @@ EngineMode = Literal["batch", "local", "mpi"]
 def get_engine(
     mode: str,
     params: dict[Any, Any],
+    cache_context: Any = None,
 ) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler, GRIDScheduler]]:
     """
     Create an engine to run the jobs.
@@ -434,6 +448,8 @@ def get_engine(
             Scheduler,
             ncores=params["ncores"],
             max_cpus=params["max_cpus"],
+            cache_context=cache_context,
+            cache_debug=params.get("debug", False),
         )
     elif mode == "mpi":
         return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore

@@ -117,7 +117,6 @@ class HaddockModule(BaseCNSModule):
     """HADDOCK3 module to create CNS all-atom topologies."""
 
     name = RECIPE_PATH.name
-
     def __init__(
         self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
     ) -> None:
@@ -338,7 +337,7 @@ class HaddockModule(BaseCNSModule):
                     _params,
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
-                    write_to_disk=self.params["debug"],
+                    write_to_disk=self.cns_input_as_file(),
                 )
 
                 self.log("Topology CNS input created")
@@ -361,8 +360,9 @@ class HaddockModule(BaseCNSModule):
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
-        Engine = get_engine(self.params["mode"], self.params)
+        Engine = get_engine(self.params["mode"], self.params, self.cache_context)
         engine = Engine(jobs)
+        self.register_cache_scheduler(engine)
         engine.run()
         self.log("CNS jobs have finished")
 

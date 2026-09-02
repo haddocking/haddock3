@@ -5,7 +5,7 @@ import os
 import uuid
 from pathlib import Path
 
-from haddock.core.typing import FilePath
+from haddock.core.typing import FilePath, Optional
 
 
 CNS_PDB_VOLATILE_PREFIXES = (
@@ -142,3 +142,28 @@ def _line_ending(line: bytes) -> bytes:
     if line.endswith(b"\n"):
         return b"\n"
     return b""
+
+
+def is_normalized_cns_artifact(
+    path: FilePath, logical_name: Optional[str] = None
+) -> bool:
+    """Return whether a CNS output artifact is free of run-volatile content.
+
+    Dispatches on the suffix, so a caller does not have to know which
+    normalization applies; anything not normalized here is reported as
+    already stable.
+
+    ``logical_name`` names the artifact when ``path`` does not.  A cache
+    stages an artifact under a temporary name of its own choosing, and
+    dispatching on *that* would silently classify every staged file as
+    "nothing to check".
+    """
+    name = logical_name if logical_name is not None else Path(path).name
+    if name.endswith(".gz"):
+        name = name[:-3]
+    suffix = Path(name).suffix.lower()
+    if suffix == ".pdb":
+        return is_normalized_cns_pdb(path)
+    if suffix == ".psf":
+        return is_normalized_cns_psf(path)
+    return True

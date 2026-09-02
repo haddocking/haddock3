@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-09-02: Added an opt-in content-addressed cache for CNS jobs (`--cache`). A job is identified by its canonical CNS input and the content of everything that input reads, so a result computed in one run can be reused by any run that asks the same question - in a different directory, with different filenames, or on a different machine. Which CNS executable evaluates the script is deliberately not part of that identity.
 - 2026-09-02: Emitted the `sampling_factor` replicas of `flexref`, `emref` and `mdref` in rounds - every model is refined once before any model is refined a second time - so raising `sampling_factor` appends model numbers instead of renumbering the models of every input after the first.
 - 2026-09-01: Fixed a pre-existing parallel scheduler ordering defect exposed by reproducible CNS job identity work; task results now retain submission order rather than completion order.
 - 2026-09-01: Removed run-volatile CNS provenance headers (`REMARK FILENAME=`, `REMARK DATE:`, `REMARK HADDOCK stats for`, and `REMARK initial structure`) from published PDB files, and volatile filename/date title lines from PSF files.

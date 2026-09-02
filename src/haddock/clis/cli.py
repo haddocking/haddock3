@@ -30,6 +30,7 @@ from haddock.core.typing import (
 from haddock.gear.extend_run import EXTEND_RUN_DEFAULT, add_extend_run
 from haddock.gear.restart_run import add_restart_arg
 from haddock.libs.libcli import add_version_arg, arg_file_exist
+from haddock.libs.libcache import add_cache_arg
 from haddock.libs.liblog import add_loglevel_arg
 
 
@@ -44,6 +45,7 @@ ap.add_argument(
 
 add_restart_arg(ap)
 add_extend_run(ap)
+add_cache_arg(ap)
 
 ap.add_argument(
     "--setup",
@@ -80,6 +82,7 @@ def main(
     workflow: FilePath,
     restart: Optional[int] = None,
     extend_run: Optional[FilePath] = EXTEND_RUN_DEFAULT,
+    cache: Optional[list[FilePath]] = None,
     setup_only: bool = False,
     log_level: LogLevel = "INFO",
 ) -> None:
@@ -98,6 +101,10 @@ def main(
     extend_run : str or Path
         The path created with `haddock3-copy` to start the run from.
         Defaults to None, which ignores this option.
+
+    cache : list of str or Path
+        Previous run directories to search for verified local CNS artifacts.
+        Sources are searched in command-line order.
 
     setup_only : bool, optional
         Whether to setup the run without running it.
@@ -128,9 +135,24 @@ def main(
     from haddock.libs.libtimer import convert_seconds_to_min_sec
     from haddock.libs.libutil import log_error_and_exit
     from haddock.libs.libworkflow import WorkflowManager
+    from haddock.libs.libcache import (
+        CacheContext,
+        parse_cache,
+        validate_cache_source,
+        validate_hardlink_policy,
+    )
     from haddock.modules import get_module_steps_folders
 
     start = time()
+    if cache is None:
+        cache_paths = []
+    elif isinstance(cache, (str, Path)):
+        cache_paths = [Path(cache)]
+    else:
+        cache_paths = [Path(path) for path in cache]
+    cache_sources = [validate_cache_source(path) for path in cache_paths]
+    if cache_sources:
+        validate_hardlink_policy()
     # the io.StringIO handler is a trick to save the log while run_dir
     # is not read from the configuration file and the log can be saved
     # in the final file.
@@ -165,6 +187,12 @@ def main(
     with open(log_file, "a") as fout:
         fout.write(log_temporary)
 
+    current_run = Path(_run_dir).resolve()
+    if current_run in cache_sources:
+        raise RuntimeError("A cache source must be different from the current run directory.")
+    if cache_sources and other_params["mode"] != "local":
+        raise RuntimeError("--cache is only supported with global mode = \"local\".")
+
     if setup_only:
         log.info("We have setup the run, only.")
         gen_feedback_messages(log.info)
@@ -182,9 +210,14 @@ def main(
         WorkflowManager_ = WorkflowManager
 
     with working_directory(_run_dir), log_error_and_exit():
+        cache_context = CacheContext(
+            current_run=current_run,
+            source_indexes=tuple(parse_cache(source) for source in cache_sources),
+        )
         workflow = WorkflowManager_(
             workflow_params=params,
             start=restart_step,
+            cache_context=cache_context,
             **other_params,
         )
 

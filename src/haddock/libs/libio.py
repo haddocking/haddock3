@@ -6,6 +6,7 @@ import os
 import stat
 import tarfile
 import re
+import uuid
 from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
@@ -379,17 +380,44 @@ def gzip_files(
     if block_size is None:
         block_size = 2 * 10**8
 
-    gfile = str(file_) + ".gz"
-    with open(file_, "rb") as fin, gzip.open(
-            gfile, mode="wb", compresslevel=compresslevel
-            ) as gout:
-        content = fin.read(block_size)  # read the first
-        while content:
-            gout.write(content)
-            content = fin.read(block_size)
+    file_path = Path(file_)
+    gfile = Path(f"{file_path}.gz")
+    if gfile.exists() and _gzip_matches_file(gfile, file_path):
+        if remove_original:
+            file_path.unlink()
+        return
+
+    temporary = gfile.parent / f".{gfile.name}.compress-{uuid.uuid4().hex}"
+    try:
+        with open(file_path, "rb") as fin, gzip.open(
+                temporary, mode="wb", compresslevel=compresslevel
+                ) as gout:
+            content = fin.read(block_size)  # read the first
+            while content:
+                gout.write(content)
+                content = fin.read(block_size)
+        os.replace(temporary, gfile)
+    finally:
+        temporary.unlink(missing_ok=True)
 
     if remove_original:
-        Path(file_).unlink()
+        file_path.unlink()
+
+
+def _gzip_matches_file(gzip_path: Path, plain_path: Path) -> bool:
+    """Return whether an existing gzip stores the plain file's exact bytes."""
+    chunk_size = 1024 * 1024
+    try:
+        with gzip.open(gzip_path, "rb") as compressed, open(plain_path, "rb") as plain:
+            while True:
+                compressed_chunk = compressed.read(chunk_size)
+                plain_chunk = plain.read(chunk_size)
+                if compressed_chunk != plain_chunk:
+                    return False
+                if not compressed_chunk:
+                    return True
+    except (EOFError, OSError):
+        return False
 
 
 def archive_files_ext(path: FilePath, ext: str, compresslevel: int = 9) -> bool:

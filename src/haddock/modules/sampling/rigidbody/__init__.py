@@ -89,7 +89,6 @@ class HaddockModule(BaseCNSModule):
     """HADDOCK3 module for rigid body sampling."""
 
     name = RECIPE_PATH.name
-
     def __init__(
         self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
     ) -> None:
@@ -179,7 +178,7 @@ class HaddockModule(BaseCNSModule):
                 ambig_fname=ambig_fname,
                 default_params_path=self.toppar_path,
                 native_segid=True,
-                debug=self.params["debug"],
+                debug=self.cns_input_as_file(),
                 seed=seed,
                 chainid_list=(
                     chainid_lists[combination_index] if chainid_lists else None
@@ -220,7 +219,7 @@ class HaddockModule(BaseCNSModule):
                 ambig_fname=ambig_fname,
                 native_segid=True,
                 default_params_path=self.toppar_path,
-                debug=self.params["debug"],
+                debug=self.cns_input_as_file(),
                 seed=seed,
                 chainid_list=(
                     chainid_lists[combination_index] if chainid_lists else None
@@ -230,7 +229,7 @@ class HaddockModule(BaseCNSModule):
             prepare_tasks.append(task)
             _l.append((combination, task, ambig_fname, seed))
             idx += 1
-        Engine = get_engine(self.params["mode"], self.params)
+        Engine = get_engine(self.params["mode"], self.params, self.cache_context)
         prepare_engine = Engine(prepare_tasks)
         prepare_engine.run()
 
@@ -333,8 +332,9 @@ class HaddockModule(BaseCNSModule):
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
-        Engine = get_engine(self.params["mode"], self.params)
+        Engine = get_engine(self.params["mode"], self.params, self.cache_context)
         engine = Engine(jobs)
+        self.register_cache_scheduler(engine)
         engine.run()
         self.log("CNS jobs have finished")
 

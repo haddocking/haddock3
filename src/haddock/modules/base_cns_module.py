@@ -95,6 +95,15 @@ class BaseCNSModule(BaseHaddockModule):
 
         log.info(f"Module [{self.name}] finished.")
 
+    def cns_input_as_file(self) -> bool:
+        """Return whether a prepared CNS input must be materialized as a file.
+
+        A cached job is identified by its canonical script, so the cache needs
+        the generated input on disk for reasons that have nothing to do with
+        debugging.  Naming that requirement separately keeps the two apart.
+        """
+        return bool(self.params["debug"])
+
     def default_envvars(self) -> dict[str, str]:
         """Return default env vars updated to `envvars` (if given)."""
         default_envvars = {

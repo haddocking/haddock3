@@ -28,10 +28,13 @@ class WorkflowManager:
         self,
         workflow_params: ModuleParams,
         start: Optional[int] = 0,
+        cache_context: Any = None,
         **other_params: Any,
     ) -> None:
         self.start = 0 if start is None else start
-        self.recipe = Workflow(workflow_params, start=0, **other_params)
+        self.recipe = Workflow(
+            workflow_params, start=0, cache_context=cache_context, **other_params
+        )
         # terminate is used to synchronize the `clean` option with the
         # `exit` module. If the `exit` module is removed in the future,
         # you can also remove and clean the `terminate` part here.
@@ -114,6 +117,7 @@ class Workflow:
         self,
         modules_parameters: ModuleParams,
         start: Optional[int] = 0,
+        cache_context: Any = None,
         **other_params: Any,
     ) -> None:
         if start is None:
@@ -142,6 +146,7 @@ class Workflow:
                 _ = Step(
                     stage_name,
                     order=num_stage,
+                    cache_context=cache_context,
                     **params_up,
                 )
                 self.steps.append(_)
@@ -158,6 +163,7 @@ class Step:
         self,
         module_name: str,
         order: Optional[int] = None,
+        cache_context: Any = None,
         **config_params: Any,
     ) -> None:
         self.config = config_params
@@ -165,6 +171,7 @@ class Step:
         self.order = order
         self.working_path = Path(zero_fill.fill(self.module_name, self.order))  # type: ignore
         self.module = None
+        self.cache_context = cache_context
 
     def execute(self) -> None:
         """Execute simulation step."""
@@ -176,6 +183,7 @@ class Step:
         )
         module_lib = importlib.import_module(module_name)
         self.module = module_lib.HaddockModule(order=self.order, path=self.working_path)
+        self.module.cache_context = self.cache_context
 
         # Run module
         start = time()

@@ -80,7 +80,7 @@ class HaddockModule(BaseCNSModule):
                     cns_params,
                     self.name,
                     native_segid=True,
-                    debug=self.params["debug"],
+                    debug=self.cns_input_as_file(),
                     cgtoaa=True,
                 )
                 # Build CNS Job
@@ -108,8 +108,9 @@ class HaddockModule(BaseCNSModule):
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
-        Engine = get_engine(self.params["mode"], self.params)
+        Engine = get_engine(self.params["mode"], self.params, self.cache_context)
         engine = Engine(jobs)
+        self.register_cache_scheduler(engine)
         engine.run()
         self.log("CNS jobs have finished")
 

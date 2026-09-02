@@ -7,15 +7,30 @@ import subprocess
 from contextlib import suppress
 from pathlib import Path
 
+from haddock import log
 from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import (
+    CachedCNSFailure,
     CNSRunningError,
     JobRunningError,
+)
+from haddock.libs.libcache import (
+    append_cache_record,
+    append_debug_command,
+    lookup_cache_record,
+    source_cache_has_pdb_path,
+    verify_and_restore,
 )
 from haddock.core.typing import Any, FilePath, Iterable, Optional, ParamDict
 from haddock.gear.known_cns_errors import KNOWN_ERRORS as KNOWN_CNS_ERRORS
 from haddock.libs.libcnsoutput import normalize_cns_pdb, normalize_cns_psf
 from haddock.libs.libio import gzip_files
+from haddock.libs.libseamless import (
+    canonical_mapping_for_job,
+    job_checksum,
+    result_checksum_for_paths,
+    stage_debug_synthesis,
+)
 
 
 CNS_DENORMAL_STDERR = (
@@ -140,7 +155,11 @@ class CNSJob:
             suffixes are normalized after successful execution.
         """
         self.input_file = input_file
+        # Resolve in-memory CNS input consistently in worker processes.
         self.work_dir = Path.cwd().resolve()
+        self.cache_context = None
+        self.cache_debug = False
+        self.cache_hit = False
         self.output_file = output_file
         self.error_file = error_file
         self.envvars = envvars
@@ -220,8 +239,60 @@ class CNSJob:
         compress_seed: bool = False,
         compress_err: bool = True,
     ) -> bytes:
+        """Run this CNS job, serving it from a cache when one can supply it."""
+        if self.cache_context is None:
+            out = self._run_direct(
+                compress_inp=compress_inp,
+                compress_out=compress_out,
+                compress_seed=compress_seed,
+                compress_err=compress_err,
+            )
+            return out
+
+        mapping, checksum = self._cache_mapping_and_checksum()
+        cached_failure = False
+        for source_index in self.cache_context.source_indexes:
+            source_record = lookup_cache_record(source_index, checksum)
+            if source_record is None:
+                continue
+            if source_record.result_checksum == "FAILED":
+                cached_failure = True
+                continue
+            destinations = tuple(self._absolute_output(path) for path in mapping.output_paths)
+            miss_reason = verify_and_restore(
+                source_index,
+                source_record,
+                destinations,
+                lambda paths: result_checksum_for_paths(mapping.canonical_output_names, paths),
+            )
+            if miss_reason is None:
+                self.cache_hit = True
+                return b""
+            log.warning(
+                "Cache miss for job %s from %s: %s",
+                checksum,
+                source_index.source_run,
+                miss_reason,
+            )
+        if cached_failure:
+            raise CachedCNSFailure(checksum)
+        return self._run_direct(
+            compress_inp=compress_inp,
+            compress_out=compress_out,
+            compress_seed=compress_seed,
+            compress_err=compress_err,
+        )
+
+
+    def _run_direct(
+        self,
+        compress_inp: bool = False,
+        compress_out: bool = True,
+        compress_seed: bool = False,
+        compress_err: bool = True,
+    ) -> bytes:
         """
-        Run this CNS job script.
+        Execute this CNS job script, without consulting any cache.
 
         Parameters
         ----------
@@ -451,6 +522,136 @@ class CNSJob:
         if output_file.is_absolute():
             return output_file
         return self.work_dir / output_file
+
+    def has_cached_output_file(self) -> bool:
+        """Return whether a CACHE record declares this job's PDB path.
+
+        This is intentionally a path-only scheduler hint.  In particular, it
+        must not build a canonical mapping or checksum on the scheduler's
+        main thread.
+        """
+        if self.cache_context is None or not self.cache_context.source_indexes:
+            return False
+        try:
+            self._validate_cache_outputs()
+            output = self._absolute_output(self.output_pdb_files[0])
+            relative = output.relative_to(self.cache_context.current_run.resolve())
+            return any(
+                source_cache_has_pdb_path(source_index, relative)
+                for source_index in self.cache_context.source_indexes
+            )
+        except (OSError, ValueError):
+            return False
+
+    def _cache_mapping_and_checksum(self):
+        mapping = getattr(self, "_cached_mapping", None)
+        checksum = getattr(self, "_cached_job_checksum", None)
+        if mapping is None or checksum is None:
+            mapping = canonical_mapping_for_job(self)
+            checksum = job_checksum(mapping)
+            self._cached_mapping = mapping
+            self._cached_job_checksum = checksum
+        return mapping, checksum
+
+    def _absolute_output(self, output: Path) -> Path:
+        """Resolve a declared output independently of a worker's CWD."""
+        return self._output_path(output).resolve()
+
+    def _psf_output(self) -> Path | None:
+        psf_outputs = [output for output in self.output_files if output.suffix == ".psf"]
+        return self._absolute_output(psf_outputs[0]) if psf_outputs else None
+
+    def _validate_cache_outputs(self) -> None:
+        if len(self.output_pdb_files) != 1:
+            raise CNSRunningError("CNS cache requires exactly one declared PDB output.")
+        if len([path for path in self.output_files if path.suffix == ".psf"]) > 1:
+            raise CNSRunningError("CNS cache requires at most one declared PSF output.")
+
+    def _missing_outputs(self) -> list[Path]:
+        """Return declared outputs that are not yet visible in the job directory."""
+        return [
+            path
+            for path in self.output_files
+            if not self._absolute_output(path).is_file()
+        ]
+
+    def cache_outputs_present(self) -> bool:
+        """Return whether every predeclared cache artifact is visible."""
+        self._validate_cache_outputs()
+        return not self._missing_outputs()
+
+    def prepare_cache_success_record(self, checksum: str | None = None, mapping=None):
+        """Normalize visible outputs and calculate their cache record payload."""
+        self._validate_cache_outputs()
+        if checksum is None:
+            mapping = canonical_mapping_for_job(self)
+            checksum = job_checksum(mapping)
+        self.normalize_outputs()
+        psf_output = self._psf_output()
+        result = result_checksum_for_paths(
+            self._cache_output_names(),
+            (
+                self._absolute_output(self.output_pdb_files[0]),
+                *((psf_output,) if psf_output is not None else ()),
+            ),
+        )
+        return mapping, checksum, result, psf_output
+
+    def append_cache_success_record(self, payload) -> None:
+        """Append a precomputed cache payload from the writer thread."""
+        mapping, checksum, result, psf_output = payload
+        append_cache_record(
+            self.cache_context,
+            checksum,
+            result,
+            self._absolute_output(self.output_pdb_files[0]),
+            psf_output,
+        )
+        if self.cache_debug:
+            mapping = mapping or canonical_mapping_for_job(self)
+            self._append_cache_debug_command(mapping, checksum, result)
+
+    def write_cache_success_record(self) -> None:
+        """Synchronously prepare and append a completed job's cache record."""
+        self.append_cache_success_record(self.prepare_cache_success_record())
+
+    def write_cache_failure_record(self) -> None:
+        """Record a job whose complete declared artifact set never appeared."""
+        self._validate_cache_outputs()
+        mapping = canonical_mapping_for_job(self)
+        checksum = job_checksum(mapping)
+        append_cache_record(
+            self.cache_context,
+            checksum,
+            "FAILED",
+            self._absolute_output(self.output_pdb_files[0]),
+            self._psf_output(),
+        )
+        if self.cache_debug:
+            self._append_cache_debug_command(mapping, checksum, "FAILED")
+
+    def cache_writer_completion(self):
+        """Return the worker's already-required job identity to the writer.
+
+        The writer still normalizes and checksums visible output bytes itself;
+        only the identity used for the cache lookup is reused here.
+        """
+        return (
+            self.cache_writer_id,
+            getattr(self, "_cached_job_checksum", None),
+            getattr(self, "_cached_mapping", None) if self.cache_debug else None,
+        )
+
+    def _cache_output_names(self) -> tuple[str, ...]:
+        """Return fixed canonical names for the declared cache artifact shape."""
+        return ("canonical-output.pdb",) + (
+            ("canonical-output.psf",) if self._psf_output() is not None else ()
+        )
+
+    def _append_cache_debug_command(self, mapping, checksum: str, result: str) -> None:
+        if self.cache_debug:
+            command = stage_debug_synthesis(mapping, checksum).command
+            append_debug_command(self.cache_context, checksum, result, command)
 
     @staticmethod
     def contains_cns_stdout_error(out: bytes) -> bool:

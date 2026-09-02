@@ -29,7 +29,6 @@ class HaddockModule(CNSScoringModule):
     """HADDOCK3 module to perform energy minimization scoring."""
 
     name = RECIPE_PATH.name
-
     def __init__(
         self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
     ) -> None:
@@ -68,7 +67,7 @@ class HaddockModule(CNSScoringModule):
                 cns_params,
                 self.name,
                 native_segid=True,
-                debug=self.params["debug"],
+                debug=self.cns_input_as_file(),
                 seed=seed,
             )
 
@@ -97,8 +96,9 @@ class HaddockModule(CNSScoringModule):
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
-        Engine = get_engine(self.params["mode"], self.params)
+        Engine = get_engine(self.params["mode"], self.params, self.cache_context)
         engine = Engine(jobs)
+        self.register_cache_scheduler(engine)
         engine.run()
         self.log("CNS jobs have finished")
 

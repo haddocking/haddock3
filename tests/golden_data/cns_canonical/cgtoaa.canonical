@@ -62,8 +62,6 @@ canonical-output.pdb
 [canonical parameter header]
 
 ! Parameters
-eval ($mol_fix_origin_1=false)
-eval ($mol_shape_1=false)
 eval ($w_air=0.1)
 eval ($w_bsa=0.0)
 eval ($w_cdih=0.0)

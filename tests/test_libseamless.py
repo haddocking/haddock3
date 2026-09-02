@@ -6,7 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from haddock.libs.libcnscanonical import (
+from haddock.libs.libseamless import (
+    canonical_mapping_for_job,
     build_canonical_mapping,
     compression_transparent_checksum,
 )
@@ -243,7 +244,7 @@ def test_cnsjob_exposes_canonical_mapping(monkeypatch, tmp_path):
         output_files=[step / "result.pdb"],
     )
 
-    assert job.canonical_mapping().checksums == mapping.checksums
+    assert canonical_mapping_for_job(job).checksums == mapping.checksums
 
 
 def test_compression_transparent_checksum(tmp_path):

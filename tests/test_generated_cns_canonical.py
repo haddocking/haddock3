@@ -15,6 +15,7 @@ from haddock.libs.libcns import (
     prepare_cns_input,
 )
 from haddock.libs.libontology import Format, PDBFile, Persistent
+from haddock.libs.libseamless import canonical_mapping_for_job
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules.refinement.cgtoaa import HaddockModule as Cgtoaa
 from haddock.modules.refinement.emref import HaddockModule as Emref
@@ -347,7 +348,7 @@ def _generated_mapping(shape: str, work_path: Path, input_path: Path):
         envvars=module.default_envvars(),
         output_files=outputs,
     )
-    return job.canonical_mapping(), script, module
+    return canonical_mapping_for_job(job), script, module
 
 
 def _generic_input(shape: str, work_path: Path, input_path: Path):

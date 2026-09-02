@@ -134,8 +134,6 @@ canonical-output.pdb
 [canonical parameter header]
 
 ! Parameters
-eval ($mol_fix_origin_1=false)
-eval ($mol_shape_1=false)
 eval ($unambig_fname="")
 eval ($hbond_fname="")
 eval ($ambig_hot=10)
@@ -468,8 +466,6 @@ eval ($int_18_20=1.0)
 eval ($int_19_19=1.0)
 eval ($int_19_20=1.0)
 eval ($int_20_20=1.0)
-eval ($mol_fix_origin_2=false)
-eval ($mol_shape_2=false)
 eval ($ambig_fname="")
 
 ! Input structure

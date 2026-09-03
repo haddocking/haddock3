@@ -153,8 +153,10 @@ class Manifest:
 
 
 def freeze(path: Path) -> None:
-    """Make a fixture read-only.  Directories keep ``x`` so they stay walkable."""
+    """Make cache artifacts read-only while retaining writable audit bundles."""
     for entry in sorted(path.rglob("*"), reverse=True):
+        if ".cache-stage" in entry.relative_to(path).parts:
+            continue
         try:
             mode = entry.stat().st_mode
         except OSError:

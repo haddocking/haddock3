@@ -120,4 +120,4 @@ eval ($seed=1694244009)
 
 ! Output structure
 eval ($output_pdb_filename="canonical-output.pdb")
-eval ($count=canonical-count)
+eval ($count=1)

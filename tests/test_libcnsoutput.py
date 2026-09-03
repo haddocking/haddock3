@@ -1,4 +1,6 @@
 import gzip
+import subprocess
+import sys
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -301,3 +303,30 @@ def test_psf_normalization_does_not_touch_structural_data(tmp_path):
 
     body = "  DATE: 1 2 3 4\n  1 A    6    CYS  SG   SG     0.000000\n"
     assert normalize_cns_psf_bytes(body.encode()) == body.encode()
+
+
+def test_standalone_normalizer_uses_production_implementation(tmp_path):
+    from haddock.libs import libcnsnormalize
+
+    pdb = tmp_path / "model.pdb"
+    psf = tmp_path / "model.psf"
+    pdb.write_text(
+        "REMARK HADDOCK stats for model.pdb\nATOM\n",
+        encoding="utf-8",
+    )
+    psf.write_text(PSF_WITH_DATE, encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, libcnsnormalize.__file__, str(pdb), str(psf)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert pdb.read_bytes() == libcnsnormalize.normalize_cns_pdb_bytes(
+        b"REMARK HADDOCK stats for model.pdb\nATOM\n"
+    )
+    assert psf.read_bytes() == libcnsnormalize.normalize_cns_psf_bytes(
+        PSF_WITH_DATE.encode()
+    )

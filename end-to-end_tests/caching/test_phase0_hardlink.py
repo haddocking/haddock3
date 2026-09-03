@@ -36,10 +36,25 @@ from cachesuite.harness import (
     link_source,
     run_haddock3,
 )
+from cachesuite.corpus import freeze
 
 pytestmark = pytest.mark.phase0
 
 HARDLINK = "HADDOCK_CACHE_HARDLINK"
+
+
+def test_freeze_keeps_cache_stage_writable(tmp_path):
+    """The retained replay workspace is audit output, not a cache source."""
+    artifact = tmp_path / "1_rigidbody" / "model.pdb"
+    staged = tmp_path / "1_rigidbody" / ".cache-stage" / "job"
+    artifact.parent.mkdir(parents=True)
+    staged.mkdir(parents=True)
+    artifact.write_text("ATOM\n", encoding="utf-8")
+
+    freeze(tmp_path)
+
+    assert not artifact.stat().st_mode & 0o200
+    assert staged.stat().st_mode & 0o200
 
 
 def _run(micro_config, micro, sources, value, name="b", **top):

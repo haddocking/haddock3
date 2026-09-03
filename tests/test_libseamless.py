@@ -7,9 +7,13 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libseamless import (
-    canonical_mapping_for_job,
     build_canonical_mapping,
+    canonical_mapping_for_job,
+    canonical_wrapper,
     compression_transparent_checksum,
+    job_checksum,
+    synthesize_seamless_run,
+    transformation_for_mapping,
 )
 from haddock.libs.libsubprocess import CNSJob
 
@@ -23,6 +27,8 @@ def test_canonical_mapping_is_independent_of_run_step_and_install_names(tmp_path
     assert first.invariant_dependencies == (
         "canonical-cns",
         "module/protocol.cns",
+        "normalize-cns-output.py",
+        "run-cns.sh",
         "toppar/protein.top",
     )
 
@@ -32,9 +38,8 @@ def test_canonical_mapping_is_independent_of_the_cns_executable(tmp_path):
 
     Two installations hold different binaries, always -- nobody compiles or
     downloads the same bytes twice -- so an identity that read the
-    executable's content could never be shared between them.  The pin is
-    still there and still occupies its position; it is bound to a policy
-    constant rather than to bytes.
+    executable's content could never be shared between them. It is therefore
+    materialized as a Seamless meta-file pin, outside content identity.
     """
     first, _ = _mapping(tmp_path, "one", "2_rigidbody", "install-a")
     second, _ = _mapping(tmp_path, "two", "2_rigidbody", "install-b")
@@ -42,7 +47,14 @@ def test_canonical_mapping_is_independent_of_the_cns_executable(tmp_path):
     assert compression_transparent_checksum(
         first.cns_exec
     ) != compression_transparent_checksum(second.cns_exec)
-    assert first.checksums["canonical-cns"] == second.checksums["canonical-cns"]
+    assert "canonical-cns" not in first.checksums
+    assert job_checksum(first) == job_checksum(second)
+    first_tf = transformation_for_mapping(first)[1]
+    second_tf = transformation_for_mapping(second)[1]
+    assert (
+        first_tf["META__FILE__canonical-cns"]
+        != (second_tf["META__FILE__canonical-cns"])
+    )
     assert "canonical-cns" in first.invariant_dependencies
 
 
@@ -65,8 +77,9 @@ def test_canonical_mapping_keeps_model_content_in_identity(tmp_path):
     )
 
     assert first.canonical_script == second.canonical_script
-    assert first.checksums["canonical-input-1.pdb"] != (
-        second.checksums["canonical-input-1.pdb"]
+    assert (
+        first.checksums["canonical-input-1.pdb"]
+        != (second.checksums["canonical-input-1.pdb"])
     )
 
 
@@ -76,17 +89,56 @@ def test_canonical_mapping_erases_count_but_keeps_seed(tmp_path):
     different_seed = _indexed_model_mapping(tmp_path, "run-c", index=1, seed=1002)
 
     assert first.canonical_script == second.canonical_script
-    assert "canonical-count" in first.canonical_script
+    assert "evaluate ($count = 1)" in first.canonical_script
+    assert "canonical-count" not in first.canonical_script
     assert "1001" in first.canonical_script
     assert first.canonical_script != different_seed.canonical_script
+
+
+def test_canonical_mapping_keeps_addressable_molecule_flags_only(tmp_path):
+    root = tmp_path / "run" / "1_rigidbody"
+    module, toppar, cns = _install(tmp_path, "install")
+    root.mkdir(parents=True)
+    common = (
+        "eval ($mol_fix_origin_1=false)\n"
+        "eval ($mol_shape_1=false)\n"
+        "eval ($mol_fix_origin_2=false)\n"
+        "eval ($mol_shape_2=false)\n"
+    )
+    surplus = "eval ($mol_fix_origin_3=false)\neval ($mol_shape_3=false)\n"
+    tail = "eval ($ncomponents=2)\n"
+
+    with_surplus = build_canonical_mapping(
+        common + surplus + tail,
+        envvars={"MODULE": str(module), "TOPPAR": str(toppar)},
+        cns_exec=cns,
+        output_files=[root / "result.pdb"],
+        work_dir=root,
+    )
+    without_surplus = build_canonical_mapping(
+        common + tail,
+        envvars={"MODULE": str(module), "TOPPAR": str(toppar)},
+        cns_exec=cns,
+        output_files=[root / "result.pdb"],
+        work_dir=root,
+    )
+
+    assert with_surplus.canonical_script == without_surplus.canonical_script
+    assert "$mol_fix_origin_1=false" in with_surplus.canonical_script
+    assert "$mol_shape_2=false" in with_surplus.canonical_script
+    assert "$mol_fix_origin_3" not in with_surplus.canonical_script
 
 
 def test_canonical_mapping_resolves_count_suffix_restraint_file(tmp_path):
     mapping = _counted_restraint_mapping(tmp_path, count=3, suffixed_exists=True)
 
-    assert mapping.dependency_paths[
-        (tmp_path / "run" / "03_flexref" / "ambig.tbl_3").resolve()
-    ] == "canonical-ambig.tbl"
+    assert (
+        mapping.dependency_paths[
+            (tmp_path / "run" / "03_flexref" / "ambig.tbl_3").resolve()
+        ]
+        == "canonical-ambig.tbl"
+    )
+    assert 'evaluate ($filenam0 = "canonical-ambig.tbl")' in (mapping.canonical_script)
 
 
 def test_canonical_mapping_erases_count_suffix_base_alias(tmp_path):
@@ -112,9 +164,12 @@ def test_canonical_mapping_erases_count_suffix_base_alias(tmp_path):
 def test_canonical_mapping_falls_back_to_base_restraint_file(tmp_path):
     mapping = _counted_restraint_mapping(tmp_path, count=3, suffixed_exists=False)
 
-    assert mapping.dependency_paths[
-        (tmp_path / "run" / "03_flexref" / "ambig.tbl").resolve()
-    ] == "canonical-ambig.tbl"
+    assert (
+        mapping.dependency_paths[
+            (tmp_path / "run" / "03_flexref" / "ambig.tbl").resolve()
+        ]
+        == "canonical-ambig.tbl"
+    )
 
 
 def test_canonical_mapping_replaces_relative_sibling_dependency_path(tmp_path):
@@ -181,11 +236,13 @@ def test_canonical_dependency_names_follow_first_reference_order(tmp_path):
     )
 
     assert first.canonical_script == second.canonical_script
-    assert first.checksums["canonical-input-1.pdb"] == (
-        second.checksums["canonical-input-1.pdb"]
+    assert (
+        first.checksums["canonical-input-1.pdb"]
+        == (second.checksums["canonical-input-1.pdb"])
     )
-    assert first.checksums["canonical-input-2.pdb"] == (
-        second.checksums["canonical-input-2.pdb"]
+    assert (
+        first.checksums["canonical-input-2.pdb"]
+        == (second.checksums["canonical-input-2.pdb"])
     )
 
 
@@ -200,20 +257,20 @@ def test_canonical_mapping_resolves_module_absolute_suffix_and_toppar_slash(tmp_
     (toppar / "dmso.pdb").write_text("DMSO\n", encoding="utf-8")
 
     mapping = build_canonical_mapping(
-        "inline @@MODULE:/protein-ss-restraints-all.cns\n"
-        "coor @@TOPPAR/dmso.pdb\n",
+        "inline @@MODULE:/protein-ss-restraints-all.cns\ncoor @@TOPPAR/dmso.pdb\n",
         envvars={"MODULE": str(module), "TOPPAR": str(toppar)},
         cns_exec=cns,
         output_files=[work_dir / "result.pdb"],
         work_dir=work_dir,
     )
 
-    assert mapping.dependency_paths[
-        (module / "protein-ss-restraints-all.cns").resolve()
-    ] == "module/protein-ss-restraints-all.cns"
-    assert mapping.dependency_paths[
-        (toppar / "dmso.pdb").resolve()
-    ] == "toppar/dmso.pdb"
+    assert (
+        mapping.dependency_paths[(module / "protein-ss-restraints-all.cns").resolve()]
+        == "module/protein-ss-restraints-all.cns"
+    )
+    assert (
+        mapping.dependency_paths[(toppar / "dmso.pdb").resolve()] == "toppar/dmso.pdb"
+    )
 
 
 def test_canonical_mapping_rejects_unresolved_reads(tmp_path):
@@ -256,6 +313,84 @@ def test_compression_transparent_checksum(tmp_path):
     assert compression_transparent_checksum(plain) == (
         compression_transparent_checksum(compressed)
     )
+
+
+def test_transformation_pins_run_script_and_shared_normalizer(tmp_path):
+    mapping, _ = _mapping(tmp_path, "run", "1_rigidbody", "install")
+
+    _, transformation = transformation_for_mapping(mapping)
+
+    assert transformation["code"][2] == (
+        "f4400f9541e1506cdf2e077f37b6c241f6c82f936dcc9f94b7025e9d9b2f576a"
+    )
+    assert transformation["run-cns.sh"][2] == mapping.checksums["run-cns.sh"]
+    assert (
+        transformation["normalize-cns-output.py"][2]
+        == (mapping.checksums["normalize-cns-output.py"])
+    )
+    wrapper = canonical_wrapper(mapping)
+    assert "awk " not in wrapper
+    assert "python3 normalize-cns-output.py canonical-output.pdb" in wrapper
+
+
+def test_pdb_psf_transformation_has_frozen_capture_code_pin(tmp_path):
+    mapping = _pdb_psf_mapping(tmp_path)
+
+    _, transformation = transformation_for_mapping(mapping)
+
+    assert transformation["code"][2] == (
+        "1427f07ff1afcb850199a9e96d85df94eb87f80b9c03099f27957b9d7d287725"
+    )
+    assert transformation["__output__"][1] == "deepfolder"
+    assert (
+        "python3 normalize-cns-output.py canonical-output.pdb canonical-output.psf"
+    ) in canonical_wrapper(mapping)
+
+
+def test_synthesized_workspace_hardlinks_every_staged_input(tmp_path):
+    mapping, _ = _mapping(tmp_path, "run", "1_rigidbody", "install")
+
+    synthesized = synthesize_seamless_run(mapping, tmp_path / "stage")
+
+    staged_inputs = [
+        synthesized.wrapper,
+        synthesized.manifest,
+        synthesized.stage_dir / "canonical.inp",
+        synthesized.stage_dir / "canonical-cns",
+        synthesized.stage_dir / "normalize-cns-output.py",
+        *[
+            synthesized.stage_dir / dependency.canonical_name
+            for dependency in mapping.dependencies
+        ],
+    ]
+    assert all(path.stat().st_nlink >= 2 for path in staged_inputs)
+    assert synthesized.stage_dir.stat().st_mode & 0o200
+    assert synthesized.wrapper.stat().st_mode & 0o100
+    manifest = synthesized.manifest.read_text(encoding="utf-8").splitlines()
+    assert "run-cns.sh" not in manifest  # the command itself is an input
+    assert "canonical-cns" not in manifest  # supplied by --metafile
+    assert "--metafile" in synthesized.command
+
+
+def test_synthesized_workspace_materializes_compressed_dependency(tmp_path):
+    root = tmp_path / "run" / "1_rigidbody"
+    module, toppar, cns = _install(tmp_path, "install")
+    root.mkdir(parents=True)
+    compressed = root / "model.pdb.gz"
+    compressed.write_bytes(gzip.compress(b"ATOM logical\n", mtime=0))
+    mapping = build_canonical_mapping(
+        'evaluate ($input_pdb = "model.pdb.gz")\ncoor @@$input_pdb\n',
+        envvars={"MODULE": str(module), "TOPPAR": str(toppar)},
+        cns_exec=cns,
+        output_files=[root / "result.pdb"],
+        work_dir=root,
+    )
+
+    synthesized = synthesize_seamless_run(mapping, tmp_path / "stage")
+    staged = synthesized.stage_dir / "canonical-input-1.pdb"
+
+    assert staged.read_bytes() == b"ATOM logical\n"
+    assert staged.stat().st_nlink >= 2
 
 
 def test_canonical_mapping_keeps_install_reference_spelling(tmp_path):
@@ -386,8 +521,8 @@ def test_canonical_mapping_resolves_cgtoaa_indexed_variable_references(tmp_path)
         (root / f"input_{index}.psf").write_text("PSF\n", encoding="utf-8")
 
     mapping = build_canonical_mapping(
-        "eval ($input_aa_psf_filename_1=\"input_1.psf\")\n"
-        "eval ($input_aa_psf_filename_2=\"input_2.psf\")\n"
+        'eval ($input_aa_psf_filename_1="input_1.psf")\n'
+        'eval ($input_aa_psf_filename_2="input_2.psf")\n'
         "while ($nchain < 2) loop nloop1\n"
         "  structure @@$input_aa_psf_filename_$nchain end\n"
         "end loop nloop1\n",
@@ -423,7 +558,7 @@ def test_logging_and_count_canonicalizations_are_limited_to_known_cns_uses():
     assert count_lines
     assert all(
         "display STRUCTURE NUMBER $count" in line
-        or "$ambig_fname + \"_\" + encode($count)" in line
+        or '$ambig_fname + "_" + encode($count)' in line
         for line in count_lines
     )
 
@@ -450,6 +585,20 @@ def _mapping(tmp_path: Path, run_name: str, step_name: str, install_name: str):
             work_dir=root,
         ),
         root,
+    )
+
+
+def _pdb_psf_mapping(tmp_path: Path):
+    root = tmp_path / "run" / "0_topoaa"
+    module, toppar, cns = _install(tmp_path, "install")
+    root.mkdir(parents=True)
+    return build_canonical_mapping(
+        'evaluate ($output_pdb_filename = "result.pdb")\n'
+        'evaluate ($output_psf_filename = "result.psf")\n',
+        envvars={"MODULE": str(module), "TOPPAR": str(toppar)},
+        cns_exec=cns,
+        output_files=[root / "result.pdb", root / "result.psf"],
+        work_dir=root,
     )
 
 

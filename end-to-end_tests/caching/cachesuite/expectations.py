@@ -114,6 +114,7 @@ def resolve(
     run_dir: Path,
     sources: dict[str, Path],
     spec: dict,
+    attribution: dict[Path, tuple[Path, frozenset]] | None = None,
 ) -> list[Expectation]:
     """Build the expected mapping for every cacheable artifact in ``run_dir``."""
     default = spec.get("default", "hit")
@@ -153,7 +154,7 @@ def resolve(
             )
             continue
 
-        found = _find_sources(artifact, run_dir, sources)
+        found = _find_sources(artifact, run_dir, sources, attribution)
         if verdict == "auto":
             # The source either holds a usable entry for this job or it does
             # not, and which it is follows from content, not from the case
@@ -253,10 +254,59 @@ def _named_source(declared: str, sources: dict[str, Path]) -> Path:
     return sources[name] / relative
 
 
+def _source_step_record(
+    source_folder: Path,
+    source_run: Path,
+    artifact: Artifact,
+    attribution: dict[Path, tuple[Path, frozenset]] | None,
+) -> tuple[list[ModelRef], Path]:
+    """What a source step produced, including one that never said so.
+
+    A run killed mid-step never writes that step's `io.json`, so the step
+    holds finished results and no record of which job produced which. Reading
+    that as "the step produced nothing" would make every completed job in it
+    invisible, and Axis 9 asserts precisely that those jobs are reusable.
+
+    The builder does know: it ran a known configuration and killed it, and it
+    recorded the complete run that configuration is a prefix of. Borrowing
+    that run's record for this step is sound because job N is job N in both --
+    rigid-body scheduling is prefix-stable and seeds come from content, not
+    from position -- so a larger `sampling` appends jobs rather than
+    renumbering them. Only jobs the interrupted run actually finished are
+    kept: the caller drops any whose artifact is missing or unpublished.
+
+    This reads HADDOCK3's own public data-flow record, never the cache's
+    bookkeeping, so the oracle stays independent of what it measures.
+    """
+    outputs = step_outputs(source_folder)
+    if outputs:
+        return outputs, source_folder
+    explained = (attribution or {}).get(source_run)
+    if explained is None:
+        return [], source_folder
+    complete_run, recovered = explained
+    complete_folder = _step_folder(complete_run, artifact.module, artifact.occurrence)
+    if complete_folder is None:
+        return [], source_folder
+    # Only what this run recorded.  A survivor it published without recording
+    # is intact and unusable, and offering it would demand a reuse the cache
+    # has no way to reach.
+    step = source_folder.name
+    return (
+        [
+            model
+            for model in step_outputs(complete_folder)
+            if model.file_name and f"{step}/{model.file_name}" in recovered
+        ],
+        complete_folder,
+    )
+
+
 def _find_sources(
     artifact: Artifact,
     run_dir: Path,
     sources: dict[str, Path],
+    attribution: dict[Path, tuple[Path, frozenset]] | None = None,
 ) -> tuple[Path, ...]:
     """The source entries that hold the job which produced ``artifact``.
 
@@ -280,11 +330,18 @@ def _find_sources(
         source_folder = _step_folder(root, artifact.module, artifact.occurrence)
         if source_folder is None:
             continue
-        source_outputs = step_outputs(source_folder)
+        source_outputs, source_declares = _source_step_record(
+            source_folder, root, artifact, attribution
+        )
         for index in range(len(source_outputs)):
             try:
                 identity = _job_identity(
-                    root, source_folder, artifact.module, source_outputs, index
+                    root,
+                    source_folder,
+                    artifact.module,
+                    source_outputs,
+                    index,
+                    source_declares,
                 )
             except (ExpectationError, OSError):
                 # A damaged or truncated source cannot answer for this job.
@@ -343,6 +400,7 @@ def _job_identity(
     module: str,
     outputs: list[ModelRef],
     position: int,
+    declares: Path | None = None,
 ) -> tuple[tuple[str, ...], int | None]:
     """What the job that produced ``outputs[position]`` was.
 
@@ -355,14 +413,19 @@ def _job_identity(
     fewer inputs would report hits it cannot justify.
     """
     model = outputs[position]
+    # A step killed before it finished declares neither its outputs nor its
+    # inputs.  `declares` is then the same step of the complete run it was cut
+    # short from; the files themselves are still read from `run_dir`, so what
+    # enters the identity is this run's content, not the other one's.
+    declares = folder if declares is None else declares
     if module in TOPOLOGY_MODULES:
-        reads = (_checksum(_topology_input(run_dir, folder, model)),)
+        reads = (_checksum(_topology_input(run_dir, declares, model)),)
     elif module in COMBINATION_MODULES:
         reads = tuple(
-            _checksum(path) for path in _combination_inputs(run_dir, folder, model)
+            _checksum(path) for path in _combination_inputs(run_dir, declares, model)
         )
     elif module in PER_MODEL_MODULES:
-        reads = (_checksum(_per_model_input(run_dir, folder, model)),)
+        reads = (_checksum(_per_model_input(run_dir, declares, model)),)
     else:
         raise ExpectationError(
             f"{module} is a cacheable module whose job shape this oracle does "

@@ -72,6 +72,24 @@ class Fixture:
     system: str = ""
     purpose: str = ""
     config: str = ""
+    #: The complete fixture this one was cut short from, when it was.
+    #:
+    #: An interrupted run never writes the `io.json` of the step it died in,
+    #: so nothing in that step says which job produced which file.  The
+    #: builder knows: it ran a known configuration and killed it.  Naming the
+    #: complete run here lets the oracle attribute those results instead of
+    #: guessing, which is what Axis 9 needs to assert per-job recovery.  Job
+    #: N is job N in both runs because rigid-body scheduling is prefix-stable
+    #: and seeds are derived from content, not from schedule position.
+    base: str = ""
+    #: Of the artifacts an interrupted run published, those it also recorded.
+    #:
+    #: A run killed outright can finish a job, publish its result and die
+    #: before recording it.  The file is intact and still unusable: nothing
+    #: says which job produced it.  Phase 1 can see the difference and Phase 2
+    #: cannot, so it is written down here -- it is the whole distinction
+    #: between 9.2a, where reuse must happen, and 9.2b, where it must not.
+    recovered: list[str] = field(default_factory=list)
     #: Measured wall time of the original build, seconds.
     duration: float = 0.0
     #: Measured wall time of an all-hit rerun of the same config against this

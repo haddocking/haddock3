@@ -482,6 +482,11 @@ def build_interrupted(
             continue
         outputs = [artifact.relative for artifact in cacheable_artifacts(run_dir)]
         records_present = record_format.available(run_dir)
+        recovered = (
+            sorted(record_format.recorded_artifacts(run_dir))
+            if records_present
+            else []
+        )
         freeze(run_dir)
         fixtures.append(
             Fixture(
@@ -491,6 +496,8 @@ def build_interrupted(
                 system=spec.system,
                 purpose=purpose,
                 config=str(config_path.relative_to(root)),
+                base=base,
+                recovered=recovered,
                 outputs=outputs,
                 notes=[note, f"records present: {records_present}"],
             )

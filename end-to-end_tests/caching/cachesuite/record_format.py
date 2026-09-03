@@ -105,6 +105,23 @@ def write(run_dir: Path, records: list[list[str]]) -> None:
     )
 
 
+def recorded_artifacts(run_dir: Path) -> set[str]:
+    """Every artifact path the run recorded a result for.
+
+    A run killed outright can publish an artifact and never record it. The
+    file is then intact and still unusable: nothing says which job produced
+    it, so no later run can ask for it by content. Phase 1 uses this to tell
+    the oracle which of an interrupted fixture's survivors are actually
+    recoverable -- knowledge the builder has and the cache, by then, does not.
+    """
+    paths: set[str] = set()
+    for record in read(run_dir):
+        for field in PATH_FIELDS:
+            if len(record) > field and record[field]:
+                paths.add(record[field])
+    return paths
+
+
 def artifact_step(record: list[str]) -> str:
     """The step folder a record's artifacts live in, or ``""``."""
     if len(record) <= PATH_FIELDS[0]:

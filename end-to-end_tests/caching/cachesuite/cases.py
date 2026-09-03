@@ -123,6 +123,9 @@ class Prepared:
     #: perturbation edits an input, in which case a private copy.
     data_dir: Path
     sources: dict[str, Path]
+    #: For a source that was cut short: the complete run that explains its
+    #: results, and which of them it actually recorded.
+    attribution: dict[Path, tuple[Path, frozenset]]
     env: dict[str, str]
     install: Path | None
     cwd: Path
@@ -175,6 +178,7 @@ def prepare(case: Case, corpus: Manifest, corpus_dir: Path, tmp: Path) -> Prepar
         )
 
     sources = {}
+    attribution = {}
     for name in case.sources:
         fixture = corpus.require(name)
         if not fixture.path:
@@ -182,6 +186,15 @@ def prepare(case: Case, corpus: Manifest, corpus_dir: Path, tmp: Path) -> Prepar
                 f"corpus fixture {name!r} is unusable: {fixture.notes}"
             )
         sources[name] = fixture.run_dir(corpus_dir)
+        # What the builder knows about a run it cut short: which complete run
+        # it is a prefix of.  The oracle needs it to attribute results in the
+        # step that never wrote its `io.json`.
+        complete = corpus.fixtures.get(fixture.base) if fixture.base else None
+        if complete is not None and complete.path:
+            attribution[sources[name]] = (
+                complete.run_dir(corpus_dir),
+                frozenset(fixture.recovered),
+            )
 
     base_fixture = corpus.fixtures.get(case.base)
     overhead = case.overhead
@@ -200,6 +213,7 @@ def prepare(case: Case, corpus: Manifest, corpus_dir: Path, tmp: Path) -> Prepar
         run_dir=Path(str(context.config.top["run_dir"])),
         data_dir=context.data_dir,
         sources=sources,
+        attribution=attribution,
         env=env,
         install=context.install,
         cwd=context.cwd or tmp,

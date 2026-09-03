@@ -159,7 +159,9 @@ def _run_complete(case, prepared, record_property, timing_enabled):
     result.run_dir = materialize_run_dir(result.run_dir)
     assert_cacheable_modules_present(result.run_dir)
     try:
-        expectations = resolve(result.run_dir, prepared.sources, case.expect)
+        expectations = resolve(
+            result.run_dir, prepared.sources, case.expect, prepared.attribution
+        )
     except ExpectationError as error:
         pytest.fail(f"{case.case}: {error}", pytrace=False)
 

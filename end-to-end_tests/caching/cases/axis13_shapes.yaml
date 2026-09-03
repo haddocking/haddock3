@@ -111,11 +111,18 @@
 
 - case: axis13.6-coarse-grained-shapes-content-sensitive
   taxonomy: "13 (topocg/cgtoaa x Axis 6)"
-  title: A restraint change misses the sampling stage and everything after it
+  title: A restraint change misses the sampling stage and everything reading it
   why: >
     A restraint change in a coarse-grained workflow must invalidate the
-    sampling stage and everything after it, including the conversion back
-    to all-atom.
+    sampling stage and everything after it that reads the restraints.
+
+    `cgtoaa` is the exception, and deliberately so: it converts one model
+    back to all-atom and never opens the ambiguous restraint file. Its only
+    content-bearing input is the model handed to it. So it is asserted by
+    content rather than declared a miss -- if the refinement it follows
+    happens to reproduce a byte-identical model, reusing the conversion of
+    that model is correct, and demanding a recomputation would be demanding
+    that identical inputs produce a different job.
   base: cg
   sources: [cg]
   perturb:
@@ -125,7 +132,7 @@
     patterns:
       - {match: "*_rigidbody/*", expect: miss}
       - {match: "*_flexref/*", expect: miss}
-      - {match: "*_cgtoaa/*", expect: miss}
+      - {match: "*_cgtoaa/*", expect: auto}
       - {match: "*_emref/*", expect: miss}
 
 - case: axis13.7-topology-shape-both-outputs-from-one-source

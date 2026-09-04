@@ -51,7 +51,11 @@ dependencies = [
   'gdock>=0.5.0',
   # Content-addressed CNS job identity and result reuse.
   'seamless-core==0.1.4',
+  'seamless-config==0.3.2',
+  'seamless-remote==0.4.0',
   'seamless-transformer==0.6.1',
+  'hashserver==1.1.0',
+  'seamless-database==2.1.0',
 ]
 
 [project.optional-dependencies]

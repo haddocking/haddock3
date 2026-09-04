@@ -15,7 +15,12 @@ from haddock.libs.libcns import (
     prepare_cns_input,
 )
 from haddock.libs.libontology import Format, PDBFile, Persistent
-from haddock.libs.libseamless import canonical_mapping_for_job
+from haddock.libs.libseamless import (
+    canonical_mapping_for_job,
+    canonical_wrapper,
+    synthesize_seamless_run,
+    transformation_for_mapping,
+)
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules.refinement.cgtoaa import HaddockModule as Cgtoaa
 from haddock.modules.refinement.emref import HaddockModule as Emref
@@ -35,9 +40,7 @@ from . import golden_data
 SOURCE_GOLDEN_DATA = Path(golden_data).resolve()
 GOLDEN_DIR = SOURCE_GOLDEN_DATA / "cns_canonical"
 #: The shapes whose recipes read ``$seed``.
-SEEDED_SHAPES = frozenset(
-    {"rigidbody", "flexref", "emref", "mdref", "mdscoring"}
-)
+SEEDED_SHAPES = frozenset({"rigidbody", "flexref", "emref", "mdref", "mdscoring"})
 GENERIC_MODULES = {
     "rigidbody": Rigidbody,
     "flexref": Flexref,
@@ -45,6 +48,23 @@ GENERIC_MODULES = {
     "mdref": Mdref,
     "emscoring": Emscoring,
     "mdscoring": Mdscoring,
+}
+
+ALL_CNS_SHAPES = (
+    "topoaa",
+    "topocg",
+    "rigidbody",
+    "flexref",
+    "emref",
+    "mdref",
+    "emscoring",
+    "mdscoring",
+    "cgtoaa",
+)
+
+SEAMLESS_CODE_PINS = {
+    "pdb": "f4400f9541e1506cdf2e077f37b6c241f6c82f936dcc9f94b7025e9d9b2f576a",
+    "pdb+psf": "1427f07ff1afcb850199a9e96d85df94eb87f80b9c03099f27957b9d7d287725",
 }
 
 
@@ -111,20 +131,7 @@ def test_constructed_cns_parameter_families_are_included(
     assert constructed_parameters <= module.cns_params().keys()
 
 
-@pytest.mark.parametrize(
-    "shape",
-    (
-        "topoaa",
-        "topocg",
-        "rigidbody",
-        "flexref",
-        "emref",
-        "mdref",
-        "emscoring",
-        "mdscoring",
-        "cgtoaa",
-    ),
-)
+@pytest.mark.parametrize("shape", ALL_CNS_SHAPES)
 def test_generated_cns_input_matches_canonical_golden(shape, tmp_path, monkeypatch):
     """Canonicalize a generated production input and compare its canonical form."""
     input_path = _stage_inputs(tmp_path)
@@ -139,6 +146,48 @@ def test_generated_cns_input_matches_canonical_golden(shape, tmp_path, monkeypat
         golden.write_text(observed, encoding="utf-8")
 
     assert observed == golden.read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("shape", ALL_CNS_SHAPES)
+def test_generated_cns_input_has_stage4_bundle(shape, tmp_path, monkeypatch):
+    """Every production CNS job shape exports the same executable contract."""
+    input_path = _stage_inputs(tmp_path)
+    work_path = tmp_path / "step"
+    work_path.mkdir()
+    monkeypatch.chdir(work_path)
+    mapping, _script, _module = _generated_mapping(shape, work_path, input_path)
+
+    _checksum, transformation = transformation_for_mapping(mapping)
+    staged = synthesize_seamless_run(mapping, tmp_path / "stage")
+    wrapper = canonical_wrapper(mapping)
+
+    expected_shape = "pdb+psf" if shape in {"topoaa", "topocg"} else "pdb"
+    assert mapping.output_shape == expected_shape
+    assert transformation["code"][2] == SEAMLESS_CODE_PINS[expected_shape]
+    assert transformation["run-cns.sh"][2] == mapping.checksums["run-cns.sh"]
+    assert (
+        transformation["normalize-cns-output.py"][2]
+        == (mapping.checksums["normalize-cns-output.py"])
+    )
+    assert staged.wrapper.read_text(encoding="utf-8") == wrapper
+    assert "awk " not in wrapper
+    assert "python3 normalize-cns-output.py" in wrapper
+    assert staged.stage_dir.stat().st_mode & 0o200
+
+    staged_inputs = (
+        staged.wrapper,
+        staged.manifest,
+        staged.stage_dir / "canonical.inp",
+        staged.stage_dir / "canonical-cns",
+        staged.stage_dir / "normalize-cns-output.py",
+        *(
+            staged.stage_dir / dependency.canonical_name
+            for dependency in mapping.dependencies
+        ),
+    )
+    assert all(path.stat().st_nlink >= 2 for path in staged_inputs)
+    assert staged.wrapper.stat().st_mode & 0o100
+    assert (staged.stage_dir / "canonical-cns").stat().st_mode & 0o100
 
 
 #: What a golden form is, for whoever reads one in a review.

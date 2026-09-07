@@ -219,7 +219,12 @@ def test_alascan_with_ligand_topar(alascan_module_protlig, mocker):
 
 
 def test_alascan_without_ligand_topar(alascan_module, mocker):
-    """Test the use of alascan in presence of a ligand without topo/param."""
+    """Test alascan with a ligand but no user-provided topo/param.
+
+    haddock3-score now runs topoaa with ``autotoppar=true``, so the ligand
+    topology/parameters are generated on-the-fly with PRODRG and the ligand is
+    retained during scoring, just like when they are provided explicitly.
+    """
     alascan_module.previous_io = MockPreviousIO_protlig(path=alascan_module.path)
     alascan_module.run()
 
@@ -235,6 +240,6 @@ def test_alascan_without_ligand_topar(alascan_module, mocker):
 
     # Loop over files
     for mutated_fpath in mutated_filepaths:
-        # Make sure the ligand is not in it
+        # Ligand is retained thanks to autotoppar/PRODRG topology generation
         file_content = mutated_fpath.read_text()
-        assert file_content.count("G39") == 0
+        assert file_content.count("G39") > 20

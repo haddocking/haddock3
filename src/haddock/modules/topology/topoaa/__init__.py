@@ -295,7 +295,9 @@ class HaddockModule(BaseCNSModule):
                         top_path = ""
                         par_path = ""
                         try:
-                            top_path, par_path = libligand.run_prodrg(model, Path("."))
+                            top_path, par_path = libligand.run_prodrg(
+                                model, Path("."), ligand_resnames=unknown
+                            )
                         except RuntimeError as e:
                             self.finish_with_error(
                                 f"Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: {e}"

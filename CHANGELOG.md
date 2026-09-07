@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-08-07: Fixed the martinise library (libaa2cg) to make it deterministic - Issue #1657
 - 2026-09-02: Fixed identical seed per sampling_factor replica in flexref, mdref and emref - Issue #1685
 - 2026-08-05: Harmonised running mode of test config files - Issue #1655
 - 2026-08-10: Added missing improper for HYP - Issue #1662

@@ -14,6 +14,8 @@ To run it locally on your system see the instructions below (does require a work
 |-------------------------------------|--------------------------------------|--------------|
 | HADDOCK3-antibody-antigen.ipynb     | antibogy-antigen tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-antibody-antigen/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-antibody-antigen.ipynb) |
 | HADDOCK3-protein-DNA.ipynb          | protein-DNA tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-protein-DNA-basic/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-protein-dna.ipynb) |
+| HADDOCK3-protein-glycan.ipynb          | protein-glycan tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-protein-glycan/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-protein-glycan.ipynb) |
+
 
 ---
 

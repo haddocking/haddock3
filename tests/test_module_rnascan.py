@@ -13,7 +13,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import add_zscores
 from haddock.modules.analysis.rnascan import DEFAULT_CONFIG
 from haddock.modules.analysis.rnascan import HaddockModule as RnascanModule
-from haddock.modules.analysis.rnascan.scan import (
+from haddock.modules.analysis.rnascan.rnascan import (
     AddDeltaBFactor,
     calc_score,
     ClusterOutputer,
@@ -233,7 +233,7 @@ def test_interface_scanner_init_default_bases():
 def test_interface_scanner_run_four_mutations(mocker, interface_scanner):
     """Each interface nucleotide yields one job per non-WT base."""
     mocker.patch(
-        "haddock.modules.analysis.rnascan.scan.calc_score",
+        "haddock.modules.analysis.rnascan.rnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch(
@@ -269,7 +269,7 @@ def test_interface_scanner_skips_non_rna(mocker, rna_model_list, params):
         params={**params, "resdic_B": [3], "resdic_A": [40]},
     )
     mocker.patch(
-        "haddock.modules.analysis.rnascan.scan.calc_score",
+        "haddock.modules.analysis.rnascan.rnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch(
@@ -301,7 +301,7 @@ def test_interface_scanner_restrict_scan_bases(mocker, rna_model_list, params):
         params=params,
     )
     mocker.patch(
-        "haddock.modules.analysis.rnascan.scan.calc_score",
+        "haddock.modules.analysis.rnascan.rnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch(

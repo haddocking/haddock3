@@ -9,7 +9,7 @@ from haddock.modules.analysis.alascan import (
     DEFAULT_CONFIG as DEFAULT_ALASCAN_CONFIG,
     HaddockModule as AlascanModule,
 )
-from haddock.modules.analysis.alascan.scan import RES_CODES
+from haddock.modules.analysis.alascan.alascan import RES_CODES
 from haddock.libs.libio import read_from_yaml
 from haddock.libs.libontology import PDBFile
 from . import GOLDEN_DATA

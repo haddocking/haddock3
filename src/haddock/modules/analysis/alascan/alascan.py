@@ -3,20 +3,23 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Tuple, Dict
+from typing import Dict
 
 
 from haddock import log
 from haddock.core.typing import Any, Optional, Union
 from haddock.libs.libalign import get_atoms, load_coords
-from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import (
-    MutationResult,
+    MutationResult,  # noqa: F401  re-exported for the module's public API
     calc_score,
     AddDeltaBFactor as _AddDeltaBFactor,
     ClusterOutputer as _ClusterOutputer,
     write_scan_out as _write_scan_out,
     group_scan_by_cluster as _group_scan_by_cluster,
+    BaseInterfaceScanner as _BaseInterfaceScanner,
+    ModelPointMutation as _ModelPointMutation,
+    filter_interface,
+    build_resname_dict,
 )
 from haddock.libs.libcapri import CAPRI
 
@@ -164,7 +167,7 @@ def write_scan_out(results, model_id):
     )
 
 
-class InterfaceScanner:
+class InterfaceScanner(_BaseInterfaceScanner):
     """Scan interface of a model to get tartget residues and create
     corresponding mutation jobs.
     """
@@ -188,24 +191,8 @@ class InterfaceScanner:
             Additional parameters for interface detection
             (list on top of alascan/__inint__.py)
         """
-        self.model = model
+        super().__init__(model, params)
         self.mutation_res = mutation_res
-        self.params = params or {}
-        self.point_mutations_jobs = []
-        self.ligand_param_fname = self.params.get("ligand_param_fname", "")
-        self.ligand_top_fname = self.params.get("ligand_top_fname", "")
-        self.filter_resdic = {
-            key[-1]: value
-            for key, value in self.params.items()
-            if key.startswith("resdic")
-        }
-        if isinstance(model, PDBFile):
-            self.model_path = model.rel_path
-            self.model_id = model.file_name.removesuffix(".pdb")
-        else:
-            # model given as a plain path
-            self.model_path = Path(model)
-            self.model_id = self.model_path.stem
 
     @staticmethod
     def _iter_mutations(interface, resname_dict, mutation_res):
@@ -272,44 +259,15 @@ class InterfaceScanner:
                 add_resname=True,
             )
 
-            # Determine target residues: get interface, then apply user filers, if given
-            # Get all interface residues
+            # Determine target residues: get interface, then apply user filters
             cutoff = self.params.get("int_cutoff", 5.0)
             interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
+            interface = filter_interface(
+                interface, self.filter_resdic, self.params.get("chains", [])
+            )
 
-            # get user_chains for the check down the line
-            user_chains = self.params.get("chains", [])
-
-            # if user defined target residues, check they are in the interface
-            if self.filter_resdic != {"_": []}:
-                filtered_interface = {}
-                for chain in self.filter_resdic:
-                    if chain in interface:
-                        # Search for the intersection of user queried residues and interface residues
-                        user_res_valid = list(
-                            set(self.filter_resdic[chain]).intersection(
-                                set(interface[chain])
-                            )
-                        )
-                        # If at least one residue must be analyzed, add it to residues to be scanned
-                        if user_res_valid:
-                            filtered_interface[chain] = user_res_valid
-                interface = filtered_interface
-
-            # if (user defined target chains) & (no user target residues) - do use user chains
-            elif user_chains:
-                interface = {
-                    chain: res
-                    for chain, res in interface.items()
-                    if chain in user_chains
-                }
-
-            # get all atoms of the model to verifiy residue type down the line
-            resname_dict = {}
-            for chain, resid, _atom, resname in coords.keys():
-                key = f"{chain}-{resid}"
-                if key not in resname_dict:
-                    resname_dict[key] = resname
+            # residue type lookup used to verify residue type down the line
+            resname_dict = build_resname_dict(coords)
 
             # Create mutation
             output_mutants = self.params.get("output_mutants", False)
@@ -337,129 +295,14 @@ class InterfaceScanner:
             raise
 
 
-class ModelPointMutation:
-    """Executes a single point mutation."""
+class ModelPointMutation(_ModelPointMutation):
+    """Execute a single alascan (protein) point mutation.
 
-    def __init__(
-        self,
-        model_path: Path,
-        model_id: str,
-        chain: str,
-        resid: int,
-        ori_resname: str,
-        target_resname: str,
-        native_scores: Tuple[float, float, float, float, float],
-        output_mutants: bool = False,
-        ligand_param_fname: Union[Path, str] = "",
-        ligand_top_fname: Union[Path, str] = "",
-    ) -> None:
-        """
-        Initialize a single point mutation job.
-
-        Parameters
-        ----------
-        model_path : Path
-            Path to the PDB file
-        model_id : str
-            Identifier for the model
-        chain : str
-            Chain identifier
-        resid : int
-            Residue number
-        ori_resname : str
-            Original residue name
-        target_resname : str
-            Target residue name for mutation
-        native_scores : tuple
-            Native model scores (score, vdw, elec, desolv, bsa)
-        output_mutants : bool
-            Whether to keep mutant PDB files
-        ligand_param_fname : Union[Path, str]
-            Path to additional parameter file used by CNS
-        ligand_top_fname : Union[Path, str]
-            Path to additional topology file used by CNS
-        """
-        self.model_path = Path(model_path)
-        self.model_id = model_id
-        self.chain = chain
-        self.resid = resid
-        self.ori_resname = ori_resname
-        self.target_resname = target_resname
-        self.native_scores = native_scores
-        self.output_mutants = output_mutants
-        self.ligand_param_fname = ligand_param_fname
-        self.ligand_top_fname = ligand_top_fname
+    Shares its scoring flow with :class:`haddock.libs.libscan.ModelPointMutation`
+    and only forwards this module's ``mutate``/``calc_score`` (which stay
+    patchable in the module namespace).
+    """
 
     def run(self):
         """Execute the point mutation."""
-        mutation_id = f"{self.model_id}_{self.chain}{self.resid}{self.target_resname}"
-
-        try:
-            # Setup working directory
-            sc_dir = f"haddock3-score-{mutation_id}"
-            os.makedirs(sc_dir, exist_ok=True)
-
-            # Perform point mutation on pdb file
-            mut_pdb = mutate(
-                self.model_path, self.chain, self.resid, self.target_resname
-            )
-
-            # Calculate mutant scores
-            mutant_scores = calc_score(
-                mut_pdb,
-                run_dir=sc_dir,
-                outputpdb=self.output_mutants,
-                ligand_param_fname=self.ligand_param_fname,
-                ligand_top_fname=self.ligand_top_fname,
-            )
-
-            # Calculate deltas (native - mutant)
-            n_score, n_vdw, n_elec, n_des, n_bsa = self.native_scores
-            m_score, m_vdw, m_elec, m_des, m_bsa = mutant_scores
-            delta_scores = (
-                n_score - m_score,
-                n_vdw - m_vdw,
-                n_elec - m_elec,
-                n_des - m_des,
-                n_bsa - m_bsa,
-            )
-
-            # Handle output files
-            em_mut_pdb = Path(f"{mut_pdb.stem}_hs.pdb")
-            if not self.output_mutants:
-                # if output_mutants = False, then remove both files
-                if os.path.exists(mut_pdb):
-                    os.remove(mut_pdb)
-                if em_mut_pdb.exists():
-                    os.remove(em_mut_pdb)
-            else:
-                # othervise keep energy-minimized pdb
-                if os.path.exists(em_mut_pdb):
-                    shutil.move(em_mut_pdb, mut_pdb)
-            # clean up scoring dir
-            if os.path.exists(sc_dir):
-                shutil.rmtree(sc_dir)
-
-            return MutationResult(
-                model_id=self.model_id,
-                chain=self.chain,
-                resid=self.resid,
-                ori_resname=self.ori_resname,
-                target_resname=self.target_resname,
-                mutant_scores=mutant_scores,
-                delta_scores=delta_scores,
-                success=True,
-            )
-
-        except Exception as e:
-            return MutationResult(
-                model_id=self.model_id,
-                chain=self.chain,
-                resid=self.resid,
-                ori_resname=self.ori_resname,
-                target_resname=self.target_resname,
-                mutant_scores=(0, 0, 0, 0, 0),
-                delta_scores=(0, 0, 0, 0, 0),
-                success=False,
-                error_msg=str(e),
-            )
+        return self._run(mutate, calc_score)

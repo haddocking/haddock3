@@ -1,0 +1,115 @@
+scan_bases:
+  default: ["DA", "DC", "DG", "DT"]
+  type: list
+  minitems: 1
+  maxitems: 4
+  title: List of target DNA bases to test for each nucleotide.
+  short: List of target DNA bases tested for each selected interface nucleotide.
+  long: List of target DNA bases to be tested for each selected interface
+    nucleotide. Only the two-letter DNA residue names (DA, DC, DG, DT) are
+    accepted; one-letter names (A, C, G, U) denote RNA bases and are not
+    supported. By default all four bases are tested. The wild-type base is
+    automatically skipped for each nucleotide. As DNA is double stranded, the
+    base-pairing partner is always mutated to the Watson-Crick complement of
+    the target base.
+  group: analysis
+  explevel: easy
+bp_cutoff:
+  default: 3.5
+  type: float
+  min: 2.5
+  max: 6.0
+  precision: 3
+  title: Distance cutoff (Å) used to detect Watson-Crick base pairs.
+  short: Distance cutoff (Å) used to detect Watson-Crick base pairs.
+  long: Distance cutoff (Å) used to detect Watson-Crick base pairs from the
+    distance between the hydrogen-bonding ring nitrogens (N1 of the purine and
+    N3 of the pyrimidine). A canonical Watson-Crick pair has an N1...N3
+    distance of about 2.8 Å; a small margin is allowed to tolerate
+    energy-minimised or slightly distorted geometries.
+  group: analysis
+  explevel: expert
+resdic_:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: List of residues to be mutated
+  short: List of residues to be mutated. By default all the interface nucleotides are
+    mutated.
+  long: List of residues to be mutated. By default all the interface nucleotides are
+    mutated. resdic_* is an expandable parameter. You can provide resdic_A,
+    resdic_B, resdic_C, etc, where the last capital letter is the chain
+    identifier.
+  group: analysis
+  explevel: expert
+int_cutoff:
+  default: 5.0
+  type: float
+  min: 1.0
+  max: 20.
+  precision: 3
+  title: Distance cutoff (Å) used to define interface contacts.
+  short: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
+  long: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
+  group: analysis
+  explevel: easy
+output_bfactor:
+  default: false
+  type: boolean
+  title: Dump the input models with the rescaled delta_score written in the b-factor column.
+  short: Dump the input models with the rescaled delta_score written in the b-factor column.
+  long: Dump the input models with the rescaled delta_score written in the b-factor column. Those files do not contain the mutations, but rather will display the normalized (between 0 and 100) delta HADDOCK score (100 * (delta_score - min_score) / (max_score - min_score)), averaged over the tested base pairs, in the b-factor column. Both nucleotides of each base pair receive the same value. The higher the b-factor, the more favourable (or less unfavourable) the mutations. You can color the PDB files according to this attribute (in pymol, type "spectrum b")
+  group: analysis
+  explevel: easy
+plot:
+  default: false
+  type: boolean
+  title: Plot scanning data.
+  short: Plot scanning data.
+  long: Plot scanning data.
+  group: analysis
+  explevel: easy
+splitplot:
+  default: false
+  type: boolean
+  title: Split the scan plot into one panel per energy component.
+  short: One plot panel per energy component.
+  long: If true, the scan plot shows one separate panel per energy component (HADDOCK score, van der Waals, electrostatics and desolvation). If false, all components are overlaid in a single panel.
+  group: analysis
+  explevel: easy
+chains:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 10
+  title: ChainIDs to be considered for the scanning.
+  short: ChainIDs to be considered for the scanning.
+  long: ChainIDs to be considered for the scanning. If empty, all the chains will be considered. If not empty, only residues part of the specified chains will be mutated. Do not use this parameter if you are using the resdic_* parameter.
+  group: analysis
+  explevel: easy
+output_mutants:
+  default: false
+  type: boolean
+  title: Dump the mutated, energy-minimized PDB files.
+  short: Dump the mutated, energy-minimized PDB files.
+  long: Dump the mutated, energy-minimized PDB files. As the number of mutants can be very large, this option is allowed only when a single model is provided in input.
+  group: analysis
+  explevel: easy
+ligand_param_fname:
+  default: ''
+  type: file
+  title: Custom ligand parameter file
+  short: Ligand parameter file in CNS format
+  long: Ligand parameter file in CNS format, for any ligand/residues/molecules not supported by default by HADDOCK.
+  group: 'force field'
+  explevel: easy
+ligand_top_fname:
+  default: ''
+  type: file
+  title: Custom ligand topology file
+  short: Ligand topology file in CNS format
+  long: Ligand topology file in CNS format containing the ligand topologies
+    (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: easy

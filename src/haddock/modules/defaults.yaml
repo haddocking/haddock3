@@ -41,11 +41,15 @@ mode:
   choices:
     - local
     - batch
+    - mpi
+    - grid
   title: Mode of execution
-  short: Mode of execution of the jobs, either local or using a batch system.
-  long: Mode of execution of the jobs, either local or using a batch system.
-    Currently slurm and torque are supported. For the batch mode the queue command must be
-    specified in the queue parameter.
+  short: Mode of execution of the jobs, either local, or using a batch system, MPI or the grid.
+  long: Mode of execution of the jobs. With local the jobs run as concurrent processes on the
+    current machine. With batch they are submitted to a batch system; currently slurm and torque
+    are supported and the queue command must be specified in the queue parameter. With mpi they
+    are distributed over MPI, which requires the mpi optional dependencies to be installed. With
+    grid they are submitted to the DIRAC grid, falling back to local if the grid is unreachable.
   group: "execution"
   explevel: easy
 batch_type:

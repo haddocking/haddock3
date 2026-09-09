@@ -399,7 +399,7 @@ class BaseHaddockModule(ABC):
                 self._params[param] = EmptyPath()
 
 
-EngineMode = Literal["batch", "local", "mpi"]
+EngineMode = Literal["batch", "local", "mpi", "grid"]
 
 
 def get_engine(

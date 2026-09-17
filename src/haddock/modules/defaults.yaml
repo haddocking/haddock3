@@ -13,7 +13,7 @@ ncores:
   default: 4
   type: integer
   min: 1
-  max: 500
+  max: 9999
   title: Number of CPU cores
   short: Number of CPU cores to use for the CNS calculations.
     It is truncated to max available CPUs  minus 1.

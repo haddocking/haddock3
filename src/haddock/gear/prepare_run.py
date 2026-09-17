@@ -12,7 +12,13 @@ from copy import copy, deepcopy
 from functools import lru_cache, wraps
 from pathlib import Path, PosixPath
 
-from haddock import EmptyPath, contact_us, haddock3_source_path, log
+from haddock import (
+    EmptyPath,
+    contact_us,
+    haddock3_source_path,
+    log,
+    modules_defaults_path,
+)
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.core.typing import (
@@ -52,6 +58,8 @@ from haddock.gear.extend_run import (
 )
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import (
+    MANDATORY_YAML,
+    OPTIONAL_YAML,
     config_mandatory_general_parameters,
     config_optional_general_parameters,
     config_optional_general_parameters_dict,
@@ -133,6 +141,12 @@ TYPES_MAPPER = {
         PosixPath,
         EmptyPath,
     ),
+    "dir": (
+        str,
+        Path,
+        PosixPath,
+        EmptyPath,
+    ),
     "dict": (dict,),
 }
 
@@ -156,6 +170,30 @@ def with_config_error(func: Callable[..., Any]) -> Callable[..., Any]:
             return func(*args, **kwargs)
 
     return wrapper
+
+
+@lru_cache
+def _read_general_defaults() -> dict:
+    """Read the full schemes of the general (non-module) parameters.
+
+    General parameters are spread over three YAML files: the mandatory ones
+    (``core/mandatory.yaml``), the optional ones (``core/optional.yaml``) and
+    the execution ones (``modules/defaults.yaml``). The latter can also be
+    defined inside a module section, where they overwrite the global value.
+
+    Return
+    ------
+    general_config : dict
+        A dict of dict, containing all the information present in the three
+        general parameter YAML files.
+    """
+    # only modules/defaults.yaml follows the full parameter scheme; the
+    # mandatory and optional ones have no 'group' nor 'default' keys.
+    validate_defaults_yaml(modules_defaults_path)
+    general_config: dict = {}
+    for yaml_fpath in (MANDATORY_YAML, OPTIONAL_YAML, modules_defaults_path):
+        general_config.update(read_from_yaml_config(yaml_fpath, default_only=False))
+    return general_config
 
 
 @lru_cache
@@ -295,6 +333,9 @@ def setup_run(
         general_params,
         reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
     )
+
+    # Validate the types and ranges/choices of the global parameters
+    validate_general_params_values(general_params)
 
     # Validate there is no incompatible parameters in global parameters
     validate_parameters_are_not_incompatible(
@@ -652,6 +693,30 @@ def validate_module_params_values(module_name: str, args: dict) -> None:
         validate_value(default_conf_params, key, val)
 
 
+def validate_general_params_values(general_params: dict) -> None:
+    """Validate the values of the general parameters.
+
+    General parameters are not described in any module `defaults.yaml`, and
+    were therefore never checked against their type and range/choices.
+
+    Parameters
+    ----------
+    general_params : dict
+        Dictionnary of key/value of the general parameters, as obtained after
+        completion of the user config file with the default values.
+
+    Raises
+    ------
+    ConfigError
+        If there is any general parameter given by the user that is not
+        following the types or ranges/choices allowed in the general
+        parameters YAML files.
+    """
+    general_defaults = _read_general_defaults()
+    for key, val in general_params.items():
+        validate_value(general_defaults, key, val)
+
+
 def validate_value(default_yaml: dict, key: str, value: Any) -> None:
     """Validate queried value for a specific parameter of a module.
 
@@ -670,9 +735,16 @@ def validate_value(default_yaml: dict, key: str, value: Any) -> None:
         If there is any parameter given by the user that is not following the
         types or ranges/choices allowed in the defaults.cfg of the module.
     """
-    # Special case for molecules...
     if key not in default_yaml.keys():
-        return
+        # general parameters can also be set inside a module section, where
+        # they overwrite the global value. They are not described in the
+        # module `defaults.yaml`, so fall back on the general schemes.
+        general_defaults = _read_general_defaults()
+        if key not in general_defaults.keys():
+            return
+        default_yaml = general_defaults
+
+    # Special case for molecules...
     if "group" in default_yaml[key].keys():
         if default_yaml[key]["group"] == "molecules":
             return

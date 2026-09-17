@@ -16,6 +16,7 @@ from haddock.gear.prepare_run import (
     populate_mol_parameters,
     populate_topology_molecule_params,
     update_step_contents_to_step_names,
+    validate_general_params_values,
     validate_module_names_are_not_misspelled,
     validate_ncs_params,
     validate_param_range,
@@ -147,12 +148,12 @@ def test_populate_mol_params():
     assert "mol_fix_origin_1" in params["flexref.1"]
     assert "mol_fix_origin_2" in params["flexref.1"]
     assert "mol_fix_origin_3" in params["flexref.1"]
-    assert not ("mol_fix_origin_4" in params["flexref.1"])
+    assert "mol_fix_origin_4" not in params["flexref.1"]
     assert params["flexref.1"]["mol_fix_origin_2"] is True
     assert "mol_shape_1" in params["flexref.1"]
     assert "mol_shape_2" in params["flexref.1"]
     assert "mol_shape_3" in params["flexref.1"]
-    assert not ("mol_shape_4" in params["flexref.1"])
+    assert "mol_shape_4" not in params["flexref.1"]
     assert not params["caprieval.1"]
 
 
@@ -453,6 +454,79 @@ def test_validate_parameters_are_not_incompatible():
     }
     no_return = validate_parameters_are_not_incompatible(params, incompatible_params)
     assert no_return is None
+
+
+###############################################
+# Tests related to general params validation  #
+###############################################
+@pytest.mark.parametrize(
+    "general_params",
+    [
+        {"ncores": 4},
+        {"ncores": 1},
+        {"mode": "local"},
+        {"mode": "mpi"},
+        {"batch_type": "torque"},
+        {"queue_limit": 100, "concat": 1},
+        {"clean": False, "debug": True, "offline": True},
+        {"postprocess": True, "preprocess": False, "gen_archive": True},
+        {"cns_exec": "/path/to/cns"},
+        {"run_dir": "run1"},
+        {"run_dir": Path("run1")},
+        {"molecules": ["mol1.pdb", "mol2.pdb"]},
+    ],
+)
+def test_accepted_general_params_values(general_params):
+    """Test valid general parameters values are accepted.
+
+    Should not return anything
+    """
+    assert validate_general_params_values(general_params) is None
+
+
+@pytest.mark.parametrize(
+    "general_params",
+    [
+        {"ncores": -1},  # below min
+        {"ncores": 0},  # below min
+        {"ncores": 999999},  # above max
+        {"ncores": "many"},  # wrong type
+        {"mode": "foo"},  # not among choices
+        {"batch_type": "pbs"},  # not among choices
+        {"queue_limit": -3},  # below min
+        {"concat": 0},  # below min
+        {"clean": "nope"},  # wrong type
+        {"debug": 7},  # wrong type
+        {"postprocess": "yes"},  # wrong type
+        {"molecules": []},  # below minitems
+    ],
+)
+def test_general_params_values_error(general_params):
+    """Test invalid general parameters values are rejected.
+
+    Should raise ConfigurationError
+    """
+    with pytest.raises(ConfigurationError):
+        validate_general_params_values(general_params)
+
+
+@pytest.mark.parametrize(
+    "key,value",
+    [
+        ("ncores", -1),
+        ("mode", "bogus"),
+        ("debug", 7),
+    ],
+)
+def test_general_params_in_module_section_error(key, value):
+    """Test general params set inside a module section are validated.
+
+    These are accepted parameter names for any module, but are not described
+    in the modules' `defaults.yaml`, so `validate_value` must fall back on the
+    general parameters schemes.
+    """
+    with pytest.raises(ConfigurationError):
+        validate_value(DEFAULT_DICT, key, value)
 
 
 ###################################

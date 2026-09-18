@@ -373,7 +373,7 @@ def find_base_pairs(
 
     pairs: Dict[Tuple[str, int], Tuple[str, int, str]] = {}
     for key, partner in best_key.items():
-        if partner is not None:
+        if partner is not None and best_key[partner] == key:
             pairs[key] = (partner[0], partner[1], nucleotides[partner][0])
     return pairs
 

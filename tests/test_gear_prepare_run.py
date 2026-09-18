@@ -18,6 +18,7 @@ from haddock.gear.prepare_run import (
     update_step_contents_to_step_names,
     validate_general_params_values,
     validate_module_names_are_not_misspelled,
+    validate_module_params_values,
     validate_ncs_params,
     validate_param_range,
     validate_param_type,
@@ -522,11 +523,11 @@ def test_general_params_in_module_section_error(key, value):
     """Test general params set inside a module section are validated.
 
     These are accepted parameter names for any module, but are not described
-    in the modules' `defaults.yaml`, so `validate_value` must fall back on the
-    general parameters schemes.
+    in the modules' `defaults.yaml`, so the module scheme must be completed
+    with the general parameters schemes.
     """
     with pytest.raises(ConfigurationError):
-        validate_value(DEFAULT_DICT, key, value)
+        validate_module_params_values("topoaa", {key: value})
 
 
 ###################################

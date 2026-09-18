@@ -104,6 +104,14 @@ ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
     config_optional_general_parameters,
 )
 
+# Python3 types accepted for the path-like parameter types
+PATH_LIKE_TYPES = (
+    str,
+    Path,
+    PosixPath,
+    EmptyPath,
+)
+
 # Dict mapping string types (in default.yaml) into python3 objects types
 TYPES_MAPPER = {
     "boolean": (bool,),
@@ -129,24 +137,9 @@ TYPES_MAPPER = {
     "str": (str,),
     "list": (list,),
     "array": (list,),
-    "path": (
-        str,
-        Path,
-        PosixPath,
-        EmptyPath,
-    ),
-    "file": (
-        str,
-        Path,
-        PosixPath,
-        EmptyPath,
-    ),
-    "dir": (
-        str,
-        Path,
-        PosixPath,
-        EmptyPath,
-    ),
+    "path": PATH_LIKE_TYPES,
+    "file": PATH_LIKE_TYPES,
+    "dir": PATH_LIKE_TYPES,
     "dict": (dict,),
 }
 
@@ -686,11 +679,16 @@ def validate_module_params_values(module_name: str, args: dict) -> None:
         If there is any parameter given by the user that is not following the
         types or ranges/choices allowed in the defaults.cfg of the module.
     """
-    # Load all parameters information from 'defaults.cfg'
-    default_conf_params = _read_defaults(module_name, default_only=False)
-    # Loop over user queried parameters keys/values
-    for key, val in args.items():
-        validate_value(default_conf_params, key, val)
+    # Load all parameters information from 'defaults.cfg'. General parameters
+    # can also be set inside a module section, where they overwrite the global
+    # value, but are not described in the module `defaults.yaml`; hence the
+    # module scheme is completed with (and takes precedence over) the general
+    # one.
+    default_conf_params = {
+        **_read_general_defaults(),
+        **_read_defaults(module_name, default_only=False),
+    }
+    _validate_params_values(default_conf_params, args)
 
 
 def validate_general_params_values(general_params: dict) -> None:
@@ -712,9 +710,27 @@ def validate_general_params_values(general_params: dict) -> None:
         following the types or ranges/choices allowed in the general
         parameters YAML files.
     """
-    general_defaults = _read_general_defaults()
-    for key, val in general_params.items():
-        validate_value(general_defaults, key, val)
+    _validate_params_values(_read_general_defaults(), general_params)
+
+
+def _validate_params_values(default_yaml: dict, params: dict) -> None:
+    """Validate every user value against its parameter scheme.
+
+    Parameters
+    ----------
+    default_yaml : dict
+        Dictionnary of schemes, holding one entry per known parameter.
+    params : dict
+        Dictionnary of key/value provided by the user.
+
+    Raises
+    ------
+    ConfigError
+        If there is any parameter given by the user that is not following the
+        types or ranges/choices allowed in its scheme.
+    """
+    for key, val in params.items():
+        validate_value(default_yaml, key, val)
 
 
 def validate_value(default_yaml: dict, key: str, value: Any) -> None:
@@ -723,7 +739,7 @@ def validate_value(default_yaml: dict, key: str, value: Any) -> None:
     Parameters
     ----------
     default_yaml : dict
-        Dictionnary of key/value present in user config file for a module
+        Dictionnary of schemes, holding one entry per known parameter.
     key : str
         Key to be analyzed
     value : [bool, int, float, str, list]
@@ -735,17 +751,14 @@ def validate_value(default_yaml: dict, key: str, value: Any) -> None:
         If there is any parameter given by the user that is not following the
         types or ranges/choices allowed in the defaults.cfg of the module.
     """
-    if key not in default_yaml.keys():
-        # general parameters can also be set inside a module section, where
-        # they overwrite the global value. They are not described in the
-        # module `defaults.yaml`, so fall back on the general schemes.
-        general_defaults = _read_general_defaults()
-        if key not in general_defaults.keys():
-            return
-        default_yaml = general_defaults
+    # Parameters without a scheme are the dynamically generated ones
+    # (expandable parameters such as `mol_fix_origin_2` or `ncs_sta1_1`);
+    # their names were already validated upstream, so nothing to check here.
+    if key not in default_yaml:
+        return
 
     # Special case for molecules...
-    if "group" in default_yaml[key].keys():
+    if "group" in default_yaml[key]:
         if default_yaml[key]["group"] == "molecules":
             return
 

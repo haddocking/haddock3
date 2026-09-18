@@ -12,7 +12,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import add_zscores
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
-from haddock.modules.analysis.alascan.scan import (
+from haddock.modules.analysis.alascan.alascan import (
     AddDeltaBFactor,
     calc_score,
     ClusterOutputer,
@@ -373,7 +373,7 @@ def test_interface_scanner_run(mocker, interface_scanner):
     """Test InterfaceScanner.run() (in haddock mode, so returns mutation jobs)."""
     # mock stand-alone functions
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.calc_score",
+        "haddock.modules.analysis.alascan.alascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch(
@@ -408,7 +408,7 @@ def test_interface_scanner_run_empty_interface(mocker, interface_scanner):
         "haddock.libs.libcapri.CAPRI.identify_interface", return_value={}
     )  # no interface
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.calc_score",
+        "haddock.modules.analysis.alascan.alascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch("haddock.libs.libalign.get_atoms")
@@ -425,7 +425,7 @@ def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
         return_value={"A": [19, 20], "B": [30, 31]},
     )
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.calc_score",
+        "haddock.modules.analysis.alascan.alascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch("haddock.libs.libalign.get_atoms")
@@ -456,7 +456,7 @@ def test_interface_scanner_residue_filtering(mocker, complex_pdb, params):
         return_value={"A": [19, 20, 21], "B": [30, 31, 32]},
     )
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.calc_score",
+        "haddock.modules.analysis.alascan.alascan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
     mocker.patch("haddock.libs.libalign.get_atoms")
@@ -488,7 +488,7 @@ def test_interface_scanner_residue_filtering_not_in_interface(
         return_value={"A": [19, 20], "B": [30, 31]},
     )
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.calc_score",
+        "haddock.modules.analysis.alascan.alascan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
     mocker.patch("haddock.libs.libalign.get_atoms")
@@ -506,7 +506,7 @@ def test_interface_scanner_skip_same_residue_mutation(mocker, complex_pdb, param
         return_value={"A": [19, 20]},  # here 19 is TRP, so should be not mutated
     )
     mocker.patch(
-        "haddock.modules.analysis.alascan.scan.calc_score",
+        "haddock.modules.analysis.alascan.alascan.calc_score",
         return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730),
     )
     scanner = InterfaceScanner(model=complex_pdb, mutation_res="THR", params=params)
@@ -546,12 +546,12 @@ def test_model_point_mutation_run(mocker, mutation_job, monkeypatch):
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
         mock_mutate = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.mutate",
+            "haddock.modules.analysis.alascan.alascan.mutate",
             return_value=Path("mutant.pdb"),
         )
         mutant_scores = (-101.3, -28.5, -344.0, -14.2, 1484.2)
         mock_calc_score = mocker.patch(
-            "haddock.modules.analysis.alascan.scan.calc_score",
+            "haddock.modules.analysis.alascan.alascan.calc_score",
             return_value=mutant_scores,
         )
         # mock file operations
@@ -587,10 +587,10 @@ def test_model_point_mutation_run_with_output_mutants_false(
         mutant_pdb.touch()
         em_mutant_pdb.touch()
         mocker.patch(
-            "haddock.modules.analysis.alascan.scan.mutate", return_value=mutant_pdb
+            "haddock.modules.analysis.alascan.alascan.mutate", return_value=mutant_pdb
         )
         mocker.patch(
-            "haddock.modules.analysis.alascan.scan.calc_score",
+            "haddock.modules.analysis.alascan.alascan.calc_score",
             return_value=(-101.3, -28.5, -344.0, -14.2, 1484.2),
         )
         # Mock file removal operations
@@ -622,10 +622,10 @@ def test_model_point_mutation_run_with_output_mutants_true(mocker, monkeypatch):
         mutant_pdb.touch()
         em_mutant_pdb.touch()
         mocker.patch(
-            "haddock.modules.analysis.alascan.scan.mutate", return_value=mutant_pdb
+            "haddock.modules.analysis.alascan.alascan.mutate", return_value=mutant_pdb
         )
         mocker.patch(
-            "haddock.modules.analysis.alascan.scan.calc_score",
+            "haddock.modules.analysis.alascan.alascan.calc_score",
             return_value=(-101.3, -28.5, -344.0, -14.2, 1484.2),
         )
         # mock file operations
@@ -663,11 +663,11 @@ def test_model_point_mutation_cleanup(mocker, mutation_job, monkeypatch):
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
         mocker.patch(
-            "haddock.modules.analysis.alascan.scan.mutate",
+            "haddock.modules.analysis.alascan.alascan.mutate",
             return_value=Path("mutant.pdb"),
         )
         mocker.patch(
-            "haddock.modules.analysis.alascan.scan.calc_score",
+            "haddock.modules.analysis.alascan.alascan.calc_score",
             return_value=(-101.3, -28.5, -344.0, -14.2, 1484.2),
         )
         mocker.patch("os.path.exists", return_value=True)

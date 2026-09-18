@@ -98,15 +98,12 @@ def fixture_dnascan(monkeypatch):
 @pytest.fixture
 def example_df_scan_clt():
     """Return example dnascan clt DataFrame."""
+    # base-pair labels, "<chain>-<resid>-<ori>><target>" per base of the pair
+    bp_dg_da = "B-2-DG>DA/B-37-DC>DT"
+    bp_dg_dt = "B-2-DG>DT/B-37-DC>DA"
     example_clt_data = [
-        [
-            "B", 2, "DG", "DA", "B-2-DG>DA/B-37-DC>DT",
-            -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0,
-        ],
-        [
-            "B", 2, "DG", "DT", "B-2-DG>DT/B-37-DC>DA",
-            -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0,
-        ],
+        ["B", 2, "DG", "DA", bp_dg_da, -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
+        ["B", 2, "DG", "DT", bp_dg_dt, -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
     ]
     columns = [
         "chain",

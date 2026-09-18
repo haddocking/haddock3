@@ -181,6 +181,7 @@ class ClusterOutputer(_ClusterOutputer):
     default_scan_residue = "RNA base"
     sort_columns = ["chain", "resid", "target_resname"]
     zscore_reference = "mutations"
+    plot_xaxis_title = "Mutation"
 
     def _identity_columns(self):
         return ["chain", "resid", "resname", "target_resname", "full_resname"]
@@ -188,7 +189,10 @@ class ClusterOutputer(_ClusterOutputer):
     def _identity_row(self, ident, clt_res_dt):
         # ident is "<chain>-<resid>-<ori_resname>-<target_resname>"
         chain, resid, resname, target_resname = ident.split("-")
-        return [chain, int(resid), resname, target_resname, ident]
+        # the displayed label spells the mutation as "<ori>><target>", which
+        # reads better than a fourth dash and matches the dnascan labels
+        full_resname = f"{chain}-{resid}-{resname}>{target_resname}"
+        return [chain, int(resid), resname, target_resname, full_resname]
 
 
 class AddDeltaBFactor(_AddDeltaBFactor):

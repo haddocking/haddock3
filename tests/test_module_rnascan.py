@@ -91,8 +91,8 @@ def fixture_rnascan(monkeypatch):
 def example_df_scan_clt():
     """Return example rnascan clt DataFrame."""
     example_clt_data = [
-        ["B", 3, "G", "A", "B-3-G-A", -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
-        ["B", 3, "G", "U", "B-3-G-U", -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
+        ["B", 3, "G", "A", "B-3-G>A", -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
+        ["B", 3, "G", "U", "B-3-G>U", -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
     ]
     columns = [
         "chain",
@@ -503,8 +503,12 @@ def test_rnascan_cluster_full_outputs(rna_input_list, results_by_model, monkeypa
             generate_plot=True,
             offline=False,
         ).run()
-        assert Path("scan_clt_unclustered.tsv").exists()
+        tsv = Path("scan_clt_unclustered.tsv")
+        assert tsv.exists()
         assert Path("scan_clt_unclustered.html").exists()
+        # labels are "<chain>-<resid>-<ori>><target>"
+        df = pd.read_csv(tsv, sep="\t", comment="#")
+        assert "B-3-G>A" in df["full_resname"].tolist()
 
 
 def test_write_scan_out_with_mutation_results(

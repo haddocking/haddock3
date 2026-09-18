@@ -99,8 +99,14 @@ def fixture_dnascan(monkeypatch):
 def example_df_scan_clt():
     """Return example dnascan clt DataFrame."""
     example_clt_data = [
-        ["B", 2, "DG", "DA", "B-2-DG-DA", -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
-        ["B", 2, "DG", "DT", "B-2-DG-DT", -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
+        [
+            "B", 2, "DG", "DA", "B-2-DG>DA/B-37-DC>DT",
+            -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0,
+        ],
+        [
+            "B", 2, "DG", "DT", "B-2-DG>DT/B-37-DC>DA",
+            -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0,
+        ],
     ]
     columns = [
         "chain",
@@ -744,6 +750,8 @@ def test_dnascan_cluster_full_outputs(dna_input_list, results_by_model, monkeypa
         # partner columns must be present in the cluster tsv
         df = pd.read_csv(tsv, sep="\t", comment="#")
         assert "partner_target_resname" in df.columns
+        # labels are "<chain>-<resid>-<ori>><target>" per base of the pair
+        assert "B-2-DG>DA/B-37-DC>DT" in df["full_resname"].tolist()
 
 
 def test_write_scan_out_with_mutation_results(

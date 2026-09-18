@@ -385,6 +385,7 @@ class ClusterOutputer(_ClusterOutputer):
     default_scan_residue = "DNA base pair"
     sort_columns = ["chain", "resid", "target_resname"]
     zscore_reference = "mutations"
+    plot_xaxis_title = "Base-pair mutation"
 
     def _identity_columns(self):
         return [
@@ -403,11 +404,13 @@ class ClusterOutputer(_ClusterOutputer):
         return ["each row is a Watson-Crick double mutation (base pair)"]
 
     def _identity_row(self, ident, clt_res_dt):
-        # Build a compact human-readable label for the base-pair mutation
+        # Build a human-readable label for the base-pair mutation, using the
+        # "<chain>-<resid>-<ori>><target>" convention shared with alascan and
+        # rnascan. The two nucleotides of the pair are separated by a slash.
         full_resname = (
-            f"{clt_res_dt['chain']}{clt_res_dt['resid']}"
+            f"{clt_res_dt['chain']}-{clt_res_dt['resid']}-"
             f"{clt_res_dt['ori_resname']}>{clt_res_dt['target_resname']}"
-            f"/{clt_res_dt['partner_chain']}{clt_res_dt['partner_resid']}"
+            f"/{clt_res_dt['partner_chain']}-{clt_res_dt['partner_resid']}-"
             f"{clt_res_dt['partner_ori_resname']}>"
             f"{clt_res_dt['partner_target_resname']}"
         )

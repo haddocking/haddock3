@@ -240,6 +240,7 @@ def make_scan_plot(
     scan_res: str = "residue",
     offline: bool = False,
     splitplot: bool = False,
+    xaxis_title: str = "Residue Name",
 ) -> str:
     """Generate a scan cluster plot (harmonised across scan modules).
 
@@ -261,15 +262,23 @@ def make_scan_plot(
     splitplot : bool, optional
         If True draw one panel per energy component; if False (default) overlay
         all components in a single panel.
+    xaxis_title : str, optional
+        Label of the x-axis, by default "Residue Name". Mutational scans use
+        "Mutation" instead.
 
     Returns
     -------
     html_output_filename : str
         Name of the plot generated.
     """
-    if splitplot:
-        return make_rnascan_plot(df, clt_id, scan_res=scan_res, offline=offline)
-    return make_alascan_plot(df, clt_id, scan_res=scan_res, offline=offline)
+    plot_func = make_rnascan_plot if splitplot else make_alascan_plot
+    return plot_func(
+        df,
+        clt_id,
+        scan_res=scan_res,
+        offline=offline,
+        xaxis_title=xaxis_title,
+    )
 
 
 @dataclass
@@ -606,6 +615,8 @@ class ClusterOutputer:
     default_scan_residue: str = "residue"
     sort_columns = ["chain", "resid"]
     zscore_reference: str = "residues"
+    #: x-axis label of the cluster plot; mutational scans override it
+    plot_xaxis_title: str = "Residue Name"
 
     def __init__(
         self,
@@ -740,6 +751,7 @@ class ClusterOutputer:
                 self.scanned_residue,
                 offline=self.offline,
                 splitplot=self.splitplot,
+                xaxis_title=self.plot_xaxis_title,
             )
         except Exception as e:
             log.warning(

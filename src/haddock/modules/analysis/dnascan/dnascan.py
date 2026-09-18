@@ -361,7 +361,7 @@ def find_base_pairs(
         for key_j in keys[i + 1 :]:
             resname_j, xyz_j = nucleotides[key_j]
             # Partners must be of complementary ring type (purine <-> pyrimidine)
-            if (resname_i in PURINES) == (resname_j in PURINES):
+            if COMPLEMENT[resname_i] != resname_j:
                 continue
             dist = float(np.linalg.norm(xyz_i - xyz_j))
             if dist < best_dist[key_i]:

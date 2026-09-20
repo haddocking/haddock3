@@ -13,7 +13,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libscan import add_zscores
 from haddock.modules.analysis.rnascan import DEFAULT_CONFIG
 from haddock.modules.analysis.rnascan import HaddockModule as RnascanModule
-from haddock.modules.analysis.rnascan.scan import (
+from haddock.modules.analysis.rnascan.rnascan import (
     AddDeltaBFactor,
     calc_score,
     ClusterOutputer,
@@ -91,8 +91,8 @@ def fixture_rnascan(monkeypatch):
 def example_df_scan_clt():
     """Return example rnascan clt DataFrame."""
     example_clt_data = [
-        ["B", 3, "G", "A", "B-3-G-A", -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
-        ["B", 3, "G", "U", "B-3-G-U", -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
+        ["B", 3, "G", "A", "B-3-G>A", -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
+        ["B", 3, "G", "U", "B-3-G>U", -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
     ]
     columns = [
         "chain",
@@ -233,7 +233,7 @@ def test_interface_scanner_init_default_bases():
 def test_interface_scanner_run_four_mutations(mocker, interface_scanner):
     """Each interface nucleotide yields one job per non-WT base."""
     mocker.patch(
-        "haddock.modules.analysis.rnascan.scan.calc_score",
+        "haddock.modules.analysis.rnascan.rnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch(
@@ -269,7 +269,7 @@ def test_interface_scanner_skips_non_rna(mocker, rna_model_list, params):
         params={**params, "resdic_B": [3], "resdic_A": [40]},
     )
     mocker.patch(
-        "haddock.modules.analysis.rnascan.scan.calc_score",
+        "haddock.modules.analysis.rnascan.rnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch(
@@ -301,7 +301,7 @@ def test_interface_scanner_restrict_scan_bases(mocker, rna_model_list, params):
         params=params,
     )
     mocker.patch(
-        "haddock.modules.analysis.rnascan.scan.calc_score",
+        "haddock.modules.analysis.rnascan.rnascan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7),
     )
     mocker.patch(
@@ -503,8 +503,12 @@ def test_rnascan_cluster_full_outputs(rna_input_list, results_by_model, monkeypa
             generate_plot=True,
             offline=False,
         ).run()
-        assert Path("scan_clt_unclustered.tsv").exists()
+        tsv = Path("scan_clt_unclustered.tsv")
+        assert tsv.exists()
         assert Path("scan_clt_unclustered.html").exists()
+        # labels are "<chain>-<resid>-<ori>><target>"
+        df = pd.read_csv(tsv, sep="\t", comment="#")
+        assert "B-3-G>A" in df["full_resname"].tolist()
 
 
 def test_write_scan_out_with_mutation_results(

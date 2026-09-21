@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-09-21: Corrected seperate.cns - Issue #1392
 - 2026-09-18: Added `dnascan` module for mutagenesis scanning of DNA base pairs - Issue #1634
 - 2026-09-09: Adding missing execution modes to default.yaml - Issue #1690
 - 2026-08-01: Fixed autotoppar/PRODRG topology generation when the unknown ligand is embedded in a larger system - Issue #1645

@@ -16,10 +16,10 @@ ncores:
   max: 9999
   title: Number of CPU cores
   short: Number of CPU cores to use for the CNS calculations.
-    It is truncated to max available CPUs  minus 1.
+    It is truncated to max available CPUs minus 1 if max_cpus=false.
   long: Number of CPU cores to use for the CNS calculations.
     This will define the number of concurrent jobs being executed.
-    Note that is truncated to the total number of available CPUs minus 1.
+    Note that it is truncated to the total number of available CPUs minus 1 if max_cpus=false.
   group: "execution"
   explevel: easy
 max_cpus:

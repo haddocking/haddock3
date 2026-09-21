@@ -55,7 +55,7 @@ from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.libs.libparallel import GenericTask
 from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
-from haddock.modules.analysis.alascan.scan import (
+from haddock.modules.analysis.alascan.alascan import (
     AddDeltaBFactor,
     ClusterOutputer,
     group_scan_by_cluster,

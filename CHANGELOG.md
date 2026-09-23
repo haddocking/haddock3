@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-17: Implemted worflow validation again general parameters - Issue #1693
 - 2026-09-18: Added `dnascan` module for mutagenesis scanning of DNA base pairs - Issue #1634
 - 2026-09-09: Adding missing execution modes to default.yaml - Issue #1690

@@ -530,49 +530,125 @@ def get_prodrg_exec() -> tuple[Optional[Path], Optional[Path]]:
 
 def get_available_memory() -> float:
     """
-    Get the available system memory in GB.
+    Get the total system memory in GB.
 
-    Get the available virtual memory in Bytes
-    then divide it by (1024 ^ 3) to get this value in GigaBytes
+    The *total* physical memory is used on purpose rather than the currently
+    available one: `psutil` reports as "available" only the memory that can be
+    handed out without swapping, which on macOS excludes the (reclaimable) page
+    cache and compressed pages.  On an idle 32 GB laptop this can be as low as
+    14 GB, which would make any gate built on it non-deterministic from one run
+    to the next on the very same input.
 
     Returns
     -------
     float
-        Available memory in gigabytes (GB).
+        Total physical memory in gigabytes (GB).
     """
-    return psutil.virtual_memory().available / (1024**3)
+    return psutil.virtual_memory().total / (1024**3)
+
+
+# Number of heavy atoms assumed when a model cannot be read at all.
+DEFAULT_HEAVY_ATOMS = 10000
+
+# `compute_distance_matrix()` calls ``squareform(pdist(coords))``: while
+# `squareform` allocates the full (N x N) matrix the condensed N(N-1)/2 array
+# returned by `pdist` is still alive, so the peak is ~1.5x the final matrix.
+DIST_MATRIX_PEAK_FACTOR = 1.5
+
+# A float64 distance matrix holds 8 bytes per entry.
+BYTES_PER_MATRIX_ENTRY = 8
+
+
+def count_heavy_atoms(path: FilePath) -> int:
+    """
+    Count the non-hydrogen atoms of a PDB file.
+
+    Mirrors the filtering done by
+    ``haddock.modules.analysis.contactmap.contmap.extract_pdb_dt()``, which
+    skips hydrogens, so that the count matches the number of coordinates that
+    actually end up in the distance matrix.
+
+    Parameters
+    ----------
+    path : FilePath
+        Path to the PDB file to parse.
+
+    Returns
+    -------
+    int
+        Number of heavy (non-hydrogen) ATOM/HETATM records.
+    """
+    # imported here because `libpdb` imports from this module
+    from haddock.libs.libpdb import slc_name
+
+    heavy_atoms = 0
+    with open(path, "r") as fhandler:
+        for line in fhandler:
+            if not line.startswith(("ATOM", "HETATM")):
+                continue
+            atname = line[slc_name].strip()
+            if not atname or atname[0] == "H":
+                continue
+            heavy_atoms += 1
+    return heavy_atoms
 
 
 def get_necessary_memory(models: list) -> float:
     """
-    Estimate the memory required to compute contact maps.
+    Estimate the memory required to compute the contact map of one model.
 
-    Calculates memory based on the largest model's estimated atom count.
-    The memory estimate assumes a distance matrix of size (atoms x atoms) * 8 bytes.
+    The largest of the input models is located by its file size (a cheap
+    ``stat``), and only that one is parsed to obtain the exact number of heavy
+    atoms.  The estimate is the peak allocation of the (atoms x atoms) float64
+    distance matrix built by `compute_distance_matrix()`.
+
+    The returned value is the requirement of a *single* contact map job; the
+    caller must scale it by the number of jobs running concurrently.
 
     Parameters
     ----------
     models : list
-        List of model objects with file_name attribute.
+        List of `PDBFile` objects.
 
     Returns
     -------
     float
         Estimated memory requirement in gigabytes (GB).
     """
-    # Compute an approximation of the matrix size
-    # Most models will be similar, so just use the first one
-    try:
-        file_size = os.path.getsize(models[0].file_name)
-        estimated_atoms = file_size // 10
-    except Exception:
-        estimated_atoms = 10000
+    # `PDBFile.file_name` is a bare basename while the models of the previous
+    # step are addressed by `rel_path`, so always go through `rel_path`.
+    sizes: list[tuple[int, Path]] = []
+    for model in models:
+        path = Path(model.rel_path)
+        try:
+            sizes.append((os.path.getsize(path), path))
+        except OSError as err:
+            log.debug(f"Could not stat {path} while estimating memory: {err}")
 
-    if estimated_atoms == 0:
-        estimated_atoms = 10000
+    heavy_atoms = DEFAULT_HEAVY_ATOMS
+    if sizes:
+        _, biggest = max(sizes, key=lambda entry: entry[0])
+        try:
+            heavy_atoms = count_heavy_atoms(biggest)
+        except OSError as err:
+            log.warning(
+                f"Could not read {biggest} to estimate the memory required by "
+                f"the contact map ({err}); "
+                f"assuming {DEFAULT_HEAVY_ATOMS} heavy atoms."
+            )
+    elif models:
+        log.warning(
+            "Could not access any input model to estimate the memory required "
+            f"by the contact map; assuming {DEFAULT_HEAVY_ATOMS} heavy atoms."
+        )
 
-    matrix_size_bytes = (estimated_atoms * estimated_atoms) * 8
+    if heavy_atoms == 0:
+        heavy_atoms = DEFAULT_HEAVY_ATOMS
+
+    matrix_size_bytes = (
+        DIST_MATRIX_PEAK_FACTOR
+        * (heavy_atoms * heavy_atoms)
+        * BYTES_PER_MATRIX_ENTRY
+    )
     # Convert it into GigaBytes
-    matrix_size_gb = matrix_size_bytes / (1024**3)
-
-    return matrix_size_gb
+    return matrix_size_bytes / (1024**3)

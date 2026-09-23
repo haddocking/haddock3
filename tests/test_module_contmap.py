@@ -1,9 +1,11 @@
 """Test the CONTact MAP module."""
 
 import os
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Callable
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -22,6 +24,7 @@ from haddock.modules.analysis.contactmap.contmap import (
     ctrl_rib_chords,
     datakey_to_colorscale,
     extract_pdb_coords,
+    extract_pdb_dt,
     extract_submatrix,
     gen_contact_dt,
     invPerm,
@@ -36,6 +39,9 @@ from haddock.modules.analysis.contactmap.contmap import (
     write_res_contacts,
 )
 from haddock.libs.libutil import (
+    DEFAULT_HEAVY_ATOMS,
+    DIST_MATRIX_PEAK_FACTOR,
+    count_heavy_atoms,
     get_available_memory,
     get_necessary_memory,
 )
@@ -615,6 +621,11 @@ def test_make_ideogram_arc_moduloAB():
         assert np.isclose(arc_positions[i], excpected_output[i], atol=0.0001)
 
 
+def _expected_gb(n_atoms: int) -> float:
+    """Reference formula for the peak distance-matrix allocation."""
+    return DIST_MATRIX_PEAK_FACTOR * n_atoms * n_atoms * 8 / (1024**3)
+
+
 def test_get_available_memory():
     """Test get_available_memory function."""
     memory = get_available_memory()
@@ -623,32 +634,79 @@ def test_get_available_memory():
     assert memory > 0
 
 
+def test_count_heavy_atoms():
+    """Heavy atom count must match the atoms kept by `extract_pdb_dt`."""
+    pdb = Path(golden_data, "protprot_complex_1.pdb")
+    counted = count_heavy_atoms(pdb)
+
+    # `extract_pdb_dt` is the consumer that defines what lands in the matrix
+    pdb_dt = extract_pdb_dt(pdb)
+    from_parser = sum(
+        len(pdb_dt[chain][resid]["atoms"])
+        for chain in pdb_dt["chain_order"]
+        for resid in pdb_dt[chain]["order"]
+    )
+
+    assert counted == from_parser
+    # and no hydrogen slipped through
+    assert counted < sum(
+        1 for line in pdb.read_text().splitlines()
+        if line.startswith(("ATOM", "HETATM"))
+    )
+
+
 def test_get_necessary_memory():
-    """Test get_necessary_memory function with valid models."""
+    """Estimate must match the real matrix size of the *largest* model."""
     models = [
+        PDBFile(Path(golden_data, "hpr_ensemble_1_haddock.pdb"), path=golden_data),
         PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
-        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
     ]
     memory = get_necessary_memory(models)
-    # Should return a positive float
-    assert isinstance(memory, float)
-    assert memory > 0
+
+    biggest = count_heavy_atoms(Path(golden_data, "protprot_complex_1.pdb"))
+    assert memory == pytest.approx(_expected_gb(biggest))
+    # a ~1800 heavy atom complex is tens of MB, not tens of GB
+    assert memory < 0.1
+
+
+def test_get_necessary_memory_uses_rel_path():
+    """Models are addressed by `rel_path`, not by the bare `file_name`.
+
+    At run time the module works from its own step folder while the models
+    live in the previous one, so `file_name` alone never resolves.
+    """
+    with tempfile.TemporaryDirectory() as tempdir:
+        prev_step = Path(tempdir, "1_prev")
+        this_step = Path(tempdir, "2_contactmap")
+        prev_step.mkdir()
+        this_step.mkdir()
+        shutil.copy(Path(golden_data, "protprot_complex_1.pdb"), prev_step)
+
+        model = PDBFile("protprot_complex_1.pdb", path=prev_step)
+
+        cwd = os.getcwd()
+        try:
+            os.chdir(this_step)
+            # the bare file name is not resolvable from here ...
+            assert not Path(model.file_name).exists()
+            # ... but the estimate must still be the real one
+            memory = get_necessary_memory([model])
+        finally:
+            os.chdir(cwd)
+
+        biggest = count_heavy_atoms(Path(prev_step, "protprot_complex_1.pdb"))
+        assert memory == pytest.approx(_expected_gb(biggest))
 
 
 def test_get_necessary_memory_empty_list():
     """Test get_necessary_memory with empty list."""
-    models = []
-    memory = get_necessary_memory(models)
+    memory = get_necessary_memory([])
     # Should fall back to default estimate
-    assert isinstance(memory, float)
-    assert memory > 0
+    assert memory == pytest.approx(_expected_gb(DEFAULT_HEAVY_ATOMS))
 
 
 def test_get_necessary_memory_invalid_files():
-    """Test get_necessary_memory with invalid file paths."""
-    from unittest.mock import patch
-
-    # Mock os.path.getsize to raise an exception
+    """Unreachable models fall back to the default estimate."""
     with patch("os.path.getsize") as mock_getsize:
         mock_getsize.side_effect = FileNotFoundError("File not found")
 
@@ -656,22 +714,15 @@ def test_get_necessary_memory_invalid_files():
             PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
         ]
         memory = get_necessary_memory(models)
-        # Should fall back to default estimate
-        assert isinstance(memory, float)
-        assert memory > 0
+        assert memory == pytest.approx(_expected_gb(DEFAULT_HEAVY_ATOMS))
 
 
 def test_get_necessary_memory_zero_bytes():
-    """Test get_necessary_memory with zero-byte files."""
+    """A model without any heavy atom falls back to the default estimate."""
     with tempfile.TemporaryDirectory() as tempdir:
-        # Create a zero-byte file
         zero_file = Path(tempdir, "empty.pdb")
         zero_file.write_text("")
 
-        models = [
-            PDBFile(zero_file, path=str(zero_file.parent)),
-        ]
+        models = [PDBFile(zero_file, path=str(zero_file.parent))]
         memory = get_necessary_memory(models)
-        # Should use default fallback (10000 atoms)
-        assert isinstance(memory, float)
-        assert memory > 0
+        assert memory == pytest.approx(_expected_gb(DEFAULT_HEAVY_ATOMS))

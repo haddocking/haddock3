@@ -530,21 +530,14 @@ def get_prodrg_exec() -> tuple[Optional[Path], Optional[Path]]:
 
 def get_available_memory() -> float:
     """
-    Get the total system memory in GB.
-
-    The *total* physical memory is used on purpose rather than the currently
-    available one: `psutil` reports as "available" only the memory that can be
-    handed out without swapping, which on macOS excludes the (reclaimable) page
-    cache and compressed pages.  On an idle 32 GB laptop this can be as low as
-    14 GB, which would make any gate built on it non-deterministic from one run
-    to the next on the very same input.
+    Get the available system memory in GB.
 
     Returns
     -------
     float
-        Total physical memory in gigabytes (GB).
+        Available physical memory in gigabytes (GB).
     """
-    return psutil.virtual_memory().total / (1024**3)
+    return psutil.virtual_memory().available / (1024**3)
 
 
 # Number of heavy atoms assumed when a model cannot be read at all.

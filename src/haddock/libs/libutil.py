@@ -646,9 +646,7 @@ def get_necessary_memory(models: list) -> float:
         heavy_atoms = DEFAULT_HEAVY_ATOMS
 
     matrix_size_bytes = (
-        DIST_MATRIX_PEAK_FACTOR
-        * (heavy_atoms * heavy_atoms)
-        * BYTES_PER_MATRIX_ENTRY
+        DIST_MATRIX_PEAK_FACTOR * (heavy_atoms * heavy_atoms) * BYTES_PER_MATRIX_ENTRY
     )
     # Convert it into GigaBytes
     return matrix_size_bytes / (1024**3)

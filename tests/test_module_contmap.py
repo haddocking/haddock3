@@ -650,7 +650,8 @@ def test_count_heavy_atoms():
     assert counted == from_parser
     # and no hydrogen slipped through
     assert counted < sum(
-        1 for line in pdb.read_text().splitlines()
+        1
+        for line in pdb.read_text().splitlines()
         if line.startswith(("ATOM", "HETATM"))
     )
 

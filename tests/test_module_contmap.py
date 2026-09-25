@@ -727,3 +727,106 @@ def test_get_necessary_memory_zero_bytes():
         models = [PDBFile(zero_file, path=str(zero_file.parent))]
         memory = get_necessary_memory(models)
         assert memory == pytest.approx(_expected_gb(DEFAULT_HEAVY_ATOMS))
+
+
+####################################################
+# Testing of the memory guard in the module _run() #
+####################################################
+def _run_with_memory(contactmap, mocker, per_job: float, available: float):
+    """Run the module with a faked memory situation.
+
+    Returns the `ncores` the execution engine was handed, or None when the
+    module decided to skip itself.
+    """
+    contactmap.previous_io = MockPreviousIO()
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_necessary_memory",
+        return_value=per_job,
+    )
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_available_memory",
+        return_value=available,
+    )
+    exported = mocker.patch(
+        "haddock.modules.BaseHaddockModule.export_io_models",
+        return_value=None,
+    )
+    get_engine = mocker.patch(
+        "haddock.modules.analysis.contactmap.get_engine",
+    )
+
+    contactmap.params["ncores"] = 8
+    contactmap.run()
+
+    # models are always passed on to the next step, run or skip
+    assert exported.called
+    if not get_engine.called:
+        return None
+    return get_engine.call_args.args[1]["ncores"]
+
+
+def test_contactmap_memory_guard_plenty(contactmap, mocker):
+    """With memory to spare the requested `ncores` is left untouched."""
+    ncores = _run_with_memory(contactmap, mocker, per_job=0.01, available=32.0)
+    assert ncores == 8
+
+
+def test_contactmap_memory_guard_reduces_ncores(contactmap, mocker):
+    """When the jobs do not all fit, `ncores` drops to what memory can feed."""
+    # two jobs of 1Gb each requested, but only 1.5Gb to hand
+    ncores = _run_with_memory(contactmap, mocker, per_job=1.0, available=1.5)
+    assert ncores == 1
+
+
+class MockPreviousIOManyModels:
+    """Mocking class yielding enough unclustered models to saturate the cores."""
+
+    def retrieve_models(self, individualize: bool = False):
+        """Provide six unclustered models, i.e. six contact map jobs."""
+        models = []
+        for i in range(6):
+            model = PDBFile(
+                Path(golden_data, "protprot_complex_1.pdb"), path=golden_data
+            )
+            model.clt_id = None
+            model.score = float(i)
+            models.append(model)
+        return models
+
+
+def test_contactmap_memory_guard_reduces_to_intermediate(contactmap, mocker):
+    """The reduction is to the number of jobs that fit, not blindly down to 1."""
+    contactmap.previous_io = MockPreviousIOManyModels()
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_necessary_memory",
+        return_value=0.5,
+    )
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_available_memory",
+        return_value=1.6,
+    )
+    mocker.patch(
+        "haddock.modules.BaseHaddockModule.export_io_models",
+        return_value=None,
+    )
+    get_engine = mocker.patch("haddock.modules.analysis.contactmap.get_engine")
+
+    # 6 jobs of 0.5Gb would need 3.0Gb, only 1.6Gb is free -> 3 of them fit
+    contactmap.params["ncores"] = 8
+    contactmap.params["topX"] = 10
+    contactmap.run()
+
+    assert get_engine.call_args.args[1]["ncores"] == 3
+
+
+def test_contactmap_memory_guard_skips_when_one_job_too_big(contactmap, mocker):
+    """A single model that does not fit is the only reason left to skip."""
+    ncores = _run_with_memory(contactmap, mocker, per_job=2.0, available=1.5)
+    assert ncores is None
+
+
+def test_contactmap_memory_guard_does_not_mutate_params(contactmap, mocker):
+    """The reduction must not rewrite the user's requested `ncores`."""
+    _run_with_memory(contactmap, mocker, per_job=1.0, available=1.5)
+    # `params.cfg` is the record of what was asked for, keep it intact
+    assert contactmap.params["ncores"] == 8

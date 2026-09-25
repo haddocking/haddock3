@@ -121,31 +121,46 @@ class HaddockModule(BaseHaddockModule):
         # as of 04-2026 so instead we apply the following workaround:
         #  - Find the largest input model and count its heavy atoms
         #  - Calculate the expected matrix size and its memory requirements
-        #  - Scale it by the number of jobs that will actually run in parallel
         #  - Get how much memory the current host system has
-        #  - If the system has less memory than needed, fail graciously
+        #  - Run as many jobs in parallel as that memory can feed, down to a single one
+        #  - Only when even one job does not fit, fail graciously
+        engine_params = self.params
+        per_job_memory = get_necessary_memory(models)
         current_memory = get_available_memory()
         # Each job holds one distance matrix, and at most `ncores` of them run at once
         concurrent_jobs = min(self.params["ncores"], len(contact_jobs))
-        needed_memory = get_necessary_memory(models) * concurrent_jobs
-        if current_memory < needed_memory:
+        if current_memory < per_job_memory * concurrent_jobs:
+            # Running slower is better than not running at all, so keep only as many
+            # cores as the available memory can feed
+            affordable_jobs = int(current_memory // per_job_memory)
+            if affordable_jobs < 1:
+                self.log(
+                    msg=(
+                        f"Not enough memory to execute `contactmap` (needs "
+                        f"{per_job_memory:.2f}Gb for a single model, has "
+                        f"{current_memory:.2f}Gb). ! Skipping this module !"
+                    ),
+                    level="warning",
+                )
+                self.output_models = models
+                self.export_io_models()
+                return
             self.log(
                 msg=(
-                    f"Not enough memory to execute `contactmap` "
-                    f"(needs {needed_memory:.2f}Gb has {current_memory:.2f}Gb). "
-                    "! Skipping this module !"
+                    f"Not enough memory to run {concurrent_jobs} `contactmap` jobs in "
+                    f"parallel (needs {per_job_memory * concurrent_jobs:.2f}Gb has "
+                    f"{current_memory:.2f}Gb); reducing the number of cores to "
+                    f"{affordable_jobs}."
                 ),
                 level="warning",
             )
-            self.output_models = models
-            self.export_io_models()
-            return
+            engine_params = {**self.params, "ncores": affordable_jobs}
 
         # ==============================================================================
 
         # Find execution engine
         exec_mode = get_analysis_exec_mode(self.params["mode"])
-        Engine = get_engine(exec_mode, self.params)
+        Engine = get_engine(exec_mode, engine_params)
         engine = Engine(contact_jobs)
         engine.run()
 

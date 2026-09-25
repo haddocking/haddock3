@@ -1451,6 +1451,7 @@ def make_alascan_plot(
     clt_id: int,
     scan_res: str = "ALA",
     offline: bool = False,
+    xaxis_title: str = "Residue Name",
 ) -> str:
     """
     Make a plotly interactive plot.
@@ -1466,6 +1467,9 @@ def make_alascan_plot(
         Cluster ID.
     scan_res : str, optional
         Residue name used for the scan, by default "ALA"
+    xaxis_title : str, optional
+        Label of the x-axis, by default "Residue Name". Mutational scans
+        (rnascan, dnascan) label it "Mutation" instead.
 
     Returns
     -------
@@ -1519,7 +1523,7 @@ def make_alascan_plot(
     fig.update_layout(
         title=f"{scan_res} scanning cluster {clt_id}",
         xaxis={
-            "title": {"text": "Residue Name", "font": {"size": 16}},
+            "title": {"text": xaxis_title, "font": {"size": 16}},
             "tickfont_size": 14,
             "tick0": df["full_resname"],
             # in case we want to show less residues
@@ -1556,6 +1560,7 @@ def make_rnascan_plot(
     clt_id: int,
     scan_res: str = "RNA base",
     offline: bool = False,
+    xaxis_title: str = "Mutation",
 ) -> str:
     """
     Make a plotly interactive plot for mutational scans.
@@ -1576,6 +1581,8 @@ def make_rnascan_plot(
         Label used for the scan, by default "RNA base".
     offline : bool, optional
         Whether the plot must be functional offline, by default False.
+    xaxis_title : str, optional
+        Label of the x-axis, by default "Mutation".
 
     Returns
     -------
@@ -1627,7 +1634,7 @@ def make_rnascan_plot(
             col=col,
         )
         fig.update_xaxes(
-            title={"text": "Mutation", "font": {"size": 14}},
+            title={"text": xaxis_title, "font": {"size": 14}},
             tickfont_size=12,
             row=row,
             col=col,

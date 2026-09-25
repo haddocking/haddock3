@@ -56,15 +56,15 @@ while ( $done = false ) loop bdihe
                         geometry
                     evaluate ($dihedral_phi=$result)
                     evaluate ($alphaphi=max($dihedral_phi,-77))
-                    evaluate ($alphaphi=max($dihedral_phi,-37))
-                    if ($alphaphi eq -37) then
+                    evaluate ($alphaphi=min($alphaphi,-37))
+                    if ($alphaphi eq $dihedral_phi) then
                         evaluate ($alpha_check = 1)
                     else
                         evaluate ($alpha_check = 0)
                     end if
                     evaluate ($betaphi=max($dihedral_phi,-145))
-                    evaluate ($betaphi=max($dihedral_phi,-105))
-                    if ($betaphi eq -105) then
+                    evaluate ($betaphi=min($betaphi,-105))
+                    if ($betaphi eq $dihedral_phi) then
                         evaluate ($beta_check = 1)
                     else
                         evaluate ($beta_check = 0)
@@ -81,13 +81,13 @@ while ( $done = false ) loop bdihe
                         geometry
                     evaluate ($dihedral_psi=$result)
                     evaluate ($alphapsi=max($dihedral_psi,-67))
-                    evaluate ($alphapsi=max($dihedral_psi,-27))
-                    if ($alphapsi eq -27) then
+                    evaluate ($alphapsi=min($alphapsi,-27))
+                    if ($alphapsi eq $dihedral_psi) then
                         evaluate ($alpha_check = $alpha_check + 1)
                     end if
                     evaluate ($betapsi=max($dihedral_psi,105))
-                    evaluate ($betapsi=max($dihedral_psi,145))
-                    if ($betapsi eq 145) then
+                    evaluate ($betapsi=min($betapsi,145))
+                    if ($betapsi eq $dihedral_psi) then
                         evaluate ($beta_check = $beta_check + 1)
                     end if
                 end if

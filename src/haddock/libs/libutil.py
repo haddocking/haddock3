@@ -541,38 +541,3 @@ def get_available_memory() -> float:
         Available memory in gigabytes (GB).
     """
     return psutil.virtual_memory().available / (1024**3)
-
-
-def get_necessary_memory(models: list) -> float:
-    """
-    Estimate the memory required to compute contact maps.
-
-    Calculates memory based on the largest model's estimated atom count.
-    The memory estimate assumes a distance matrix of size (atoms x atoms) * 8 bytes.
-
-    Parameters
-    ----------
-    models : list
-        List of model objects with file_name attribute.
-
-    Returns
-    -------
-    float
-        Estimated memory requirement in gigabytes (GB).
-    """
-    # Compute an approximation of the matrix size
-    # Most models will be similar, so just use the first one
-    try:
-        file_size = os.path.getsize(models[0].file_name)
-        estimated_atoms = file_size // 10
-    except Exception:
-        estimated_atoms = 10000
-
-    if estimated_atoms == 0:
-        estimated_atoms = 10000
-
-    matrix_size_bytes = (estimated_atoms * estimated_atoms) * 8
-    # Convert it into GigaBytes
-    matrix_size_gb = matrix_size_bytes / (1024**3)
-
-    return matrix_size_gb

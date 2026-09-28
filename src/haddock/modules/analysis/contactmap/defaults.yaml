@@ -6,7 +6,10 @@ ca_ca_dist_threshold:
   precision: 1
   title: Ca-Ca distance defining a contact.
   short: Distance between Ca atoms of two residues defining a contact.
-  long: Distance between Ca atoms of two residues defining a contact.
+  long: Distance between the reference atoms of two residues defining a
+    contact. The reference atom is CA for amino acids, C4' for
+    nucleotides and C1 for carbohydrates. Residues without a reference atom (e.g. ions) are never in
+    contact according to this distance.
   group: analysis
   explevel: easy
 
@@ -115,6 +118,8 @@ chordchart_datatype:
   title: Type of data to be used in the chordchart.
   short: Type of data to be used in the chordchart.
   long: ca-ca-dist and shortest-dist are averages distances observed in
-    cluster.
+    cluster. A contact is drawn when this average distance is under its
+    threshold (ca_ca_dist_threshold or shortest_dist_threshold). The same
+    data and threshold are used to write the interchain contacts file.
   group: analysis
   explevel: easy

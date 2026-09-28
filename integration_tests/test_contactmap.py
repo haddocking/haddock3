@@ -1,6 +1,5 @@
 """Integration-test of the CONTact MAP module."""
 
-import glob
 import os
 import tempfile
 from pathlib import Path
@@ -8,7 +7,6 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.libs.libutil import get_available_memory
 from haddock.modules.analysis.contactmap import DEFAULT_CONFIG as CONTMAP_CONF
 from haddock.modules.analysis.contactmap import HaddockModule as CMapModule
 from integration_tests import GOLDEN_DATA
@@ -55,10 +53,6 @@ class MockPreviousIO:
         return models
 
 
-@pytest.mark.skipif(
-    get_available_memory() < 4,
-    reason="not enough memory to run this test",
-)
 def test_contactmap_example(contactmap, monkeypatch, mocker):
     """Test the contact map module run."""
     # mock the previous_io behavior
@@ -96,29 +90,3 @@ def test_contactmap_example(contactmap, monkeypatch, mocker):
     assert Path(clust1_html_fpath).stat().st_size != 0
     Path(clust1_tsv_fpath).unlink(missing_ok=False)
     Path(clust1_html_fpath).unlink(missing_ok=False)
-
-
-def test_contactmap_low_memory(contactmap, monkeypatch, mocker):
-    """Test the contact map module fails gracefully with insufficient memory."""
-    contactmap.previous_io = MockPreviousIO
-    mocker.patch(
-        "haddock.modules.BaseHaddockModule.export_io_models",
-        return_value=None,
-    )
-
-    mocker.patch(
-        "haddock.modules.analysis.contactmap.get_available_memory",
-        return_value=0.0,
-    )
-    mocker.patch(
-        "haddock.modules.analysis.contactmap.get_necessary_memory",
-        return_value=1.0,
-    )
-    monkeypatch.chdir(contactmap.path)
-
-    # Run the module - should skip execution due to low memory
-    contactmap.run()
-
-    # Check that the directory is empty
-    ls = list(glob.glob(f"{contactmap.path}/*"))
-    assert len(ls) == 0

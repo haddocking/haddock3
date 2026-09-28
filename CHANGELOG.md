@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-09-28: Overhauled `contactmap`: fixed chord chart residues attached to wrong arcs, cluster distance heatmaps clipped to 1, merged insertion codes, duplicated alternate locations and multi-model parsing; added nucleotide (C4' reference atom) and carbohydrate (C1 reference atom) classes, modified residue classes, colorblind-safe colors, and removed the full atom-atom distance matrix and the memory guard it required
 - 2026-09-21: Corrected seperate.cns - Issue #1392
 - 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
 - 2026-09-18: Added `dnascan` module for mutagenesis scanning of DNA base pairs - Issue #1634

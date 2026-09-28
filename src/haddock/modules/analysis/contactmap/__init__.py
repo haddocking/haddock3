@@ -6,11 +6,21 @@ the contacts observed in the input complexes.
 If complexes are clustered, the analysis of contacts will be performed
 based on all structures from each cluster.
 
-**Heatmaps** are describing the probability of contacts (<5A) between two
-residues (both intramolecular and intermolecular).
+**Heatmaps** are describing distances between all pairs of residues (both
+intramolecular and intermolecular) for single models, and, for clusters,
+the data selected with ``cluster_heatmap_datatype`` (by default the
+probability of the shortest distance being under ``shortest_dist_threshold``).
 
 **Chordcharts** are describing only intermolecular contacts in circles,
-connecting with *chords* the two residues that are contacting.
+connecting with *chords* the two residues that are contacting. Residues are
+colored by class (apolar, polar, positive, negative, nucleotide,
+carbohydrate). Ribbons are colored when both residues share a class, or for
+negative-positive pairs, and grey otherwise. Residue classes are not detected
+interaction types. For clusters, a contact is drawn when the cluster
+*average* distance is under threshold.
+
+The ``ca-ca-dist`` is computed between CA atoms for amino acids, C4' atoms
+for nucleotides and C1 atoms for carbohydrates.
 
 For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#contactmap-module>`_
@@ -21,21 +31,15 @@ from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import Any, FilePath, SupportsRunT
-from haddock.modules import BaseHaddockModule
-from haddock.modules import get_engine
+from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.contactmap.contmap import (
-    ContactsMap,
     ClusteredContactMap,
+    ContactsMap,
     get_clusters_sets,
     make_contactmap_report,
     topX_models,
 )
-from haddock.libs.libutil import (
-    get_available_memory,
-    get_necessary_memory,
-)
-
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
@@ -70,33 +74,6 @@ class HaddockModule(BaseHaddockModule):
             models = self.previous_io.retrieve_models(individualize=True)
         except AttributeError as e:
             self.finish_with_error(e)
-
-        # === IMPORTANT ================================================================
-        # This modules uses a NxN distance matrix, this means that the memory
-        # requirement will increase quadratically and can fail with an out-of-memory
-        # error. Changing this behaviour would require a total re-write of the module
-        # as of 04-2026 so instead we apply the following workaround:
-        #  - Check what is the total size of the models (size is faster than reading)
-        #  - Guesstimate how many atoms in total it would have based on the size
-        #  - Calculate the expected matrix size and its memory requirements
-        #  - Get how much memory the current host system has
-        #  - If the system has less memory than needed, fail graciously
-        current_memory = get_available_memory()
-        needed_memory = get_necessary_memory(models) * self.params["ncores"]
-        if current_memory < needed_memory:
-            self.log(
-                msg=(
-                    f"Not enough memory to execute `contactmap` "
-                    f"(needs {needed_memory:.2f}Gb has {current_memory:.2f}Gb). "
-                    "! Skipping this module !"
-                ),
-                level="warning",
-            )
-            self.output_models = models
-            self.export_io_models()
-            return
-
-        # ==============================================================================
 
         # Obtain clusters
         clusters_sets = get_clusters_sets(models)

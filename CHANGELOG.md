@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-21: Corrected seperate.cns - Issue #1392
 - 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
 - 2026-09-18: Added `dnascan` module for mutagenesis scanning of DNA base pairs - Issue #1634

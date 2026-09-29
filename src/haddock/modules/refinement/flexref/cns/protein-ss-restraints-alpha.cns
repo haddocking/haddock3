@@ -52,7 +52,6 @@ while ( $done = false ) loop bdihe
                         geometry
                     evaluate ($dihedral_phi=$result)
                     ! check if the phi dihedral is within the alpha helical range
-                    evaluate ($alpha_check = 0)
                     if ($dihedral_phi ge -77) then 
                         if ($dihedral_phi le -37) then
                             evaluate ($alpha_check = 1)

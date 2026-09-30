@@ -61,6 +61,11 @@ class HaddockModule(ScoringModule):
         # NOTE: deeprank has its own logic of parallelization mechanism
         #  so here we DO NOT use haddock's engine and we let deeprank the execution.
         #  Because of that we need `parse_ncores` explicitly
+        use_gpu = self.params.get("use_gpu", False)
+        gpu_devices = self.params.get("gpu_devices", None)
+        gpu_device = (
+            gpu_devices[0] if (gpu_devices and len(gpu_devices) > 0) else None
+        )
         ncores = parse_ncores(self.params["ncores"])
 
         deeprank_wrapper = DeeprankWrapper(
@@ -68,6 +73,8 @@ class HaddockModule(ScoringModule):
             ncores=ncores,
             chain_i=self.params["chain_i"],
             chain_j=self.params["chain_j"],
+            use_gpu=use_gpu,
+            gpu_device=gpu_device,
         )
 
         # `run()` executes entirely inside a temporary directory and returns

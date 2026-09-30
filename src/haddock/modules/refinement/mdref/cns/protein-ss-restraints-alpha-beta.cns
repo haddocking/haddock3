@@ -62,7 +62,6 @@ while ( $done = false ) loop bdihe
                         end if
                     end if
                     ! check if the phi dihedral is within the beta range
-                    evaluate ($beta_check = 0)
                     if ($dihedral_phi ge -145) then
                         if ($dihedral_phi le -105) then
                             evaluate ($beta_check = 1)

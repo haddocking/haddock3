@@ -6,14 +6,15 @@ from pathlib import Path
 
 import pytest
 
-from haddock.modules.analysis.rmsdmatrix import \
-    DEFAULT_CONFIG as DEFAULT_RMSDMATRIX_PARAMS
+from haddock.modules.analysis.rmsdmatrix import (
+    DEFAULT_CONFIG as DEFAULT_RMSDMATRIX_PARAMS,
+)
 from haddock.modules.analysis.rmsdmatrix import HaddockModule as Rmsdmatrix
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     XYZWriter,
     get_pair,
     rmsd_dispatcher,
-    )
+)
 
 
 @pytest.fixture(name="rmsdmatrix")
@@ -87,6 +88,21 @@ def test_overall_rmsd(rmsdmatrix, protdna_input_list):
 
     expected_rmsd_matrix = "1 2 2.257" + os.linesep
 
+    assert rmsd_matrix == expected_rmsd_matrix
+
+
+def test_overall_rmsd_gpu(rmsdmatrix, protdna_input_list):
+    """Test GPU-accelerated path in rmsdmatrix module."""
+    rmsdmatrix.previous_io.output = protdna_input_list
+    rmsdmatrix.params["use_gpu"] = True
+    rmsdmatrix._run()
+
+    ls = os.listdir()
+    assert "rmsd.matrix" in ls
+    assert "rmsd_matrix.json" in ls
+
+    rmsd_matrix = open("rmsd.matrix").read()
+    expected_rmsd_matrix = "1 2 2.257" + os.linesep
     assert rmsd_matrix == expected_rmsd_matrix
 
     # os.unlink(Path("rmsd.matrix"))

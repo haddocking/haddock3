@@ -49,3 +49,14 @@ def test_one_model_one_cluster(fcc_module, protprot_input_list):
     fcc_module.output_models = single_model_list
     fcc_module.run()
     assert fcc_module.output_models[0].clt_id == 1
+
+
+def test_one_model_one_cluster_gpu(fcc_module, protprot_input_list):
+    """Test clustfcc execution with use_gpu=True."""
+    single_model_list = [protprot_input_list[0]]
+    fcc_module.params["use_gpu"] = True
+    fcc_module.previous_io.output = single_model_list
+    fcc_module.output_models = single_model_list
+    fcc_module.run()
+    assert fcc_module.output_models[0].clt_id == 1
+

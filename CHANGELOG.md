@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-09-30: Added optional GPU acceleration across OpenMM, pairwise RMSD (`rmsdmatrix`/`ilrmsdmatrix`), contact clustering (`clustfcc`), contact maps (`contactmap`), deep learning scoring (`deeprank`), and SLURM scheduling with Modal testing harness - PR #XXXX
 - 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-21: Corrected seperate.cns - Issue #1392
 - 2026-09-17: Implemented worflow validation again general parameters - Issue #1693

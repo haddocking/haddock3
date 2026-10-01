@@ -159,3 +159,5 @@ end-to-end_tests/prot-grid
 personal_docs/
 .agents/
 bm5_gpu_benchmarks.json
+benchmark/
+plan.md

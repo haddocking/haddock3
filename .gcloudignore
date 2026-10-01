@@ -1,0 +1,18 @@
+# .gcloudignore
+.git/
+.venv/
+.pytest_cache/
+tests/
+integration_tests/
+end-to-end_tests/
+benchmark/
+examples/
+docs/
+personal_docs/
+notebooks/
+varia/
+analysis/
+src/
+server/workspace/
+*.log
+*.pdb

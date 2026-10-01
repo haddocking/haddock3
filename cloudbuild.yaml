@@ -1,0 +1,11 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/project-65e1b701-ea09-4ee3-813/haddock3/haddock3-server:latest'
+      - '-f'
+      - 'server/Dockerfile'
+      - '.'
+images:
+  - 'us-central1-docker.pkg.dev/project-65e1b701-ea09-4ee3-813/haddock3/haddock3-server:latest'

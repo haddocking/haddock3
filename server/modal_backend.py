@@ -144,7 +144,6 @@ if modal is not None:
             [
                 "",
                 "[rigidbody]",
-                # Raised tolerance: partial clashes are expected in ab-initio
                 "tolerance = 50",
                 f"sampling = {max(sampling, 10)}",
             ]
@@ -152,9 +151,13 @@ if modal is not None:
         if ambig_fname:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
         else:
-            # Ab-initio mode: center-of-mass restraints pull molecules together
+            # Ab-initio mode: Center-of-mass restraints with screened electrostatics
+            # to prevent steric/Coulomb explosion during simulated annealing.
             cfg_lines.append("cmrest = true")
-            cfg_lines.append("ranair = false")
+            cfg_lines.append("epsilon = 78")
+            cfg_lines.append('dielec = "cdie"')
+            cfg_lines.append("randremoval = false")
+            cfg_lines.append("w_desolv = 0")
 
         # flexref stage
         cfg_lines.extend(
@@ -166,18 +169,17 @@ if modal is not None:
                 f"select = {max(refinement, 5)}",
                 "",
                 "[flexref]",
-                # Raise tolerance for ab-initio: models may have clashes
                 "tolerance = 50",
             ]
         )
         if ambig_fname:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
         else:
-            # For ab-initio flexref, use contact-based AIRs (automatically
-            # derived from the rigidbody interface contacts). Do NOT use
-            # cmrest here - it generates CM restraints too broad for CNS SA
-            # and causes 100% job failure due to extreme clashes.
-            cfg_lines.append("contactairs = true")
+            cfg_lines.append("cmrest = true")
+            cfg_lines.append("epsilon = 78")
+            cfg_lines.append('dielec = "cdie"')
+            cfg_lines.append("randremoval = false")
+            cfg_lines.append("w_desolv = 0")
 
         # emref stage: CNS energy minimisation to clean up remaining clashes
         cfg_lines.extend(
@@ -191,6 +193,10 @@ if modal is not None:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
         else:
             cfg_lines.append("contactairs = true")
+            cfg_lines.append("epsilon = 78")
+            cfg_lines.append('dielec = "cdie"')
+            cfg_lines.append("randremoval = false")
+            cfg_lines.append("w_desolv = 0")
 
         cfg_lines.extend(
             [
@@ -228,13 +234,63 @@ if modal is not None:
             combined_log = (
                 (proc.stdout or "") + "\n" + (proc.stderr or "")
             ).strip()
+
+            diagnostic_details = []
+            if out_run_dir.exists():
+                # Check for run_output/log
+                log_file = out_run_dir / "log"
+                if log_file.exists():
+                    try:
+                        log_txt = log_file.read_text(errors="replace")
+                        diagnostic_details.append(f"=== HADDOCK LOG (tail) ===\n{log_txt[-3000:]}")
+                    except Exception:
+                        pass
+
+                # Check for any .fail files
+                for fail_f in sorted(out_run_dir.rglob("*.fail")):
+                    try:
+                        diagnostic_details.append(f"=== {fail_f.name} ===\n{fail_f.read_text(errors='replace')[:2000]}")
+                        break
+                    except Exception:
+                        pass
+
+                # Check for .cnserr / .cnserr.gz
+                import gzip
+                for err_f in sorted(out_run_dir.rglob("*.cnserr*")):
+                    try:
+                        if err_f.name.endswith(".gz"):
+                            err_txt = gzip.decompress(err_f.read_bytes()).decode("utf-8", errors="replace")
+                        else:
+                            err_txt = err_f.read_text(errors="replace")
+                        diagnostic_details.append(f"=== {err_f.name} ===\n{err_txt[-3000:]}")
+                        break
+                    except Exception:
+                        pass
+
+                # Check for .out / .out.gz with errors
+                for out_f in sorted(out_run_dir.rglob("*.out*"), key=lambda p: p.stat().st_mtime, reverse=True):
+                    try:
+                        if out_f.name.endswith(".gz"):
+                            out_txt = gzip.decompress(out_f.read_bytes()).decode("utf-8", errors="replace")
+                        else:
+                            out_txt = out_f.read_text(errors="replace")
+                        if any(k in out_txt for k in ("%CNS", "ERROR", "^^^^", "ABORT", "error")):
+                            diagnostic_details.append(f"=== {out_f.name} ===\n{out_txt[-3000:]}")
+                            break
+                    except Exception:
+                        pass
+
+            error_full = combined_log[-3000:]
+            if diagnostic_details:
+                error_full += "\n\n" + "\n\n".join(diagnostic_details)
+
             return {
                 "job_id": job_id,
                 "status": "failed",
                 "gpu_hardware": device_name,
                 "execution_seconds": elapsed,
                 "returncode": proc.returncode,
-                "error_message": combined_log[-3000:],
+                "error_message": error_full[-8000:],
                 "clusters": [],
                 "best_models": [],
                 "pdb_artifacts": {},
@@ -242,8 +298,9 @@ if modal is not None:
 
         # 4. Parse CAPRI cluster metrics from final step
         clusters = []
-        capri_clt_file = out_run_dir / "8_caprieval" / "capri_clt.tsv"
-        if capri_clt_file.exists():
+        capri_clt_files = sorted(out_run_dir.glob("*caprieval/capri_clt.tsv"))
+        if capri_clt_files:
+            capri_clt_file = capri_clt_files[-1]
             with open(capri_clt_file, "r") as f:
                 reader = csv.reader(f, delimiter="\t")
                 for row in reader:
@@ -272,8 +329,11 @@ if modal is not None:
 
         # If models in subfolders
         if not pdb_artifacts:
-            for pdb_path in sorted(out_run_dir.glob("*_flexref/*.pdb"))[:5]:
-                pdb_artifacts[pdb_path.name] = pdb_path.read_text()
+            for pattern in ("*seletopclusts/*.pdb", "*caprieval/*.pdb", "*emref/*.pdb", "*flexref/*.pdb"):
+                for pdb_path in sorted(out_run_dir.glob(pattern))[:10]:
+                    pdb_artifacts[pdb_path.name] = pdb_path.read_text()
+                if pdb_artifacts:
+                    break
 
         return {
             "job_id": job_id,

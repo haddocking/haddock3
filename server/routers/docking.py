@@ -209,7 +209,7 @@ async def submit_docking_job(
     pdb_files[m2_name] = m2_text
 
     # Process Molecule 3 if provided
-    if mol3_file is not None:
+    if mol3_file is not None and bool(mol3_file.filename):
         m3_name, m3_text = await _read_and_validate_structure(
             mol3_file, chain=mol3_chain or "All", default_name="mol3.pdb"
         )
@@ -219,7 +219,7 @@ async def submit_docking_job(
 
     # Process Restraints
     tbl_files: dict[str, str] = {}
-    if restraints is not None:
+    if restraints is not None and bool(restraints.filename):
         max_bytes = settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024
         tbl_name = restraints.filename or "ambig.tbl"
         tbl_bytes = await restraints.read()
@@ -275,6 +275,7 @@ async def submit_docking_job(
         status_url=f"/api/v1/docking/{job_id}/status",
         results_url=f"/api/v1/results/{job_id}",
         created_at=record.created_at,
+        error_message=record.error_message,
     )
 
 

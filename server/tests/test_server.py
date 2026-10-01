@@ -116,10 +116,18 @@ async def test_submit_and_poll_workflow_with_params():
     mock_call = MagicMock()
     mock_call.object_id = "mock-modal-call-777"
     mock_call.get.side_effect = TimeoutError()
+    mock_call.get.aio = MagicMock(side_effect=TimeoutError())
 
-    with patch("server.client.execute_docking_job") as mock_exec:
-        mock_exec.spawn.return_value = mock_call
+    mock_fn = MagicMock()
+    mock_fn.spawn.return_value = mock_call
 
+    async def _async_spawn(**kwargs):
+        _async_spawn.called_kwargs = kwargs
+        return mock_call
+
+    mock_fn.spawn.aio = _async_spawn
+
+    with patch("server.client.modal.Function.from_name", return_value=mock_fn):
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             files = {
@@ -150,7 +158,7 @@ async def test_submit_and_poll_workflow_with_params():
             assert sub_data["modal_call_id"] == "mock-modal-call-777"
 
             # Check that spawn received filtered mol1 PDB (only Chain A, not Chain B)
-            called_kwargs = mock_exec.spawn.call_args.kwargs
+            called_kwargs = getattr(_async_spawn, "called_kwargs", {})
             saved_mol1_text = called_kwargs["pdb_files"]["mol1.pdb"]
             assert "MET A   1" in saved_mol1_text
             assert "GLY B   1" not in saved_mol1_text  # Chain B stripped out!
@@ -203,9 +211,20 @@ async def test_completed_results_and_download():
     mock_call.object_id = "mock-modal-call-888"
     mock_call.get.return_value = mock_results
 
-    with patch("server.client.execute_docking_job") as mock_exec:
-        mock_exec.spawn.return_value = mock_call
+    async def _async_get(timeout=0):
+        return mock_results
 
+    mock_call.get.aio = _async_get
+
+    mock_fn = MagicMock()
+    mock_fn.spawn.return_value = mock_call
+
+    async def _async_spawn(**kwargs):
+        return mock_call
+
+    mock_fn.spawn.aio = _async_spawn
+
+    with patch("server.client.modal.Function.from_name", return_value=mock_fn):
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             files = {

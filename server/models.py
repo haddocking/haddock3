@@ -35,6 +35,7 @@ class JobSubmissionResponse(BaseModel):
     status_url: str = Field(..., description="Endpoint to poll for execution progress.")
     results_url: str = Field(..., description="Endpoint to fetch final scientific results.")
     created_at: str = Field(..., description="ISO 8601 UTC submission timestamp.")
+    error_message: Optional[str] = Field(None, description="Detailed error description if submission failed.")
 
 
 class JobStatusResponse(BaseModel):

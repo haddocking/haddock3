@@ -67,20 +67,41 @@ class ModalClientManager:
         record.started_at = time.time()
         record.status = JobStatus.RUNNING
 
-        if modal is not None and execute_docking_job is not None:
+        if modal is not None:
             try:
-                # Dispatch asynchronously on Modal cloud
-                call = execute_docking_job.spawn(
-                    job_id=job_id,
-                    pdb_files=pdb_files,
-                    tbl_files=tbl_files,
-                    sampling=sampling,
-                    refinement=refinement,
-                    gpu_device=gpu_device,
-                    gpu_platform=gpu_platform,
-                    mol_params=mol_params,
-                )
-                record.modal_call_id = call.object_id
+                # 1. Lookup the deployed remote function from Modal
+                try:
+                    fn = modal.Function.from_name(settings.MODAL_APP_NAME, "execute_docking_job")
+                except Exception:
+                    fn = execute_docking_job
+
+                # 2. Dispatch asynchronously using Modal's native async spawn
+                if hasattr(fn, "spawn") and hasattr(fn.spawn, "aio"):
+                    call = await fn.spawn.aio(
+                        job_id=job_id,
+                        pdb_files=pdb_files,
+                        tbl_files=tbl_files,
+                        sampling=sampling,
+                        refinement=refinement,
+                        gpu_device=gpu_device,
+                        gpu_platform=gpu_platform,
+                        mol_params=mol_params,
+                    )
+                elif hasattr(fn, "spawn"):
+                    call = fn.spawn(
+                        job_id=job_id,
+                        pdb_files=pdb_files,
+                        tbl_files=tbl_files,
+                        sampling=sampling,
+                        refinement=refinement,
+                        gpu_device=gpu_device,
+                        gpu_platform=gpu_platform,
+                        mol_params=mol_params,
+                    )
+                else:
+                    raise RuntimeError("No executable Modal function available.")
+
+                record.modal_call_id = getattr(call, "object_id", str(call))
                 record.call_handle = call
             except Exception as e:
                 # If running locally or without credentials, register error
@@ -102,16 +123,23 @@ class ModalClientManager:
         # Check Modal call status if still running
         if record.status == JobStatus.RUNNING and record.call_handle:
             try:
-                # Check with zero-timeout non-blocking get
-                res = record.call_handle.get(timeout=0)
-                record.results = res
-                if res.get("status") == "completed":
-                    record.status = JobStatus.COMPLETED
-                    record.finished_at = time.time()
-                    self._persist_artifacts(job_id, res)
+                # Non-blocking get
+                if hasattr(record.call_handle, "get") and hasattr(record.call_handle.get, "aio"):
+                    res = await record.call_handle.get.aio(timeout=0)
+                elif hasattr(record.call_handle, "get"):
+                    res = record.call_handle.get(timeout=0)
                 else:
-                    record.status = JobStatus.FAILED
-                    record.error_message = res.get("error_message", "Unknown error")
+                    res = None
+
+                if res is not None:
+                    record.results = res
+                    if res.get("status") == "completed":
+                        record.status = JobStatus.COMPLETED
+                        record.finished_at = time.time()
+                        self._persist_artifacts(job_id, res)
+                    else:
+                        record.status = JobStatus.FAILED
+                        record.error_message = res.get("error_message", "Unknown error")
             except TimeoutError:
                 # Still running
                 pass

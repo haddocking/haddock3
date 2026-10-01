@@ -118,14 +118,15 @@ if modal is not None:
             fpath.write_text(content)
             ambig_fname = f"data/{fname}"
 
-        # 2. Generate HADDOCK3 GPU workflow configuration
+        # 2. Generate HADDOCK3 workflow configuration.
+        # NOTE: use_gpu / gpu_devices / gpu_platform in the cfg refer to a CNS
+        # CUDA binary that is NOT present in the Modal container. GPU acceleration
+        # for FCC/RMSD clustering happens automatically via PyTorch when a GPU is
+        # detected. Setting use_gpu=true here breaks CNS and causes 100% job failure.
         cfg_lines = [
             f'run_dir = "run_output"',
             'mode = "local"',
-            "ncores = 4",
-            "use_gpu = true",
-            f"gpu_devices = [{gpu_device}]",
-            f'gpu_platform = "{gpu_platform}"',
+            "ncores = 8",
             f"molecules = {saved_molecules}",
             "",
             "[topoaa]",
@@ -138,20 +139,24 @@ if modal is not None:
                     cfg_lines.append(f"[topoaa.{mol_idx}]")
                     cfg_lines.append("cyclicpept = true")
 
+        # rigidbody stage
         cfg_lines.extend(
             [
                 "",
                 "[rigidbody]",
-                "tolerance = 20",
+                # Raised tolerance: partial clashes are expected in ab-initio
+                "tolerance = 50",
                 f"sampling = {max(sampling, 10)}",
             ]
         )
         if ambig_fname:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
         else:
-            # Enable ab-initio docking via Center of Mass restraints
+            # Ab-initio mode: center-of-mass restraints pull molecules together
             cfg_lines.append("cmrest = true")
+            cfg_lines.append("ranair = false")
 
+        # flexref stage
         cfg_lines.extend(
             [
                 "",
@@ -161,13 +166,15 @@ if modal is not None:
                 f"select = {max(refinement, 5)}",
                 "",
                 "[flexref]",
-                "tolerance = 20",
+                # High tolerance: ab-initio rigid-body models can have clashes
+                "tolerance = 50",
+                # Auto backbone dihedral restraints maintain secondary structure
+                'ssdihed = "alphabeta"',
             ]
         )
         if ambig_fname:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
         else:
-            # Enable Center of Mass restraints in flexible refinement
             cfg_lines.append("cmrest = true")
 
         cfg_lines.extend(
@@ -203,13 +210,16 @@ if modal is not None:
 
         out_run_dir = work_dir / "run_output"
         if proc.returncode != 0 or not out_run_dir.exists():
+            combined_log = (
+                (proc.stdout or "") + "\n" + (proc.stderr or "")
+            ).strip()
             return {
                 "job_id": job_id,
                 "status": "failed",
                 "gpu_hardware": device_name,
                 "execution_seconds": elapsed,
                 "returncode": proc.returncode,
-                "error_message": proc.stderr[-2000:] if proc.stderr else proc.stdout[-2000:],
+                "error_message": combined_log[-3000:],
                 "clusters": [],
                 "best_models": [],
                 "pdb_artifacts": {},

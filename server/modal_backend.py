@@ -148,6 +148,9 @@ if modal is not None:
         )
         if ambig_fname:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
+        else:
+            # Enable ab-initio docking via Center of Mass restraints
+            cfg_lines.append("cmrest = true")
 
         cfg_lines.extend(
             [
@@ -163,6 +166,9 @@ if modal is not None:
         )
         if ambig_fname:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
+        else:
+            # Enable Center of Mass restraints in flexible refinement
+            cfg_lines.append("cmrest = true")
 
         cfg_lines.extend(
             [

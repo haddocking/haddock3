@@ -50,7 +50,7 @@ class JobStatusResponse(BaseModel):
     completed_stages: list[str] = Field(
         default_factory=list, description="List of finished pipeline stages."
     )
-    total_stages: int = Field(9, description="Total stages in the docking workflow.")
+    total_stages: int = Field(10, description="Total stages in the docking workflow.")
     elapsed_seconds: float = Field(0.0, description="Elapsed wall-clock execution time.")
     error_message: Optional[str] = Field(None, description="Error detail if job failed.")
 

@@ -166,16 +166,31 @@ if modal is not None:
                 f"select = {max(refinement, 5)}",
                 "",
                 "[flexref]",
-                # High tolerance: ab-initio rigid-body models can have clashes
+                # Raise tolerance for ab-initio: models may have clashes
                 "tolerance = 50",
-                # Auto backbone dihedral restraints maintain secondary structure
-                'ssdihed = "alphabeta"',
             ]
         )
         if ambig_fname:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
         else:
-            cfg_lines.append("cmrest = true")
+            # For ab-initio flexref, use contact-based AIRs (automatically
+            # derived from the rigidbody interface contacts). Do NOT use
+            # cmrest here - it generates CM restraints too broad for CNS SA
+            # and causes 100% job failure due to extreme clashes.
+            cfg_lines.append("contactairs = true")
+
+        # emref stage: CNS energy minimisation to clean up remaining clashes
+        cfg_lines.extend(
+            [
+                "",
+                "[emref]",
+                "tolerance = 50",
+            ]
+        )
+        if ambig_fname:
+            cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
+        else:
+            cfg_lines.append("contactairs = true")
 
         cfg_lines.extend(
             [

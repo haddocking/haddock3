@@ -61,18 +61,34 @@ POST /api/v1/docking/submit
 Content-Type: multipart/form-data
 ```
 **Parameters**:
-- `molecules`: Multiple PDB structure files (`.pdb`, `.ent`, `.cif`). Minimum 2 files.
-- `restraints`: Optional interaction restraint file (`.tbl` or `.act`).
-- `sampling`: Number of rigid-body models (default: `100`).
-- `refinement`: Number of flexible refinement models (default: `20`).
-- `gpu_type`: Target GPU accelerator (`A100`, `T4`, `A10G`, `H100`). Default: `A100`.
-- `job_name`: Optional title.
+- **Molecule 1**:
+  - `mol1_file`: PDB or mmCIF structure file (`.pdb`, `.ent`, `.cif`). Required.
+  - `mol1_chain`: Which chain to use (default: `"All"`, or specific chain ID e.g. `"A"`).
+  - `mol1_kind`: Molecule kind (default: `"Protein or Protein-Ligand"`, `"DNA"`, `"RNA"`, `"Small Molecule"`).
+  - `mol1_coarse_grain`: Convert to Martini coarse-grained representation (`true`/`false`, default: `false`).
+  - `mol1_cyclic_peptide`: Is it a cyclic peptide? (`true`/`false`, default: `false`).
+- **Molecule 2**:
+  - `mol2_file`: PDB or mmCIF structure file (`.pdb`, `.ent`, `.cif`). Required.
+  - `mol2_chain`: Which chain to use (default: `"All"`, or specific chain ID e.g. `"B"`).
+  - `mol2_kind`: Molecule kind (default: `"Protein or Protein-Ligand"`).
+  - `mol2_coarse_grain`: Convert to Martini coarse-grained representation (`true`/`false`, default: `false`).
+  - `mol2_cyclic_peptide`: Is it a cyclic peptide? (`true`/`false`, default: `false`).
+- **Restraints & Compute Settings**:
+  - `restraints`: Optional interaction restraint file (`.tbl` or `.act`).
+  - `sampling`: Number of rigid-body models (default: `100`).
+  - `refinement`: Number of flexible refinement models (default: `20`).
+  - `gpu_type`: Target GPU accelerator (`A100`, `T4`, `A10G`, `H100`). Default: `A100`.
+  - `job_name`: Optional title.
 
 **Example `curl`**:
 ```bash
 curl -X POST "http://localhost:8080/api/v1/docking/submit" \
-  -F "molecules=@e2a.pdb" \
-  -F "molecules=@hpr.pdb" \
+  -F "mol1_file=@e2a.pdb" \
+  -F "mol1_chain=A" \
+  -F "mol1_cyclic_peptide=false" \
+  -F "mol2_file=@hpr.pdb" \
+  -F "mol2_chain=All" \
+  -F "mol2_cyclic_peptide=false" \
   -F "restraints=@ti.tbl" \
   -F "sampling=100" \
   -F "refinement=20" \

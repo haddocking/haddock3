@@ -60,6 +60,7 @@ class ModalClientManager:
         gpu_device: int = 0,
         gpu_platform: str = "auto",
         job_name: Optional[str] = None,
+        mol_params: Optional[dict[str, Any]] = None,
     ) -> JobRecord:
         """Asynchronously dispatch a docking calculation to Modal."""
         record = JobRecord(job_id=job_id, gpu_type=gpu_type, job_name=job_name)
@@ -77,6 +78,7 @@ class ModalClientManager:
                     refinement=refinement,
                     gpu_device=gpu_device,
                     gpu_platform=gpu_platform,
+                    mol_params=mol_params,
                 )
                 record.modal_call_id = call.object_id
                 record.call_handle = call

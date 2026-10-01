@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 try:
     import modal
@@ -76,6 +76,7 @@ if modal is not None:
         refinement: int = 20,
         gpu_device: int = 0,
         gpu_platform: str = "auto",
+        mol_params: Optional[dict[str, Any]] = None,
     ) -> dict[str, Any]:
         """Execute a full GPU-accelerated docking pipeline on an NVIDIA GPU.
 
@@ -87,6 +88,7 @@ if modal is not None:
             refinement: Number of top models to refine with flexible annealing.
             gpu_device: GPU device index (e.g. 0).
             gpu_platform: Acceleration backend ('auto', 'cuda').
+            mol_params: Optional molecule-specific configuration (e.g. cyclic peptide).
 
         Returns:
             Dictionary containing structured CAPRI scores, top PDBs, and timing.
@@ -128,11 +130,22 @@ if modal is not None:
             "",
             "[topoaa]",
             "autohis = false",
-            "",
-            "[rigidbody]",
-            "tolerance = 20",
-            f"sampling = {max(sampling, 10)}",
         ]
+        if mol_params:
+            for mol_idx, params in mol_params.items():
+                if params.get("cyclic_peptide"):
+                    cfg_lines.append("")
+                    cfg_lines.append(f"[topoaa.{mol_idx}]")
+                    cfg_lines.append("cyclicpept = true")
+
+        cfg_lines.extend(
+            [
+                "",
+                "[rigidbody]",
+                "tolerance = 20",
+                f"sampling = {max(sampling, 10)}",
+            ]
+        )
         if ambig_fname:
             cfg_lines.append(f'ambig_fname = "{ambig_fname}"')
 

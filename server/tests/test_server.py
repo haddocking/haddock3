@@ -1,20 +1,18 @@
 """Integration tests for HADDOCK3 FastAPI Cloud Server."""
 
 import io
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
 from server.client import modal_manager
-from server.config import settings
 from server.main import app
-from server.models import JobStatus
 
 DUMMY_PDB_1 = (
     "ATOM      1  N   MET A   1      27.240  24.414  25.914  1.00 11.22           N\n"
     "ATOM      2  CA  MET A   1      26.505  25.267  26.857  1.00 12.01           C\n"
+    "ATOM      3  N   GLY B   1      20.000  20.000  20.000  1.00 10.00           N\n"
     "END\n"
 )
 
@@ -70,16 +68,15 @@ async def test_system_gpu():
 
 
 @pytest.mark.asyncio
-async def test_submit_validation_missing_molecules():
-    """Submit must fail with 400 if fewer than 2 molecules provided."""
+async def test_submit_validation_missing_molecule():
+    """Submit must fail with 422 if either required molecule is missing."""
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
-        files = [
-            ("molecules", ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain"))
-        ]
+        files = {
+            "mol1_file": ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain"),
+        }
         response = await client.post("/api/v1/docking/submit", files=files)
-        assert response.status_code == 400
-        assert "At least 2 molecular structures" in response.json()["detail"]
+        assert response.status_code == 422  # Missing mol2_file
 
 
 @pytest.mark.asyncio
@@ -87,21 +84,37 @@ async def test_submit_validation_invalid_file_extension():
     """Submit must reject unsupported file extensions."""
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
-        files = [
-            ("molecules", ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain")),
-            ("molecules", ("mol2.txt", io.BytesIO(DUMMY_PDB_2.encode("utf-8")), "text/plain")),
-        ]
+        files = {
+            "mol1_file": ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain"),
+            "mol2_file": ("mol2.txt", io.BytesIO(DUMMY_PDB_2.encode("utf-8")), "text/plain"),
+        }
         response = await client.post("/api/v1/docking/submit", files=files)
         assert response.status_code == 400
         assert "Unsupported file format" in response.json()["detail"]
 
 
 @pytest.mark.asyncio
-async def test_submit_and_poll_workflow():
-    """Test full submit -> status -> cancel lifecycle with mocked Modal backend."""
+async def test_submit_validation_chain_not_found():
+    """Submit must fail with 400 if user selects a chain that does not exist in PDB."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        files = {
+            "mol1_file": ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain"),
+            "mol2_file": ("mol2.pdb", io.BytesIO(DUMMY_PDB_2.encode("utf-8")), "text/plain"),
+        }
+        data = {
+            "mol1_chain": "Z",  # Chain Z doesn't exist in DUMMY_PDB_1
+        }
+        response = await client.post("/api/v1/docking/submit", files=files, data=data)
+        assert response.status_code == 400
+        assert "Specified chain 'Z' not found" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_submit_and_poll_workflow_with_params():
+    """Test full submit -> status -> cancel lifecycle with separate molecule fields & params."""
     mock_call = MagicMock()
     mock_call.object_id = "mock-modal-call-777"
-    # First status check: Still running (raises TimeoutError)
     mock_call.get.side_effect = TimeoutError()
 
     with patch("server.client.execute_docking_job") as mock_exec:
@@ -109,15 +122,23 @@ async def test_submit_and_poll_workflow():
 
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
-            files = [
-                ("molecules", ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain")),
-                ("molecules", ("mol2.pdb", io.BytesIO(DUMMY_PDB_2.encode("utf-8")), "text/plain")),
-            ]
+            files = {
+                "mol1_file": ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain"),
+                "mol2_file": ("mol2.pdb", io.BytesIO(DUMMY_PDB_2.encode("utf-8")), "text/plain"),
+            }
             data = {
+                "mol1_chain": "A",
+                "mol1_kind": "Protein or Protein-Ligand",
+                "mol1_coarse_grain": "false",
+                "mol1_cyclic_peptide": "true",
+                "mol2_chain": "B",
+                "mol2_kind": "Protein or Protein-Ligand",
+                "mol2_coarse_grain": "false",
+                "mol2_cyclic_peptide": "false",
                 "sampling": 10,
                 "refinement": 5,
                 "gpu_type": "A100",
-                "job_name": "Test Run",
+                "job_name": "Portal Style Test",
             }
             # 1. Submit
             sub_resp = await client.post("/api/v1/docking/submit", files=files, data=data)
@@ -127,6 +148,14 @@ async def test_submit_and_poll_workflow():
             assert sub_data["status"] == "running"
             assert sub_data["gpu_type"] == "A100"
             assert sub_data["modal_call_id"] == "mock-modal-call-777"
+
+            # Check that spawn received filtered mol1 PDB (only Chain A, not Chain B)
+            called_kwargs = mock_exec.spawn.call_args.kwargs
+            saved_mol1_text = called_kwargs["pdb_files"]["mol1.pdb"]
+            assert "MET A   1" in saved_mol1_text
+            assert "GLY B   1" not in saved_mol1_text  # Chain B stripped out!
+            # Check cyclic peptide param passed
+            assert called_kwargs["mol_params"]["mol1"]["cyclic_peptide"] is True
 
             # 2. Poll Status (Running)
             stat_resp = await client.get(f"/api/v1/docking/{job_id}/status")
@@ -179,10 +208,10 @@ async def test_completed_results_and_download():
 
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
-            files = [
-                ("molecules", ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain")),
-                ("molecules", ("mol2.pdb", io.BytesIO(DUMMY_PDB_2.encode("utf-8")), "text/plain")),
-            ]
+            files = {
+                "mol1_file": ("mol1.pdb", io.BytesIO(DUMMY_PDB_1.encode("utf-8")), "text/plain"),
+                "mol2_file": ("mol2.pdb", io.BytesIO(DUMMY_PDB_2.encode("utf-8")), "text/plain"),
+            }
             # Submit
             sub_resp = await client.post("/api/v1/docking/submit", files=files)
             job_id = sub_resp.json()["job_id"]
@@ -213,6 +242,5 @@ async def test_download_security_traversal_prevention():
     """Verify directory traversal is strictly blocked on artifact download."""
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
-        # Traversal attempt
         dl_resp = await client.get("/api/v1/results/some-job/download/..%2F..%2Fetc%2Fpasswd")
         assert dl_resp.status_code in (400, 404)

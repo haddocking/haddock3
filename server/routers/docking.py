@@ -16,28 +16,48 @@ from server.models import (
 router = APIRouter(prefix="/docking", tags=["Docking"])
 
 
-def filter_pdb_by_chain(pdb_text: str, chain: str) -> str:
+WATER_RESNAMES = {"HOH", "WAT", "TIP3", "TIP", "DOD", "H2O", "SOL"}
+BUFFER_AND_SOLVENT_RESNAMES = {
+    "HOH", "WAT", "TIP3", "TIP", "DOD", "H2O", "SOL",
+    "SO4", "PO4", "GOL", "EDO", "ACT", "DMS", "FMT", "BME", "PEG", "MPD", "IPA", "TRS", "MES", "HEPES",
+    "MG", "NA", "CL", "K", "CA", "ZN", "MN", "FE", "CU", "NI", "CO", "CD", "HG", "PB", "BR", "I", "CS", "LI",
+}
+UNSUPPORTED_HETATMS = {"GNP", "UNX", "UNK"}
+
+
+def filter_pdb_by_chain(pdb_text: str, chain: str, kind: str = "Protein or Protein-Ligand") -> str:
     """Filter PDB file contents to keep only atoms belonging to the specified chain.
 
-    If chain is 'All', '*' or empty, the content is returned unmodified.
+    Always strips crystallographic water molecules (HOH, WAT, TIP3, etc.), which are
+    unbonded solvent artifacts from crystallography. In implicit-solvent simulated annealing
+    docking (flexref), unconstrained water beads cause coordinate/energy explosion and 100% job failure.
+    For protein docking, also strips isolated buffer salts, crystallization ions (MG, NA, CL, etc.),
+    and unsupported non-standard cofactors without CNS topology (such as GNP) that trigger
+    CNS torsion-angle dynamics errors.
+    If chain is 'All', '*' or empty, all matching valid atoms are retained.
     """
     clean_chain = chain.strip()
-    if clean_chain.lower() in ("all", "*", ""):
-        return pdb_text
+    target_chain = None if clean_chain.lower() in ("all", "*", "") else clean_chain.upper()
+    is_protein = "protein" in kind.lower()
 
-    target_chain = clean_chain.upper()
     filtered_lines = []
     found_target_atoms = False
 
     for line in pdb_text.splitlines(keepends=True):
         if line.startswith(("ATOM  ", "HETATM")):
-            chain_id = line[21].strip() if len(line) > 21 else ""
-            if chain_id.upper() == target_chain:
+            resname = line[17:20].strip().upper()
+            if is_protein and (resname in BUFFER_AND_SOLVENT_RESNAMES or resname in UNSUPPORTED_HETATMS):
+                continue
+            elif resname in WATER_RESNAMES:
+                continue
+
+            chain_id = line[21].strip().upper() if len(line) > 21 else ""
+            if target_chain is None or chain_id == target_chain:
                 filtered_lines.append(line)
                 found_target_atoms = True
         elif line.startswith(("TER", "ANISOU")):
-            chain_id = line[21].strip() if len(line) > 21 else ""
-            if not chain_id or chain_id.upper() == target_chain:
+            chain_id = line[21].strip().upper() if len(line) > 21 else ""
+            if target_chain is None or not chain_id or chain_id == target_chain:
                 filtered_lines.append(line)
         else:
             # Preserve headers, SEQRES, CRYST1, CONECT, END
@@ -56,6 +76,7 @@ async def _read_and_validate_structure(
     file: UploadFile,
     chain: str,
     default_name: str,
+    kind: str = "Protein or Protein-Ligand",
 ) -> tuple[str, str]:
     """Validate structure file format, read bytes, and apply chain filter."""
     fname = file.filename or default_name
@@ -87,7 +108,7 @@ async def _read_and_validate_structure(
             detail=f"File '{fname}' must be valid UTF-8 text.",
         )
 
-    filtered_text = filter_pdb_by_chain(raw_text, chain)
+    filtered_text = filter_pdb_by_chain(raw_text, chain, kind=kind)
     return fname, filtered_text
 
 
@@ -195,13 +216,13 @@ async def submit_docking_job(
 
     # Process Molecule 1
     m1_name, m1_text = await _read_and_validate_structure(
-        mol1_file, chain=mol1_chain, default_name="mol1.pdb"
+        mol1_file, chain=mol1_chain, default_name="mol1.pdb", kind=mol1_kind
     )
     pdb_files[m1_name] = m1_text
 
     # Process Molecule 2
     m2_name, m2_text = await _read_and_validate_structure(
-        mol2_file, chain=mol2_chain, default_name="mol2.pdb"
+        mol2_file, chain=mol2_chain, default_name="mol2.pdb", kind=mol2_kind
     )
     # Ensure distinct filename in case both uploaded as 'model.pdb'
     if m2_name == m1_name:
@@ -211,7 +232,7 @@ async def submit_docking_job(
     # Process Molecule 3 if provided
     if mol3_file is not None and bool(mol3_file.filename):
         m3_name, m3_text = await _read_and_validate_structure(
-            mol3_file, chain=mol3_chain or "All", default_name="mol3.pdb"
+            mol3_file, chain=mol3_chain or "All", default_name="mol3.pdb", kind=mol3_kind or "Protein or Protein-Ligand"
         )
         if m3_name in pdb_files:
             m3_name = f"mol3_{m3_name}"

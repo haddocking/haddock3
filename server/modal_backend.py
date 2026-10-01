@@ -127,6 +127,7 @@ if modal is not None:
             f'run_dir = "run_output"',
             'mode = "local"',
             "ncores = 8",
+            "debug = true",
             f"molecules = {saved_molecules}",
             "",
             "[topoaa]",
@@ -267,18 +268,37 @@ if modal is not None:
                     except Exception:
                         pass
 
-                # Check for .out / .out.gz with errors
+                # Check for .out / .out.gz with errors or failure signals
+                found_out_diagnostic = False
                 for out_f in sorted(out_run_dir.rglob("*.out*"), key=lambda p: p.stat().st_mtime, reverse=True):
                     try:
                         if out_f.name.endswith(".gz"):
                             out_txt = gzip.decompress(out_f.read_bytes()).decode("utf-8", errors="replace")
                         else:
                             out_txt = out_f.read_text(errors="replace")
-                        if any(k in out_txt for k in ("%CNS", "ERROR", "^^^^", "ABORT", "error")):
+                        if any(k in out_txt for k in (
+                            "%CNS", "ERROR", "^^^^", "ABORT", "error",
+                            "ENERGY PROBLEM", "BLOWING UP", "STOPPING",
+                            "MAX/MIN possible coordinates exceeded",
+                        )):
                             diagnostic_details.append(f"=== {out_f.name} ===\n{out_txt[-3000:]}")
+                            found_out_diagnostic = True
                             break
                     except Exception:
                         pass
+
+                # If no specific error keywords matched, grab the tail of the latest .out file for context
+                if not found_out_diagnostic:
+                    for out_f in sorted(out_run_dir.rglob("*.out*"), key=lambda p: p.stat().st_mtime, reverse=True):
+                        try:
+                            if out_f.name.endswith(".gz"):
+                                out_txt = gzip.decompress(out_f.read_bytes()).decode("utf-8", errors="replace")
+                            else:
+                                out_txt = out_f.read_text(errors="replace")
+                            diagnostic_details.append(f"=== {out_f.name} (tail) ===\n{out_txt[-3000:]}")
+                            break
+                        except Exception:
+                            pass
 
             error_full = combined_log[-3000:]
             if diagnostic_details:

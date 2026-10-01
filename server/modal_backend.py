@@ -322,18 +322,35 @@ if modal is not None:
                     except (ValueError, IndexError):
                         continue
 
-        # 5. Extract top docked PDB structures
+        # 5. Extract top docked PDB structures (supporting .pdb and .pdb.gz)
         pdb_artifacts = {}
-        for pdb_path in sorted(out_run_dir.glob("*.pdb"))[:10]:
-            pdb_artifacts[pdb_path.name] = pdb_path.read_text()
+        import gzip
 
-        # If models in subfolders
+        def read_pdb(p: Path) -> str:
+            if p.name.endswith(".gz"):
+                return gzip.decompress(p.read_bytes()).decode("utf-8", errors="replace")
+            return p.read_text(errors="replace")
+
+        # Priority 1: Top cluster models from seletopclusts
+        cluster_pdbs = sorted(out_run_dir.rglob("cluster_*.pdb*"))
+        if cluster_pdbs:
+            for pdb_path in cluster_pdbs[:10]:
+                clean_name = pdb_path.name.removesuffix(".gz")
+                pdb_artifacts[clean_name] = read_pdb(pdb_path)
+        else:
+            # Priority 2: Any refined models (emref or flexref)
+            refined_pdbs = sorted(out_run_dir.rglob("*emref*/*.pdb*")) or sorted(out_run_dir.rglob("*flexref*/*.pdb*"))
+            for pdb_path in refined_pdbs[:10]:
+                if not any(pdb_path.name.endswith(ext) for ext in (".cnserr", ".cnserr.gz", ".out", ".out.gz")):
+                    clean_name = pdb_path.name.removesuffix(".gz")
+                    pdb_artifacts[clean_name] = read_pdb(pdb_path)
+
+        # Fallback: Any PDB files in run_output
         if not pdb_artifacts:
-            for pattern in ("*seletopclusts/*.pdb", "*caprieval/*.pdb", "*emref/*.pdb", "*flexref/*.pdb"):
-                for pdb_path in sorted(out_run_dir.glob(pattern))[:10]:
-                    pdb_artifacts[pdb_path.name] = pdb_path.read_text()
-                if pdb_artifacts:
-                    break
+            for pdb_path in sorted(out_run_dir.rglob("*.pdb*"))[:10]:
+                if not any(pdb_path.name.endswith(ext) for ext in (".cnserr", ".cnserr.gz", ".out", ".out.gz")):
+                    clean_name = pdb_path.name.removesuffix(".gz")
+                    pdb_artifacts[clean_name] = read_pdb(pdb_path)
 
         return {
             "job_id": job_id,

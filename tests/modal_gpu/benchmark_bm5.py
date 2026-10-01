@@ -19,7 +19,8 @@ try:
 except ImportError:
     modal = None  # type: ignore
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+_parents = Path(__file__).resolve().parents
+REPO_ROOT = _parents[2] if len(_parents) > 2 else Path("/root/haddock3")
 
 # Representative BM5 targets categorized by interface difficulty
 BM5_TARGETS = {
@@ -70,7 +71,8 @@ if modal is not None:
         .add_local_dir(
             local_path=str(REPO_ROOT),
             remote_path="/root/haddock3",
-            ignore=["*.git*", "*__pycache__*", "*.pytest_cache*", "*personal_docs*"],
+            ignore=["*.git*", "*__pycache__*", "*.pytest_cache*", "*personal_docs*", "*.venv*"],
+            copy=True,
         )
         .run_commands(
             "cd /root/haddock3 && pip install --no-build-isolation -e '.[gpu]'"

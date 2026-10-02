@@ -1,0 +1,43 @@
+{
+  "device": "NVIDIA A100-SXM4-40GB",
+  "total_vram_gb": 39.49,
+  "n_models": 1000,
+  "total_pairs": 499500,
+  "n_atoms": 4000,
+  "modules": {
+    "rmsdmatrix": {
+      "n_pairs": 499500,
+      "gpu_seconds": 1.8834,
+      "cpu_extrapolated_seconds": 5.2582,
+      "speedup": 2.79,
+      "peak_vram_mb": 904.84,
+      "numerical_equivalence": {
+        "max_abs_diff_angstrom": 0.0,
+        "mean_abs_diff_angstrom": 0.0,
+        "tolerance_passed": true
+      }
+    },
+    "clustfcc": {
+      "n_pairs": 499500,
+      "gpu_seconds": 0.4011,
+      "cpu_extrapolated_seconds": 2.399,
+      "speedup": 5.98,
+      "peak_vram_mb": 21.23,
+      "numerical_equivalence": {
+        "r2_correlation": 1.0,
+        "tolerance_passed": true
+      }
+    },
+    "contactmap": {
+      "n_atoms": 4000,
+      "gpu_seconds": 0.0868,
+      "cpu_seconds": 0.1342,
+      "speedup": 1.55,
+      "peak_vram_mb": 39.54,
+      "numerical_equivalence": {
+        "max_abs_diff_angstrom": 0.00195312,
+        "tolerance_passed": true
+      }
+    }
+  }
+}

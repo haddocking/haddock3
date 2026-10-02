@@ -124,17 +124,7 @@ To answer this, Tier 2 evaluated the complete 7-stage HADDOCK3 macro-pipeline:
 
 We tested the authentic bacterial phosphotransferase complex **E2A-HPr (PDB 1GGR)**, driven by experimental NMR chemical shift perturbation data encoded as Ambiguous Interaction Restraints (AIRs).
 
-```
-+-------------------------------------------------------------------------------------------------------+
-|                       TIER 2 MACRO-PIPELINE PARITY SUMMARY: E2A-HPr (PDB 1GGR)                         |
-+---------------+---------------+--------------------+--------------------+-----------------------------+
-| Cluster Rank  | Cluster ID    | GPU HADDOCK Score  | CPU HADDOCK Score  | CAPRI DockQ (Quality)       |
-+---------------+---------------+--------------------+--------------------+-----------------------------+
-| Rank 1        | Cluster 4     | -194.110           | -194.110           | 0.424 (Medium Quality)      |
-| Rank 2        | Cluster 3     | -193.378           | -193.378           | 0.770 (High Quality)        |
-| Rank 3        | Cluster 1     | -192.732           | -192.732           | 0.642 (Medium Quality)      |
-+---------------+---------------+--------------------+--------------------+-----------------------------+
-```
+![Tier 2 Macro-Pipeline Parity: E2A-HPr (PDB 1GGR)](images/tier2_macro_pipeline_table.jpg)
 
 #### Key Findings from Tier 2:
 1. **100% Cluster Parity**: The GPU and CPU runs identified the **exact same top 3 clusters**, in the exact same rank order, with zero numerical variation in HADDOCK energy scoring down to the third decimal place.

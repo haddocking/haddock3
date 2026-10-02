@@ -137,16 +137,7 @@ We tested the authentic bacterial phosphotransferase complex **E2A-HPr (PDB 1GGR
 
 To prove that GPU acceleration is not overfitted to a single system, Tier 3 tested targets across distinct conformational difficulty classes from the gold-standard **Protein Docking Benchmark 5.5 (BM5)**:
 
-```
-+-------------------------------------------------------------------------------------------------------+
-|                    TIER 3 MULTI-TARGET BM5 GENERALIZABILITY (RIGID & MEDIUM)                          |
-+--------+------------------------+-----------+--------------------+-------------------+----------------+
-| Target | Biological Complex     | Category  | Top Cluster DockQ  | Top Single Pose   | Parity Status  |
-+--------+------------------------+-----------+--------------------+-------------------+----------------+
-| 1PPE   | Trypsin / CMTI-I       | Rigid     | 0.932 (★★★ High)   | DockQ = 1.000     | Exact Match    |
-| 1ATN   | Actin / DNase I        | Medium    | 0.844 (★★★ High)   | DockQ = 1.000     | Exact Match    |
-+--------+------------------------+-----------+--------------------+-------------------+----------------+
-```
+![Tier 3 Multi-Target Generalizability (BM5)](images/tier3_multitarget_table.jpg)
 
 #### 1. Rigid Target: Trypsin / CMTI-I Squash Inhibitor (PDB 1PPE)
 - **Biological Context**: A classic enzyme-inhibitor complex with rigid backbone binding.

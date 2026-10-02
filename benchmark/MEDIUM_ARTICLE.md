@@ -186,17 +186,7 @@ Across all evaluated benchmark complexes, the GPU pipeline achieves exact scient
 ![CAPRI DockQ Performance and Scientific Equivalence](images/haddock3_capri_dockq_accuracy.jpg)
 *Figure 6: Biological validation against crystal structures from the Protein Docking Benchmark 5.5 (BM5). Left: Top-cluster CAPRI DockQ accuracy across Rigid (1PPE, DockQ = 0.93), Medium (1ATN, DockQ = 0.84), and NMR-restrained (1GGR, DockQ = 0.77) complexes. Right: Result fidelity showing no measurable structural deviation at reported precision and 100% cluster ranking parity between GPU and CPU predictions.*
 
-```
-+---------------------------------------------------------------------------------------------------------------+
-|                                      BIOLOGICAL VALIDATION (BM5 BENCHMARK)                                    |
-+--------+--------------------------+---------+---------+-------------------+-------------------+---------------+
-| Target | Biological Complex       | GPU (s) | CPU (s) | Top DockQ         | Top i-RMSD        | Quality Class |
-+--------+--------------------------+---------+---------+-------------------+-------------------+---------------+
-| 1PPE   | Trypsin / CMTI-I         | 172.9s  | 166.8s  | 0.932 vs 0.932    | 0.504 Å / 0.504 Å | High Quality  |
-| 1ATN   | Actin / DNase I          | 325.9s  | 334.1s  | 0.844 vs 0.844    | 0.882 Å / 0.882 Å | High Quality  |
-| 1GGR   | E2A-HPr Phosphotransfer  | 149.2s  | 152.0s  | 0.770 vs 0.770    | 1.094 Å / 1.094 Å | Med-High      |
-+--------+--------------------------+---------+---------+-------------------+-------------------+---------------+
-```
+![Biological Validation (BM5 Benchmark)](images/bm5_validation_table.jpg)
 
 ### Scientific Parity and Result Fidelity
 Across all tested complexes in the benchmark suite:

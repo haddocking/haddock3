@@ -184,39 +184,11 @@ On every single target across the benchmark suite:
 
 ## 5. What This Means for Modern Drug Discovery
 
-Why does an engineer or biotech founder care about cutting matrix analysis from 12 minutes to 60 seconds?
+Shrinking ensemble analysis from 12 minutes to 60 seconds is not just an engineering benchmark—it unlocks three high-value therapeutic frontiers:
 
-```
-+---------------------------------------------------------------------------------+
-|                       IMPACT ON THERAPEUTIC PIPELINES                           |
-+---------------------------------------------------------------------------------+
-|                                                                                 |
-| 1. High-Throughput Biologics Screening                                          |
-|    Antibody lead optimization requires screening hundreds of variant loops.     |
-|    What previously took a week on high-performance compute clusters can now     |
-|    run overnight on a single cloud GPU node.                                    |
-|                                                                                 |
-| 2. Next-Gen Modalities: PROTACs and Molecular Glues                             |
-|    Targeted protein degradation requires modeling ternary complexes             |
-|    (Target + E3 Ligase + Small Molecule). The conformational search space is    |
-|    vast; fast clustering allows exploring tens of thousands of decoys.         |
-|                                                                                 |
-| 3. Unifying Physics with Modern AI                                              |
-|    AlphaFold and ESMFold generate thousands of monomeric structures in          |
-|    seconds. Physics-based integrative docking with HADDOCK3 filters out AI      |
-|    hallucinations by enforcing physical restraints and energy minimization.     |
-|    GPU-accelerating HADDOCK3 bridges the speed gap between AI and biophysics.   |
-+---------------------------------------------------------------------------------+
-```
-
-### 1. High-Throughput Screening for Engineered Antibodies
-When designing therapeutic antibodies or nanobodies, computational biologists introduce dozens of mutations across the complementarity-determining regions (CDRs). Modeling 100 variants with 5,000 decoys each used to mean days of cluster runtime. With GPU-accelerated HADDOCK3, clustering and scoring finish in seconds, enabling near-real-time antibody engineering loops.
-
-### 2. Multi-Body Complexes and PROTACs
-Targeted protein degraders (PROTACs) and molecular glues require modeling ternary complexes (Target–Degrader–E3 Ligase). The conformational landscape is enormous. Navigating this landscape demands sampling 10,000+ conformations. Accelerating quadratic pairwise analysis makes large-ensemble sampling computationally practical.
-
-### 3. Coupling Physics to Machine Learning
-Deep learning models like AlphaFold-Multimer and ESMFold have revolutionized structure prediction, but they often hallucinate interface contacts or struggle with non-canonical modifications, cofactors, and flexible loops. HADDOCK3 acts as the ultimate physical ground-truth filter: applying empirical NMR/cryo-EM restraints and force-field energy minimization to AI-generated decoys. Accelerating HADDOCK3 brings physics-based docking up to the speed of modern AI inference.
+- **High-Throughput Biologics**: Screening 100 antibody CDR variants with 5,000 decoys each previously tied up HPC clusters for days. GPU clustering completes in seconds, collapsing week-long lead optimization campaigns into overnight runs.
+- **Ternary Modalities (PROTACs & Glues)**: Targeted protein degraders expand conformational search across target, small molecule, and E3 ligase. Accelerating quadratic O(N²) pairwise calculations makes 10,000+ decoy ensembles computationally routine.
+- **Physics-Grounded AI Validation**: Generative tools (AlphaFold, ESMFold) generate thousands of structural hypotheses in seconds, but frequently hallucinate interface contacts or struggle with flexible loops. Accelerated HADDOCK3 bridges this gap—applying experimental NMR/cryo-EM restraints and force-field energy minimization at the speed of modern AI inference.
 
 ---
 

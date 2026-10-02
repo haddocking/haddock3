@@ -59,28 +59,9 @@ On multi-core CPUs running traditional Fortran and C binaries, this analysis alo
 
 Rather than running 12.5 million sequential CPU function calls, we reformulated HADDOCK3's pairwise matrix calculations into batched multidimensional tensor algebra suitable for GPU stream multiprocessors.
 
-```
-+---------------------------------------------------------------------------------+
-|                       GPU ACCELERATION PIPELINE OVERVIEW                        |
-+---------------------------------------------------------------------------------+
-|                                                                                 |
-|   Decoy Ensemble Coordinates [N, A, 3]                                          |
-|                |                                                                |
-|                +---> [rmsdmatrix]  --> Batched Centroid Centering               |
-|                |                       Batched Covariance Matrix: C = P^T * Q   |
-|                |                       Batched SVD on GPU (torch.linalg.svd)    |
-|                |                       Reflection Correction: det(V * U^T)      |
-|                |                       Output: float64 RMSD Matrix (12.04x)    |
-|                |                                                                |
-|                +---> [clustfcc]    --> Sparse-to-Dense Bitmask Encoding         |
-|                |                       Bitwise AND Matrix Multiplication        |
-|                |                       Output: FCC Similarity Matrix (7.10x)    |
-|                |                                                                |
-|                +---> [contactmap]  --> Batched Euclidean Distance:              |
-|                                        torch.cdist(coords, coords)              |
-|                                        Thresholding & Sparse Matrix (1.98x)     |
-+---------------------------------------------------------------------------------+
-```
+![GPU Acceleration Pipeline Overview: Tensor-Accelerated Pairwise Modules](images/gpu_pipeline_biorender.jpg)
+*Figure 3: GPU Acceleration Pipeline Overview. The 3D decoy coordinate tensor `[N, Atoms, 3]` is streamed in parallel across three accelerated GPU modules: batched SVD structural alignment (`rmsdmatrix`, 12.0x faster), tensor-core bitmask contact clustering (`clustfcc`, 7.1x faster), and batched Euclidean distance calculations (`contactmap`, 2.0x faster).*
+
 
 ### A. Batched GPU Kabsch Alignment (`rmsdmatrix` & `ilrmsdmatrix`)
 Finding the minimum RMSD between two sets of 3D coordinates requires finding the optimal rotation matrix using the Kabsch algorithm. 
@@ -128,7 +109,7 @@ To prove this acceleration is publication-grade and industrially reliable, we ex
 At production ensemble scale, the speedup is dramatic:
 
 ![HADDOCK3 GPU Speedup and Runtime Benchmark Comparison](charts/haddock3_gpu_speedup_benchmarks.jpg)
-*Figure 3: Performance scaling across 12,497,500 pairwise calculations on an NVIDIA A100 GPU vs 8-core CPU baseline. Panel A shows wall-clock execution times on a log scale (12m 04s vs 60.1s for rmsdmatrix). Panel B illustrates the resulting speedup multipliers (up to 12.04x) and runtime percentage reductions (up to 91.7%).*
+*Figure 4: Performance scaling across 12,497,500 pairwise calculations on an NVIDIA A100 GPU vs 8-core CPU baseline. Panel A shows wall-clock execution times on a log scale (12m 04s vs 60.1s for rmsdmatrix). Panel B illustrates the resulting speedup multipliers (up to 12.04x) and runtime percentage reductions (up to 91.7%).*
 
 ```
 +-------------------------------------------------------------------------------------------------------+
@@ -158,7 +139,7 @@ Speed is meaningless in structural biology if the algorithm predicts the wrong b
 We put the GPU pipeline to the test across authentic complexes from the Protein Docking Benchmark 5.5 (BM5):
 
 ![CAPRI DockQ Performance and Scientific Equivalence](charts/haddock3_capri_dockq_accuracy.jpg)
-*Figure 4: Biological validation against crystal structures from the Protein Docking Benchmark 5.5 (BM5). Panel A highlights top-cluster CAPRI DockQ accuracy across Rigid (1PPE, DockQ = 0.932), Medium (1ATN, DockQ = 0.844), and NMR-restrained (1GGR, DockQ = 0.770) complexes, achieving 3-Star High-Quality status. Panel B demonstrates exact scientific fidelity with zero numerical drift (Δ = 0.000 Å) between GPU and CPU predictions.*
+*Figure 5: Biological validation against crystal structures from the Protein Docking Benchmark 5.5 (BM5). Panel A highlights top-cluster CAPRI DockQ accuracy across Rigid (1PPE, DockQ = 0.932), Medium (1ATN, DockQ = 0.844), and NMR-restrained (1GGR, DockQ = 0.770) complexes, achieving 3-Star High-Quality status. Panel B demonstrates exact scientific fidelity with zero numerical drift (Δ = 0.000 Å) between GPU and CPU predictions.*
 
 ```
 +---------------------------------------------------------------------------------------------------------------+

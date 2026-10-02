@@ -94,7 +94,7 @@ To prove this acceleration is publication-grade and industrially reliable, we ex
 
 At production ensemble scale, the speedup is dramatic:
 
-![HADDOCK3 GPU Speedup and Runtime Benchmark Comparison](charts/haddock3_gpu_speedup_benchmarks.jpg)
+![HADDOCK3 GPU Speedup and Runtime Benchmark Comparison](images/haddock3_gpu_speedup_benchmarks.jpg)
 *Figure 5: Performance scaling across 12,497,500 pairwise calculations on an NVIDIA A100 GPU vs 8-core CPU baseline. Left: Module speedups comparing GPU acceleration against the CPU 1.0x baseline for rmsdmatrix (12.0x faster), clustfcc (7.1x faster), and contactmap (2.0x faster). Right: GPU speedup scaling across ensemble sizes, showing GPU acceleration rising to a 12.0x advantage at 5,000 decoys over the flat CPU baseline.*
 
 ```
@@ -160,7 +160,7 @@ Speed is meaningless in structural biology if the algorithm predicts the wrong b
 
 Across all evaluated benchmark complexes, the GPU pipeline achieves exact scientific parity:
 
-![CAPRI DockQ Performance and Scientific Equivalence](charts/haddock3_capri_dockq_accuracy.jpg)
+![CAPRI DockQ Performance and Scientific Equivalence](images/haddock3_capri_dockq_accuracy.jpg)
 *Figure 6: Biological validation against crystal structures from the Protein Docking Benchmark 5.5 (BM5). Left: Top-cluster CAPRI DockQ accuracy across Rigid (1PPE, DockQ = 0.93), Medium (1ATN, DockQ = 0.84), and NMR-restrained (1GGR, DockQ = 0.77) complexes, achieving 3-Star High-Quality status. Right: Exact scientific fidelity with zero numerical drift (Δ = 0.0000 Å) and 100% cluster ranking parity between GPU and CPU predictions.*
 
 ```

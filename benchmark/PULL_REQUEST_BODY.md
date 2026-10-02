@@ -52,11 +52,6 @@ Evaluated across distinct difficulty classes in `benchmark/bm5_tier3_multitarget
 
 ---
 
-## AI assistance
-
-AI tools (Antigravity coding assistant) were utilized to help draft unit test scaffolding, format benchmark harness scripts, and structure documentation. All scientific algorithms, tensor mathematics, PyTorch CUDA kernels, OpenMM parameter handling, and CAPRI validation outputs were manually verified and cross-checked against crystallographic ground truth structures and CPU baselines.
-
----
 
 ## Checklist
 

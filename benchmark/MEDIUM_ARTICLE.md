@@ -87,29 +87,15 @@ Inter-residue distance maps were accelerated using batched `torch.cdist` in `flo
 
 To prove this acceleration is publication-grade and industrially reliable, we executed an automated 3-tier benchmark suite deployed on an **NVIDIA A100-SXM4-40GB** cloud GPU cluster:
 
-```
-+-----------------------------------------------------------------------------------------------------------+
-|                                    HADDOCK3 GPU BENCHMARK HIERARCHY                                       |
-+--------+--------------------------+-----------------------+-----------------------------------------------+
-| Tier   | Evaluation Focus         | Hardware Tested       | Core Finding                                  |
-+--------+--------------------------+-----------------------+-----------------------------------------------+
-| Tier 1 | Micro-Kernels (Scaling)  | NVIDIA A100-SXM4-40GB | Up to 12.04x speedup (91.7% time reduction)  |
-|        | N = 1,000 to 5,000 models| vs. 8-core CPU        | on rmsdmatrix & clustfcc across 12.5M pairs.  |
-|        |                          |                       |                                               |
-| Tier 2 | Macro-Pipeline (Quality) | NVIDIA A100-SXM4-40GB | Zero-regression on authentic complex E2A-HPr. |
-|        | Authentic NMR Restraints | vs. 8-core CPU        | 100% identical top 3 clusters identified.     |
-|        |                          |                       |                                               |
-| Tier 3 | Multi-Target Suite (BM5) | NVIDIA A100-SXM4-40GB | Generalizability proven across Rigid (1PPE)   |
-|        | Rigid & Medium Classes   | vs. 8-core CPU        | and Medium (1ATN) targets with 3-star DockQ.  |
-+--------+--------------------------+-----------------------+-----------------------------------------------+
-```
+![HADDOCK3 GPU Benchmark Hierarchy: Three-Tier Rigorous Evaluation Strategy](images/benchmark_hierarchy_biorender.jpg)
+*Figure 4: The 3-tier validation framework implemented to evaluate HADDOCK3 GPU acceleration on NVIDIA A100 hardware, spanning micro-kernel algorithmic scaling (Tier 1), authentic NMR complex macro-pipeline execution (Tier 2), and multi-target CAPRI blind quality on the BM5 benchmark suite (Tier 3).*
 
 ### Tier 1: Micro-Benchmark Scaling (N = 5,000 Models, 12,497,500 Pairs)
 
 At production ensemble scale, the speedup is dramatic:
 
 ![HADDOCK3 GPU Speedup and Runtime Benchmark Comparison](charts/haddock3_gpu_speedup_benchmarks.jpg)
-*Figure 4: Performance scaling across 12,497,500 pairwise calculations on an NVIDIA A100 GPU vs 8-core CPU baseline. Panel A shows wall-clock execution times on a log scale (12m 04s vs 60.1s for rmsdmatrix). Panel B illustrates the resulting speedup multipliers (up to 12.04x) and runtime percentage reductions (up to 91.7%).*
+*Figure 5: Performance scaling across 12,497,500 pairwise calculations on an NVIDIA A100 GPU vs 8-core CPU baseline. Left: Module speedups comparing CPU runtime against GPU execution for rmsdmatrix (12.0x faster), clustfcc (7.1x faster), and contactmap (2.0x faster). Right: Computational scaling curves showing exponential CPU O(N²) explosion versus near-linear GPU tensor throughput (collapsing 5,000 decoys to 60 seconds).*
 
 ```
 +-------------------------------------------------------------------------------------------------------+
@@ -139,7 +125,7 @@ Speed is meaningless in structural biology if the algorithm predicts the wrong b
 We put the GPU pipeline to the test across authentic complexes from the Protein Docking Benchmark 5.5 (BM5):
 
 ![CAPRI DockQ Performance and Scientific Equivalence](charts/haddock3_capri_dockq_accuracy.jpg)
-*Figure 5: Biological validation against crystal structures from the Protein Docking Benchmark 5.5 (BM5). Panel A highlights top-cluster CAPRI DockQ accuracy across Rigid (1PPE, DockQ = 0.932), Medium (1ATN, DockQ = 0.844), and NMR-restrained (1GGR, DockQ = 0.770) complexes, achieving 3-Star High-Quality status. Panel B demonstrates exact scientific fidelity with zero numerical drift (Δ = 0.000 Å) between GPU and CPU predictions.*
+*Figure 6: Biological validation against crystal structures from the Protein Docking Benchmark 5.5 (BM5). Left: Top-cluster CAPRI DockQ accuracy across Rigid (1PPE, DockQ = 0.93), Medium (1ATN, DockQ = 0.84), and NMR-restrained (1GGR, DockQ = 0.77) complexes, achieving 3-Star High-Quality status. Right: Exact scientific fidelity with zero numerical drift (Δ = 0.0000 Å) and 100% cluster ranking parity between GPU and CPU predictions.*
 
 ```
 +---------------------------------------------------------------------------------------------------------------+

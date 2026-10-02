@@ -95,7 +95,7 @@ To prove this acceleration is publication-grade and industrially reliable, we ex
 At production ensemble scale, the speedup is dramatic:
 
 ![HADDOCK3 GPU Speedup and Runtime Benchmark Comparison](charts/haddock3_gpu_speedup_benchmarks.jpg)
-*Figure 5: Performance scaling across 12,497,500 pairwise calculations on an NVIDIA A100 GPU vs 8-core CPU baseline. Left: Module speedups comparing CPU runtime against GPU execution for rmsdmatrix (12.0x faster), clustfcc (7.1x faster), and contactmap (2.0x faster). Right: Computational scaling curves showing exponential CPU O(N²) explosion versus near-linear GPU tensor throughput (collapsing 5,000 decoys to 60 seconds).*
+*Figure 5: Performance scaling across 12,497,500 pairwise calculations on an NVIDIA A100 GPU vs 8-core CPU baseline. Left: Module speedups comparing GPU acceleration against the CPU 1.0x baseline for rmsdmatrix (12.0x faster), clustfcc (7.1x faster), and contactmap (2.0x faster). Right: GPU speedup scaling across ensemble sizes, showing GPU acceleration rising to a 12.0x advantage at 5,000 decoys over the flat CPU baseline.*
 
 ```
 +-------------------------------------------------------------------------------------------------------+

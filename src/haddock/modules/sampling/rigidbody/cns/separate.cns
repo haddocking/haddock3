@@ -192,7 +192,7 @@ if ($nfixed < $data.ncomponents) then
   
         while ($sum_random > 0) loop placemol
             evaluate ($maximum = 0)
-            evaluate ($maxid = 0)
+            evaluate ($maxid = 1)
             evaluate ($ncount = 0)
   
             ! Select molecule with largest random number

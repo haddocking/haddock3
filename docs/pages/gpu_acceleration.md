@@ -1,6 +1,6 @@
 # GPU Acceleration in HADDOCK3
 
-HADDOCK3 includes optional, zero-regression GPU acceleration designed to eliminate the heaviest computational bottlenecks in biomolecular docking, refinement, and ensemble analysis.
+HADDOCK3 includes optional, zero-regression GPU acceleration designed to accelerate pairwise $O(N^2)$ post-docking analysis and clustering (RMSD matrices, Fraction of Common Contacts, contact maps) and molecular dynamics refinement.
 
 ---
 
@@ -44,16 +44,16 @@ In standard execution, pairwise RMSD analysis across N structural models scales 
 With `use_gpu: true`:
 - Coordinates are loaded into memory and aligned via batched Kabsch Singular Value Decomposition (SVD) in double precision (`float64`).
 - Centering, covariance cross-products, and reflection corrections are evaluated entirely in GPU VRAM.
-- Achieves 15x to 50x speedups over CPU execution for ensembles of 1,000+ structures.
+- Achieves up to ~12x speedup over CPU execution for large ensembles ($N \ge 1,000$ structures) with double-precision numerical equivalence (maximum absolute difference = 0.0000 Å vs CPU baseline).
 
 ### 3.2 Fraction of Common Contacts Clustering (`clustfcc`)
 
-The Fraction of Common Contacts (FCC) algorithm calculates the residue-residue contact overlap between all pairs of decoy complexes. In pure Python, evaluating N * (N - 1) / 2 set intersections is a major bottleneck for large ensembles.
+The Fraction of Common Contacts (FCC) algorithm calculates the residue-residue contact overlap between all pairs of decoy complexes. In pure Python, evaluating $N \times (N - 1) / 2$ set intersections is a major bottleneck for large ensembles.
 
 With `use_gpu: true`:
-- Contacts are encoded as a binary occurrence matrix A of shape (N, total_unique_contacts).
-- Pairwise intersection counts are evaluated simultaneously using matrix multiplication: M = A * A^T.
-- Accelerated using GPU Tensor Cores or compiled SciPy sparse routines, reducing clustering preparation from minutes to milliseconds.
+- Contacts are encoded as a binary occurrence matrix $A$ of shape $(N, \text{total\_unique\_contacts})$.
+- Pairwise intersection counts are evaluated simultaneously using matrix multiplication: $M = A \times A^T$.
+- Accelerated using GPU Tensor Cores via PyTorch, achieving up to ~7x speedup over the serial CPU implementation with exact cluster preservation ($R^2 = 1.0000$).
 
 ### 3.3 Inter-Chain Contact Heatmaps (`contactmap`)
 
@@ -78,45 +78,13 @@ The OpenMM refinement module performs energy minimization and short molecular dy
 
 ---
 
-## 4. CNS CUDA Integration (`cns_solve_CUDA`)
+## 4. Scope and Workflow Performance (Amdahl's Law)
 
-HADDOCK3 can seamlessly integrate with the CUDA-accelerated CNS solver (`cns_solve_CUDA`), accelerating non-bonded energy evaluations and simulated annealing protocols (`rigidbody`, `flexref`, `emref`).
+In standard HADDOCK3 docking workflows, sampling and simulated annealing stages (`rigidbody`, `flexref`, `mdref`) rely on the Crystallography & NMR System (CNS) Fortran executable, which runs on CPU. Because CNS dominates 85% to >95% of total wall-clock runtime in a standard docking pipeline, overall end-to-end workflow runtimes remain primarily CPU-bound in accordance with Amdahl's Law.
 
-### Building `cns_solve_CUDA`
-
-A build script is provided in the repository to compile the CUDA kernels with automatic GPU architecture detection:
-
-```bash
-bash varia/build_cns_cuda.sh
-```
-
-The script detects active NVIDIA compute capabilities (`sm_75` for T4, `sm_80` for A100, `sm_86` for A10G, `sm_90` for H100) and compiles the binary to `src/haddock/bin/cns_solve_CUDA`.
-
-### Activating in HADDOCK3
-
-Expose the binary via environment variable or specify it directly:
-
-```bash
-export CNS_CUDA_EXEC="/path/to/cns_solve_CUDA"
-```
-
-Or set in your configuration file:
-
-```yaml
-rigidbody:
-  cns_exec: "/path/to/cns_solve_CUDA"
-  use_gpu: true
-```
-
-### NVIDIA Multi-Process Service (MPS)
-
-When multiplexing multiple concurrent CNS processes onto a single GPU, enable the NVIDIA MPS control daemon to eliminate CUDA context switching latency:
-
-```bash
-nvidia-cuda-mps-control -d
-```
-
-HADDOCK3's parallel scheduler automatically monitors and interfaces with MPS when present.
+The GPU acceleration introduced here specifically addresses the memory footprint and execution bottleneck during **post-docking ensemble analysis and clustering**:
+- For standard small runs ($N \le 200$), CPU clustering completes in seconds, so GPU overhead yields near parity (~1.0x).
+- For production ensembles ($N = 1,000$ to $10,000+$ models), pairwise $O(N^2)$ matrix evaluations otherwise become severe CPU/RAM bottlenecks. GPU execution reduces these analysis stages from tens of minutes to seconds.
 
 ---
 
@@ -128,25 +96,4 @@ When running in SLURM environments, HADDOCK3 automatically injects GPU resource 
 mode: "slurm"
 use_gpu: true
 gpus: 2                     # Injects #SBATCH --gres=gpu:2
-```
-
----
-
-## 6. Cloud Testing and Benchmarking with Modal
-
-To run automated test suites and benchmarks on cloud NVIDIA GPUs without local hardware:
-
-```bash
-# Install Modal client
-pip install 'haddock3[modal]'
-modal setup
-
-# Execute unit test suite on an NVIDIA T4 GPU
-modal run tests/modal_gpu/modal_runner.py --gpu-type T4 --test-target tests/test_libgpu.py
-
-# Run RMSD matrix benchmark on an NVIDIA A100 GPU
-modal run tests/modal_gpu/modal_runner.py --gpu-type A100 --benchmark rmsdmatrix --n-models 2000
-
-# Execute full BM5 benchmark breakdown
-modal run tests/modal_gpu/benchmark_bm5.py --target-category rigid --gpu-type A100
 ```

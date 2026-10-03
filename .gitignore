@@ -154,3 +154,12 @@ docs/src/
 log
 end-to-end_tests/ab-grid
 end-to-end_tests/prot-grid
+
+
+personal_docs/
+plan.md
+server/
+.agents/
+/bm5_gpu_benchmarks.json
+benchmark/run-*
+benchmark/data

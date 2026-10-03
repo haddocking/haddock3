@@ -1,15 +1,18 @@
 """Test the CONTact MAP module."""
 
 import os
-import tempfile
 from pathlib import Path
-from typing import Callable
+import tempfile
 
 import numpy as np
 import pytest
 from scipy.spatial.distance import pdist, squareform
 
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libutil import (
+    get_available_memory,
+    get_necessary_memory,
+)
 from haddock.modules.analysis.contactmap import DEFAULT_CONFIG
 from haddock.modules.analysis.contactmap import HaddockModule as ContactMapModule
 from haddock.modules.analysis.contactmap.contmap import (
@@ -34,10 +37,6 @@ from haddock.modules.analysis.contactmap.contmap import (
     topX_models,
     within_2PI,
     write_res_contacts,
-)
-from haddock.libs.libutil import (
-    get_available_memory,
-    get_necessary_memory,
 )
 
 from . import golden_data
@@ -675,3 +674,40 @@ def test_get_necessary_memory_zero_bytes():
         # Should use default fallback (10000 atoms)
         assert isinstance(memory, float)
         assert memory > 0
+
+
+def test_compute_distance_matrix_gpu(atoms_coordinates, ref_dist_matrix):
+    """Test compute_distance_matrix with use_gpu=True."""
+    dist_mat = compute_distance_matrix(
+        atoms_coordinates,
+        use_gpu=True,
+        device="cpu",
+        chunk_size=2,
+    )
+    assert np.allclose(dist_mat, ref_dist_matrix, atol=1e-5)
+
+
+def test_protprot_contactmap_gpu(protprot_contactmap):
+    """Test ContactsMap.run with use_gpu=True."""
+    protprot_contactmap.params["use_gpu"] = True
+    contacts, heavy_contacts = protprot_contactmap.run()
+    assert len(contacts) > 0
+    assert isinstance(heavy_contacts, list)
+
+
+def test_contactmap_module_memory_bypass_gpu(contactmap, protprot_input_list, monkeypatch):
+    """Test that use_gpu=True bypasses the CPU RAM exhaustion guard."""
+    from unittest.mock import patch
+
+    contactmap.previous_io.output = protprot_input_list
+    contactmap.params["use_gpu"] = True
+
+    # Mock get_available_memory to return a very small value (e.g. 0.001 GB)
+    with patch(
+        "haddock.modules.analysis.contactmap.get_available_memory",
+        return_value=0.001,
+    ):
+        contactmap.run()
+        # Should not skip; output_models should be populated and files created
+        assert len(contactmap.output_models) == len(protprot_input_list)
+

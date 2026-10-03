@@ -88,7 +88,6 @@ class BaseCNSModule(BaseHaddockModule):
 
         fstr = os.linesep.join(lines)
         Path(self.path, filename).write_text(fstr)
-        return
 
     def make_self_contained(self) -> None:
         """Create folders to make run self-contained."""
@@ -108,7 +107,18 @@ class BaseCNSModule(BaseHaddockModule):
         self.envvars = self.default_envvars()
         self.save_envvars()
 
-        _cns_exec = self.params["cns_exec"] or global_cns_exec
+        use_gpu = self.params.get("use_gpu", False)
+        if use_gpu and not self.params.get("cns_exec"):
+            from haddock.core.defaults import cns_cuda_exec
+
+            if cns_cuda_exec:
+                log.info(f"Using CUDA-accelerated CNS binary: {cns_cuda_exec}")
+                _cns_exec = cns_cuda_exec
+            else:
+                _cns_exec = global_cns_exec
+        else:
+            _cns_exec = self.params["cns_exec"] or global_cns_exec
+
         new_cns = Path(".", Path(_cns_exec).name)
         if not new_cns.exists():
             shutil.copyfile(_cns_exec, new_cns)

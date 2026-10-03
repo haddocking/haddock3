@@ -122,20 +122,39 @@ class HaddockModule(BaseHaddockModule):
             False,
         )
 
-        # Imporant: matrix is a generator object, be careful with it
-        matrix_gen = calculate_pairwise_matrix(
-            parsed_contacts,
-            False,
-        )
-
-        # write the matrix to a file, so we can read it afterwards and don't
-        #  need to reinvent the wheel handling this
+        use_gpu = self.params.get("use_gpu", False)
         fcc_matrix_f = Path("fcc.matrix")
-        matrix = list(matrix_gen)
-        with open(fcc_matrix_f, "w") as fh:
-            for data in matrix:
-                data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
-                fh.write(f"{data_str}{os.linesep}")
+
+        if use_gpu:
+            from haddock.libs.libfcc_gpu import (
+                calculate_pairwise_matrix_gpu,
+                write_fcc_matrix_file,
+            )
+            from haddock.libs.libgpu import get_best_available_device
+
+            device = get_best_available_device(
+                preferred_platform=self.params.get("gpu_platform", "auto"),
+                gpu_devices=self.params.get("gpu_devices"),
+            )
+            log.info(f"Calculating the FCC matrix with GPU acceleration ({device})")
+            matrix = calculate_pairwise_matrix_gpu(parsed_contacts, device=device)
+            write_fcc_matrix_file(matrix, fcc_matrix_f)
+        else:
+            log.info("Calculating the FCC matrix")
+            # Imporant: matrix is a generator object, be careful with it
+            matrix_gen = calculate_pairwise_matrix(
+                parsed_contacts,
+                False,
+            )
+
+            # write the matrix to a file, so we can read it afterwards and don't
+            #  need to reinvent the wheel handling this
+            matrix = list(matrix_gen)
+            with open(fcc_matrix_f, "w") as fh:
+                for data in matrix:
+                    data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
+                    fh.write(f"{data_str}{os.linesep}")
+
 
         # Cluster
         log.info("Clustering...")

@@ -79,16 +79,29 @@ class GenericTask:
 class Worker(Process):
     """Work on tasks."""
 
-    def __init__(self, tasks: Sequence[SupportsRunT], results: Queue) -> None:
+    def __init__(
+        self,
+        tasks: Sequence[SupportsRunT],
+        results: Queue,
+        gpu_device: Optional[int] = None,
+    ) -> None:
         super(Worker, self).__init__()
         self.tasks = tasks
         self.result_queue = results
+        self.gpu_device = gpu_device
         log.debug(f"Worker ready with {len(self.tasks)} tasks")
 
     def run(self) -> None:
         """Execute tasks."""
+        if self.gpu_device is not None:
+            from haddock.libs.libgpu import GPUDevicePool
+
+            GPUDevicePool.set_cuda_visible_device(self.gpu_device)
+
         results = []
         for task in self.tasks:
+            if self.gpu_device is not None and hasattr(task, "gpu_device"):
+                task.gpu_device = self.gpu_device
             r = None
             try:
                 r = task.run()
@@ -114,6 +127,8 @@ class Scheduler:
         tasks: list[SupportsRunT],
         ncores: Optional[int] = None,
         max_cpus: bool = False,
+        use_gpu: bool = False,
+        gpu_devices: Optional[list[int]] = None,
     ) -> None:
         """
         Schedule tasks to a defined number of processes.
@@ -127,8 +142,16 @@ class Scheduler:
             The number of cores to use. If `None` is given uses the
             maximum number of CPUs allowed by
             `libs.libututil.parse_ncores` function.
+
+        use_gpu : bool
+            Whether to enable GPU device assignment to workers.
+
+        gpu_devices : list of int, optional
+            List of GPU device indices to assign among workers.
         """
         self.max_cpus = max_cpus
+        self.use_gpu = use_gpu
+        self.gpu_devices = gpu_devices
         self.num_tasks = len(tasks)
         self.num_processes = ncores  # first parses num_cores
         self.queue: Queue = Queue()
@@ -150,7 +173,16 @@ class Scheduler:
             sorted_task_list = tasks
 
         job_list = split_tasks(sorted_task_list, self.num_processes)
-        self.worker_list = [Worker(jobs, self.queue) for jobs in job_list]
+        if self.use_gpu:
+            from haddock.libs.libgpu import GPUDevicePool
+
+            gpu_pool = GPUDevicePool(self.gpu_devices)
+            self.worker_list = [
+                Worker(jobs, self.queue, gpu_device=gpu_pool.get_device(idx))
+                for idx, jobs in enumerate(job_list)
+            ]
+        else:
+            self.worker_list = [Worker(jobs, self.queue) for jobs in job_list]
 
         log.info(f"Using {self.num_processes} cores")
         log.debug(f"{self.num_tasks} tasks ready.")

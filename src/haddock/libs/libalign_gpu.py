@@ -61,7 +61,9 @@ def compute_rmsd_matrix_torch(
     log.info(f"Computing RMSD matrix on device: {target_dev}")
 
     n_models, n_atoms, _ = coords.shape
-    coords_t = torch.as_tensor(coords, dtype=torch.float64, device=target_dev)
+    # MPS does not support float64 tensors; fall back to float32 on MPS
+    dtype = torch.float32 if str(target_dev).startswith("mps") else torch.float64
+    coords_t = torch.as_tensor(coords, dtype=dtype, device=target_dev)
 
     # Center all structures at origin
     centroids = coords_t.mean(dim=1, keepdim=True)
@@ -97,7 +99,7 @@ def compute_rmsd_matrix_torch(
         batch_rmsd = torch.sqrt(diff)
         rmsd_list.append(batch_rmsd.cpu())
 
-    all_rmsds = torch.cat(rmsd_list).numpy()
+    all_rmsds = torch.cat(rmsd_list).numpy().astype(np.float64, copy=False)
     return i_idx.cpu().numpy(), j_idx.cpu().numpy(), all_rmsds
 
 

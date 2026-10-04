@@ -81,20 +81,22 @@ class HaddockModule(BaseHaddockModule):
         #  - Calculate the expected matrix size and its memory requirements
         #  - Get how much memory the current host system has
         #  - If the system has less memory than needed, fail graciously
-        current_memory = get_available_memory()
-        needed_memory = get_necessary_memory(models) * self.params["ncores"]
-        if current_memory < needed_memory:
-            self.log(
-                msg=(
-                    f"Not enough memory to execute `contactmap` "
-                    f"(needs {needed_memory:.2f}Gb has {current_memory:.2f}Gb). "
-                    "! Skipping this module !"
-                ),
-                level="warning",
-            )
-            self.output_models = models
-            self.export_io_models()
-            return
+        use_gpu = self.params.get("use_gpu", False)
+        if not use_gpu:
+            current_memory = get_available_memory()
+            needed_memory = get_necessary_memory(models) * self.params["ncores"]
+            if current_memory < needed_memory:
+                self.log(
+                    msg=(
+                        f"Not enough memory to execute `contactmap` "
+                        f"(needs {needed_memory:.2f}Gb has {current_memory:.2f}Gb). "
+                        "! Skipping this module !"
+                    ),
+                    level="warning",
+                )
+                self.output_models = models
+                self.export_io_models()
+                return
 
         # ==============================================================================
 

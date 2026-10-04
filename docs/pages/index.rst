@@ -17,6 +17,7 @@ Content
    intro
    INSTALL
    USAGE
+   gpu_acceleration
    examples
    tutorials/index
    ../src/clients/haddock.clis

@@ -174,7 +174,18 @@ class ContactsMap(SupportsRun):
         # Extract all cordinates
         all_coords, resid_keys, resid_dt = get_ordered_coords(pdb_dt)
         # Compute distance matrix
-        full_dist_matrix = compute_distance_matrix(all_coords)
+        use_gpu = self.params.get("use_gpu", False)
+        gpu_platform = self.params.get("gpu_platform", "auto")
+        device = (
+            "cuda"
+            if gpu_platform in ("cuda", "auto")
+            else ("mps" if gpu_platform == "mps" else "cpu")
+        )
+        full_dist_matrix = compute_distance_matrix(
+            all_coords,
+            use_gpu=use_gpu,
+            device=device,
+        )
 
         res_res_contacts = []
         all_heavy_interchain_contacts = []
@@ -787,19 +798,57 @@ def get_ordered_coords(
     return (all_coords, resid_keys, resid_dt)
 
 
-def compute_distance_matrix(all_atm_coords: list[list[float]]) -> NDFloat:
+def compute_distance_matrix(
+    all_atm_coords: list[list[float]],
+    use_gpu: bool = False,
+    device: str = "cpu",
+    chunk_size: int = 2048,
+) -> NDFloat:
     """Compute all vs all distance matrix.
 
     Parameters
     ----------
     all_atm_coords : list[list[float]]
         List of atomic coordinates.
+    use_gpu : bool, optional
+        Whether to accelerate with PyTorch GPU/MPS, by default False.
+    device : str, optional
+        Target device ('cpu', 'cuda', 'mps'), by default 'cpu'.
+    chunk_size : int, optional
+        Chunk size for distance computation to bound VRAM usage, by default 2048.
 
     Return
     ------
     dist_matrix : NDFloat
         N*N distance matrix between all coordinates.
     """
+    if use_gpu:
+        try:
+            import torch
+
+            dev = torch.device(
+                device
+                if (torch.cuda.is_available() or device == "mps")
+                else "cpu"
+            )
+            coords_t = torch.tensor(
+                all_atm_coords, dtype=torch.float32, device=dev
+            )
+            n_atoms = len(all_atm_coords)
+            if n_atoms <= chunk_size:
+                return torch.cdist(coords_t, coords_t).cpu().numpy()
+
+            dist_matrix = np.empty((n_atoms, n_atoms), dtype=np.float32)
+            for i_start in range(0, n_atoms, chunk_size):
+                i_end = min(i_start + chunk_size, n_atoms)
+                chunk = coords_t[i_start:i_end]
+                dist_matrix[i_start:i_end] = (
+                    torch.cdist(chunk, coords_t).cpu().numpy()
+                )
+            return dist_matrix
+        except (ImportError, RuntimeError, ValueError):
+            pass
+
     dist_matrix = squareform(pdist(all_atm_coords))
     return dist_matrix
 

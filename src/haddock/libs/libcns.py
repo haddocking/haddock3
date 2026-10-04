@@ -168,7 +168,15 @@ def load_workflow_params(
     param_header: str
         The string with the CNS parameters defined.
     """
-    non_empty_parameters = ((k, v) for k, v in params.items() if filter_empty_vars(v))
+    non_empty_parameters = []
+    for k, v in params.items():
+        if isinstance(v, (list, tuple, dict, set)):
+            continue
+        try:
+            if filter_empty_vars(v):
+                non_empty_parameters.append((k, v))
+        except TypeError:
+            continue
 
     # types besides the ones in the if-statements should not enter this loop
     for param, v in non_empty_parameters:

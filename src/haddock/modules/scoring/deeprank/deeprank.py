@@ -36,11 +36,21 @@ class DeeprankWrapper:
 
     ENSEMBLE_NAME = "deeprank_ensemble.pdb"
 
-    def __init__(self, models, ncores, chain_i, chain_j):
+    def __init__(
+        self,
+        models,
+        ncores,
+        chain_i,
+        chain_j,
+        use_gpu: bool = False,
+        gpu_device: int | None = None,
+    ):
         self.models = models
         self.chain_i = chain_i
         self.chain_j = chain_j
         self.ncores = ncores
+        self.use_gpu = use_gpu
+        self.gpu_device = gpu_device
 
     def _make_ensemble(self, workspace: Path) -> Path:
         """Combine all input models into a single multi-model PDB.
@@ -68,39 +78,50 @@ class DeeprankWrapper:
         # This import needs to be exactly here
         from deeprank_gnn.predict import main as deeprank_main
 
-        with tempfile.TemporaryDirectory() as workspace_str:
-            workspace = Path(workspace_str)
-            ensemble_path = self._make_ensemble(workspace)
+        orig_cuda_visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+        try:
+            if self.use_gpu:
+                dev = self.gpu_device if self.gpu_device is not None else 0
+                os.environ["CUDA_VISIBLE_DEVICES"] = str(dev)
 
-            # NOTE: Since we are using the `main` function that takes `sys.argv`
-            #  we need a hacky solution to override. Here we can simply re-write
-            #  it and pass the arguments we need
-            original_argv = sys.argv
-            original_cwd = os.getcwd()
-            sys.argv = [
-                "deeprank",
-                str(ensemble_path),
-                self.chain_i,
-                self.chain_j,
-                str(self.ncores),
-            ]
+            with tempfile.TemporaryDirectory() as workspace_str:
+                workspace = Path(workspace_str)
+                ensemble_path = self._make_ensemble(workspace)
 
-            try:
-                # NOTE: deeprank will write its output to the path its being executed, there
-                #  is no way to define where the output will be saved, so here we need to move
-                #  into the workspace to trigger the function
-                os.chdir(workspace)
-                deeprank_main()
-            finally:
-                # NOTE: !!! VERY IMPORTANT !!!
-                #  Since we moved directories and overrode the `sys.argv` we NEED to have this
-                #  `finally` here - it means this branch of the code will always be executed.
-                #  With this we can hopely guarantee we go back to where we should be before
-                #  the execution moves on
-                sys.argv = original_argv
-                os.chdir(original_cwd)
+                # NOTE: Since we are using the `main` function that takes `sys.argv`
+                #  we need a hacky solution to override. Here we can simply re-write
+                #  it and pass the arguments we need
+                original_argv = sys.argv
+                original_cwd = os.getcwd()
+                sys.argv = [
+                    "deeprank",
+                    str(ensemble_path),
+                    self.chain_i,
+                    self.chain_j,
+                    str(self.ncores),
+                ]
 
-            return self._retrieve_scores(workspace)
+                try:
+                    # NOTE: deeprank will write its output to the path its being executed, there
+                    #  is no way to define where the output will be saved, so here we need to move
+                    #  into the workspace to trigger the function
+                    os.chdir(workspace)
+                    deeprank_main()
+                finally:
+                    # NOTE: !!! VERY IMPORTANT !!!
+                    #  Since we moved directories and overrode the `sys.argv` we NEED to have this
+                    #  `finally` here - it means this branch of the code will always be executed.
+                    #  With this we can hopely guarantee we go back to where we should be before
+                    #  the execution moves on
+                    sys.argv = original_argv
+                    os.chdir(original_cwd)
+
+                return self._retrieve_scores(workspace)
+        finally:
+            if orig_cuda_visible is not None:
+                os.environ["CUDA_VISIBLE_DEVICES"] = orig_cuda_visible
+            elif self.use_gpu and "CUDA_VISIBLE_DEVICES" in os.environ:
+                os.environ.pop("CUDA_VISIBLE_DEVICES", None)
 
     def _retrieve_scores(self, workspace: Path) -> dict[str, float]:
         """Parse the output from deeprank and return the scores per input model.

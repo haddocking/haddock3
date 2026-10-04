@@ -37,6 +37,22 @@ pip install 'haddock3[mpi]'
 pip install 'haddock3[notebooks]'
 ```
 
+## (Optional) Install GPU acceleration dependencies
+
+To accelerate analysis modules (`rmsdmatrix`, `ilrmsdmatrix`, `clustfcc`, `contactmap`) and refinement (`openmm`) on NVIDIA CUDA or Apple Silicon MPS:
+
+```bash
+pip install 'haddock3[gpu]'
+```
+
+For cloud GPU benchmarking and execution via Modal:
+
+```bash
+pip install 'haddock3[modal]'
+```
+
+See [GPU Acceleration Guide](gpu_acceleration.md) for full configuration details.
+
 ## Troubleshooting the CNS executable
 
 Depending on your architecture, the CNS executable coming with the `pip install` command (see above), might give errors because of some missing libraries.

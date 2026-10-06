@@ -649,6 +649,123 @@ def test_topoaa_GalGalNAcalpha(topoaa_module):
     )
 
 
+# alpha-Neu5Ac (SIA) stereochemistry, as carbohydrate.top restrains it.  The
+# values are the CNS improper targets; improper_angle() uses the opposite sign
+# convention, so a correct structure measures about the negative of each.
+SIA_STEREO = [
+    (("H4", "O4", "C5", "C3"), 66.9),
+    (("H5", "C4", "C6", "N5"), 66.8),
+    (("H6", "C7", "O6", "C5"), 66.8),
+    (("H7", "O7", "C8", "C6"), 66.9),
+    (("H8", "O8", "C9", "C7"), 66.9),
+    (("C1", "O1A", "O1B", "C2"), 0.0),
+    (("N5", "C10", "C5", "HN5"), 0.0),
+    (("C10", "C11", "N5", "O10"), 0.0),
+]
+
+
+def assert_stereo(coords, checks, label):
+    """Check impropers against their CNS targets, allowing for the sign flip."""
+    for atoms, target in checks:
+        assert all(a in coords for a in atoms), f"{label}: {atoms} not all built"
+        value = improper_angle(coords, *atoms)
+        if target == 0.0:
+            assert abs(value) < 12.0, (
+                f"{label} {' '.join(atoms)} should be planar, is {value:.1f} deg"
+            )
+        else:
+            assert value * target < 0 and 40.0 < abs(value) < 95.0, (
+                f"{label} {' '.join(atoms)} is {value:.1f} deg, expected about "
+                f"{-target:.1f}"
+            )
+
+
+def test_topoaa_sialic_acid(topoaa_module):
+    """Topoaa with alpha-N-acetyl neuraminic acid (SIA) on its own."""
+    topoaa_module.params["molecules"] = [Path(GOLDEN_DATA, "sia.pdb")]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_psf = Path(topoaa_module.path, "sia_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "sia_haddock.pdb")
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    sia = residue_coords(expected_pdb, "SIA", 1)
+    # ring, carboxylate, N-acetyl and the full glycerol arm
+    for atom in (
+        "C1",
+        "O1A",
+        "O1B",
+        "C2",
+        "O2",
+        "O6",
+        "N5",
+        "C10",
+        "C11",
+        "O7",
+        "O8",
+        "O9",
+    ):
+        assert atom in sia, f"SIA {atom} missing from the topology output"
+    assert_stereo(sia, SIA_STEREO, "SIA")
+
+
+@pytest.mark.parametrize(
+    "pdb,patch,acceptor_oh",
+    [
+        ("sia-a2g-26.pdb", "A26S", "HO6"),  # sialyl-Tn
+        ("sia-a2g-23.pdb", "A23", "HO3"),
+    ],
+)
+def test_topoaa_sialyl_GalNAc(topoaa_module, pdb, patch, acceptor_oh):
+    """Topoaa detects SIA alpha(2,6) and alpha(2,3) linkages to alpha-GalNAc.
+
+    sia-a2g-26.pdb is the sialyl-Tn antigen.  Both cases check that
+    bondglycans.cns picks the linkage up, that the patch deletes the anomeric
+    hydroxyl of the sialic acid and the acceptor hydroxyl hydrogen, and that
+    neither residue loses its stereochemistry in the process.
+    """
+    topoaa_module.params["molecules"] = [Path(GOLDEN_DATA, pdb)]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    stem = pdb.removesuffix(".pdb")
+    expected_psf = Path(topoaa_module.path, f"{stem}_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, f"{stem}_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, f"{stem}.out.gz")
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    with gzip.open(expected_gz, mode="rt", encoding="utf-8", errors="replace") as f:
+        log = f.read()
+    assert f"{patch} link added" in log, f"{patch} was not applied"
+
+    sia = residue_coords(expected_pdb, "SIA", 2)
+    a2g = residue_coords(expected_pdb, "A2G", 1)
+
+    # the patch replaces the anomeric hydroxyl of SIA with the glycosidic bond
+    assert "O2" not in sia, "SIA O2 should have been deleted by the patch"
+    assert "HO2" not in sia, "SIA HO2 should have been deleted by the patch"
+    assert acceptor_oh not in a2g, f"A2G {acceptor_oh} should have been deleted"
+
+    assert_stereo(sia, SIA_STEREO, "SIA")
+    assert_stereo(
+        a2g,
+        [
+            (("H1", "O5", "O1", "C2"), 67.6),
+            (("H4", "O4", "C3", "C5"), 66.9),
+            (("H2", "C1", "N2", "C3"), 66.8),
+            (("N2", "C7", "C2", "HN2"), 0.0),
+        ],
+        "A2G",
+    )
+
+
 def test_topoaa_module_protein_noCter(topoaa_module):
     """Topoaa module with uncharged Cter and charged Nter."""
     topoaa_module.params["molecules"] = [

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709
 - 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-21: Corrected seperate.cns - Issue #1392
 - 2026-09-17: Implemented worflow validation again general parameters - Issue #1693

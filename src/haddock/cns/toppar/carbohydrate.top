@@ -1062,7 +1062,7 @@ END
 
 !-------------------------------------------------------------------
 
-RESIdue GCS  !2-N-beta-D-galactopyranose (glucosamine)
+RESIdue GCS  !2-N-beta-D-glucopyranose (glucosamine)
  GROUP
   ATOM C1   TYPE=CCE  CHARge= 0.350   END
   ATOM H1   TYPE=HAS  CHARge= 0.100   END

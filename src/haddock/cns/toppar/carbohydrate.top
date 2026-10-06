@@ -11,7 +11,8 @@ REMARKS Topologies added for BDP-MMA-XYS-ABE
 REMARKS Alexandre Bonvin October-2026
 REMARKS A2G (alpha-GalNAc) remark corrected - it was wrongly listed as a
 REMARKS glucopyranose; fixed malformed NGM C4 improper; A2G added as
-REMARKS alpha(2,3)/alpha(2,6) sialylation acceptor
+REMARKS alpha(2,3)/alpha(2,6) sialylation acceptor;
+REMARKS added the missing N-acetyl planarity impropers to NGA, NAG, MAG, A2G
 REMARKS Continuous updated and additions under HADDOCK project 2020 to present
 REMARKS ----------------------------------------------------------
 REMARKS Currently supported carbohydrates and their anomers:
@@ -665,6 +666,9 @@ RESIdue NGA  !2-N-Acetyl-beta-D-galactopyranose
   DIHEDRAL H5 C5 C6 O6
   DIHEDRAL C5 C6 O6 H61
 
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+
   IMPRoper H1 O1 O5 C2  {beta C1}
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
@@ -1050,6 +1054,9 @@ RESIdue NAG  !2-N-Acetyl-beta-D-glucopyranose
   DIHEDRAL H5 C5 C6 O6
   DIHEDRAL C5 C6 O6 H61
 
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+
   IMPRoper H1 O1 O5 C2  {beta C1}
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
@@ -1225,6 +1232,9 @@ RESIdue MAG  !2-N-Acetyl-beta-D-glucopyranose + Methyl at O1
   DIHEDRAL H5 C5 C6 O6
   DIHEDRAL C5 C6 O6 H61
 
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+
   IMPRoper H1 O1 O5 C2  {beta C1}
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
@@ -1315,6 +1325,9 @@ RESIdue A2G  !2-N-Acetyl-alpha-D-galactopyranose (alpha-GalNAc) ! alpha anomer o
   DIHEDRAL H4 C4 O4 HO4
   DIHEDRAL H5 C5 C6 O6
   DIHEDRAL C5 C6 O6 H61
+
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
 
   IMPRoper H1 O5 O1 C2  {alpha C1}
   IMPRoper H2 C1 N2 C3  {C2}

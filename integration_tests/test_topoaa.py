@@ -1,5 +1,6 @@
 import copy
 import gzip
+import math
 import shutil
 import tempfile
 from pathlib import Path
@@ -10,6 +11,48 @@ from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CON
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
 
 from . import CNS_EXEC, EXAMPLE_DIR, GOLDEN_DATA, has_grid
+
+
+def improper_angle(coords, a1, a2, a3, a4) -> float:
+    """Improper dihedral a1-a2-a3-a4 in degrees, from a name -> xyz mapping.
+
+    Note that the sign convention is the opposite of the one CNS uses for the
+    IMPRoper target values in ``carbohydrate.param``.
+    """
+
+    def sub(u, v):
+        return [u[n] - v[n] for n in range(3)]
+
+    def cross(u, v):
+        return [u[1] * v[2] - u[2] * v[1],
+                u[2] * v[0] - u[0] * v[2],
+                u[0] * v[1] - u[1] * v[0]]
+
+    def dot(u, v):
+        return sum(x * y for x, y in zip(u, v))
+
+    b1 = sub(coords[a2], coords[a1])
+    b2 = sub(coords[a3], coords[a2])
+    b3 = sub(coords[a4], coords[a3])
+    n1, n2 = cross(b1, b2), cross(b2, b3)
+    perp = cross(n1, b2)
+    return math.degrees(
+        math.atan2(dot(perp, n2) / math.sqrt(dot(b2, b2)), dot(n1, n2))
+    )
+
+
+def residue_coords(fpath, resname, resid) -> dict[str, tuple[float, float, float]]:
+    """Extract an atomname -> xyz mapping for one residue of a PDB file."""
+    coords = {}
+    with open(fpath, encoding="utf-8", mode="r") as fin:
+        for line in fin:
+            if not line.startswith(("ATOM", "HETATM")):
+                continue
+            if line[17:20].strip() == resname and line[22:26].strip() == str(resid):
+                coords[line[12:16].strip()] = (
+                    float(line[30:38]), float(line[38:46]), float(line[46:54])
+                )
+    return coords
 
 
 @pytest.fixture
@@ -538,6 +581,70 @@ def test_topoaa_GalGalNacalphaOMe(topoaa_module):
 
     assert " C9 " in file_content
     assert " O4 " in file_content
+
+
+def test_topoaa_GalGalNAcalpha(topoaa_module):
+    """Topoaa with alpha-GalNAc (A2G), the alpha anomer of NGA.
+
+    Input is the core-1/T-antigen disaccharide Gal-beta(1,3)-alpha-GalNAc.
+    The anomeric carbon and the C4 substituents are absent from the input and
+    have to be built by CNS, so this also checks that the A2G impropers pin the
+    right stereochemistry: alpha at C1 and galacto (axial O4) at C4.
+    """
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "gal-a2g.pdb"),
+    ]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "gal-a2g.inp")
+    expected_psf = Path(topoaa_module.path, "gal-a2g_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "gal-a2g_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "gal-a2g.out.gz")
+
+    assert expected_inp.exists(), f"{expected_inp} does not exist"
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_gz.exists(), f"{expected_gz} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    with open(expected_pdb, encoding="utf-8", mode="r") as f:
+        file_content = f.read()
+
+    # the free anomeric hydroxyl and the C4 hydroxyl must have been built
+    assert " O1 " in file_content
+    assert " O4 " in file_content
+
+    # the beta(1,3) link to the galactose must have been patched in
+    with gzip.open(expected_gz, mode="rt", encoding="utf-8") as f:
+        log = f.read()
+    assert "B13 link added" in log
+
+    a2g = residue_coords(expected_pdb, "A2G", 2)
+    gal = residue_coords(expected_pdb, "GAL", 3)
+
+    # Alpha anomer. carbohydrate.top restrains IMPRoper H1 O5 O1 C2 of A2G to
+    # 67.6 degrees, the alpha-D value; the beta anomer NGA uses the j/k-swapped
+    # ordering H1 O1 O5 C2 and so has the opposite sign for this quadruple.
+    # improper_angle() follows the opposite sign convention to CNS, hence the
+    # negative reference value here.
+    anomeric = improper_angle(a2g, "H1", "O5", "O1", "C2")
+    assert -80.0 < anomeric < -55.0, (
+        f"A2G C1 is not the alpha anomer: H1-O5-O1-C2 is {anomeric:.1f} deg, "
+        "expected about -67.6"
+    )
+
+    # Galacto configuration at C4 (axial O4).  Compared against the galactose
+    # of the same molecule using the same atom ordering, so this holds whatever
+    # sign convention improper_angle() uses: the gluco epimer of A2G would come
+    # out with the opposite sign.
+    a2g_c4 = improper_angle(a2g, "H4", "O4", "C3", "C5")
+    gal_c4 = improper_angle(gal, "H4", "O4", "C3", "C5")
+    assert a2g_c4 * gal_c4 > 0, (
+        "A2G C4 has gluco, not galacto, configuration: H4-O4-C3-C5 is "
+        f"{a2g_c4:.1f} deg against {gal_c4:.1f} deg for the galactose"
+    )
 
 
 def test_topoaa_module_protein_noCter(topoaa_module):

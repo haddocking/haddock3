@@ -24,9 +24,11 @@ def improper_angle(coords, a1, a2, a3, a4) -> float:
         return [u[n] - v[n] for n in range(3)]
 
     def cross(u, v):
-        return [u[1] * v[2] - u[2] * v[1],
-                u[2] * v[0] - u[0] * v[2],
-                u[0] * v[1] - u[1] * v[0]]
+        return [
+            u[1] * v[2] - u[2] * v[1],
+            u[2] * v[0] - u[0] * v[2],
+            u[0] * v[1] - u[1] * v[0],
+        ]
 
     def dot(u, v):
         return sum(x * y for x, y in zip(u, v))
@@ -36,9 +38,7 @@ def improper_angle(coords, a1, a2, a3, a4) -> float:
     b3 = sub(coords[a4], coords[a3])
     n1, n2 = cross(b1, b2), cross(b2, b3)
     perp = cross(n1, b2)
-    return math.degrees(
-        math.atan2(dot(perp, n2) / math.sqrt(dot(b2, b2)), dot(n1, n2))
-    )
+    return math.degrees(math.atan2(dot(perp, n2) / math.sqrt(dot(b2, b2)), dot(n1, n2)))
 
 
 def residue_coords(fpath, resname, resid) -> dict[str, tuple[float, float, float]]:
@@ -50,7 +50,9 @@ def residue_coords(fpath, resname, resid) -> dict[str, tuple[float, float, float
                 continue
             if line[17:20].strip() == resname and line[22:26].strip() == str(resid):
                 coords[line[12:16].strip()] = (
-                    float(line[30:38]), float(line[38:46]), float(line[46:54])
+                    float(line[30:38]),
+                    float(line[38:46]),
+                    float(line[46:54]),
                 )
     return coords
 

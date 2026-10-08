@@ -181,6 +181,7 @@ class HaddockModule(BaseCNSModule):
             self.params["ambig_fname"],
             self.params["unambig_fname"],
             self.params["hbond_fname"],
+            self.params["logn_fname"],
             self.params["cmrest"],
             self.params["ranair"],
             self.params["surfrest"],

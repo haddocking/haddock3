@@ -63,3 +63,15 @@ noe
     masymptote  * -0.1
     mrswitch    * 1.0
 end
+
+if ($logn_fname # "") then
+    fileexist $logn_fname end
+    if ($result eq true) then
+        noe 
+        class logn @@$logn_fname end
+    end if
+end if
+
+noe
+    potential logn logn
+end

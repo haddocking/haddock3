@@ -2,7 +2,7 @@
 !   Perform the second simulation annealing stage of it1
 !
 ! ***********************************************************************
-! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2026 Alexandre Bonvin, Utrecht University.           *
 ! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
 ! * All rights reserved.                                                *
 ! * This code is part of the HADDOCK software and governed by its       *
@@ -66,6 +66,12 @@ end if
 if ($Data.hbond_cool2 = 0) then
     evaluate ($Data.hbond_cool2 = 0.000001)
 end if
+if ($Data.logn_cool1 = 0) then
+    evaluate ($Data.logn_cool1 = 0.000001)
+end if
+if ($Data.logn_cool2 = 0) then
+    evaluate ($Data.logn_cool2 = 0.000001)
+end if
 
 evaluate ($k_unamb= $Data.unambig_cool1)
 evaluate ($unambig_fac = ($Data.unambig_cool2/$Data.unambig_cool1)^(1/$ncycle))
@@ -73,6 +79,8 @@ evaluate ($k_amb= $Data.ambig_cool1)
 evaluate ($ambig_fac = ($Data.ambig_cool2/$Data.ambig_cool1)^(1/$ncycle))
 evaluate ($k_hbond= $Data.hbond_cool1)
 evaluate ($hbond_fac = ($Data.hbond_cool2/$Data.hbond_cool1)^(1/$ncycle))
+evaluate ($k_logn= $Data.logn_cool1)
+evaluate ($logn_fac = ($Data.logn_cool2/$Data.logn_cool1)^(1/$ncycle))
 
 
 evaluate ($bath  = $SaProtocol.t2_init)
@@ -90,6 +98,7 @@ while ($i_cool < $ncycle) loop cool
     evaluate ($k_unamb = $k_unamb*$unambig_fac)
     evaluate ($k_amb = $k_amb*$ambig_fac)
     evaluate ($k_hbond = $k_hbond*$hbond_fac)
+    evaluate ($k_logn = $k_logn*$logn_fac)
     evaluate ($asy=$asy+$asy_add)
     evaluate ($masy=$masy+$masy_add)
 
@@ -98,6 +107,7 @@ while ($i_cool < $ncycle) loop cool
         scale dist $k_unamb
         scale ambi $k_amb
         scale hbon $k_hbond
+        scale logn $k_logn
         asym ambi $asy
         asym dist $asy
         asym hbon $asy

@@ -50,6 +50,14 @@ unambig_fname:
     Note that this file can contain both ambiguous and unambiguous restraints.
   group: 'distance restraints'
   explevel: easy
+logn_fname:
+  default: ''
+  type: file
+  title: Log normal restraints filename
+  short: Filename of the log normal distance restraints file.
+  long: Filename of the log normal distance restraints file. All restraints in that file will be used.
+  group: 'distance restraints'
+  explevel: easy
 hbond_fname:
   default: ''
   type: file
@@ -86,6 +94,16 @@ hbond_scale:
   title: Force constant for hbonds distance restraints
   short: Force constant applied to the distance restraints defined in hbond_fname.
   long: Force constant applied to the distance restraints defined in hbond_fname.
+  group: 'distance restraints'
+  explevel: expert
+logn_scale:
+  default: 200
+  type: integer
+  min: 0
+  max: 1000
+  title: Force constant for log normal distance restraints
+  short: Force constant applied to the log normal distance restraints defined in logn_fname.
+  long: Force constant applied to the log normal distance restraints defined in logn_fname.
   group: 'distance restraints'
   explevel: expert
 randremoval:

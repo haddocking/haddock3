@@ -16,11 +16,13 @@ eval ($kinter = 1.0)
 evaluate ($unambig_scale = $Data.unambig_scale)
 evaluate ($ambig_scale = $Data.ambig_scale)
 evaluate ($hbond_scale = $Data.hbond_scale)
+evaluate ($logn_scale = $Data.logn_scale)
 
 noe 
     scale dist $unambig_scale 
     scale ambi $ambig_scale
     scale hbon $hbond_scale
+    scale logn $logn_scale
     scale symm 0.0
 end
 
@@ -98,11 +100,13 @@ evaluate ($kinter = $SaProtocol.inter_rigid)
 evaluate ($unambig_scale = $unambig_scale_store)
 evaluate ($ambig_scale = $ambig_scale_store)
 evaluate ($hbond_scale = $hbond_scale_store)
+evaluate ($logn_scale = $logn_scale_store)
 evaluate ($symm_scale = $symm_scale_store)
 
 noe 
     scale dist $unambig_scale 
     scale ambi $ambig_scale
     scale hbon $hbond_scale
+    scale logn $logn_scale
     scale symm $symm_scale
 end

@@ -2,7 +2,7 @@
 !    Perform an explitic solvent (water or dmso) refinement
 !
 ! ***********************************************************************
-! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2026 Alexandre Bonvin, Utrecht University.           *
 ! * This code is part of the HADDOCK software and governed by its       *
 ! * license. Please see the LICENSE file that should have been included *
 ! * as part of this package.                                            *
@@ -54,6 +54,7 @@ evaluate ($data.npart=$npart)
 evaluate ($data.ambig_scale=$ambig_scale)
 evaluate ($data.unambig_scale=$unambig_scale)
 evaluate ($data.hbond_scale=$hbond_scale)
+evaluate ($data.logn_scale=$logn_scale)
 
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
@@ -218,6 +219,7 @@ noe
     scale ambi $ambig_scale
     scale dist $unambig_scale
     scale hbon $hbond_scale
+    scale logn $logn_scale
     sqconstant * 1.0
     sqexponent * 2
     soexponent * 1
@@ -513,6 +515,7 @@ noe
     scale dist $Data.unambig_scale
     scale ambi $Data.ambig_scale
     scale hbon $Data.hbond_scale
+    scale logn $Data.logn_scale
     scale symm 0.0
     scale cont 0.0
 end
@@ -545,6 +548,7 @@ if ($Data.flags.sym eq true) then
         scale dist $Data.unambig_scale
         scale ambi $Data.ambig_scale
         scale hbon $Data.hbond_scale
+        scale logn $Data.logn_scale
     end
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)

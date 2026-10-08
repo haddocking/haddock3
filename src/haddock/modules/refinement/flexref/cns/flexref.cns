@@ -87,6 +87,11 @@ evaluate ($data.hbond_cool1=$hbond_cool1)
 evaluate ($data.hbond_cool2=$hbond_cool2)
 evaluate ($data.hbond_cool3=$hbond_cool3)
 
+evaluate ($data.logn_hot=$logn_hot)
+evaluate ($data.logn_cool1=$logn_cool1)
+evaluate ($data.logn_cool2=$logn_cool2)
+evaluate ($data.logn_cool3=$logn_cool3)
+
 evaluate ($data.mrswi_hot=$mrswi_hot)
 evaluate ($data.mrswi_cool1=$mrswi_cool1)
 evaluate ($data.mrswi_cool2=$mrswi_cool2)
@@ -352,11 +357,13 @@ evaluate ($failure = $result)
 evaluate ($unambig_scale = $Data.unambig_hot)
 evaluate ($ambig_scale = $Data.ambig_hot)
 evaluate ($hbond_scale = $Data.hbond_hot)
+evaluate ($logn_scale = $Data.logn_hot)
 
 noe
     scale dist $unambig_scale
     scale ambi $ambig_scale
     scale hbon $hbond_scale
+    scale logn $logn_scale
 end
 
 {* Stage 0 ================================== initial EM for flexible parts only *}
@@ -551,6 +558,7 @@ noe
     scale dist $Data.unambig_cool3
     scale ambi $Data.ambig_cool3
     scale hbon $Data.hbond_cool3
+    scale logn $Data.logn_cool3
     scale symm 0.0
     scale cont 0.0
 end
@@ -583,6 +591,7 @@ if ($Data.flags.sym eq true) then
         scale dist $Data.unambig_cool3
         scale ambi $Data.ambig_cool3
         scale hbon $Data.hbond_cool3
+        scale logn $Data.logn_cool3
     end
     evaluate ($result = 0)
     print threshold=0.3 noe

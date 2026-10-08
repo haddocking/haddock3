@@ -50,6 +50,14 @@ unambig_fname:
     Note that this file can contain both ambiguous and unambiguous restraints.
   group: 'distance restraints'
   explevel: easy
+logn_fname:
+  default: ''
+  type: file
+  title: Log normal restraints filename
+  short: Filename of the log normal distance restraints file.
+  long: Filename of the log normal distance restraints file. All restraints in that file will be used.
+  group: 'distance restraints'
+  explevel: easy
 hbond_fname:
   default: ''
   type: file
@@ -176,6 +184,46 @@ hbond_cool3:
   title: Hot phase SA force constant for hydrogen bond restraints
   short: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.
   long: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
+  group: 'distance restraints'
+  explevel: expert
+logn_hot:
+  default: 40
+  type: integer
+  min: 0
+  max: 1000
+  title: Hot phase SA force constant for log normal distance restraints
+  short: Force constant applied to the log normal distance restraints defined in logn_fname during the hot phase of the SA.
+  long: Force constant applied to the log normal distance restraints defined in logn_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
+  group: 'distance restraints'
+  explevel: expert
+logn_cool1:
+  default: 40
+  type: integer
+  min: 0
+  max: 1000
+  title: Hot phase SA force constant for log normal distance restraints
+  short: Force constant applied to the log normal distance restraints defined in hbond_fname during the hot phase of the SA.
+  long: Force constant applied to the log normal distance restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
+  group: 'distance restraints'
+  explevel: expert
+logn_cool2:
+  default: 200
+  type: integer
+  min: 0
+  max: 1000
+  title: Hot phase SA force constant for log normal distance restraints
+  short: Force constant applied to the log normal distance restraints defined in hbond_fname during the hot phase of the SA.
+  long: Force constant applied to the log normal distance restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
+  group: 'distance restraints'
+  explevel: expert
+logn_cool3:
+  default: 200
+  type: integer
+  min: 0
+  max: 1000
+  title: Hot phase SA force constant for log normal distance restraints
+  short: Force constant applied to the log normal distance restraints defined in hbond_fname during the hot phase of the SA.
+  long: Force constant applied to the log normal distance restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
   group: 'distance restraints'
   explevel: expert
 randremoval:

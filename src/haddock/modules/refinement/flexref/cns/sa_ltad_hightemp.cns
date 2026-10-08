@@ -2,7 +2,7 @@
 !    Perform the high-temperature rigid-body MD of it1
 !
 ! ***********************************************************************
-! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2026 Alexandre Bonvin, Utrecht University.           *
 ! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
 ! * All rights reserved.                                                *
 ! * This code is part of the HADDOCK software and governed by its       *
@@ -48,6 +48,7 @@ noe
     scale dist  $Data.unambig_hot
     scale ambi  $Data.ambig_hot
     scale hbon  $Data.hbond_hot
+    scale logn  $Data.logn_hot
 end
 
 evaluate ($kinter = $SaProtocol.inter_init_rigid)

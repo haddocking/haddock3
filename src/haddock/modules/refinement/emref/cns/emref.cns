@@ -200,9 +200,7 @@ if ($NUMNOE lt $data.npart) then
 end if
 
 noe
-    averaging  * sum
-    potential  * soft
-    scale      * 1.0
+    scale * 1.0
     scale ambi $ambig_scale
     scale dist $unambig_scale
     scale hbon $hbond_scale

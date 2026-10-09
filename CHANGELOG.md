@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-03: Updated glycans linkage scripts - Issue #1714
 - 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709
 - 2026-10-02: Corrected ssdihed: range for automatic alpha/beta dihedrals and the definition in yaml - Issue #1668 
 - 2026-09-23: Fixed various issues in notebooks - Issue #1697

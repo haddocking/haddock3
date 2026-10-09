@@ -1,5 +1,6 @@
 import copy
 import gzip
+import math
 import shutil
 import tempfile
 from pathlib import Path
@@ -10,6 +11,50 @@ from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CON
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
 
 from . import CNS_EXEC, EXAMPLE_DIR, GOLDEN_DATA, has_grid
+
+
+def improper_angle(coords, a1, a2, a3, a4) -> float:
+    """Improper dihedral a1-a2-a3-a4 in degrees, from a name -> xyz mapping.
+
+    Note that the sign convention is the opposite of the one CNS uses for the
+    IMPRoper target values in ``carbohydrate.param``.
+    """
+
+    def sub(u, v):
+        return [u[n] - v[n] for n in range(3)]
+
+    def cross(u, v):
+        return [
+            u[1] * v[2] - u[2] * v[1],
+            u[2] * v[0] - u[0] * v[2],
+            u[0] * v[1] - u[1] * v[0],
+        ]
+
+    def dot(u, v):
+        return sum(x * y for x, y in zip(u, v))
+
+    b1 = sub(coords[a2], coords[a1])
+    b2 = sub(coords[a3], coords[a2])
+    b3 = sub(coords[a4], coords[a3])
+    n1, n2 = cross(b1, b2), cross(b2, b3)
+    perp = cross(n1, b2)
+    return math.degrees(math.atan2(dot(perp, n2) / math.sqrt(dot(b2, b2)), dot(n1, n2)))
+
+
+def residue_coords(fpath, resname, resid) -> dict[str, tuple[float, float, float]]:
+    """Extract an atomname -> xyz mapping for one residue of a PDB file."""
+    coords = {}
+    with open(fpath, encoding="utf-8", mode="r") as fin:
+        for line in fin:
+            if not line.startswith(("ATOM", "HETATM")):
+                continue
+            if line[17:20].strip() == resname and line[22:26].strip() == str(resid):
+                coords[line[12:16].strip()] = (
+                    float(line[30:38]),
+                    float(line[38:46]),
+                    float(line[46:54]),
+                )
+    return coords
 
 
 @pytest.fixture
@@ -538,6 +583,187 @@ def test_topoaa_GalGalNacalphaOMe(topoaa_module):
 
     assert " C9 " in file_content
     assert " O4 " in file_content
+
+
+def test_topoaa_GalGalNAcalpha(topoaa_module):
+    """Topoaa with alpha-GalNAc (A2G), the alpha anomer of NGA.
+
+    Input is the core-1/T-antigen disaccharide Gal-beta(1,3)-alpha-GalNAc.
+    The anomeric carbon and the C4 substituents are absent from the input and
+    have to be built by CNS, so this also checks that the A2G impropers pin the
+    right stereochemistry: alpha at C1 and galacto (axial O4) at C4.
+    """
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "gal-a2g.pdb"),
+    ]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "gal-a2g.inp")
+    expected_psf = Path(topoaa_module.path, "gal-a2g_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "gal-a2g_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "gal-a2g.out.gz")
+
+    assert expected_inp.exists(), f"{expected_inp} does not exist"
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_gz.exists(), f"{expected_gz} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    with open(expected_pdb, encoding="utf-8", mode="r") as f:
+        file_content = f.read()
+
+    # the free anomeric hydroxyl and the C4 hydroxyl must have been built
+    assert " O1 " in file_content
+    assert " O4 " in file_content
+
+    # the beta(1,3) link to the galactose must have been patched in
+    with gzip.open(expected_gz, mode="rt", encoding="utf-8") as f:
+        log = f.read()
+    assert "B13 link added" in log
+
+    a2g = residue_coords(expected_pdb, "A2G", 2)
+    gal = residue_coords(expected_pdb, "GAL", 3)
+
+    # Alpha anomer. carbohydrate.top restrains IMPRoper H1 O5 O1 C2 of A2G to
+    # 67.6 degrees, the alpha-D value; the beta anomer NGA uses the j/k-swapped
+    # ordering H1 O1 O5 C2 and so has the opposite sign for this quadruple.
+    # improper_angle() follows the opposite sign convention to CNS, hence the
+    # negative reference value here.
+    anomeric = improper_angle(a2g, "H1", "O5", "O1", "C2")
+    assert -80.0 < anomeric < -55.0, (
+        f"A2G C1 is not the alpha anomer: H1-O5-O1-C2 is {anomeric:.1f} deg, "
+        "expected about -67.6"
+    )
+
+    # Galacto configuration at C4 (axial O4).  Compared against the galactose
+    # of the same molecule using the same atom ordering, so this holds whatever
+    # sign convention improper_angle() uses: the gluco epimer of A2G would come
+    # out with the opposite sign.
+    a2g_c4 = improper_angle(a2g, "H4", "O4", "C3", "C5")
+    gal_c4 = improper_angle(gal, "H4", "O4", "C3", "C5")
+    assert a2g_c4 * gal_c4 > 0, (
+        "A2G C4 has gluco, not galacto, configuration: H4-O4-C3-C5 is "
+        f"{a2g_c4:.1f} deg against {gal_c4:.1f} deg for the galactose"
+    )
+
+
+# alpha-Neu5Ac (SIA) stereochemistry, as carbohydrate.top restrains it.  The
+# values are the CNS improper targets; improper_angle() uses the opposite sign
+# convention, so a correct structure measures about the negative of each.
+SIA_STEREO = [
+    (("H4", "O4", "C5", "C3"), 66.9),
+    (("H5", "C4", "C6", "N5"), 66.8),
+    (("H6", "C7", "O6", "C5"), 66.8),
+    (("H7", "O7", "C8", "C6"), 66.9),
+    (("H8", "O8", "C9", "C7"), 66.9),
+    (("C1", "O1A", "O1B", "C2"), 0.0),
+    (("N5", "C10", "C5", "HN5"), 0.0),
+    (("C10", "C11", "N5", "O10"), 0.0),
+]
+
+
+def assert_stereo(coords, checks, label):
+    """Check impropers against their CNS targets, allowing for the sign flip."""
+    for atoms, target in checks:
+        assert all(a in coords for a in atoms), f"{label}: {atoms} not all built"
+        value = improper_angle(coords, *atoms)
+        if target == 0.0:
+            assert abs(value) < 12.0, (
+                f"{label} {' '.join(atoms)} should be planar, is {value:.1f} deg"
+            )
+        else:
+            assert value * target < 0 and 40.0 < abs(value) < 95.0, (
+                f"{label} {' '.join(atoms)} is {value:.1f} deg, expected about "
+                f"{-target:.1f}"
+            )
+
+
+def test_topoaa_sialic_acid(topoaa_module):
+    """Topoaa with alpha-N-acetyl neuraminic acid (SIA) on its own."""
+    topoaa_module.params["molecules"] = [Path(GOLDEN_DATA, "sia.pdb")]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_psf = Path(topoaa_module.path, "sia_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "sia_haddock.pdb")
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    sia = residue_coords(expected_pdb, "SIA", 1)
+    # ring, carboxylate, N-acetyl and the full glycerol arm
+    for atom in (
+        "C1",
+        "O1A",
+        "O1B",
+        "C2",
+        "O2",
+        "O6",
+        "N5",
+        "C10",
+        "C11",
+        "O7",
+        "O8",
+        "O9",
+    ):
+        assert atom in sia, f"SIA {atom} missing from the topology output"
+    assert_stereo(sia, SIA_STEREO, "SIA")
+
+
+@pytest.mark.parametrize(
+    "pdb,patch,acceptor_oh",
+    [
+        ("sia-a2g-26.pdb", "A26S", "HO6"),  # sialyl-Tn
+        ("sia-a2g-23.pdb", "A23", "HO3"),
+    ],
+)
+def test_topoaa_sialyl_GalNAc(topoaa_module, pdb, patch, acceptor_oh):
+    """Topoaa detects SIA alpha(2,6) and alpha(2,3) linkages to alpha-GalNAc.
+
+    sia-a2g-26.pdb is the sialyl-Tn antigen.  Both cases check that
+    bondglycans.cns picks the linkage up, that the patch deletes the anomeric
+    hydroxyl of the sialic acid and the acceptor hydroxyl hydrogen, and that
+    neither residue loses its stereochemistry in the process.
+    """
+    topoaa_module.params["molecules"] = [Path(GOLDEN_DATA, pdb)]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    stem = pdb.removesuffix(".pdb")
+    expected_psf = Path(topoaa_module.path, f"{stem}_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, f"{stem}_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, f"{stem}.out.gz")
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    with gzip.open(expected_gz, mode="rt", encoding="utf-8", errors="replace") as f:
+        log = f.read()
+    assert f"{patch} link added" in log, f"{patch} was not applied"
+
+    sia = residue_coords(expected_pdb, "SIA", 2)
+    a2g = residue_coords(expected_pdb, "A2G", 1)
+
+    # the patch replaces the anomeric hydroxyl of SIA with the glycosidic bond
+    assert "O2" not in sia, "SIA O2 should have been deleted by the patch"
+    assert "HO2" not in sia, "SIA HO2 should have been deleted by the patch"
+    assert acceptor_oh not in a2g, f"A2G {acceptor_oh} should have been deleted"
+
+    assert_stereo(sia, SIA_STEREO, "SIA")
+    assert_stereo(
+        a2g,
+        [
+            (("H1", "O5", "O1", "C2"), 67.6),
+            (("H4", "O4", "C3", "C5"), 66.9),
+            (("H2", "C1", "N2", "C3"), 66.8),
+            (("N2", "C7", "C2", "HN2"), 0.0),
+        ],
+        "A2G",
+    )
 
 
 def test_topoaa_module_protein_noCter(topoaa_module):

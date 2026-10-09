@@ -1,6 +1,7 @@
 # Changelog
 
 - 2026-10-06: Removed the dead backwards `A23a`/`A26a` sialylation detection loops from `bondglycans.cns` - Issue #1711
+- 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709
 - 2026-10-02: Corrected ssdihed: range for automatic alpha/beta dihedrals and the definition in yaml - Issue #1668 
 - 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-21: Corrected seperate.cns - Issue #1392

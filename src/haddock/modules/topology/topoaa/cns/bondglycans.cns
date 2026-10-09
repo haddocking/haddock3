@@ -207,7 +207,7 @@ for $id1 in id ( (resname GLC) and name C1 and known ) loop A11a
 
 end loop A11a
 
-{- A23: SIA,SIB to GAL,NGA -}
+{- A23: SIA,SIB to GAL,NGA,A2G -}
 for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
 
   show (segid) (id $id1)
@@ -215,7 +215,7 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
   show (resid) (id $id1)
   evaluate ($resid1=$result)
 
-  for $id2 in id ( (resname GAL or resname NGA) and name O3 and known ) loop A23d
+  for $id2 in id ( (resname GAL or resname NGA or resname A2G) and name O3 and known ) loop A23d
 
     show (segid) (id $id2)
     evaluate ($segid2=$result)
@@ -243,7 +243,7 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
 
 end loop A23c
 
-{- A26: SIA,SIB to GAL,NGA -}
+{- A26: SIA,SIB to GAL,NGA,A2G -}
 for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A26c
 
   show (segid) (id $id1)
@@ -251,7 +251,7 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A26c
   show (resid) (id $id1)
   evaluate ($resid1=$result)
 
-  for $id2 in id ( (resname GAL or resname NGA) and name O6 and known ) loop A26d
+  for $id2 in id ( (resname GAL or resname NGA or resname A2G) and name O6 and known ) loop A26d
 
     show (segid) (id $id2)
     evaluate ($segid2=$result)

@@ -8,6 +8,11 @@ REMARKS Alexandre Bonvin July-2020
 REMARKS Patches added for GAL-SIA 2-3 and 2.6 linkages
 REMARKS Marco Giulini November-2024
 REMARKS Topologies added for BDP-MMA-XYS-ABE
+REMARKS Alexandre Bonvin October-2026
+REMARKS A2G (alpha-GalNAc) remark corrected - it was wrongly listed as a
+REMARKS glucopyranose; fixed malformed NGM C4 improper; A2G added as
+REMARKS alpha(2,3)/alpha(2,6) sialylation acceptor;
+REMARKS added the missing N-acetyl planarity impropers to NGA, NAG, MAG, A2G
 REMARKS Continuous updated and additions under HADDOCK project 2020 to present
 REMARKS ----------------------------------------------------------
 REMARKS Currently supported carbohydrates and their anomers:
@@ -20,7 +25,7 @@ REMARKS MAN:       alpha-D-mannopyranose
 REMARKS BMA:       beta -D-mannopyronose
 REMARKS MAG:       2-N-Acetyl-beta-D-glucopyranose + Methyl at O1
 REMARKS NDG:       2-N-acetyl-alpha-D-glucopyranose
-REMARKS A2G:       2-N-acetyl-alpha-D-glucopyranose, different stereochemistry at C4
+REMARKS A2G:       2-N-acetyl-alpha-D-galactopyranose (alpha-GalNAc) - alpha anomer of NGA
 REMARKS GCS:       2-N-beta-D-glucopyranose (glucosamine)
 REMARKS NAG:       2-N-acetyl-beta-D-glucopyranose
 REMARKS NAM:       1-O-methyl-2-N-Acetyl-beta-D-glucopyranose
@@ -55,10 +60,12 @@ REMARKS A12L: alpha(1,2) link from FUC to any
 REMARKS A13L: alpha(1,3) link from FUC to any
 REMARKS A14L: alpha(1,4) link from FUC to any
 REMARKS A16L: alpha(1,6) link from FUC to any
-REMARKS A23: alpha(2,3) link from GAL to SIA, SIB
-REMARKS A23S: alpha(2,3) link from SIA to GAL
-REMARKS A26: alpha(2,6) link from GAL to SIA, SIB
-REMARKS A26S: alpha(2,6)  link from SIA, SIB to GAL
+REMARKS A23: alpha(2,3) link from SIA, SIB to GAL, NGA, A2G
+!            note: there is no A23S patch - A23 already has SIA, SIB as the
+!            '-' reference, so it serves both link directions
+REMARKS A26: alpha(2,6) link from GAL, NGA to SIA, SIB
+REMARKS A26S: alpha(2,6)  link from SIA, SIB to GAL, NGA, A2G
+!            note: A2G as acceptor gives sialyl-Tn (SIA alpha(2,6) alpha-GalNAc)
 REMARKS A28S: alpha(2,8)  link from SIA, SIB to SIA, SIB
 REMARKS RAM: alpha-L-rhamnose
 REMARKS GXL: alpha-L-galactopyranose
@@ -659,6 +666,9 @@ RESIdue NGA  !2-N-Acetyl-beta-D-galactopyranose
   DIHEDRAL H5 C5 C6 O6
   DIHEDRAL C5 C6 O6 H61
 
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+
   IMPRoper H1 O1 O5 C2  {beta C1}
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
@@ -1044,6 +1054,9 @@ RESIdue NAG  !2-N-Acetyl-beta-D-glucopyranose
   DIHEDRAL H5 C5 C6 O6
   DIHEDRAL C5 C6 O6 H61
 
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+
   IMPRoper H1 O1 O5 C2  {beta C1}
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
@@ -1056,7 +1069,7 @@ END
 
 !-------------------------------------------------------------------
 
-RESIdue GCS  !2-N-beta-D-galactopyranose (glucosamine)
+RESIdue GCS  !2-N-beta-D-glucopyranose (glucosamine)
  GROUP
   ATOM C1   TYPE=CCE  CHARge= 0.350   END
   ATOM H1   TYPE=HAS  CHARge= 0.100   END
@@ -1219,6 +1232,9 @@ RESIdue MAG  !2-N-Acetyl-beta-D-glucopyranose + Methyl at O1
   DIHEDRAL H5 C5 C6 O6
   DIHEDRAL C5 C6 O6 H61
 
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+
   IMPRoper H1 O1 O5 C2  {beta C1}
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
@@ -1231,7 +1247,7 @@ END
 
 !-------------------------------------------------------------------
 
-RESIdue A2G  !2-N-Acetyl-alpha-D-galactopyranose, different stereochemistry at C4 ! new residue ATB 12/07/09
+RESIdue A2G  !2-N-Acetyl-alpha-D-galactopyranose (alpha-GalNAc) ! alpha anomer of NGA, inverted C4 w.r.t. NDG, ATB 12/07/09
  GROUP
   ATOM C1   TYPE=CCE  CHARge= 0.350   END
   ATOM H1   TYPE=HAS  CHARge= 0.100   END
@@ -1309,6 +1325,9 @@ RESIdue A2G  !2-N-Acetyl-alpha-D-galactopyranose, different stereochemistry at C
   DIHEDRAL H4 C4 O4 HO4
   DIHEDRAL H5 C5 C6 O6
   DIHEDRAL C5 C6 O6 H61
+
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
 
   IMPRoper H1 O5 O1 C2  {alpha C1}
   IMPRoper H2 C1 N2 C3  {C2}
@@ -1412,7 +1431,7 @@ RESIdue NGM  !1-O-methyl-2-N-Acetyl-alpha-D-galactopyranose
   IMPRoper H1 O5 O1 C2  {alpha C1}
   IMPRoper H2 C1 N2 C3  {C2}
   IMPRoper H3 O3 C2 C4  {C3}
-  IMPRoper H4 C4 O3 C5  {C4}
+  IMPRoper H4 O4 C3 C5  {C4}
   IMPRoper H5 C4 O5 C6  {C5}
   IMPRoper H61 H62 O6 C5  !stereo C6
   IMPRoper C2 N2 C7 C8 {trans peptide}

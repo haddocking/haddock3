@@ -1,19 +1,21 @@
 # Changelog
 
+- 2026-09-23: Adapted the memory estimate of the contactmap module - Issue #1699
 - 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709
 - 2026-10-02: Corrected ssdihed: range for automatic alpha/beta dihedrals and the definition in yaml - Issue #1668 
 - 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-21: Corrected seperate.cns - Issue #1392
-- 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
 - 2026-09-18: Added `dnascan` module for mutagenesis scanning of DNA base pairs - Issue #1634
+- 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
+- 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
 - 2026-09-09: Adding missing execution modes to default.yaml - Issue #1690
-- 2026-08-01: Fixed autotoppar/PRODRG topology generation when the unknown ligand is embedded in a larger system - Issue #1645
 - 2026-09-02: Fixed identical seed per sampling_factor replica in flexref, mdref and emref - Issue #1685
-- 2026-08-05: Harmonised running mode of test config files - Issue #1655
 - 2026-08-10: Added missing improper for HYP - Issue #1662
 - 2026-08-05: Removed identical duplicate `ANGLe` statements from `protein-allhdg5-4.param` and `protein-CG-Martini-2-2.param` - Issue #1589
+- 2026-08-05: Harmonised running mode of test config files - Issue #1655
 - 2026-08-04: Added workflow module ordering validation - related to Issue #1530
 - 2026-08-02: Fixed logging/warning leaks - Issue #1647
+- 2026-08-01: Fixed autotoppar/PRODRG topology generation when the unknown ligand is embedded in a larger system - Issue #1645
 - 2026-07-31: Fixed D-amino acid detection - Issue #1636
 - 2026-07-31: Fixed topocg issue removing ligands - Issue #1638
 - 2026-07-27: Added `rnascan` module for mutagenesis scanning of RNA bases (mutating interface nucleotides to A, C, G, U) - Issue #1631

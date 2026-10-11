@@ -27,7 +27,7 @@ def read_parameters() -> dict[str, set[tuple[str, ...]]]:
         fields = line.split("!")[0].split()
         term = fields[0][:4].upper() if fields else ""
         if term in N_ATOMS:
-            types = tuple(t.upper() for t in fields[1:1 + N_ATOMS[term]])
+            types = tuple(t.upper() for t in fields[1 : 1 + N_ATOMS[term]])
             params[term].add(types)
     return params
 
@@ -54,9 +54,9 @@ def read_patches() -> dict[str, dict[str, str]]:
     return {
         match.group(1): dict(
             re.findall(r"MODIFY ATOM (\S+)\s+TYPE=(\S+)", match.group(2), re.I)
-            )
+        )
         for match in re.finditer(r"PRESidue (\S+)(.*?)\nEND", text, re.S)
-        }
+    }
 
 
 @pytest.mark.parametrize("resname", NUCLEOTIDES)

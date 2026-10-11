@@ -31,38 +31,70 @@ from integration_tests import CNS_EXEC, GOLDEN_DATA
 # the CNS script restrains them from.
 WATSON_CRICK = {
     "rna_1SDR": {
-        ("A2", "B23"), ("A3", "B22"), ("A6", "B19"), ("A11", "B14"),
-        ("B13", "A12"), ("B15", "A10"), ("B16", "A9"), ("B17", "A8"),
-        ("B18", "A7"), ("B20", "A5"), ("B21", "A4"), ("B24", "A1"),
-        },
+        ("A2", "B23"),
+        ("A3", "B22"),
+        ("A6", "B19"),
+        ("A11", "B14"),
+        ("B13", "A12"),
+        ("B15", "A10"),
+        ("B16", "A9"),
+        ("B17", "A8"),
+        ("B18", "A7"),
+        ("B20", "A5"),
+        ("B21", "A4"),
+        ("B24", "A1"),
+    },
     "dna_3GO3": {
-        ("A1", "B108"), ("A2", "B107"), ("A6", "B103"),
-        ("B102", "A7"), ("B106", "A3"),
-        },
+        ("A1", "B108"),
+        ("A2", "B107"),
+        ("A6", "B103"),
+        ("B102", "A7"),
+        ("B106", "A3"),
+    },
     "dna_triplex_1D3X": {
-        ("A1", "B16"), ("A3", "B14"), ("A5", "B12"), ("A7", "B10"),
-        ("A8", "B9"), ("B11", "A6"), ("B13", "A4"), ("B15", "A2"),
-        },
+        ("A1", "B16"),
+        ("A3", "B14"),
+        ("A5", "B12"),
+        ("A7", "B10"),
+        ("A8", "B9"),
+        ("B11", "A6"),
+        ("B13", "A4"),
+        ("B15", "A2"),
+    },
     "rna_triplex_9TCG": {
-        ("A1", "B5"), ("A3", "B3"), ("A5", "B1"), ("B2", "A4"), ("B4", "A2"),
-        ("C1", "D5"), ("C3", "D3"), ("C5", "D1"), ("D2", "C4"), ("D4", "C2"),
-        },
-    }
+        ("A1", "B5"),
+        ("A3", "B3"),
+        ("A5", "B1"),
+        ("B2", "A4"),
+        ("B4", "A2"),
+        ("C1", "D5"),
+        ("C3", "D3"),
+        ("C5", "D1"),
+        ("D2", "C4"),
+        ("D4", "C2"),
+    },
+}
 HOOGSTEEN = {
     "rna_1SDR": set(),
     "dna_3GO3": {("A5", "B104"), ("B101", "A8"), ("B105", "A4")},
     "dna_triplex_1D3X": {
-        ("A1", "C17"), ("A2", "C18"), ("A3", "C19"), ("A4", "C20"),
-        ("A5", "C21"), ("A6", "C22"), ("A7", "C23"), ("A8", "C24"),
-        },
+        ("A1", "C17"),
+        ("A2", "C18"),
+        ("A3", "C19"),
+        ("A4", "C20"),
+        ("A5", "C21"),
+        ("A6", "C22"),
+        ("A7", "C23"),
+        ("A8", "C24"),
+    },
     "rna_triplex_9TCG": {("A2", "D8"), ("C2", "B8")},
-    }
+}
 
 # restraints per pair, by representation, pair type and restrained base
 RESTRAINTS_PER_PAIR = {
     "aa": {("WC", "ADE"): 4, ("WC", "CYT"): 5, ("HOOG", "ADE"): 4, ("HOOG", "GUA"): 4},
     "cg": {("WC", "ADE"): 2, ("WC", "CYT"): 3, ("HOOG", "ADE"): 3, ("HOOG", "GUA"): 3},
-    }
+}
 BASE = {"A": "ADE", "DA": "ADE", "C": "CYT", "DC": "CYT", "G": "GUA", "DG": "GUA"}
 
 CNS_INPUT = """
@@ -80,7 +112,7 @@ stop
 NOE_RE = re.compile(
     r"set-i-atoms\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+"
     r"set-j-atoms\s+(\S+)\s+(\S+)\s+\S+\s+\S+"
-    )
+)
 
 
 def run_dna_rna_restraints(name: str) -> str:
@@ -90,9 +122,9 @@ def run_dna_rna_restraints(name: str) -> str:
         envvars={
             "MODULE": str(Path(EMREF_PATH, "cns")),
             "GOLDEN": str(GOLDEN_DATA),
-            },
+        },
         cns_exec=CNS_EXEC,
-        )
+    )
     return job.run().decode()
 
 
@@ -130,10 +162,14 @@ def test_base_pairs(structure, rep):
 
     pairs = restrained_pairs(output)
     found = {
-        pair_type: {pair for (ptype, _), group in pairs.items()
-                    if ptype == pair_type for pair in group}
-        for pair_type in ("WC", "HOOG")
+        pair_type: {
+            pair
+            for (ptype, _), group in pairs.items()
+            if ptype == pair_type
+            for pair in group
         }
+        for pair_type in ("WC", "HOOG")
+    }
     assert found["WC"] == WATSON_CRICK[structure]
     assert found["HOOG"] == HOOGSTEEN[structure]
 

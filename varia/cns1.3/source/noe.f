@@ -2051,7 +2051,7 @@ C local
       DOUBLE PRECISION DF, DDF, C
       DOUBLE PRECISION EL, DEVI, LW
       DOUBLE PRECISION AAA, BBB, NEXP, NSOE, SAVEXP
-      DOUBLE PRECISION LOGDEVI
+      DOUBLE PRECISION LOGDEVI, SIGMA
       INTEGER I, J, N, NSTART, NSTOP, II, JJ, LI, LJ
       INTEGER IPRI, NPRIME, ICLASS
       INTEGER L1,L2,INORR,NNORR,NORR
@@ -2570,9 +2570,20 @@ C E= const log((d/R))
 C
 C we calculate the deviation and the deviation of logarithms but keep only
 C the deviation of logarithms
+C 
+C Modifictions: Alexandre Bonvin
+C sigma used to scale const. It is taken as either the lower bound 
+C or upper bound correction values of the restraint depending on if d<R
+C
         ICLASS=NOECND(N)
-        C=MIN(NOEWGH(N)*NOESCA(ICLASS)*NOECNS(ICLASS),NOECEI)
         DEVI=RN-NOEDIS(N)
+        IF (DEVI.LT.ZERO) THEN
+          SIGMA=MAX(NOELOW(N),0.01)
+        ELSE
+          SIGMA=MAX(NOEHIG(N),0.01)
+        END IF
+        C=NOEWGH(N)*NOESCA(ICLASS)*NOECNS(ICLASS)/SIGMA
+        C=MIN(C,NOECEI)
         LOGDEVI=LOG(RN/NOEDIS(N))
         DF=DF*C*TWO*LOGDEVI/RN
         EL=C*LOGDEVI*LOGDEVI

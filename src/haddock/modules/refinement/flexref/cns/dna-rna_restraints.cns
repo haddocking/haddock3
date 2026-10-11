@@ -83,6 +83,35 @@ evaluate ($wc_sc1_min=7.55)
 evaluate ($wc_sc1_max=9.5)
 
 
+{=========================================== Hoogsteen base pairs =========================================}
+
+{* automatically pick Hoogsteen and reverse-Hoogsteen restraint values from
+   structure. The error range is the Watson-Crick one ($wc_low, $wc_up). *}
+evaluate ($dna_pick_hoog=true)
+
+{* A Hoogsteen pair uses the N7 edge of the purine: A N7...T/U N3 with
+   A N6...T/U O4 (Hoogsteen) or A N6...T/U O2 (reverse Hoogsteen), and
+   G N7...C N3 with G O6...C N4 (C+.G-C triples). In all-atom models both
+   contacts must be within $hbcut and C1'-C1' within the window below.
+   Over 258 such pairs in 43 DNA/RNA triplex, riboswitch and Hoogsteen-duplex
+   structures this finds 220, with 2 wrong partners. *}
+evaluate ($hoog_c1_min=7.0)
+evaluate ($hoog_c1_max=10.5)
+
+{* In CG models the N7 edge is the SC4 bead of the purine: the contact is
+   purine SC4 - pyrimidine SC2 (3.0-4.4 A for Hoogsteen pairs). The pyrimidine
+   SC2 bead must be closer to the purine SC4 bead than to its SC3 bead, which
+   carries the Watson-Crick edge, by at least $hoog_edge_cg. SC3-SC3 must be
+   below $hoog_sc33_cg and SC1-SC1 within the window. CG bead positions are
+   less discriminating than atoms: on the same set this finds 195 of the 258
+   pairs, with 4 wrong partners. *}
+evaluate ($hbcut_hoog_cg=4.2)
+evaluate ($hoog_edge_cg=0.8)
+evaluate ($hoog_sc33_cg=7.0)
+evaluate ($hoog_sc1_min=4.0)
+evaluate ($hoog_sc1_max=8.6)
+
+
 {=========================================== Coarse-Grained ===========================================================}
 {* Is the DNA/RNA molecule CG?
    Leave at false to auto-detect: a CG nucleic acid is recognised by its
@@ -365,22 +394,32 @@ if ($dna_pick_bacdih=true) then
     end if
 end if
 
-{- Watson-Crick base pairing -}
+{- Watson-Crick and Hoogsteen base pairing -}
 ! Every A/DA and C/DC base looks for its Watson-Crick partner among the
 ! T/DT/U and G/DG bases. A candidate must make the Watson-Crick contact
 ! (all-atom A N1...T N3 and C N3...G N1, CG A SC3...T SC2 and C SC2...G SC3)
 ! within the cutoff, have the two other base-base contacts within the cutoff
 ! as well, and have its anchor (C1'-C1' or SC1-SC1) distance inside the
-! Watson-Crick window. If several candidates pass, the nearest is taken.
-! Hoogsteen and reverse-Hoogsteen pairs fail these tests and stay
-! unrestrained.
+! Watson-Crick window. In CG the pyrimidine SC2 bead must also be closer to
+! the purine SC3 bead (Watson-Crick edge) than to its SC4 bead (N7 edge).
+! Every A/DA and G/DG base then looks for a Hoogsteen or reverse-Hoogsteen
+! partner on its N7 edge in the same way. A purine can have both partners,
+! as in base triples. If several candidates pass, the nearest is taken.
 ! All selections are segid-aware: resids repeat across chains, and in CG
 ! the SC# bead names are shared with protein side chains. Stacked neighbours
 ! are excluded on the current strand only, so a partner that happens to
 ! carry resid +/-1 on the opposite strand is still found.
 
+evaluate ($dna_pick_bp=false)
 if ($dna_pick_wc = true) then
-    show sum(1) ( (resn DA or resn A or resn DC or resn C) and tag )
+    evaluate ($dna_pick_bp=true)
+end if
+if ($dna_pick_hoog = true) then
+    evaluate ($dna_pick_bp=true)
+end if
+
+if ($dna_pick_bp = true) then
+    show sum(1) ( (resn DA or resn A or resn DC or resn C or resn DG or resn G) and tag )
     if ( $result > 0 ) then
         noe
             class hres
@@ -405,6 +444,7 @@ if ($dna_pick_wc = true) then
             evaluate ($wc_anc_max=$wc_c1_max)
         end if
 
+        if ($dna_pick_wc = true) then
         for $id in id ( (resn DA or resn A or resn DC or resn C) and tag ) loop resid
             show (segid) (id $id)
             evaluate ($segid=$result)
@@ -415,10 +455,12 @@ if ($dna_pick_wc = true) then
             show ( resn ) (id $id)
             evaluate ($ares=$result)
 
-            ! partner residue names, the Watson-Crick contact (w), and the two
-            ! other contacts (x, y), each as (atom here, atom on partner).
-            ! In CG the A N6...T O4 contact maps onto SC3...SC3, the only other
-            ! contact for A-T, so x and y coincide.
+            ! partner residue names, the Watson-Crick contact (w), the purine
+            ! N7-edge bead that must lie farther from the pyrimidine (e, CG
+            ! only; in all-atom e repeats w), and the two other contacts (x, y),
+            ! each as (atom here, atom on partner). In CG the A N6...T O4
+            ! contact maps onto SC3...SC3, the only other contact for A-T, so x
+            ! and y coincide.
             if ($ares = DA) then
                 evaluate ($ares_name = ADE)
             elseif ($ares = A) then
@@ -433,6 +475,8 @@ if ($dna_pick_wc = true) then
                 if ($dna_cg=true) then
                     evaluate ($wc_wa=SC3)
                     evaluate ($wc_wb=SC2)
+                    evaluate ($wc_ea=SC4)
+                    evaluate ($wc_eb=SC2)
                     evaluate ($wc_xa=SC3)
                     evaluate ($wc_xb=SC3)
                     evaluate ($wc_ya=SC3)
@@ -440,6 +484,8 @@ if ($dna_pick_wc = true) then
                 else
                     evaluate ($wc_wa=N1)
                     evaluate ($wc_wb=N3)
+                    evaluate ($wc_ea=N1)
+                    evaluate ($wc_eb=N3)
                     evaluate ($wc_xa=N6)
                     evaluate ($wc_xb=O4)
                     evaluate ($wc_ya=N6)
@@ -452,6 +498,8 @@ if ($dna_pick_wc = true) then
                 if ($dna_cg=true) then
                     evaluate ($wc_wa=SC2)
                     evaluate ($wc_wb=SC3)
+                    evaluate ($wc_ea=SC2)
+                    evaluate ($wc_eb=SC4)
                     evaluate ($wc_xa=SC3)
                     evaluate ($wc_xb=SC3)
                     evaluate ($wc_ya=SC2)
@@ -459,6 +507,8 @@ if ($dna_pick_wc = true) then
                 else
                     evaluate ($wc_wa=N3)
                     evaluate ($wc_wb=N1)
+                    evaluate ($wc_ea=N3)
+                    evaluate ($wc_eb=N1)
                     evaluate ($wc_xa=N4)
                     evaluate ($wc_xb=O6)
                     evaluate ($wc_ya=O2)
@@ -476,6 +526,9 @@ if ($dna_pick_wc = true) then
                 evaluate ($qresid=$result)
                 pick bond (id $jd) (segid $segid and resid $resid and name $wc_wa) geometry
                 evaluate ($dw=$result)
+                pick bond (segid $segid and resid $resid and name $wc_ea)
+                          (segid $qsegid and resid $qresid and name $wc_eb) geometry
+                evaluate ($de=$result)
                 pick bond (segid $segid and resid $resid and name $wc_anc)
                           (segid $qsegid and resid $qresid and name $wc_anc) geometry
                 evaluate ($danc=$result)
@@ -490,7 +543,9 @@ if ($dna_pick_wc = true) then
                     if ($danc <= $wc_anc_max) then
                         if ($dx <= $wc_cut) then
                             if ($dy <= $wc_cut) then
-                                evaluate ($wc_ok=true)
+                                if ($dw <= $de) then
+                                    evaluate ($wc_ok=true)
+                                end if
                             end if
                         end if
                     end if
@@ -635,5 +690,202 @@ if ($dna_pick_wc = true) then
               end if
             end if
         end loop resid
+        end if
+
+        if ($dna_pick_hoog = true) then
+        for $id in id ( (resn DA or resn A or resn DG or resn G) and tag ) loop hgres
+            show (segid) (id $id)
+            evaluate ($segid=$result)
+            show (resid) ( id $id )
+            evaluate ($resid=decode($result))
+            evaluate ($presid=$resid-1)
+            evaluate ($fresid=$resid+1)
+            show ( resn ) (id $id)
+            evaluate ($ares=$result)
+
+            ! partner residue names, the N7-edge contact (w), the purine bead
+            ! on the Watson-Crick edge that must lie farther from the partner
+            ! (e, CG only), and the two secondary contacts (x, y), of which at
+            ! least one must be within $hg_seccut. For A the secondary contact
+            ! is N6...O4 (Hoogsteen) or N6...O2 (reverse Hoogsteen).
+            if ($ares = DA) then
+                evaluate ($ares_name = ADE)
+            elseif ($ares = A) then
+                evaluate ($ares_name = ADE)
+            else
+                evaluate ($ares_name = GUA)
+            end if
+            if ($ares_name = ADE) then
+                evaluate ($hg_pr1=DT)
+                evaluate ($hg_pr2=T)
+                evaluate ($hg_pr3=U)
+            else
+                evaluate ($hg_pr1=DC)
+                evaluate ($hg_pr2=C)
+                evaluate ($hg_pr3=C)
+            end if
+            if ($dna_cg=true) then
+                evaluate ($hg_cut=$hbcut_hoog_cg)
+                evaluate ($hg_anc=SC1)
+                evaluate ($hg_anc_min=$hoog_sc1_min)
+                evaluate ($hg_anc_max=$hoog_sc1_max)
+                evaluate ($hg_seccut=$hoog_sc33_cg)
+                evaluate ($hg_edge=$hoog_edge_cg)
+                evaluate ($hg_wa=SC4)
+                evaluate ($hg_wb=SC2)
+                evaluate ($hg_ea=SC3)
+                evaluate ($hg_xa=SC3)
+                evaluate ($hg_xb=SC3)
+                evaluate ($hg_ya=SC3)
+                evaluate ($hg_yb=SC3)
+            else
+                evaluate ($hg_cut=$hbcut)
+                evaluate ($hg_anc=C1')
+                evaluate ($hg_anc_min=$hoog_c1_min)
+                evaluate ($hg_anc_max=$hoog_c1_max)
+                evaluate ($hg_seccut=$hbcut)
+                evaluate ($hg_edge=-999.0)
+                evaluate ($hg_wa=N7)
+                evaluate ($hg_wb=N3)
+                evaluate ($hg_ea=N7)
+                if ($ares_name = ADE) then
+                    evaluate ($hg_xa=N6)
+                    evaluate ($hg_xb=O4)
+                    evaluate ($hg_ya=N6)
+                    evaluate ($hg_yb=O2)
+                else
+                    evaluate ($hg_xa=O6)
+                    evaluate ($hg_xb=N4)
+                    evaluate ($hg_ya=O6)
+                    evaluate ($hg_yb=N4)
+                end if
+            end if
+
+            evaluate ($dmin=999.0)
+            for $jd in id ( ((resn $hg_pr1 or resn $hg_pr2 or resn $hg_pr3) and
+                             not (segid $segid and (resid $presid or resid $fresid)) and name $hg_wb)
+                            and (segid $segid and resid $resid and name $hg_wa) around $hg_cut ) loop hgcand
+                show (segid) (id $jd)
+                evaluate ($qsegid=$result)
+                show (resid) (id $jd)
+                evaluate ($qresid=$result)
+                pick bond (id $jd) (segid $segid and resid $resid and name $hg_wa) geometry
+                evaluate ($dw=$result)
+                pick bond (id $jd) (segid $segid and resid $resid and name $hg_ea) geometry
+                evaluate ($de=$result)
+                pick bond (segid $segid and resid $resid and name $hg_anc)
+                          (segid $qsegid and resid $qresid and name $hg_anc) geometry
+                evaluate ($danc=$result)
+                pick bond (segid $segid and resid $resid and name $hg_xa)
+                          (segid $qsegid and resid $qresid and name $hg_xb) geometry
+                evaluate ($dx=$result)
+                pick bond (segid $segid and resid $resid and name $hg_ya)
+                          (segid $qsegid and resid $qresid and name $hg_yb) geometry
+                evaluate ($dy=$result)
+                evaluate ($hg_emin=$dw + $hg_edge)
+                evaluate ($hg_ok=false)
+                if ($danc >= $hg_anc_min) then
+                    if ($danc <= $hg_anc_max) then
+                        if ($de >= $hg_emin) then
+                            if ($dx <= $hg_seccut) then
+                                evaluate ($hg_ok=true)
+                            end if
+                            if ($dy <= $hg_seccut) then
+                                evaluate ($hg_ok=true)
+                            end if
+                        end if
+                    end if
+                end if
+                if ($hg_ok = true) then
+                    if ($dw < $dmin) then
+                        evaluate ($dmin=$dw)
+                        evaluate ($rpair=$qresid)
+                        evaluate ($psegid=$qsegid)
+                    end if
+                end if
+            end loop hgcand
+
+            if ($dmin < 999.0) then
+              if ($dna_cg=true) then
+                ! A N7...T N3 and G N7...C N3 map onto SC4...SC2, A N6...T O4 and
+                ! G O6...C N4 onto SC3...SC3. A third bead pair fixes the
+                ! orientation: SC3...SC2 (A N6...T O2) or SC4...SC3 (G N7...C N4).
+                if ($ares_name = ADE) then
+                    evaluate ($hg_za=SC3)
+                    evaluate ($hg_zb=SC2)
+                else
+                    evaluate ($hg_za=SC4)
+                    evaluate ($hg_zb=SC3)
+                end if
+                pick bond
+                    (segid $segid and resid $resid and name SC4)
+                    (segid $psegid and resid $rpair and name SC2)
+                    geometry
+                evaluate ($hg_d1=$result)
+                pick bond
+                    (segid $segid and resid $resid and name SC3)
+                    (segid $psegid and resid $rpair and name SC3)
+                    geometry
+                evaluate ($hg_d2=$result)
+                pick bond
+                    (segid $segid and resid $resid and name $hg_za)
+                    (segid $psegid and resid $rpair and name $hg_zb)
+                    geometry
+                evaluate ($hg_d3=$result)
+                noe
+                    assign (segid $segid and resid $resid and name SC4)
+                           (segid $psegid and resid $rpair and name SC2) $hg_d1 $wc_low $wc_up
+                    assign (segid $segid and resid $resid and name SC3)
+                           (segid $psegid and resid $rpair and name SC3) $hg_d2 $wc_low $wc_up
+                    assign (segid $segid and resid $resid and name $hg_za)
+                           (segid $psegid and resid $rpair and name $hg_zb) $hg_d3 $wc_low $wc_up
+                end
+              else
+                ! the N7 edge contact, both secondary contacts (only one is an
+                ! H-bond, which one depends on the pair type) and a cross
+                ! distance fixing the orientation: N7...O4 for A, N7...N4 for G
+                if ($ares_name = ADE) then
+                    evaluate ($hg_za=N7)
+                    evaluate ($hg_zb=O4)
+                else
+                    evaluate ($hg_za=N7)
+                    evaluate ($hg_zb=N4)
+                    evaluate ($hg_ya=O6)
+                    evaluate ($hg_yb=N3)
+                end if
+                pick bond
+                    (segid $segid and resid $resid and name N7)
+                    (segid $psegid and resid $rpair and name N3)
+                    geometry
+                evaluate ($hg_d1=$result)
+                pick bond
+                    (segid $segid and resid $resid and name $hg_xa)
+                    (segid $psegid and resid $rpair and name $hg_xb)
+                    geometry
+                evaluate ($hg_d2=$result)
+                pick bond
+                    (segid $segid and resid $resid and name $hg_ya)
+                    (segid $psegid and resid $rpair and name $hg_yb)
+                    geometry
+                evaluate ($hg_d3=$result)
+                pick bond
+                    (segid $segid and resid $resid and name $hg_za)
+                    (segid $psegid and resid $rpair and name $hg_zb)
+                    geometry
+                evaluate ($hg_d4=$result)
+                noe
+                    assign (segid $segid and resid $resid and name N7)
+                           (segid $psegid and resid $rpair and name N3) $hg_d1 $wc_low $wc_up
+                    assign (segid $segid and resid $resid and name $hg_xa)
+                           (segid $psegid and resid $rpair and name $hg_xb) $hg_d2 $wc_low $wc_up
+                    assign (segid $segid and resid $resid and name $hg_ya)
+                           (segid $psegid and resid $rpair and name $hg_yb) $hg_d3 $wc_low $wc_up
+                    assign (segid $segid and resid $resid and name $hg_za)
+                           (segid $psegid and resid $rpair and name $hg_zb) $hg_d4 $wc_low $wc_up
+                end
+              end if
+            end if
+        end loop hgres
+        end if
     end if
 end if

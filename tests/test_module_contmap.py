@@ -1,9 +1,11 @@
 """Test the CONTact MAP module."""
 
 import os
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Callable
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -22,6 +24,7 @@ from haddock.modules.analysis.contactmap.contmap import (
     ctrl_rib_chords,
     datakey_to_colorscale,
     extract_pdb_coords,
+    extract_pdb_dt,
     extract_submatrix,
     gen_contact_dt,
     invPerm,
@@ -36,6 +39,9 @@ from haddock.modules.analysis.contactmap.contmap import (
     write_res_contacts,
 )
 from haddock.libs.libutil import (
+    DEFAULT_HEAVY_ATOMS,
+    DIST_MATRIX_PEAK_FACTOR,
+    count_heavy_atoms,
     get_available_memory,
     get_necessary_memory,
 )
@@ -615,6 +621,11 @@ def test_make_ideogram_arc_moduloAB():
         assert np.isclose(arc_positions[i], excpected_output[i], atol=0.0001)
 
 
+def _expected_gb(n_atoms: int) -> float:
+    """Reference formula for the peak distance-matrix allocation."""
+    return DIST_MATRIX_PEAK_FACTOR * n_atoms * n_atoms * 8 / (1024**3)
+
+
 def test_get_available_memory():
     """Test get_available_memory function."""
     memory = get_available_memory()
@@ -623,32 +634,80 @@ def test_get_available_memory():
     assert memory > 0
 
 
+def test_count_heavy_atoms():
+    """Heavy atom count must match the atoms kept by `extract_pdb_dt`."""
+    pdb = Path(golden_data, "protprot_complex_1.pdb")
+    counted = count_heavy_atoms(pdb)
+
+    # `extract_pdb_dt` is the consumer that defines what lands in the matrix
+    pdb_dt = extract_pdb_dt(pdb)
+    from_parser = sum(
+        len(pdb_dt[chain][resid]["atoms"])
+        for chain in pdb_dt["chain_order"]
+        for resid in pdb_dt[chain]["order"]
+    )
+
+    assert counted == from_parser
+    # and no hydrogen slipped through
+    assert counted < sum(
+        1
+        for line in pdb.read_text().splitlines()
+        if line.startswith(("ATOM", "HETATM"))
+    )
+
+
 def test_get_necessary_memory():
-    """Test get_necessary_memory function with valid models."""
+    """Estimate must match the real matrix size of the *largest* model."""
     models = [
+        PDBFile(Path(golden_data, "hpr_ensemble_1_haddock.pdb"), path=golden_data),
         PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
-        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
     ]
     memory = get_necessary_memory(models)
-    # Should return a positive float
-    assert isinstance(memory, float)
-    assert memory > 0
+
+    biggest = count_heavy_atoms(Path(golden_data, "protprot_complex_1.pdb"))
+    assert memory == pytest.approx(_expected_gb(biggest))
+    # a ~1800 heavy atom complex is tens of MB, not tens of GB
+    assert memory < 0.1
+
+
+def test_get_necessary_memory_uses_rel_path():
+    """Models are addressed by `rel_path`, not by the bare `file_name`.
+
+    At run time the module works from its own step folder while the models
+    live in the previous one, so `file_name` alone never resolves.
+    """
+    with tempfile.TemporaryDirectory() as tempdir:
+        prev_step = Path(tempdir, "1_prev")
+        this_step = Path(tempdir, "2_contactmap")
+        prev_step.mkdir()
+        this_step.mkdir()
+        shutil.copy(Path(golden_data, "protprot_complex_1.pdb"), prev_step)
+
+        model = PDBFile("protprot_complex_1.pdb", path=prev_step)
+
+        cwd = os.getcwd()
+        try:
+            os.chdir(this_step)
+            # the bare file name is not resolvable from here ...
+            assert not Path(model.file_name).exists()
+            # ... but the estimate must still be the real one
+            memory = get_necessary_memory([model])
+        finally:
+            os.chdir(cwd)
+
+        biggest = count_heavy_atoms(Path(prev_step, "protprot_complex_1.pdb"))
+        assert memory == pytest.approx(_expected_gb(biggest))
 
 
 def test_get_necessary_memory_empty_list():
     """Test get_necessary_memory with empty list."""
-    models = []
-    memory = get_necessary_memory(models)
+    memory = get_necessary_memory([])
     # Should fall back to default estimate
-    assert isinstance(memory, float)
-    assert memory > 0
+    assert memory == pytest.approx(_expected_gb(DEFAULT_HEAVY_ATOMS))
 
 
 def test_get_necessary_memory_invalid_files():
-    """Test get_necessary_memory with invalid file paths."""
-    from unittest.mock import patch
-
-    # Mock os.path.getsize to raise an exception
+    """Unreachable models fall back to the default estimate."""
     with patch("os.path.getsize") as mock_getsize:
         mock_getsize.side_effect = FileNotFoundError("File not found")
 
@@ -656,22 +715,118 @@ def test_get_necessary_memory_invalid_files():
             PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
         ]
         memory = get_necessary_memory(models)
-        # Should fall back to default estimate
-        assert isinstance(memory, float)
-        assert memory > 0
+        assert memory == pytest.approx(_expected_gb(DEFAULT_HEAVY_ATOMS))
 
 
 def test_get_necessary_memory_zero_bytes():
-    """Test get_necessary_memory with zero-byte files."""
+    """A model without any heavy atom falls back to the default estimate."""
     with tempfile.TemporaryDirectory() as tempdir:
-        # Create a zero-byte file
         zero_file = Path(tempdir, "empty.pdb")
         zero_file.write_text("")
 
-        models = [
-            PDBFile(zero_file, path=str(zero_file.parent)),
-        ]
+        models = [PDBFile(zero_file, path=str(zero_file.parent))]
         memory = get_necessary_memory(models)
-        # Should use default fallback (10000 atoms)
-        assert isinstance(memory, float)
-        assert memory > 0
+        assert memory == pytest.approx(_expected_gb(DEFAULT_HEAVY_ATOMS))
+
+
+####################################################
+# Testing of the memory guard in the module _run() #
+####################################################
+def _run_with_memory(contactmap, mocker, per_job: float, available: float):
+    """Run the module with a faked memory situation.
+
+    Returns the `ncores` the execution engine was handed, or None when the
+    module decided to skip itself.
+    """
+    contactmap.previous_io = MockPreviousIO()
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_necessary_memory",
+        return_value=per_job,
+    )
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_available_memory",
+        return_value=available,
+    )
+    exported = mocker.patch(
+        "haddock.modules.BaseHaddockModule.export_io_models",
+        return_value=None,
+    )
+    get_engine = mocker.patch(
+        "haddock.modules.analysis.contactmap.get_engine",
+    )
+
+    contactmap.params["ncores"] = 8
+    contactmap.run()
+
+    # models are always passed on to the next step, run or skip
+    assert exported.called
+    if not get_engine.called:
+        return None
+    return get_engine.call_args.args[1]["ncores"]
+
+
+def test_contactmap_memory_guard_plenty(contactmap, mocker):
+    """With memory to spare the requested `ncores` is left untouched."""
+    ncores = _run_with_memory(contactmap, mocker, per_job=0.01, available=32.0)
+    assert ncores == 8
+
+
+def test_contactmap_memory_guard_reduces_ncores(contactmap, mocker):
+    """When the jobs do not all fit, `ncores` drops to what memory can feed."""
+    # two jobs of 1Gb each requested, but only 1.5Gb to hand
+    ncores = _run_with_memory(contactmap, mocker, per_job=1.0, available=1.5)
+    assert ncores == 1
+
+
+class MockPreviousIOManyModels:
+    """Mocking class yielding enough unclustered models to saturate the cores."""
+
+    def retrieve_models(self, individualize: bool = False):
+        """Provide six unclustered models, i.e. six contact map jobs."""
+        models = []
+        for i in range(6):
+            model = PDBFile(
+                Path(golden_data, "protprot_complex_1.pdb"), path=golden_data
+            )
+            model.clt_id = None
+            model.score = float(i)
+            models.append(model)
+        return models
+
+
+def test_contactmap_memory_guard_reduces_to_intermediate(contactmap, mocker):
+    """The reduction is to the number of jobs that fit, not blindly down to 1."""
+    contactmap.previous_io = MockPreviousIOManyModels()
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_necessary_memory",
+        return_value=0.5,
+    )
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_available_memory",
+        return_value=1.6,
+    )
+    mocker.patch(
+        "haddock.modules.BaseHaddockModule.export_io_models",
+        return_value=None,
+    )
+    get_engine = mocker.patch("haddock.modules.analysis.contactmap.get_engine")
+
+    # 6 jobs of 0.5Gb would need 3.0Gb, only 1.6Gb is free -> 3 of them fit
+    contactmap.params["ncores"] = 8
+    contactmap.params["topX"] = 10
+    contactmap.run()
+
+    assert get_engine.call_args.args[1]["ncores"] == 3
+
+
+def test_contactmap_memory_guard_skips_when_one_job_too_big(contactmap, mocker):
+    """A single model that does not fit is the only reason left to skip."""
+    ncores = _run_with_memory(contactmap, mocker, per_job=2.0, available=1.5)
+    assert ncores is None
+
+
+def test_contactmap_memory_guard_does_not_mutate_params(contactmap, mocker):
+    """The reduction must not rewrite the user's requested `ncores`."""
+    _run_with_memory(contactmap, mocker, per_job=1.0, available=1.5)
+    # `params.cfg` is the record of what was asked for, keep it intact
+    assert contactmap.params["ncores"] == 8

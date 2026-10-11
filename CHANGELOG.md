@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-11: Removed the dead backwards `A23a`/`A26a` sialylation detection loops from `bondglycans.cns` - Issue #1711
 - 2026-10-11: Updated glycans linkage scripts - Issue #1714
 - 2026-10-11: Fixed the martinise library (libaa2cg) to make it deterministic - Issue #1657
 - 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709

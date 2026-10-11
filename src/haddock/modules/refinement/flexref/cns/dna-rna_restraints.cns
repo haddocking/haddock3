@@ -64,6 +64,24 @@ evaluate ($dna_pick_wc=true)
 evaluate ($wc_low=0.05)
 evaluate ($wc_up=0.05)
 
+{* Donor-acceptor cutoff used to detect a base pair in an all-atom model:
+   A N1...T/U N3 or C N3...G N1, plus A N6...T/U O4 or C N4...G O6 and
+   C O2...G N2. Watson-Crick pairs have all of these at 2.4-3.2 A. *}
+evaluate ($hbcut=3.5)
+
+{* A candidate base pair is accepted only with Watson-Crick geometry, judged
+   by the distance between the atoms carrying the glycosidic bond: C1'-C1'
+   in all-atom models, SC1-SC1 in CG models. Over 97 Watson-Crick pairs
+   (B-DNA, A-RNA, tRNA, protein-DNA and drug-DNA complexes), C1'-C1' spans
+   9.98-11.01 A against 8.08-8.72 A for Hoogsteen pairs. In CG models built
+   by topocg, SC1-SC1 spans 7.63-9.03 A; it rejects the diagonal
+   cross-strand neighbours of A-form helices and overlapping copies of a
+   strand, while Hoogsteen pairs are rejected by the contact cutoff. *}
+evaluate ($wc_c1_min=9.4)
+evaluate ($wc_c1_max=11.6)
+evaluate ($wc_sc1_min=7.55)
+evaluate ($wc_sc1_max=9.5)
+
 
 {=========================================== Coarse-Grained ===========================================================}
 {* Is the DNA/RNA molecule CG?
@@ -74,11 +92,13 @@ evaluate ($dna_cg=false)
 {* Distance cutoff used to detect a base pair in a CG model.
    The all-atom code pairs bases on a donor-acceptor contact within $hbcut
    (3.5 A). In the CG model that contact becomes a bead-bead distance:
-   A/DA SC3 - T/DT/U SC2, and C/DC SC2 - G/DG SC3. Measured over 158 base
-   pairs, those sit at 3.9-4.15 A in regular B-DNA, so 4.5 A captures them
-   with margin. Candidates beyond it are simply not paired; if more than one
-   candidate falls inside, no restraint is generated for that base. *}
-evaluate ($hbcut_cg=4.5)
+   A/DA SC3 - T/DT/U SC2, and C/DC SC2 - G/DG SC3. In CG models built by
+   topocg that contact spans 3.28-5.12 A for Watson-Crick pairs, against
+   5.59-6.04 A for Hoogsteen pairs, so 5.3 A is used. The two other
+   base-base contacts of a pair must also fall within it. Candidates are
+   filtered on geometry (see $wc_sc1_min/$wc_sc1_max above) and the nearest
+   remaining one is taken as the partner. *}
+evaluate ($hbcut_cg=5.3)
 
 {=========================================================================================================}
 {                        things below this line do not normally need to be changed                        }
@@ -346,10 +366,20 @@ if ($dna_pick_bacdih=true) then
 end if
 
 {- Watson-Crick base pairing -}
-    
+! Every A/DA and C/DC base looks for its Watson-Crick partner among the
+! T/DT/U and G/DG bases. A candidate must make the Watson-Crick contact
+! (all-atom A N1...T N3 and C N3...G N1, CG A SC3...T SC2 and C SC2...G SC3)
+! within the cutoff, have the two other base-base contacts within the cutoff
+! as well, and have its anchor (C1'-C1' or SC1-SC1) distance inside the
+! Watson-Crick window. If several candidates pass, the nearest is taken.
+! Hoogsteen and reverse-Hoogsteen pairs fail these tests and stay
+! unrestrained.
+! All selections are segid-aware: resids repeat across chains, and in CG
+! the SC# bead names are shared with protein side chains. Stacked neighbours
+! are excluded on the current strand only, so a partner that happens to
+! carry resid +/-1 on the opposite strand is still found.
+
 if ($dna_pick_wc = true) then
-    evaluate ($hbcut = 3.5)
-    ! We only to check for ADE and CYT
     show sum(1) ( (resn DA or resn A or resn DC or resn C) and tag )
     if ( $result > 0 ) then
         noe
@@ -360,6 +390,21 @@ if ($dna_pick_wc = true) then
             sqexponent hres 2
             scale hres 70.
         end
+
+        ! The atoms used for detection differ between the two representations.
+        ! Purine and pyrimidine choices are made per residue below.
+        if ($dna_cg=true) then
+            evaluate ($wc_cut=$hbcut_cg)
+            evaluate ($wc_anc=SC1)
+            evaluate ($wc_anc_min=$wc_sc1_min)
+            evaluate ($wc_anc_max=$wc_sc1_max)
+        else
+            evaluate ($wc_cut=$hbcut)
+            evaluate ($wc_anc=C1')
+            evaluate ($wc_anc_min=$wc_c1_min)
+            evaluate ($wc_anc_max=$wc_c1_max)
+        end if
+
         for $id in id ( (resn DA or resn A or resn DC or resn C) and tag ) loop resid
             show (segid) (id $id)
             evaluate ($segid=$result)
@@ -367,43 +412,101 @@ if ($dna_pick_wc = true) then
             evaluate ($resid=decode($result))
             evaluate ($presid=$resid-1)
             evaluate ($fresid=$resid+1)
-            evaluate ($ares_name = none)
             show ( resn ) (id $id)
             evaluate ($ares=$result)
 
-            if ( $ares = DA ) then
-                eval ($ares_name = ADE)
-            elseif ( $ares = A ) then
-                eval ($ares_name = ADE)
+            ! partner residue names, the Watson-Crick contact (w), and the two
+            ! other contacts (x, y), each as (atom here, atom on partner).
+            ! In CG the A N6...T O4 contact maps onto SC3...SC3, the only other
+            ! contact for A-T, so x and y coincide.
+            if ($ares = DA) then
+                evaluate ($ares_name = ADE)
+            elseif ($ares = A) then
+                evaluate ($ares_name = ADE)
+            else
+                evaluate ($ares_name = CYT)
+            end if
+            if ($ares_name = ADE) then
+                evaluate ($wc_pr1=DT)
+                evaluate ($wc_pr2=T)
+                evaluate ($wc_pr3=U)
+                if ($dna_cg=true) then
+                    evaluate ($wc_wa=SC3)
+                    evaluate ($wc_wb=SC2)
+                    evaluate ($wc_xa=SC3)
+                    evaluate ($wc_xb=SC3)
+                    evaluate ($wc_ya=SC3)
+                    evaluate ($wc_yb=SC3)
+                else
+                    evaluate ($wc_wa=N1)
+                    evaluate ($wc_wb=N3)
+                    evaluate ($wc_xa=N6)
+                    evaluate ($wc_xb=O4)
+                    evaluate ($wc_ya=N6)
+                    evaluate ($wc_yb=O4)
+                end if
+            else
+                evaluate ($wc_pr1=DG)
+                evaluate ($wc_pr2=G)
+                evaluate ($wc_pr3=G)
+                if ($dna_cg=true) then
+                    evaluate ($wc_wa=SC2)
+                    evaluate ($wc_wb=SC3)
+                    evaluate ($wc_xa=SC3)
+                    evaluate ($wc_xb=SC3)
+                    evaluate ($wc_ya=SC2)
+                    evaluate ($wc_yb=SC2)
+                else
+                    evaluate ($wc_wa=N3)
+                    evaluate ($wc_wb=N1)
+                    evaluate ($wc_xa=N4)
+                    evaluate ($wc_xb=O6)
+                    evaluate ($wc_ya=O2)
+                    evaluate ($wc_yb=N2)
+                end if
             end if
 
-            if ( $ares = DC ) then
-                eval ($ares_name = CYT)
-            elseif ( $ares = C ) then
-                eval ($ares_name = CYT)
-            end if
-            
-            if ($ares_name = ADE) then
-              if ($dna_cg=true) then
-                ! CG: the A N1...T N3 contact becomes the A SC3...T SC2 contact.
-                ! Unlike the all-atom atom names used below, the SC# bead names
-                ! are shared with CG protein side chains, so every selection has
-                ! to be segid-aware or a protein bead with a matching resid gets
-                ! pulled in. The stacked neighbours are excluded on the current
-                ! strand only, so a partner that happens to carry resid +/-1 on
-                ! the opposite strand is still found.
-                show sum(1) ( ((resn DT or resn T or resn U) and
-                               not (segid $segid and (resid $presid or resid $fresid)) and name SC2)
-                               and (segid $segid and resid $resid and name SC3) around $hbcut_cg)
-                if ($result = 1) then
-                    show (resid) ( ((resn DT or resn T or resn U) and
-                                   not (segid $segid and (resid $presid or resid $fresid)) and name SC2)
-                                  and (segid $segid and resid $resid and name SC3) around $hbcut_cg)
-                    evaluate ($rpair = $result)
-                    show (segid) ( ((resn DT or resn T or resn U) and
-                                   not (segid $segid and (resid $presid or resid $fresid)) and name SC2)
-                                  and (segid $segid and resid $resid and name SC3) around $hbcut_cg)
-                    evaluate ($psegid = $result)
+            evaluate ($dmin=999.0)
+            for $jd in id ( ((resn $wc_pr1 or resn $wc_pr2 or resn $wc_pr3) and
+                             not (segid $segid and (resid $presid or resid $fresid)) and name $wc_wb)
+                            and (segid $segid and resid $resid and name $wc_wa) around $wc_cut ) loop wccand
+                show (segid) (id $jd)
+                evaluate ($qsegid=$result)
+                show (resid) (id $jd)
+                evaluate ($qresid=$result)
+                pick bond (id $jd) (segid $segid and resid $resid and name $wc_wa) geometry
+                evaluate ($dw=$result)
+                pick bond (segid $segid and resid $resid and name $wc_anc)
+                          (segid $qsegid and resid $qresid and name $wc_anc) geometry
+                evaluate ($danc=$result)
+                pick bond (segid $segid and resid $resid and name $wc_xa)
+                          (segid $qsegid and resid $qresid and name $wc_xb) geometry
+                evaluate ($dx=$result)
+                pick bond (segid $segid and resid $resid and name $wc_ya)
+                          (segid $qsegid and resid $qresid and name $wc_yb) geometry
+                evaluate ($dy=$result)
+                evaluate ($wc_ok=false)
+                if ($danc >= $wc_anc_min) then
+                    if ($danc <= $wc_anc_max) then
+                        if ($dx <= $wc_cut) then
+                            if ($dy <= $wc_cut) then
+                                evaluate ($wc_ok=true)
+                            end if
+                        end if
+                    end if
+                end if
+                if ($wc_ok = true) then
+                    if ($dw < $dmin) then
+                        evaluate ($dmin=$dw)
+                        evaluate ($rpair=$qresid)
+                        evaluate ($psegid=$qsegid)
+                    end if
+                end if
+            end loop wccand
+
+            if ($dmin < 999.0) then
+              if ($ares_name = ADE) then
+                if ($dna_cg=true) then
                     ! A N6...T O4 maps onto SC3...SC3, A N1...T N3 onto SC3...SC2.
                     ! The N1...O4 and N1...O2 pairs of the all-atom code collapse
                     ! onto those same two bead pairs and are therefore dropped.
@@ -425,69 +528,44 @@ if ($dna_pick_wc = true) then
                                (segid $psegid and resid $rpair and name SC2)
                                $sc3sc2 $wc_low $wc_up
                     end
-                end if
-              else
-                show sum(1) ( ((resn DT or resn T or resn U) and not (resid $presid or resid $fresid) and name N3)
-                               and (resid $resid and name N1) around $hbcut)
-                if ($result = 1) then
-                    show (resid) ( ((resn DT or resn T or resn U) and not (resid $presid or resid $fresid) and name N3) 
-                                  and (resid $resid and name N1) around $hbcut)
-                    evaluate ($rpair = $result)
+                else
                     pick bond
-                        (resid $resid and name N6)
-                        (resid $rpair and name O4)
+                        (segid $segid and resid $resid and name N6)
+                        (segid $psegid and resid $rpair and name O4)
                         geometry
                     evaluate ($n6o4=$result)
                     pick bond
-                        (resid $resid and name N1)
-                        (resid $rpair and name N3)
+                        (segid $segid and resid $resid and name N1)
+                        (segid $psegid and resid $rpair and name N3)
                         geometry
                     evaluate ($n1n3=$result)
                     pick bond
-                        (resid $resid and name N1)
-                        (resid $rpair and name O4)
+                        (segid $segid and resid $resid and name N1)
+                        (segid $psegid and resid $rpair and name O4)
                         geometry
                     evaluate ($n1o4=$result)
                     pick bond
-                        (resid $resid and name N1)
-                        (resid $rpair and name O2)
+                        (segid $segid and resid $resid and name N1)
+                        (segid $psegid and resid $rpair and name O2)
                         geometry
                     evaluate ($n1o2=$result)
                     noe
-                        assign (resid $resid and name N6) 
-                               (resid $rpair and name O4)
+                        assign (segid $segid and resid $resid and name N6)
+                               (segid $psegid and resid $rpair and name O4)
                                $n6o4 $wc_low $wc_up
-                        assign (resid $resid and name N1)
-                               (resid $rpair and name N3)
+                        assign (segid $segid and resid $resid and name N1)
+                               (segid $psegid and resid $rpair and name N3)
                                $n1n3 $wc_low $wc_up
-                        assign (resid $resid and name N1)
-                               (resid $rpair and name O4)
+                        assign (segid $segid and resid $resid and name N1)
+                               (segid $psegid and resid $rpair and name O4)
                                $n1o4 $wc_low $wc_up
-                        assign (resid $resid and name N1)
-                               (resid $rpair and name O2)
+                        assign (segid $segid and resid $resid and name N1)
+                               (segid $psegid and resid $rpair and name O2)
                                $n1o2 $wc_low $wc_up
                     end
                 end if
-              end if
-            end if
-
-            !find possible pairing for DC/C with DG/G
-            if ($ares_name = CYT) then
-              if ($dna_cg=true) then
-                ! CG: the C N3...G N1 contact becomes the C SC2...G SC3 contact.
-                ! Segid-aware for the same reason as the A/T branch above.
-                show sum(1) ( ((resn DG or resn G) and
-                               not (segid $segid and (resid $presid or resid $fresid)) and name SC3)
-                               and (segid $segid and resid $resid and name SC2) around $hbcut_cg)
-                if ($result = 1) then
-                    show (resid) ( ((resn DG or resn G) and
-                                   not (segid $segid and (resid $presid or resid $fresid)) and name SC3)
-                                  and (segid $segid and resid $resid and name SC2) around $hbcut_cg)
-                    evaluate ($rpair = $result)
-                    show (segid) ( ((resn DG or resn G) and
-                                   not (segid $segid and (resid $presid or resid $fresid)) and name SC3)
-                                  and (segid $segid and resid $resid and name SC2) around $hbcut_cg)
-                    evaluate ($psegid = $result)
+              else
+                if ($dna_cg=true) then
                     ! C N3...G N1 maps onto SC2...SC3, C N4...G O6 onto SC3...SC3
                     ! and C O2...G N2 onto SC2...SC2. The N3...O6 and N3...N2
                     ! pairs of the all-atom code collapse onto those same bead
@@ -515,50 +593,43 @@ if ($dna_pick_wc = true) then
                         assign (segid $segid and resid $resid and name SC2)
                                (segid $psegid and resid $rpair and name SC2) $sc2sc2 $wc_low $wc_up
                     end
-                end if
-              else
-                show sum(1) ( ((resn DG or resn G) and not (resid $presid or resid $fresid) and name N1)
-                               and (resid $resid and name N3) around $hbcut)
-                if ($result = 1) then
-                    show (resid) ( ((resn DG or resn G) and not (resid $presid or resid $fresid) and name N1) 
-                                  and (resid $resid and name N3) around $hbcut)
-                    evaluate ($rpair = $result)
+                else
                     pick bond
-                        (resid $resid and name N3)
-                        (resid $rpair and name N1)
+                        (segid $segid and resid $resid and name N3)
+                        (segid $psegid and resid $rpair and name N1)
                         geometry
                     evaluate ($n3n1=$result)
                     pick bond
-                        (resid $resid and name N4)
-                        (resid $rpair and name O6)
+                        (segid $segid and resid $resid and name N4)
+                        (segid $psegid and resid $rpair and name O6)
                         geometry
                     evaluate ($n4o6=$result)
                     pick bond
-                        (resid $resid and name O2)
-                        (resid $rpair and name N2)
+                        (segid $segid and resid $resid and name O2)
+                        (segid $psegid and resid $rpair and name N2)
                         geometry
                     evaluate ($o2n2=$result)
                     pick bond
-                        (resid $resid and name N3)
-                        (resid $rpair and name O6)
+                        (segid $segid and resid $resid and name N3)
+                        (segid $psegid and resid $rpair and name O6)
                         geometry
                     evaluate ($n3o6=$result)
                     pick bond
-                        (resid $resid and name N3)
-                        (resid $rpair and name N2)
+                        (segid $segid and resid $resid and name N3)
+                        (segid $psegid and resid $rpair and name N2)
                         geometry
                     evaluate ($n3n2=$result)
                     noe
-                        assign (resid $resid and name N3)
-                               (resid $rpair and name N1) $n3n1 $wc_low $wc_up
-                        assign (resid $resid and name N4)
-                               (resid $rpair and name O6) $n4o6 $wc_low $wc_up
-                        assign (resid $resid and name O2)
-                               (resid $rpair and name N2) $o2n2 $wc_low $wc_up
-                        assign (resid $resid and name N3)
-                               (resid $rpair and name O6) $n3o6 $wc_low $wc_up
-                        assign (resid $resid and name N3)
-                               (resid $rpair and name N2) $n3n2 $wc_low $wc_up
+                        assign (segid $segid and resid $resid and name N3)
+                               (segid $psegid and resid $rpair and name N1) $n3n1 $wc_low $wc_up
+                        assign (segid $segid and resid $resid and name N4)
+                               (segid $psegid and resid $rpair and name O6) $n4o6 $wc_low $wc_up
+                        assign (segid $segid and resid $resid and name O2)
+                               (segid $psegid and resid $rpair and name N2) $o2n2 $wc_low $wc_up
+                        assign (segid $segid and resid $resid and name N3)
+                               (segid $psegid and resid $rpair and name O6) $n3o6 $wc_low $wc_up
+                        assign (segid $segid and resid $resid and name N3)
+                               (segid $psegid and resid $rpair and name N2) $n3n2 $wc_low $wc_up
                     end
                 end if
               end if

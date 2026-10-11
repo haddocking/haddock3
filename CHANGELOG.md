@@ -1,12 +1,14 @@
 # Changelog
 
 - 2026-09-23: Adapted the memory estimate of the contactmap module - Issue #1699
+- 2026-10-11: Removed the dead backwards `A23a`/`A26a` sialylation detection loops from `bondglycans.cns` - Issue #1711
+- 2026-10-11: Updated glycans linkage scripts - Issue #1714
+- 2026-10-11: Fixed the martinise library (libaa2cg) to make it deterministic - Issue #1657
 - 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709
 - 2026-10-02: Corrected ssdihed: range for automatic alpha/beta dihedrals and the definition in yaml - Issue #1668 
 - 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-21: Corrected seperate.cns - Issue #1392
 - 2026-09-18: Added `dnascan` module for mutagenesis scanning of DNA base pairs - Issue #1634
-- 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
 - 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
 - 2026-09-09: Adding missing execution modes to default.yaml - Issue #1690
 - 2026-09-02: Fixed identical seed per sampling_factor replica in flexref, mdref and emref - Issue #1685

@@ -23,7 +23,8 @@ define
 (
   {- define all alpha anomer carbo residues for the links below -}
   alpha=   ( resname GLC or resname GLA or resname MAN or resname NDG or resname A2G or resname FUC or resname FCA
-          or resname NAA or resname MMA or resname NGM or resname XYS or resname RAM or resname ABE);
+          or resname NAA or resname MMA or resname NGM or resname XYS or resname RAM or resname ABE
+          or resname GXL);
 
   {- define all beta anomer carbo residues for the links below -}
   beta=    ( resname BGC or resname GAL or resname BMA or resname NAG or resname NGA or resname FUL or resname FCB or resname XYP
@@ -207,43 +208,7 @@ for $id1 in id ( (resname GLC) and name C1 and known ) loop A11a
 
 end loop A11a
 
-{- A23: GAL, NGA to SIA, SIB -}
-for $id1 in id ( (resname GAL or resname NGA) and name C2 and known ) loop A23a
-
-  show (segid) (id $id1)
-  evaluate ($segid1=$result)
-  show (resid) (id $id1)
-  evaluate ($resid1=$result)
-
-  for $id2 in id ( (resname SIA or resname SIB) and name O3 and known ) loop A23b
-
-    show (segid) (id $id2)
-    evaluate ($segid2=$result)
-    show (resid) (id $id2)
-    evaluate ($resid2=$result)
-
-    show (x) ( id $id1 ) evaluate ($x1=$result)
-    show (y) ( id $id1 ) evaluate ($y1=$result)
-    show (z) ( id $id1 ) evaluate ($z1=$result)
-    show (x) ( id $id2 ) evaluate ($x2=$result)
-    show (y) ( id $id2 ) evaluate ($y2=$result)
-    show (z) ( id $id2 ) evaluate ($z2=$result)
-    evaluate ($distance=sqrt( ($x1-$x2)^2 + ($y1-$y2)^2 + ($z1-$z2)^2 ))
-
-    if ( $distance <= &carbo_dist ) then
-       evaluate ($npatch=$npatch+1)
-       evaluate ($seg1.$npatch=$segid1)
-       evaluate ($seg2.$npatch=$segid2)
-       evaluate ($res1.$npatch=$resid1)
-       evaluate ($res2.$npatch=$resid2)
-       evaluate ($pres.$npatch="A23")
-   end if
-
-  end loop A23b
-
-end loop A23a
-
-{- A23: SIA,SIB to GAL,NGA -}
+{- A23: SIA,SIB to GAL,NGA,A2G -}
 for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
 
   show (segid) (id $id1)
@@ -251,7 +216,7 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
   show (resid) (id $id1)
   evaluate ($resid1=$result)
 
-  for $id2 in id ( (resname GAL or resname NGA) and name O3 and known ) loop A23d
+  for $id2 in id ( (resname GAL or resname NGA or resname A2G) and name O3 and known ) loop A23d
 
     show (segid) (id $id2)
     evaluate ($segid2=$result)
@@ -279,43 +244,7 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
 
 end loop A23c
 
-{- A26: GAL,NGA to SIA,SIB -}
-for $id1 in id ( (resname GAL or resname NGA) and name C2 and known ) loop A26a
-
-  show (segid) (id $id1)
-  evaluate ($segid1=$result)
-  show (resid) (id $id1)
-  evaluate ($resid1=$result)
-
-  for $id2 in id ( (resname SIA or resname SIB) and name O6 and known ) loop A26b
-
-    show (segid) (id $id2)
-    evaluate ($segid2=$result)
-    show (resid) (id $id2)
-    evaluate ($resid2=$result)
-
-    show (x) ( id $id1 ) evaluate ($x1=$result)
-    show (y) ( id $id1 ) evaluate ($y1=$result)
-    show (z) ( id $id1 ) evaluate ($z1=$result)
-    show (x) ( id $id2 ) evaluate ($x2=$result)
-    show (y) ( id $id2 ) evaluate ($y2=$result)
-    show (z) ( id $id2 ) evaluate ($z2=$result)
-    evaluate ($distance=sqrt( ($x1-$x2)^2 + ($y1-$y2)^2 + ($z1-$z2)^2 ))
-
-    if ( $distance <= &carbo_dist ) then
-       evaluate ($npatch=$npatch+1)
-       evaluate ($seg1.$npatch=$segid1)
-       evaluate ($seg2.$npatch=$segid2)
-       evaluate ($res1.$npatch=$resid1)
-       evaluate ($res2.$npatch=$resid2)
-       evaluate ($pres.$npatch="A26")
-   end if
-
-  end loop A26b
-
-end loop A26a
-
-{- A26: SIA,SIB to GAL,NGA -}
+{- A26: SIA,SIB to GAL,NGA,A2G -}
 for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A26c
 
   show (segid) (id $id1)
@@ -323,7 +252,7 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A26c
   show (resid) (id $id1)
   evaluate ($resid1=$result)
 
-  for $id2 in id ( (resname GAL or resname NGA) and name O6 and known ) loop A26d
+  for $id2 in id ( (resname GAL or resname NGA or resname A2G) and name O6 and known ) loop A26d
 
     show (segid) (id $id2)
     evaluate ($segid2=$result)
@@ -578,7 +507,8 @@ ident (store4) ( ( &alpha or &beta) and name O4 and known )
 {- for A16: alpha(1,6)  link from alpha-anomer to any -}
 ident (store6) ( ( &alpha or &beta) and name O6 and known ) 
 
-for $id1 in id ( &alpha and name C1 and known and not (resname NAA or resname NGM)) loop A1
+{- NAA, NGM and MMA are 1-O-methylated and so cannot donate a (1,x) link -}
+for $id1 in id ( &alpha and name C1 and known and not (resname NAA or resname NGM or resname MMA)) loop A1
 
   show (segid) (id $id1)
   evaluate ($segid1=$result)
@@ -586,6 +516,16 @@ for $id1 in id ( &alpha and name C1 and known and not (resname NAA or resname NG
   evaluate ($resid1=$result)
   show (resname) (id $id1)
   evaluate ($resname1=$result)
+
+  {- the L-sugars need the A1xL patches, which mirror the anomeric improper -}
+  evaluate ($lsugar1=false)
+  if ($resname1="FUC") then
+     evaluate ($lsugar1=true)
+  elseif ($resname1="RAM") then
+     evaluate ($lsugar1=true)
+  elseif ($resname1="GXL") then
+     evaluate ($lsugar1=true)
+  end if
 
   for $id2 in id ( recall2 ) loop A12
 
@@ -617,7 +557,7 @@ for $id1 in id ( &alpha and name C1 and known and not (resname NAA or resname NG
           evaluate ($seg2.$npatch=$segid2)
           evaluate ($res1.$npatch=$resid1)
           evaluate ($res2.$npatch=$resid2)
-          if ($resname1="FUC") then
+          if ($lsugar1=true) then
              evaluate ($pres.$npatch="A12L")
           else
              evaluate ($pres.$npatch="A12")
@@ -657,7 +597,7 @@ for $id1 in id ( &alpha and name C1 and known and not (resname NAA or resname NG
           evaluate ($seg2.$npatch=$segid2)
           evaluate ($res1.$npatch=$resid1)
           evaluate ($res2.$npatch=$resid2)
-          if ($resname1="FUC") then
+          if ($lsugar1=true) then
              evaluate ($pres.$npatch="A13L")
           else
              evaluate ($pres.$npatch="A13")
@@ -697,7 +637,7 @@ for $id1 in id ( &alpha and name C1 and known and not (resname NAA or resname NG
           evaluate ($seg2.$npatch=$segid2)
           evaluate ($res1.$npatch=$resid1)
           evaluate ($res2.$npatch=$resid2)
-          if ($resname1="FUC") then
+          if ($lsugar1=true) then
              evaluate ($pres.$npatch="A14L")
           else
              evaluate ($pres.$npatch="A14")
@@ -736,7 +676,7 @@ for $id1 in id ( &alpha and name C1 and known and not (resname NAA or resname NG
           evaluate ($seg2.$npatch=$segid2)
           evaluate ($res1.$npatch=$resid1)
           evaluate ($res2.$npatch=$resid2)
-          if ($resname1="FUC") then
+          if ($lsugar1=true) then
              evaluate ($pres.$npatch="A16L")
           else
              evaluate ($pres.$npatch="A16")

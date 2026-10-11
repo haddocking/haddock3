@@ -158,6 +158,7 @@ CLI and the modules. Each handles one cross-cutting concern.
 | [parameters.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/parameters.py) | Definitions of mandatory/general parameter sets |
 | [expandable_parameters.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/expandable_parameters.py) | Per-molecule / repeatable parameter blocks (e.g. `mol_*`, `seg_*`) |
 | [validations.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/validations.py) | Domain-specific validation rules |
+| [workflow_ordering.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/workflow_ordering.py) | Validate module sequence against the rules in `workflow_rules.yaml` |
 | [restart_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/restart_run.py) | `--restart` flag logic |
 | [extend_run.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/extend_run.py) | `--extend-run` flag + `haddock3-copy`; `WorkflowManagerExtend` |
 | [clean_steps.py](https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/clean_steps.py) | Compress/clean a step's output files |

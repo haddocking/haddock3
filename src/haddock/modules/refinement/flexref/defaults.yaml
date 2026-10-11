@@ -332,11 +332,14 @@ ssdihed:
     - alphabeta
   title: Define automatically backbone dihedral angle restraints
   short: If turned on, this option will automatically defined backbone dihedral angle restraints for the selected regions.
-  long: This option allows to utomatically defined backbone dihedral angle restraints for the selected regions.
+  long: This option allows to automatically defined backbone dihedral angle restraints for the selected regions.
     The restraints will be defined for the phi and psi backbone dihedral angles of amino acids, with the target value taken from
-    the measured angle in the input structure, and the error bound defined by the error_dih parameter.
+    the measured angle in the input structure if the measured values lies within the corresponding window. 
+    The window within which alpha helix is detected is phi in [-77;-37] and psi in [-67;-27].
+    The window within which beta strand is detected is phi in [-145;-105] and psi in [105;145]. 
+    The error bound for all angles is defined by the error_dih parameter. 
     Those restraints can be applied to the entire structure (all), the alpha/beta secondary structure elements (alphabeta) or
-    only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations.
+    only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations. 
   group: 'dihedral restraints'
   explevel: easy
 error_dih:

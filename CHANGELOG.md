@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-11: Updated glycans linkage scripts - Issue #1714
 - 2026-10-11: Fixed the martinise library (libaa2cg) to make it deterministic - Issue #1657
 - 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709
 - 2026-10-02: Corrected ssdihed: range for automatic alpha/beta dihedrals and the definition in yaml - Issue #1668 

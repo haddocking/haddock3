@@ -20,7 +20,7 @@ import pytest
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules.refinement.emref import RECIPE_PATH as EMREF_PATH
 
-from integration_tests import CNS_EXEC, GOLDEN_DATA, has_cns
+from integration_tests import CNS_EXEC, GOLDEN_DATA
 
 
 # (purine/pyrimidine, partner) as (segid + resid) of the A/DA or C/DC base
@@ -82,7 +82,6 @@ def restrained_pairs(output: str) -> Counter:
     return pairs
 
 
-@has_cns
 @pytest.mark.parametrize(
     "name,expected,excluded",
     [

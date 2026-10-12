@@ -74,13 +74,13 @@ evaluate ($hbcut=3.5)
    in all-atom models, SC1-SC1 in CG models. Over 97 Watson-Crick pairs
    (B-DNA, A-RNA, tRNA, protein-DNA and drug-DNA complexes), C1'-C1' spans
    9.98-11.01 A against 8.08-8.72 A for Hoogsteen pairs. In CG models built
-   by topocg, SC1-SC1 spans 7.63-9.03 A; it rejects the diagonal
-   cross-strand neighbours of A-form helices and overlapping copies of a
-   strand, while Hoogsteen pairs are rejected by the contact cutoff. *}
+   by topocg, SC1-SC1 is 7.0-9.0 A for 96% of them; the window rejects
+   overlapping copies of a strand, while Hoogsteen pairs are rejected by the
+   contact cutoff. *}
 evaluate ($wc_c1_min=9.4)
 evaluate ($wc_c1_max=11.6)
-evaluate ($wc_sc1_min=7.55)
-evaluate ($wc_sc1_max=9.5)
+evaluate ($wc_sc1_min=7.0)
+evaluate ($wc_sc1_max=9.0)
 
 
 {=========================================== Hoogsteen base pairs =========================================}
@@ -99,16 +99,16 @@ evaluate ($hoog_c1_min=7.0)
 evaluate ($hoog_c1_max=10.5)
 
 {* In CG models the N7 edge is the SC4 bead of the purine: the contact is
-   purine SC4 - pyrimidine SC2 (3.0-4.4 A for Hoogsteen pairs). The pyrimidine
+   purine SC4 - pyrimidine SC2 (3.0-4.2 A for Hoogsteen pairs). The pyrimidine
    SC2 bead must be closer to the purine SC4 bead than to its SC3 bead, which
    carries the Watson-Crick edge, by at least $hoog_edge_cg. SC3-SC3 must be
    below $hoog_sc33_cg and SC1-SC1 within the window. CG bead positions are
-   less discriminating than atoms: on the same set this finds 195 of the 258
-   pairs, with 4 wrong partners. *}
-evaluate ($hbcut_hoog_cg=4.2)
-evaluate ($hoog_edge_cg=0.8)
+   less discriminating than atoms: on the same set this finds 235 of the 258
+   pairs, with 1 wrong partner. *}
+evaluate ($hbcut_hoog_cg=4.4)
+evaluate ($hoog_edge_cg=0.0)
 evaluate ($hoog_sc33_cg=7.0)
-evaluate ($hoog_sc1_min=4.0)
+evaluate ($hoog_sc1_min=5.0)
 evaluate ($hoog_sc1_max=8.6)
 
 
@@ -122,12 +122,20 @@ evaluate ($dna_cg=false)
    The all-atom code pairs bases on a donor-acceptor contact within $hbcut
    (3.5 A). In the CG model that contact becomes a bead-bead distance:
    A/DA SC3 - T/DT/U SC2, and C/DC SC2 - G/DG SC3. In CG models built by
-   topocg that contact spans 3.28-5.12 A for Watson-Crick pairs, against
-   5.59-6.04 A for Hoogsteen pairs, so 5.3 A is used. The two other
-   base-base contacts of a pair must also fall within it. Candidates are
-   filtered on geometry (see $wc_sc1_min/$wc_sc1_max above) and the nearest
-   remaining one is taken as the partner. *}
-evaluate ($hbcut_cg=5.3)
+   topocg that contact spans 3.3-5.6 A for Watson-Crick pairs (3.3-4.7 A
+   for 96% of them), so 5.6 A is used. The two other base-base contacts of a pair must also fall within
+   it. Candidates are filtered on geometry (see $wc_sc1_min/$wc_sc1_max
+   above). *}
+evaluate ($hbcut_cg=5.6)
+
+{* Choice among the CG candidates that pass, for Watson-Crick and Hoogsteen
+   pairs. A bead stands for several atoms, so the contact distance alone
+   often prefers the stacked neighbour of the true partner, which sits
+   closer to the purine SC1 bead. The candidate with the lowest
+   contact - $bp_sc1_rank * SC1-SC1 is taken. All-atom candidates are ranked
+   on the contact distance alone. On the same set this finds 752 of the 786
+   Watson-Crick pairs, with 1 wrong partner. *}
+evaluate ($bp_sc1_rank=0.5)
 
 {=========================================================================================================}
 {                        things below this line do not normally need to be changed                        }
@@ -404,7 +412,8 @@ end if
 ! the purine SC3 bead (Watson-Crick edge) than to its SC4 bead (N7 edge).
 ! Every A/DA and G/DG base then looks for a Hoogsteen or reverse-Hoogsteen
 ! partner on its N7 edge in the same way. A purine can have both partners,
-! as in base triples. If several candidates pass, the nearest is taken.
+! as in base triples. If several candidates pass, the nearest is taken
+! (see $bp_sc1_rank for CG models).
 ! All selections are segid-aware: resids repeat across chains, and in CG
 ! the SC# bead names are shared with protein side chains. Stacked neighbours
 ! are excluded on the current strand only, so a partner that happens to
@@ -437,11 +446,13 @@ if ($dna_pick_bp = true) then
             evaluate ($wc_anc=SC1)
             evaluate ($wc_anc_min=$wc_sc1_min)
             evaluate ($wc_anc_max=$wc_sc1_max)
+            evaluate ($bp_rankw=$bp_sc1_rank)
         else
             evaluate ($wc_cut=$hbcut)
             evaluate ($wc_anc=C1')
             evaluate ($wc_anc_min=$wc_c1_min)
             evaluate ($wc_anc_max=$wc_c1_max)
+            evaluate ($bp_rankw=0.0)
         end if
 
         if ($dna_pick_wc = true) then
@@ -551,8 +562,9 @@ if ($dna_pick_bp = true) then
                     end if
                 end if
                 if ($wc_ok = true) then
-                    if ($dw < $dmin) then
-                        evaluate ($dmin=$dw)
+                    evaluate ($drank=$dw - $bp_rankw*$danc)
+                    if ($drank < $dmin) then
+                        evaluate ($dmin=$drank)
                         evaluate ($rpair=$qresid)
                         evaluate ($psegid=$qsegid)
                     end if
@@ -797,8 +809,9 @@ if ($dna_pick_bp = true) then
                     end if
                 end if
                 if ($hg_ok = true) then
-                    if ($dw < $dmin) then
-                        evaluate ($dmin=$dw)
+                    evaluate ($drank=$dw - $bp_rankw*$danc)
+                    if ($drank < $dmin) then
+                        evaluate ($dmin=$drank)
                         evaluate ($rpair=$qresid)
                         evaluate ($psegid=$qsegid)
                     end if

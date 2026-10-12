@@ -364,7 +364,7 @@ dnarest_on:
     The following restraints will be automatically defined:
     - single base planarity
     - sugar pucker
-    - phosphate backbone diherdral angle restraints
+    - phosphate backbone dihedral angle restraints
     - Watson-Crick and Hoogsteen base pairing"
   group: 'other restraints'
   explevel: easy

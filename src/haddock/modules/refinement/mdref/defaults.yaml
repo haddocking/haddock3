@@ -245,7 +245,7 @@ dnarest_on:
     - single base planarity
     - sugar pucker
     - phosphate backbone diherdral angle restraints
-    - Watson-Crick base pairing"
+    - Watson-Crick and Hoogsteen base pairing"
   group: 'other restraints'
   explevel: easy
 #

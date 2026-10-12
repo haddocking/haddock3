@@ -1,6 +1,7 @@
 # Changelog
 
 - 2026-10-12: Corrected adenine CG parameters - issue #1720
+- 2026-10-11: Updated h-bond detection for DNA/RNA in both AA and CG modes and added Hoogsteen pairs detections - Issue #1659
 - 2026-09-23: Adapted the memory estimate of the contactmap module - Issue #1699
 - 2026-10-11: Removed the dead backwards `A23a`/`A26a` sialylation detection loops from `bondglycans.cns` - Issue #1711
 - 2026-10-11: Updated glycans linkage scripts - Issue #1714

@@ -5,8 +5,10 @@ import shutil
 
 import pytest
 
+from haddock.libs import libio
 from haddock.libs.libio import (
     clean_suffix,
+    compress_files_ext,
     dot_suffix,
     extract_files_flat,
     file_exists,
@@ -148,3 +150,33 @@ def test_extract_files_flat(monkeypatch):
         # extract the archive
         extract_files_flat(archive, ".")
         assert Path("ambig_1.tbl").exists()
+
+
+@pytest.mark.parametrize(
+    "ncores,ncpus,nfiles,expected",
+    [
+        (40, 6, 10, 6),  # capped by available CPUs
+        (40, 6, 3, 3),  # capped by number of files
+        (2, 6, 10, 2),  # requested cores honoured
+        ],
+    )
+def test_compress_files_ext_caps_ncores(
+        monkeypatch, tmp_path, ncores, ncpus, nfiles, expected
+        ):
+    """Test compress_files_ext caps the pool size."""
+    for i in range(nfiles):
+        Path(tmp_path, f"file_{i}.pdb").write_text("ATOM\n")
+
+    pool_sizes = []
+    real_pool = libio.Pool
+
+    def spy_pool(n):
+        pool_sizes.append(n)
+        return real_pool(1)
+
+    monkeypatch.setattr(libio, "cpu_count", lambda: ncpus)
+    monkeypatch.setattr(libio, "Pool", spy_pool)
+
+    assert compress_files_ext(tmp_path, ".pdb", ncores=ncores)
+    assert pool_sizes == [expected]
+    assert len(list(tmp_path.glob("*.pdb.gz"))) == nfiles

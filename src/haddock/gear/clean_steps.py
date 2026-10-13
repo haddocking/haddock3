@@ -29,6 +29,7 @@ from haddock.libs.libio import (
     glob_folder,
     remove_files_with_ext,
     )
+from haddock.libs.libutil import cpu_count
 
 
 UNPACK_FOLDERS: list[FilePath] = []
@@ -92,7 +93,7 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
         )
 
     archive_ready = partial(_archive_and_remove_files, path=path)
-    _ncores = min(ncores, len(files_to_archive))
+    _ncores = max(min(ncores, cpu_count(), len(files_to_archive)), 1)
     with Pool(_ncores) as pool:
         imap = pool.imap_unordered(archive_ready, files_to_archive)
         for _ in imap:

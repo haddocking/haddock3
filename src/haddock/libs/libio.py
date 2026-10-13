@@ -24,7 +24,7 @@ from haddock.core.typing import (
     Union,
     )
 from haddock.libs.libontology import PDBFile
-from haddock.libs.libutil import sort_numbered_paths
+from haddock.libs.libutil import cpu_count, sort_numbered_paths
 
 
 def clean_suffix(ext: str) -> str:
@@ -332,6 +332,10 @@ def compress_files_ext(
     ext : str
         The extension of the files.
 
+    ncores : int
+        The requested number of worker processes. Capped to the number
+        of available CPUs and to the number of files to compress.
+
     **kwargs : anything
         Arguments passed to :py:func:`gzip_files`.
 
@@ -347,7 +351,8 @@ def compress_files_ext(
     files = glob_folder(path, ext)
     gzip_ready = partial(gzip_files, **kwargs)
     if files:
-        with Pool(ncores) as pool:
+        _ncores = max(min(ncores, cpu_count(), len(files)), 1)
+        with Pool(_ncores) as pool:
             imap = pool.imap_unordered(gzip_ready, files)
             for _ in imap:
                 pass

@@ -9,7 +9,6 @@ from itertools import combinations
 from math import isnan
 from pathlib import Path
 
-
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
 import numpy as np
@@ -192,54 +191,55 @@ class CAPRI:
         )
 
         if len(ref_interface_resdic) == 0:
-            log.warning("No reference interface found")
-        else:
-            # Load interface coordinates
-            ref_coord_dic, _ = load_coords(
-                self.reference,
+            log.warning("No interface found in reference file !")
+            return
+        
+        # Load interface coordinates
+        ref_coord_dic, _ = load_coords(
+            self.reference,
+            self.atoms,
+            ref_interface_resdic,
+            keep_hetatm=self.keep_hetatm,
+        )
+        try:
+            mod_coord_dic, _ = load_coords(
+                self.model,
                 self.atoms,
                 ref_interface_resdic,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
                 keep_hetatm=self.keep_hetatm,
             )
-            try:
-                mod_coord_dic, _ = load_coords(
-                    self.model,
-                    self.atoms,
-                    ref_interface_resdic,
-                    numbering_dic=self.model2ref_numbering,
-                    model2ref_chain_dict=self.model2ref_chain_dict,
-                    keep_hetatm=self.keep_hetatm,
-                )
-            except ALIGNError as alignerror:
-                log.warning(alignerror)
-                return
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
 
-            # Here _coord_dic keys are matched
-            #  and formatted as (chain, resnum, atom)
-            #  we will use atoms that are present in both
-            P = []
-            Q = []
+        # Here _coord_dic keys are matched
+        #  and formatted as (chain, resnum, atom)
+        #  we will use atoms that are present in both
+        P = []
+        Q = []
 
-            for k in ref_coord_dic.keys() & mod_coord_dic.keys():
-                ref_xyz = ref_coord_dic[k]
-                mod_xyz = mod_coord_dic[k]
+        for k in ref_coord_dic.keys() & mod_coord_dic.keys():
+            ref_xyz = ref_coord_dic[k]
+            mod_xyz = mod_coord_dic[k]
 
-                Q.append(ref_xyz)
-                P.append(mod_xyz)
+            Q.append(ref_xyz)
+            P.append(mod_xyz)
 
-            Q = np.asarray(Q)
-            P = np.asarray(P)
-            # write_coords("model.pdb", P)
-            # write_coords("ref.pdb", Q)
+        Q = np.asarray(Q)
+        P = np.asarray(P)
+        # write_coords("model.pdb", P)
+        # write_coords("ref.pdb", Q)
 
-            Q = Q - centroid(Q)
-            P = P - centroid(P)
-            U = kabsch(P, Q)
-            P = np.dot(P, U)
+        Q = Q - centroid(Q)
+        P = P - centroid(P)
+        U = kabsch(P, Q)
+        P = np.dot(P, U)
 
-            self.irmsd = calc_rmsd(P, Q)
-            # write_coords("model_aln.pdb", P)
-            # write_coords("ref_aln.pdb", Q)
+        self.irmsd = calc_rmsd(P, Q)
+        # write_coords("model_aln.pdb", P)
+        # write_coords("ref_aln.pdb", Q)
 
     def calc_lrmsd(self) -> None:
         """Calculate the L-RMSD."""

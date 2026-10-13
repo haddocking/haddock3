@@ -572,6 +572,12 @@ RNA_FULL_DICT_all = {
     "martini3": RNA_FULL_DICT_MARTINI3,
 }
 
+# Backmapping of PDB to HADDOCK-like nulecotide backbone oxygen namings
+NUCLEOTIDE_BACKBONE_OXYGEN_MAP = {
+    "O1P": "PO1",
+    "O2P": "PO2",
+}
+
 
 class ALIGNError(Exception):
     """Raised when something goes wrong with the ALIGNMENT library."""
@@ -706,12 +712,20 @@ def load_coords(
             # Extract PDB line data
             atom_name = line[slc_name].strip()
             resname = line[slc_resname].strip()
+
+            # Special case happens for OP1 -> PO1 and O2P -> PO2
+            # map atom to HADDOCK-like naming convention
+            if resname in list(DNA_FULL_DICT) + list(RNA_FULL_DICT):
+                if atom_name in NUCLEOTIDE_BACKBONE_OXYGEN_MAP.keys():
+                    atom_name = NUCLEOTIDE_BACKBONE_OXYGEN_MAP[atom_name]
+
             # Skip entries to be ignored
             if resname in RES_TO_BE_IGNORED:
                 continue
             else:
                 if atom_name not in atoms[resname]:
                     continue
+
             # Continue parsing of the PDB line
             chain = line[slc_chainid]
             resnum = int(line[slc_resseq])
@@ -1476,14 +1490,16 @@ def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
         # but still the user may want to see a warning
         log.warning(
             "Not all the atoms are common to all the models."
-            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) higher than allowed ({atom_similarity:.2f}%)."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. "
+            f"Similarity ({perc:.2f}%) higher than allowed ({atom_similarity:.2f}%)."
         )
     else:
         # common keys are less than 90% of the previous keys
         # something is likely wrong
         _err_msg = (
             "Input atoms are not the same for all the models."
-            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) lower than allowed ({atom_similarity:.2f}%)."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. "
+            f"Similarity ({perc:.2f}%) lower than allowed ({atom_similarity:.2f}%)."
             " Please check the input ensemble."
         )
         raise ALIGNError(_err_msg)

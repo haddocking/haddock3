@@ -1,6 +1,7 @@
 """Specific tests for topoaa."""
 
 import os
+import re
 import tempfile
 from math import isnan
 from pathlib import Path
@@ -10,7 +11,7 @@ import pytest
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG as topoaa_params
 from haddock.modules.topology.topoaa import HaddockModule as Topoaa
-from haddock.modules.topology.topoaa import generate_topology
+from haddock.modules.topology.topoaa import RECIPE_PATH, generate_topology
 
 from . import golden_data
 
@@ -81,3 +82,66 @@ def test_get_md5(topoaa, ensemble_header_w_md5, protein):
 
     observed_md5_dic = topoaa.get_md5(protein)
     assert observed_md5_dic == {}
+
+
+# The sialylation patches in carbohydrate.top all take the sialic acid as their
+# "-" reference: they modify -C2 and use -C1, -O6 and -O1A, which only SIA and
+# SIB have.  Their "+" reference is the acceptor, whose hydroxyl oxygen is the
+# one named in the patch's `ADD BOND -C2 +O<n>` line.
+SIALYL_ACCEPTOR_OXYGEN = {
+    "A23": "O3",
+    "A26": "O6",
+    "A26S": "O6",
+    "A28S": "O8",
+}
+
+OUTER_LOOP_RE = re.compile(r"^for \$id1 in id \((.*)\) loop (\w+)")
+INNER_LOOP_RE = re.compile(r"^\s+for \$id2 in id \((.*)\) loop \w+")
+PATCH_RE = re.compile(r'\$pres\.\$npatch="(\w+)"')
+
+
+def read_bondglycans_loops():
+    """Parse bondglycans.cns into one entry per outer detection loop.
+
+    Returns a list of (loop name, $id1 selection, $id2 selection, patch names).
+    """
+    text = Path(RECIPE_PATH, "cns", "bondglycans.cns").read_text()
+    loops = []
+    for line in text.splitlines():
+        outer = OUTER_LOOP_RE.match(line)
+        if outer:
+            loops.append((outer.group(2), outer.group(1), "", set()))
+            continue
+        if not loops:
+            continue
+        name, id1, id2, patches = loops[-1]
+        inner = INNER_LOOP_RE.match(line)
+        if inner:
+            loops[-1] = (name, id1, inner.group(1), patches)
+        patches.update(PATCH_RE.findall(line))
+    return loops
+
+
+def test_sialylation_loops_select_the_sialic_acid_as_first_reference():
+    """Sialyl loops must put SIA/SIB in $id1, which is bound to `reference=-`.
+
+    bondglycans.cns applies every patch with `reference=-` bound to the $id1
+    residue, so a loop that selects the acceptor as $id1 hands the patch a
+    residue that has none of the atoms it needs.  See issue #1711.
+    """
+    sialyl_loops = [
+        loop
+        for loop in read_bondglycans_loops()
+        if loop[3] & set(SIALYL_ACCEPTOR_OXYGEN)
+    ]
+
+    assert len(sialyl_loops) == 3
+
+    for name, id1, id2, patches in sialyl_loops:
+        assert "resname SIA" in id1, name
+        assert "resname SIB" in id1, name
+        assert "name C2" in id1, name
+        assert "resname GAL" not in id1, name
+        assert "resname NGA" not in id1, name
+        for patch in patches:
+            assert f"name {SIALYL_ACCEPTOR_OXYGEN[patch]}" in id2, (name, patch)

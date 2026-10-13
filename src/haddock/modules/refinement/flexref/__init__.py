@@ -103,8 +103,14 @@ class HaddockModule(BaseCNSModule):
             else:
                 ambig_fname = self.params["ambig_fname"]
 
-            for _ in range(sampling_factor):
-                # prepare cns input
+            for s_ind in range(sampling_factor):
+                # offset the seed per sampling_factor
+                # so that each refinement with same staring point
+                # gets different seed and produce different end models
+                if isinstance(model, PDBFile) and model.seed is not None:
+                    offsetted_seed = model.seed + s_ind
+                else:
+                    offsetted_seed = None
                 flexref_input = prepare_cns_input(
                     idx,
                     model,
@@ -115,7 +121,7 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     debug=self.params["debug"],
-                    seed=model.seed if isinstance(model, PDBFile) else None,
+                    seed=offsetted_seed,
                 )
 
                 out_file = f"{self.name}_{idx}.out"

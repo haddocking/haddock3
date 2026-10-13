@@ -16,6 +16,7 @@ Usage::
     haddock3-score complex.pdb -p nemsteps 50 w_air 1 electflag True
 
 """
+
 import argparse
 import sys
 import tempfile
@@ -26,14 +27,14 @@ from haddock.core.typing import (
     Callable,
     FilePath,
     Namespace,
-    )
+)
 from haddock.libs.libcli import _ParamsToDict
 
 
 ap = argparse.ArgumentParser(
     prog="haddock3-score",
     description=__doc__,
-    )
+)
 
 ap.add_argument("pdb_file", help="Input PDB file")
 
@@ -43,32 +44,33 @@ ap.add_argument(
     type=str,
     required=False,
     help="Run directory name.",
-    )
+)
 
 ap.add_argument(
     "--full",
     action="store_true",
     help="Print all energy components",
-    )
+)
 
 ap.add_argument(
     "--outputpdb",
     action="store_true",
     help="Save the output PDB file (minimized structure)",
-    )
+)
 
 ap.add_argument(
     "--outputpsf",
     action="store_true",
     help="Save the output PSF file (topology)",
-    )
+)
 
 ap.add_argument(
-    "-k" "--keep-all",
+    "-k",
+    "--keep-all",
     dest="keep_all",
     action="store_true",
     help="Keep the whole run folder.",
-    )
+)
 
 ap.add_argument(
     "-p",
@@ -82,7 +84,7 @@ ap.add_argument(
     action=_ParamsToDict,
     default={},
     nargs="*",
-    )
+)
 
 
 def _ap() -> ArgumentParser:
@@ -107,14 +109,14 @@ def maincli() -> None:
 
 
 def main(
-        pdb_file: FilePath,
-        run_dir: FilePath,
-        full: bool = False,
-        outputpdb: bool = False,
-        outputpsf: bool = False,
-        keep_all: bool = False,
-        **kwargs: Any,
-        ) -> None:
+    pdb_file: FilePath,
+    run_dir: FilePath,
+    full: bool = False,
+    outputpdb: bool = False,
+    outputpsf: bool = False,
+    keep_all: bool = False,
+    **kwargs: Any,
+) -> None:
     """
     Calculate the score of a complex using the ``emscoring`` module.
 
@@ -175,7 +177,7 @@ def main(
                 f"valid `emscoring` parameter.{os.linesep}"
                 "Valid emscoring parameters are: "
                 f"{', '.join(sorted(default_emscoring))}"
-                )
+            )
         # Compare the user-given value to the default one
         if value != default_emscoring[param]:
             print(
@@ -185,9 +187,11 @@ def main(
             # get the type of default value
             default_type = type(default_emscoring[param])
             # cast the value to the same type
-            if default_type == bool:
+            if default_type is bool:
                 if value.lower() not in ["true", "false"]:
-                    sys.exit(f"* ERROR * Boolean parameter {param} should be True or False")
+                    sys.exit(
+                        f"* ERROR * Boolean parameter {param} should be True or False"
+                    )
                 value = value.lower() == "true"
             elif param.endswith("_fname"):
                 value = EmptyPath() if str(value) == "" else Path(value).resolve()
@@ -200,7 +204,7 @@ def main(
             "* ATTENTION * Non-default parameter values were used. "
             "They should be properly reported if the output "
             "data are used for publication."
-            )
+        )
         print(f"used emscoring parameters: {ems_dict}")
 
     # create run directory
@@ -212,7 +216,6 @@ def main(
 
     # create temporary file
     with tempfile.NamedTemporaryFile(prefix=input_pdb.stem, suffix=".pdb") as tmp:
-
         # create a copy of the input pdb
         input_pdb_copy = Path(tmp.name)
         shutil.copy(input_pdb, input_pdb_copy)
@@ -223,7 +226,8 @@ def main(
                 "molecules": [input_pdb_copy],
                 "ligand_param_fname": ems_dict["ligand_param_fname"],
                 "ligand_top_fname": ems_dict["ligand_top_fname"],
-                },
+                "autotoppar": True,
+            },
             "emscoring": ems_dict,
         }
 
@@ -256,7 +260,7 @@ def main(
         + ems_dict["w_desolv"] * desolv
         + ems_dict["w_air"] * air
         + ems_dict["w_bsa"] * bsa
-        )
+    )
 
     print(
         "> HADDOCK-score ="
@@ -265,7 +269,7 @@ def main(
         f" + ({ems_dict['w_desolv']} * desolv)"
         f" + ({ems_dict['w_air']} * air)"
         f" + ({ems_dict['w_bsa']} * bsa)"
-        )
+    )
     print(f"> HADDOCK-score (emscoring) = {haddock_score_itw:.4f}")
 
     if full:
@@ -277,7 +281,7 @@ def main(
         shutil.copy(
             Path(run_dir, "1_emscoring", "emscoring_1.pdb"),
             outputpdb_name,
-            )
+        )
 
     if outputpsf:
         outputpsf_name = Path(f"{input_pdb.stem}_hs.psf")
@@ -285,15 +289,15 @@ def main(
         shutil.copy(
             Path(run_dir, "0_topoaa", f"{input_pdb_copy.stem}_haddock.psf"),
             outputpsf_name,
-            )
+        )
 
     if not keep_all:
         shutil.rmtree(run_dir)
     else:
         print(
-            'The folder where the calculations were performed was kept.'
-            f' See folder: {run_dir}'
-            )
+            "The folder where the calculations were performed was kept."
+            f" See folder: {run_dir}"
+        )
 
 
 if __name__ == "__main__":

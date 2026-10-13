@@ -13,9 +13,9 @@ The two main functions of this module are:
 See also the command-line clients ``haddock3-clean`` and
 ``haddock3-unpack``.
 """
+
 import gzip
 import shutil
-import tarfile
 
 from functools import partial
 from multiprocessing import Pool
@@ -28,7 +28,7 @@ from haddock.libs.libio import (
     compress_files_ext,
     glob_folder,
     remove_files_with_ext,
-    )
+)
 from haddock.libs.libutil import cpu_count
 
 
@@ -61,9 +61,7 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
     # uncompressing routines when restarting the run work.
 
     # Files to delete (all)
-    file_to_delete_all = (
-        "mpi.pkl",
-        )
+    file_to_delete_all = ("mpi.pkl",)
     for extension in file_to_delete_all:
         for file_ in glob_folder(path, extension):
             Path(file_).unlink()
@@ -78,7 +76,7 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
         ".out.gz",
         ".job",
         ".err",
-        )
+    )
 
     for extension in files_to_delete:
         flist = glob_folder(path, extension)
@@ -90,7 +88,7 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
         ".seed",
         ".seed.gz",
         ".con",
-        )
+    )
 
     archive_ready = partial(_archive_and_remove_files, path=path)
     _ncores = max(min(ncores, cpu_count(), len(files_to_archive)), 1)
@@ -106,7 +104,7 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
         ".pdb",
         ".psf",
         ".cnserr",
-        )
+    )
 
     for ftc in files_to_compress:
         found = compress_files_ext(path, ftc, ncores=ncores)
@@ -122,10 +120,10 @@ def _archive_and_remove_files(fta: str, path: FilePath) -> None:
 
 # eventually this function can be moved to `libs.libio` in case of future need.
 def unpack_compressed_and_archived_files(
-        folders: Iterable[FilePathT],
-        ncores: int = 1,
-        dec_all: bool = False,
-        ) -> None:
+    folders: Iterable[FilePathT],
+    ncores: int = 1,
+    dec_all: bool = False,
+) -> None:
     """
     Unpack compressed and archived files in a folders.
 
@@ -149,7 +147,7 @@ def unpack_compressed_and_archived_files(
         ".pdb.gz",
         ".psf.gz",
         ".seed.gz",
-        ]
+    ]
 
     for folder in folders:
         gz_files: list[Path] = []
@@ -157,10 +155,10 @@ def unpack_compressed_and_archived_files(
             gz_files.extend(list(glob_folder(folder, file_to_dec)))
 
         if dec_all:
-            for dec_all_files in ('.inp.gz', '.out.gz'):
+            for dec_all_files in (".inp.gz", ".out.gz"):
                 gz_files.extend(list(glob_folder(folder, dec_all_files)))
 
-        tar_files = glob_folder(folder, '.tgz')
+        tar_files = glob_folder(folder, ".tgz")
 
         if gz_files or tar_files:
             # register the folders that where unpacked
@@ -176,6 +174,7 @@ def unpack_compressed_and_archived_files(
 
         for tar_file in tar_files:
             from haddock.libs.libio import extract_files_flat
+
             extract_files_flat(tar_file, folder)
 
             tar_file.unlink()
@@ -184,15 +183,15 @@ def unpack_compressed_and_archived_files(
 def _unpack_gz(gz_file: Path) -> None:
     out_file = Path(gz_file.parent, gz_file.stem)
 
-    with gzip.open(gz_file, "rb") as fin, \
-            open(out_file, "wb") as fout:
+    with gzip.open(gz_file, "rb") as fin, open(out_file, "wb") as fout:
         shutil.copyfileobj(fin, fout, 2 * 10**8)
 
     gz_file.unlink()
 
 
-def update_unpacked_names(prev: Iterable[FilePath], new: Iterable[FilePath],
-                          original: list[FilePath]) -> None:
+def update_unpacked_names(
+    prev: Iterable[FilePath], new: Iterable[FilePath], original: list[FilePath]
+) -> None:
     """
     Update the unpacked path names.
 

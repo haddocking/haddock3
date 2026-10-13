@@ -193,7 +193,7 @@ class CAPRI:
         if len(ref_interface_resdic) == 0:
             log.warning("No interface found in reference file !")
             return
-        
+
         # Load interface coordinates
         ref_coord_dic, _ = load_coords(
             self.reference,

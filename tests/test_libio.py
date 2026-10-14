@@ -1,12 +1,15 @@
 """Test libio."""
+
 import tempfile
 from pathlib import Path
 import shutil
 
 import pytest
 
+from haddock.libs import libio
 from haddock.libs.libio import (
     clean_suffix,
+    compress_files_ext,
     dot_suffix,
     extract_files_flat,
     file_exists,
@@ -14,7 +17,7 @@ from haddock.libs.libio import (
     read_from_yaml,
     write_dic_to_file,
     write_nested_dic_to_file,
-    )
+)
 
 from . import emptycfg, haddock3_yaml_cfg_examples
 from . import golden_data
@@ -25,8 +28,8 @@ from . import golden_data
     [
         emptycfg,
         haddock3_yaml_cfg_examples,
-        ],
-    )
+    ],
+)
 def test_read_from_yaml(cfg):
     """Test read from yaml file."""
     result = read_from_yaml(cfg)
@@ -37,8 +40,8 @@ def test_write_nested_dic_to_file():
     """Test write nested dictionary to file."""
     f = tempfile.NamedTemporaryFile(delete=False)
     write_nested_dic_to_file(
-        data_dict={1: {"something": "something"}},
-        output_fname=f.name)
+        data_dict={1: {"something": "something"}}, output_fname=f.name
+    )
 
     assert Path(f.name).exists()
     assert Path(f.name).stat().st_size != 0
@@ -49,9 +52,7 @@ def test_write_nested_dic_to_file():
 def test_write_dic_to_file():
     """Test write dictionary to file."""
     f = tempfile.NamedTemporaryFile(delete=False)
-    write_dic_to_file(
-        data_dict={"something": "something"},
-        output_fname=f.name)
+    write_dic_to_file(data_dict={"something": "something"}, output_fname=f.name)
 
     assert Path(f.name).exists()
     assert Path(f.name).stat().st_size != 0
@@ -66,8 +67,8 @@ def test_write_dic_to_file():
         ("ext", ".ext"),
         (".out.gz", ".out.gz"),
         ("out.gz", ".out.gz"),
-        ]
-    )
+    ],
+)
 def test_dot_suffix(in_, expected):
     result = dot_suffix(in_)
     assert result == expected
@@ -80,20 +81,20 @@ def test_dot_suffix(in_, expected):
         ("ext", "ext"),
         (".out.gz", "out.gz"),
         ("out.gz", "out.gz"),
-        ]
-    )
+    ],
+)
 def test_clean_suffix(in_, expected):
     result = clean_suffix(in_)
     assert result == expected
 
 
 @pytest.mark.parametrize(
-    'i,expected',
+    "i,expected",
     [
         (Path(__file__), Path(__file__)),
         (str(Path(__file__)), Path(__file__)),
-        ],
-    )
+    ],
+)
 def test_file_exists(i, expected):
     """."""
     r = file_exists(i)
@@ -101,12 +102,12 @@ def test_file_exists(i, expected):
 
 
 @pytest.mark.parametrize(
-    'i',
+    "i",
     [
-        'some_bad_path',
+        "some_bad_path",
         Path(__file__).parent,  # this is a folder
-        ],
-    )
+    ],
+)
 def test_file_exists_wrong(i):
     """."""
     with pytest.raises(ValueError):
@@ -120,13 +121,13 @@ def test_folder_exists():
 
 
 @pytest.mark.parametrize(
-    'i',
+    "i",
     [
-        'some_bad_path',
+        "some_bad_path",
         Path(__file__),  # this is a file
         str(Path(__file__)),  # this is a file
-        ],
-    )
+    ],
+)
 def test_folder_exists_wrong(i):
     """."""
     with pytest.raises(ValueError):
@@ -148,3 +149,33 @@ def test_extract_files_flat(monkeypatch):
         # extract the archive
         extract_files_flat(archive, ".")
         assert Path("ambig_1.tbl").exists()
+
+
+@pytest.mark.parametrize(
+    "ncores,ncpus,nfiles,expected",
+    [
+        (40, 6, 10, 6),  # capped by available CPUs
+        (40, 6, 3, 3),  # capped by number of files
+        (2, 6, 10, 2),  # requested cores honoured
+    ],
+)
+def test_compress_files_ext_caps_ncores(
+    monkeypatch, tmp_path, ncores, ncpus, nfiles, expected
+):
+    """Test compress_files_ext caps the pool size."""
+    for i in range(nfiles):
+        Path(tmp_path, f"file_{i}.pdb").write_text("ATOM\n")
+
+    pool_sizes = []
+    real_pool = libio.Pool
+
+    def spy_pool(n):
+        pool_sizes.append(n)
+        return real_pool(1)
+
+    monkeypatch.setattr(libio, "cpu_count", lambda: ncpus)
+    monkeypatch.setattr(libio, "Pool", spy_pool)
+
+    assert compress_files_ext(tmp_path, ".pdb", ncores=ncores)
+    assert pool_sizes == [expected]
+    assert len(list(tmp_path.glob("*.pdb.gz"))) == nfiles

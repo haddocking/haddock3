@@ -2,6 +2,7 @@
 
 - 2026-10-13: Made CG DNA/RNA base ring angles consistent with the ring bonds (deviating from original Martini values) - PR #1721
 - 2026-10-12: Corrected adenine CG parameters - issue #1720
+- 2026-10-13: Caps the number of core used for the cleaning - Issue #1708
 - 2026-10-11: Updated h-bond detection for DNA/RNA in both AA and CG modes and added Hoogsteen pairs detections - Issue #1659
 - 2026-09-23: Adapted the memory estimate of the contactmap module - Issue #1699
 - 2026-10-11: Removed the dead backwards `A23a`/`A26a` sialylation detection loops from `bondglycans.cns` - Issue #1711

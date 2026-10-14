@@ -574,8 +574,8 @@ RNA_FULL_DICT_all = {
 
 # Backmapping of PDB to HADDOCK-like nulecotide backbone oxygen namings
 NUCLEOTIDE_BACKBONE_OXYGEN_MAP = {
-    "O1P": "PO1",
-    "O2P": "PO2",
+    "O1P": "OP1",
+    "O2P": "OP2",
 }
 
 

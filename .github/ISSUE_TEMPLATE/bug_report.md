@@ -35,6 +35,13 @@ Ex:
 3. Inspect the output and error messages at `run1-full/1-rigidbody/<name_of_the_file>
  -->
 
+## **What is the severity of this bug?**
+<!-- Please provide an indication of the severity of this bug. -->
+
+- [ ] 🔴 High _(code non-functional or wrong results)_
+- [ ] 🟠 Medium _(partially affects functionality)_
+- [ ] 🟡 Low _(very specific scenario/border case)_
+
 ## **Suggestions on how to fix it**
 <!-- If you have any suggestions on how to fix the bug, please write them down here -->
 

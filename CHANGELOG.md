@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-13: Fixed nucleobase selection for DNA default caprieval - Issue #1658
 - 2026-10-13: Made CG DNA/RNA base ring angles consistent with the ring bonds (deviating from original Martini values) - PR #1721
 - 2026-10-12: Corrected adenine CG parameters - issue #1720
 - 2026-10-13: Caps the number of core used for the cleaning - Issue #1708

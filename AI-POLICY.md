@@ -25,7 +25,7 @@ If AI substantially shaped any of that kind of work, disclose this in the PR and
 A reviewer might ask questions about your code, if you can't answer it because the AI wrote that part and you do not understand why, the PR might be closed.
 
 PR reviews, descriptions and responses can be written by AI but should be carefully reviewed by yourself if this is the case.
-Also keep the PR description short and to the point, don't let AI write a long essay.
+Also keep the PR description short and to the point, don't let AI write a long essay. It should follow the PR template.
 
 ## Disclosure
 

@@ -26,6 +26,7 @@ A reviewer might ask questions about your code, if you can't answer it because t
 
 PR reviews, descriptions and responses can be written by AI but should be carefully reviewed by yourself if this is the case.
 Also keep the PR description short and to the point, don't let AI write a long essay. It should follow the PR template.
+And any PR should be associated with an issue and refer to it.
 
 ## Disclosure
 

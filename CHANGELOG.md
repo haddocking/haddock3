@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-14: Corrected the restraints definition in contactairs - Issue #1727
 - 2026-10-13: Lowered the CG nucleic acid chain break cutoff from 10 to 6 Å to detect single missing nucleotide - Issue #1722
 - 2026-10-13: Fixed nucleobase selection for DNA default caprieval - Issue #1658
 - 2026-10-13: Made CG DNA/RNA base ring angles consistent with the ring bonds (deviating from original Martini values) - PR #1721

@@ -196,9 +196,6 @@ igroup
     interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
                  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
     interaction  (resn SHA) (not resn SHA) weight * 0 end
-    ! turn off vdw interaction of CG charged beads with all other particles
-    interaction  (name SCD1) (all) weight vdw 0.0 end
-    interaction  (name SCD2) (all) weight vdw 0.0 end
 end
 
 flag include bond angle impr vdw end

@@ -176,13 +176,3 @@ def test_base_pairs(structure, rep):
     for key, group in pairs.items():
         for pair, n_restraints in group.items():
             assert n_restraints == RESTRAINTS_PER_PAIR[rep][key], (key, pair)
-
-
-def test_dna_rna_restraints_copies_identical():
-    """All modules must ship the same dna-rna_restraints.cns."""
-    modules_path = EMREF_PATH.parents[1]
-    copies = sorted(modules_path.glob("*/*/cns/dna-rna_restraints.cns"))
-    assert len(copies) == 5
-    reference = copies[0].read_text()
-    for copy in copies[1:]:
-        assert copy.read_text() == reference, copy

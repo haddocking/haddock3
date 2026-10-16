@@ -29,6 +29,9 @@ igroup
 
     end loop nloop1
 
+    ! turn off vdw interaction of CG charged fake-beads with all other particles
+    interaction ((name SCD1 or name SCD2) and (resn ASN or resn GLN or resn SER or resn THR)) (all) weight vdw 0.0 end
+
     interaction (resn ANI) (resn ANI) weight * 1.0 vdw 0.0 elec 0.0 end
     interaction (resn DAN) (resn DAN) weight * 1.0 vdw 0.0 elec 0.0 end
     interaction (resn XAN) (resn XAN) weight * 1.0 vdw 0.0 elec 0.0 end

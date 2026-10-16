@@ -20,7 +20,14 @@ igroup
   
         interaction (segid $prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) 
                     (segid $prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1.0 end
-      
+
+        ! turn off vdw and elec interaction of CG fake-charged beads within the same chain
+        interaction (segid $prot_segid_$nchain1 and (name SCD1 or name SCD2) and (resn ASN or resn GLN or resn SER or resn THR)) 
+                    (segid $prot_segid_$nchain1 and (name SCD1 or name SCD2) and (resn ASN or resn GLN or resn SER or resn THR))
+                    weight vdw 0.0 elec 0.0 end
+        ! turn off vdw interaction of CG fake-charged beads within all particles
+        interaction (segid $prot_segid_$nchain1 and (name SCD1 or name SCD2) and (resn ASN or resn GLN or resn SER or resn THR))
+                    (all) weight vdw 0.0 end
     end loop nloop1
 
     interaction (resn ANI) (resn ANI) weight * 1.0 vdw 0.0 elec 0.0 end
@@ -31,6 +38,3 @@ igroup
     interaction (resn SHA) (not resn SHA) weight * 0.0 end
 
 end
-
-
-

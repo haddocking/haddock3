@@ -6,15 +6,23 @@ from pathlib import Path
 
 import pytest
 
-
 SCRIPT = Path(
     Path(__file__).resolve().parents[1],
     "examples",
     "run_examples_regression.py",
 )
 
-CAPRI_HEADER = ["model", "md5", "caprieval_rank", "score", "irmsd", "fnat",
-                "lrmsd", "ilrmsd", "dockq"]
+CAPRI_HEADER = [
+    "model",
+    "md5",
+    "caprieval_rank",
+    "score",
+    "irmsd",
+    "fnat",
+    "lrmsd",
+    "ilrmsd",
+    "dockq",
+]
 
 # rank, irmsd, fnat, ilrmsd, dockq
 CAPRI_ROWS = [
@@ -39,8 +47,17 @@ def write_capri(path):
     """Write a small capri_ss.tsv file."""
     lines = ["\t".join(CAPRI_HEADER)]
     for rank, irmsd, fnat, ilrmsd, dockq in CAPRI_ROWS:
-        values = [f"../model_{rank}.pdb", "-", rank, -100, irmsd, fnat, 0,
-                  ilrmsd, dockq]
+        values = [
+            f"../model_{rank}.pdb",
+            "-",
+            rank,
+            -100,
+            irmsd,
+            fnat,
+            0,
+            ilrmsd,
+            dockq,
+        ]
         lines.append("\t".join(map(str, values)))
     path.write_text("\n".join(lines) + "\n")
 
@@ -49,7 +66,7 @@ def make_run(run_dir, finished=True, error=False):
     """Create a minimal finished run directory."""
     for step in ("0_topoaa", "1_caprieval"):
         Path(run_dir, step).mkdir(parents=True)
-        Path(run_dir, step, "io.json").write_text('{"input": [], "output": [{}, {}]}')  # noqa: E501
+        Path(run_dir, step, "io.json").write_text('{"input": [], "output": [{}, {}]}')
     write_capri(Path(run_dir, "1_caprieval", "capri_ss.tsv"))
     log = ["[2026-01-01 10:00:00,000 libworkflow INFO] Reading instructions"]
     if error:
@@ -63,14 +80,15 @@ def test_discovery_skips(regression):
     """MPI, batch and follow-up examples are skipped, others are run."""
     tests = {t[0]: t[2] for t in regression.discover_tests(regression.EXAMPLES)}
     assert tests["docking-protein-protein/docking-protein-protein-test"] is None
-    assert tests["docking-protein-protein/docking-protein-protein-hpc-test"] == "mode = batch"  # noqa: E501
+    hpc = tests["docking-protein-protein/docking-protein-protein-hpc-test"]
+    assert hpc == "mode = batch"
     assert tests["docking-protein-protein/docking-restart-exit-test"]
     assert all(reason for tid, reason in tests.items() if "mpi" in tid)
 
 
 def test_expected_steps_stop_at_exit(regression):
     """Steps after an [exit] module are not expected."""
-    cfg = Path(regression.EXAMPLES, "docking-protein-protein", "docking-exit-test.cfg")  # noqa: E501
+    cfg = Path(regression.EXAMPLES, "docking-protein-protein", "docking-exit-test.cfg")
     assert regression.expected_steps(cfg) == ["topoaa", "rigidbody"]
 
 
@@ -79,7 +97,8 @@ def test_capri_stats_dockq(regression, tmp_path):
     capri = Path(tmp_path, "capri_ss.tsv")
     write_capri(capri)
     stats = regression.capri_stats(capri, regression.DOCKQ_CRITERIA)
-    assert (stats["nmodels"], stats["acceptable"], stats["medium"], stats["high"]) == (5, 3, 2, 1)  # noqa: E501
+    counts = [stats[k] for k in ("nmodels", "acceptable", "medium", "high")]
+    assert counts == [5, 3, 2, 1]
     assert stats["first_acceptable"]["rank"] == "1"
     assert stats["first_medium"]["rank"] == "2"
     assert stats["best"]["rank"] == "4"
@@ -120,7 +139,7 @@ def test_inspect_run_missing_step(regression, tmp_path):
     """A module without a step folder is reported."""
     run_dir = Path(tmp_path, "run1")
     make_run(run_dir)
-    result = regression.inspect_run(run_dir, ["topoaa", "caprieval", "emref"], "x")  # noqa: E501
+    result = regression.inspect_run(run_dir, ["topoaa", "caprieval", "emref"], "x")
     assert result["problems"] == ["step 2_emref missing"]
 
 
@@ -156,7 +175,7 @@ def test_compare_detects_changes(regression, tmp_path):
     assert "first acceptable rank: 1 → 3 ▼" in text
     assert "best model rank: 4 → 1 ▲" in text
     assert "1 output models (reference 2)" in text
-    assert "rank of the first acceptable or better model: 0 better, 0 unchanged, 1 worse" in text  # noqa: E501
+    assert "first acceptable or better model: 0 better, 0 unchanged, 1 worse" in text
 
 
 def test_compare_failures(regression, tmp_path):

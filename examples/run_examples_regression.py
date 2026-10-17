@@ -36,11 +36,10 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-
 try:
     from haddock.gear.config import load as read_config
-except Exception:
-    print(  # noqa: T201
+except Exception:  # noqa: BLE001
+    print(
         "Haddock3 could not be imported. "
         "Please activate the haddock3 python environment.",
         file=sys.stderr,
@@ -76,7 +75,7 @@ IGNORED_SUFFIXES = (".out", ".err", ".inp", ".seed")
 
 def printf(*args):
     """Print and flush."""
-    print(*args, flush=True)  # noqa: T201
+    print(*args, flush=True)
 
 
 # ---------------------------------------------------------------------------
@@ -101,7 +100,7 @@ def skip_reason(cfg):
         return FOLLOW_UPS[cfg.name]
     try:
         params = read_config(cfg)["final_cfg"]
-    except Exception as err:
+    except Exception as err:  # noqa: BLE001
         return f"configuration could not be read ({err})"
     if params.get("mode", "local") != "local":
         return f"mode = {params['mode']}"
@@ -227,7 +226,7 @@ def fingerprint(step_dir):
     if io_json.exists():
         try:
             nmodels = len(json.loads(io_json.read_text())["output"])
-        except Exception:
+        except Exception:  # noqa: BLE001
             nmodels = None
     files = sorted(
         {
@@ -280,8 +279,8 @@ def capri_stats(capri_file, criteria):
         "acceptable": sum(passes(r, accept) for r in rows),
         "medium": sum(passes(r, medium) for r in rows),
         "high": sum(passes(r, high) for r in rows),
-        "first_acceptable": summary(next((r for r in rows if passes(r, accept)), None)),  # noqa: E501
-        "first_medium": summary(next((r for r in rows if passes(r, medium)), None)),  # noqa: E501
+        "first_acceptable": summary(next((r for r in rows if passes(r, accept)), None)),
+        "first_medium": summary(next((r for r in rows if passes(r, medium)), None)),
         "best": summary(best),
     }
 
@@ -294,7 +293,7 @@ def run_all(tests, env, log_dir, timeout, break_on_errors):
         printf(f"[{i}/{len(runnable)}] {test_id} ...")
         try:
             result = run_test(test_id, cfg, env, log_dir, timeout)
-        except Exception as err:
+        except Exception as err:  # noqa: BLE001
             # never let one broken example stop a long series of runs
             result = {
                 "status": "FAILED",
@@ -339,7 +338,7 @@ def load_json(path):
 def git(*args, cwd=REPO):
     """Run a git command and return its stdout."""
     return subprocess.run(
-        ["git", *args], cwd=cwd, check=True, capture_output=True, text=True,
+        ["git", *args], cwd=cwd, check=True, capture_output=True, text=True
     ).stdout.strip()
 
 
@@ -406,7 +405,7 @@ def compare_capri(ref, new, tol_dockq, tol_irmsd):
         diffs.append(
             f"best model rank: {_fmt(old_best.get('rank'))} → "
             f"{_fmt(new_best.get('rank'))}"
-            f"{_arrow(_int(old_best.get('rank')), _int(new_best.get('rank')), False)}"  # noqa: E501
+            f"{_arrow(_int(old_best.get('rank')), _int(new_best.get('rank')), False)}"
         )
     for key, tol, higher in (
         ("dockq", tol_dockq, True),
@@ -482,14 +481,14 @@ def ranking_row(test_id, step, crit, ref, new, tol_dockq, tol_irmsd):
         "first": _rank_change(old_first, new_first),
         "best_rank": _rank_change(old_best.get("rank"), new_best.get("rank")),
         "best_quality": _value_change(
-            old_best.get(qkey), new_best.get(qkey), tol, higher,
+            old_best.get(qkey), new_best.get(qkey), tol, higher
         ),
     }
     rmsd_change = _value_change(
-        old_best.get(rmsd_key), new_best.get(rmsd_key), tol_irmsd, False,
+        old_best.get(rmsd_key), new_best.get(rmsd_key), tol_irmsd, False
     )
     dockq_change = _value_change(
-        old_best.get("dockq"), new_best.get("dockq"), tol_dockq, True,
+        old_best.get("dockq"), new_best.get("dockq"), tol_dockq, True
     )
 
     values = set(changes.values())
@@ -506,10 +505,10 @@ def ranking_row(test_id, step, crit, ref, new, tol_dockq, tol_irmsd):
     row = (
         f"| {test_id} | {step} | {label} "
         f"| {_cell(old_first, new_first, changes['first'])} "
-        f"| {_cell(old_best.get('rank'), new_best.get('rank'), changes['best_rank'])} "  # noqa: E501
-        f"| {_cell(old_best.get(rmsd_key), new_best.get(rmsd_key), rmsd_change)} "  # noqa: E501
+        f"| {_cell(old_best.get('rank'), new_best.get('rank'), changes['best_rank'])} "
+        f"| {_cell(old_best.get(rmsd_key), new_best.get(rmsd_key), rmsd_change)} "
         f"| {_cell(old_best.get('fnat'), new_best.get('fnat'), 0)} "
-        f"| {_cell(old_best.get('dockq'), new_best.get('dockq'), dockq_change)} "  # noqa: E501
+        f"| {_cell(old_best.get('dockq'), new_best.get('dockq'), dockq_change)} "
         f"| {verdict} |"
     )
     return row, changes
@@ -525,8 +524,10 @@ def ranking_section(rows, tallies):
         return f"{counts[0]} better, {counts[1]} unchanged, {counts[2]} worse"
 
     header = [
-        "| Test | Step | Criteria | First acceptable rank | Best model rank "
-        "| Best i-RMSD / il-RMSD | Best Fnat | Best DockQ | Verdict |",
+        (
+            "| Test | Step | Criteria | First acceptable rank | Best model rank "
+            "| Best i-RMSD / il-RMSD | Best Fnat | Best DockQ | Verdict |"
+        ),
         "|---|---|---|---|---|---|---|---|---|",
     ]
     changed = [row for row in rows if not row.endswith("| same |")]
@@ -535,12 +536,16 @@ def ranking_section(rows, tallies):
         "",
         f"- rank of the first acceptable or better model: {tally('first')}",
         f"- rank of the best model: {tally('best_rank')}",
-        "- quality of the best model (DockQ, or il-RMSD for ligands): "
-        f"{tally('best_quality')}",
+        (
+            "- quality of the best model (DockQ, or il-RMSD for ligands): "
+            f"{tally('best_quality')}"
+        ),
         "",
-        "The best model is the one with the lowest i-RMSD (il-RMSD for the "
-        "ligand criteria). Values are `main → now`; a single value means "
-        "unchanged.",
+        (
+            "The best model is the one with the lowest i-RMSD (il-RMSD for the "
+            "ligand criteria). Values are `main → now`; a single value means "
+            "unchanged."
+        ),
         "",
         f"### Steps that changed ({len(changed)})",
         "",
@@ -635,15 +640,18 @@ def compare(ref, cur, tol_dockq, tol_irmsd, tol_runtime):
                 if crit not in new_capri:
                     continue
                 row, changes = ranking_row(
-                    test_id, step, crit, ref_stats, new_capri[crit],
-                    tol_dockq, tol_irmsd,
+                    test_id,
+                    step,
+                    crit,
+                    ref_stats,
+                    new_capri[crit],
+                    tol_dockq,
+                    tol_irmsd,
                 )
                 ranking_rows.append(row)
                 for key, value in changes.items():
                     ranking_tallies[key].append(value)
-                diffs = compare_capri(
-                    ref_stats, new_capri[crit], tol_dockq, tol_irmsd,
-                )
+                diffs = compare_capri(ref_stats, new_capri[crit], tol_dockq, tol_irmsd)
                 if diffs:
                     changed = True
                     label = "DockQ" if crit == "dockq" else "ligand il-RMSD"
@@ -669,10 +677,12 @@ def compare(ref, cur, tol_dockq, tol_irmsd, tol_runtime):
     report = [
         "# Example regression report",
         "",
-        f"- Reference: {ref.get('label')} `{ref.get('commit')}` ({ref.get('date')})",  # noqa: E501
-        f"- Current: {cur.get('label')} `{cur.get('commit')}` ({cur.get('date')})",  # noqa: E501
-        f"- Tolerances: DockQ {tol_dockq}, i-RMSD/il-RMSD {tol_irmsd} Å, "
-        f"runtime {tol_runtime * 100:.0f}%",
+        f"- Reference: {ref.get('label')} `{ref.get('commit')}` ({ref.get('date')})",
+        f"- Current: {cur.get('label')} `{cur.get('commit')}` ({cur.get('date')})",
+        (
+            f"- Tolerances: DockQ {tol_dockq}, i-RMSD/il-RMSD {tol_irmsd} Å, "
+            f"runtime {tol_runtime * 100:.0f}%"
+        ),
         "- ▲ better, ▼ worse (higher DockQ and lower (i)RMSD / rank are better)",
         "",
         "## 1. Run status and outputs",
@@ -711,7 +721,7 @@ def write_report(args):
         printf(f"{missing} not found: run `init` and `run` first.")
         sys.exit(1)
     report, summary = compare(
-        ref, cur, args.tol_dockq, args.tol_irmsd, args.tol_runtime,
+        ref, cur, args.tol_dockq, args.tol_irmsd, args.tol_runtime
     )
     REPORT_MD.write_text(os.linesep.join(report))
     printf("")
@@ -761,7 +771,7 @@ def load_args():
     ap.add_argument(
         "--ref-branch",
         default="origin/main",
-        help="Git reference used to build the reference (default: origin/main).",  # noqa: E501
+        help="Git reference used to build the reference (default: origin/main).",
     )
     ap.add_argument(
         "--timeout",
@@ -825,11 +835,14 @@ def main():
         )
         ref_tests = select(discover_tests(Path(worktree, "examples")), args.only)
         results = run_all(
-            ref_tests, env, Path(OUTDIR, "logs", "reference"),
-            args.timeout, args.break_on_errors,
+            ref_tests,
+            env,
+            Path(OUTDIR, "logs", "reference"),
+            args.timeout,
+            args.break_on_errors,
         )
         previous = load_json(REFERENCE_JSON) if args.only else None
-        save(REFERENCE_JSON, args.ref_branch, commit, ref_tests, results, previous)  # noqa: E501
+        save(REFERENCE_JSON, args.ref_branch, commit, ref_tests, results, previous)
         return
 
     branch = git("rev-parse", "--abbrev-ref", "HEAD")
@@ -837,8 +850,7 @@ def main():
     if git("status", "--porcelain", "--untracked-files=no"):
         commit += " (+ local changes)"
     results = run_all(
-        tests, env, Path(OUTDIR, "logs", "current"),
-        args.timeout, args.break_on_errors,
+        tests, env, Path(OUTDIR, "logs", "current"), args.timeout, args.break_on_errors
     )
     previous = load_json(CURRENT_JSON) if args.only else None
     save(CURRENT_JSON, branch, commit, tests, results, previous)

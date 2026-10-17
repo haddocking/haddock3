@@ -45,12 +45,6 @@ To accelerate analysis modules (`rmsdmatrix`, `ilrmsdmatrix`, `clustfcc`, `conta
 pip install 'haddock3[gpu]'
 ```
 
-For cloud GPU benchmarking and execution via Modal:
-
-```bash
-pip install 'haddock3[modal]'
-```
-
 See [GPU Acceleration Guide](gpu_acceleration.md) for full configuration details.
 
 ## Troubleshooting the CNS executable

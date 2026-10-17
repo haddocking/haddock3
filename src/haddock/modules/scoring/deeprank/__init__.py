@@ -63,9 +63,7 @@ class HaddockModule(ScoringModule):
         #  Because of that we need `parse_ncores` explicitly
         use_gpu = self.params.get("use_gpu", False)
         gpu_devices = self.params.get("gpu_devices", None)
-        gpu_device = (
-            gpu_devices[0] if (gpu_devices and len(gpu_devices) > 0) else None
-        )
+        gpu_device = gpu_devices[0] if (gpu_devices and len(gpu_devices) > 0) else None
         ncores = parse_ncores(self.params["ncores"])
 
         deeprank_wrapper = DeeprankWrapper(

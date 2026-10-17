@@ -19,7 +19,7 @@ def fixture_fcc_module(monkeypatch):
             order=1,
             path=Path("."),
             initial_params=clustfcc_pars,
-            )
+        )
 
 
 def test_io_json(fcc_module, protprot_input_list):
@@ -59,4 +59,3 @@ def test_one_model_one_cluster_gpu(fcc_module, protprot_input_list):
     fcc_module.output_models = single_model_list
     fcc_module.run()
     assert fcc_module.output_models[0].clt_id == 1
-

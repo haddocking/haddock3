@@ -827,13 +827,9 @@ def compute_distance_matrix(
             import torch
 
             dev = torch.device(
-                device
-                if (torch.cuda.is_available() or device == "mps")
-                else "cpu"
+                device if (torch.cuda.is_available() or device == "mps") else "cpu"
             )
-            coords_t = torch.tensor(
-                all_atm_coords, dtype=torch.float32, device=dev
-            )
+            coords_t = torch.tensor(all_atm_coords, dtype=torch.float32, device=dev)
             n_atoms = len(all_atm_coords)
             if n_atoms <= chunk_size:
                 return torch.cdist(coords_t, coords_t).cpu().numpy()
@@ -842,9 +838,7 @@ def compute_distance_matrix(
             for i_start in range(0, n_atoms, chunk_size):
                 i_end = min(i_start + chunk_size, n_atoms)
                 chunk = coords_t[i_start:i_end]
-                dist_matrix[i_start:i_end] = (
-                    torch.cdist(chunk, coords_t).cpu().numpy()
-                )
+                dist_matrix[i_start:i_end] = torch.cdist(chunk, coords_t).cpu().numpy()
             return dist_matrix
         except (ImportError, RuntimeError, ValueError):
             pass

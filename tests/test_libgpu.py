@@ -142,4 +142,3 @@ def test_nvidia_mps_daemon_handling():
         with patch("haddock.libs.libgpu.is_nvidia_mps_running", return_value=False):
             assert start_nvidia_mps_daemon() is True
             assert mock_run.called
-

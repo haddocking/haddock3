@@ -261,4 +261,3 @@ def calculate_pairwise_matrix(
             cc, cc_v = calc_fcc(contacts[i], contacts[k])
             fcc, fcc_v = cc * contact_lengths[i], cc * contact_lengths[k]
             yield i + 1, k + 1, fcc, fcc_v
-

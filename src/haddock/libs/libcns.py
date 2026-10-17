@@ -29,9 +29,7 @@ def generate_default_header(
         link = load_link(Path(path, cns_paths.LINK_FILE))
         scatter = load_scatter(Path(path, cns_paths.SCATTER_LIB))
         tensor = load_tensor(**cns_paths.get_tensors(path))
-        trans_vec = load_trans_vectors(
-            **cns_paths.get_translation_vectors(path)
-        )
+        trans_vec = load_trans_vectors(**cns_paths.get_translation_vectors(path))
         water_box = load_boxtyp20(cns_paths.get_water_box(path)["boxtyp20"])
 
     else:
@@ -253,10 +251,7 @@ def load_boxtyp20(waterbox_param: Path) -> str:
 
 
 # This is used by docking
-def prepare_multiple_input(
-    pdb_input_list: list[str], 
-    psf_input_list: list[str]
-) -> str:
+def prepare_multiple_input(pdb_input_list: list[str], psf_input_list: list[str]) -> str:
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
@@ -322,8 +317,8 @@ def prepare_single_input(
 
 
 def _add_cg_backmapping_arguments(
-        input_element: Union[PDBFile, list[PDBFile]],
-        ) -> str:
+    input_element: Union[PDBFile, list[PDBFile]],
+) -> str:
     """Build CG backmapping CNS arguments string.
 
     Args:
@@ -342,14 +337,20 @@ def _add_cg_backmapping_arguments(
     cgtoaa_tbl_list: list[Path] = []
     input_str: str = ""
     # Structure composed of multiple entries
-    if isinstance(input_element.aa_topology, (list, tuple,)):
+    if isinstance(
+        input_element.aa_topology,
+        (
+            list,
+            tuple,
+        ),
+    ):
         for psf in input_element.aa_topology:
             if psf is None:
                 raise ValueError(
                     f"All-Atom Topology not found {input_element.rel_path}. "
                     "Conversion to all-atom requires a topology generated "
                     "with [topoaa] and [topocg]."
-                    )
+                )
             else:
                 aa_psf_list.append(psf.rel_path.as_posix())
         for i, tbl in enumerate(input_element.cgtoaa_tbl):
@@ -358,7 +359,7 @@ def _add_cg_backmapping_arguments(
                     f"Coarse-Crain to All-Atom restraint file not found "
                     f"{input_element.rel_path}. Conversion to all-atom "
                     "requires a restraint file generated with [topocg]."
-                    )
+                )
             elif not input_element.shape[i]:
                 cgtoaa_tbl_list.append(tbl.as_posix())
     # Structure composed of only one entry
@@ -370,24 +371,26 @@ def _add_cg_backmapping_arguments(
                 f"All-Atom Topology not found {input_element.rel_path}."
                 "Conversion to all-atom requires a topology generated with"
                 " [topoaa] and [topocg]."
-                )
+            )
         aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
         if pdb.cgtoaa_tbl is None and not shape:
             raise ValueError(
                 "Coarse-Crain to All-Atom restraint file not found for"
                 f" entry: {input_element.rel_path}. Conversion to all-atom"
                 " requires a restraint file generated with [topocg]."
-                )
+            )
         cgtoaa_tbl_list.append(pdb.cgtoaa_tbl.as_posix())
 
     # Loop over all the files that need to be added
-    for ind, (aa_psf, cg2aa_tbl) in enumerate(zip(aa_psf_list, cgtoaa_tbl_list), start=1):
+    for ind, (aa_psf, cg2aa_tbl) in enumerate(
+        zip(aa_psf_list, cgtoaa_tbl_list), start=1
+    ):
         # eval line for psf
         input_str += write_eval_line(f"input_aa_psf_filename_{ind}", aa_psf)
         # eval line for pdb
         input_str += write_eval_line(
             f"input_aa_pdb_filename_{ind}", f"{aa_psf[:-4]}.pdb"
-            )
+        )
         # eval line for tbl
         input_str += write_eval_line(f"input_cgtbl_filename_{ind}", cg2aa_tbl)
     return input_str

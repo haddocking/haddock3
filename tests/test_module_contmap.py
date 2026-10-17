@@ -851,7 +851,9 @@ def test_protprot_contactmap_gpu(protprot_contactmap):
     assert isinstance(heavy_contacts, list)
 
 
-def test_contactmap_module_memory_bypass_gpu(contactmap, protprot_input_list, monkeypatch):
+def test_contactmap_module_memory_bypass_gpu(
+    contactmap, protprot_input_list, monkeypatch
+):
     """Test that use_gpu=True bypasses the CPU RAM exhaustion guard."""
     from unittest.mock import patch
 

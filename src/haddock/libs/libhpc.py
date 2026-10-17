@@ -35,9 +35,7 @@ TERMINATED_STATUS = (
 # modules/defaults.cfg file
 _tmpcfg = read_from_yaml_config(modules_defaults_path)
 HPCScheduler_CONCAT_DEFAULT: int = _tmpcfg["concat"]  # original value 1
-HPCWorker_QUEUE_LIMIT_DEFAULT: int = _tmpcfg[
-    "queue_limit"
-]  # original value 100 # noqa: E501
+HPCWorker_QUEUE_LIMIT_DEFAULT: int = _tmpcfg["queue_limit"]  # original value 100 # noqa: E501
 HPCWorker_QUEUE_DEFAULT: str = _tmpcfg["queue"]  # original value ""
 del _tmpcfg
 

@@ -181,7 +181,6 @@ def get_best_available_device(
     return "cpu"
 
 
-
 class GPUDevicePool:
     """Manages assignment of GPU devices to parallel workers."""
 
@@ -290,4 +289,3 @@ def stop_nvidia_mps_daemon() -> bool:
     except (subprocess.SubprocessError, OSError) as err:
         log.warning(f"Could not stop NVIDIA CUDA MPS daemon: {err}")
         return False
-

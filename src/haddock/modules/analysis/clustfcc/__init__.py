@@ -155,7 +155,6 @@ class HaddockModule(BaseHaddockModule):
                     data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
                     fh.write(f"{data_str}{os.linesep}")
 
-
         # Cluster
         log.info("Clustering...")
         pool = create_elements(

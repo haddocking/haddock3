@@ -87,10 +87,7 @@ def calculate_pairwise_matrix_gpu(
 
     # Pre-calculate inverse contact counts for normalization
     lens = np.array(
-        [
-            len(con) if hasattr(con, "__len__") else len(list(con))
-            for con in contacts
-        ],
+        [len(con) if hasattr(con, "__len__") else len(list(con)) for con in contacts],
         dtype=np.float64,
     )
     inv_lens = np.zeros_like(lens)

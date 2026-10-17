@@ -515,7 +515,6 @@ def get_cns_cuda_executable() -> Optional[Path]:
     return None
 
 
-
 def get_prodrg_exec() -> tuple[Optional[Path], Optional[Path]]:
     """
     Locate the prodrg binary and its parameter file.

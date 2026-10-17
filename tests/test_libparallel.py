@@ -314,3 +314,20 @@ def test_generic_task_run_with_complex_args():
 @pytest.mark.skip("WIP")
 def test_scheduler_terminate(scheduler_files):
     pass
+
+
+def test_scheduler_gpu_devices():
+    """Test Scheduler distributes GPU devices across workers."""
+
+    class GPUTask:
+        def __init__(self):
+            self.gpu_device = None
+
+        def run(self):
+            return self.gpu_device
+
+    tasks = [GPUTask() for _ in range(4)]
+    sched = Scheduler(tasks=tasks, ncores=2, use_gpu=True, gpu_devices=[0, 1])
+    assert len(sched.worker_list) == 2
+    assert sched.worker_list[0].gpu_device == 0
+    assert sched.worker_list[1].gpu_device == 1

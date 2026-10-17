@@ -1,4 +1,5 @@
 """Test libutil."""
+
 from pathlib import Path
 
 import pytest
@@ -14,25 +15,25 @@ from haddock.libs.libutil import (
     recursive_dict_update,
     sort_numbered_paths,
     transform_to_list,
-    )
+)
 
 
 @pytest.mark.parametrize(
-    'i,expected',
+    "i,expected",
     [
         (1, 1),
-        ('1', 1),
+        ("1", 1),
         (0, 0),
-        ('0', 0),
-        ],
-    )
+        ("0", 0),
+    ],
+)
 def test_non_negative_int(i, expected):
     """."""
     r = non_negative_int(i)
     assert r == expected
 
 
-@pytest.mark.parametrize('i', [-1, -12, -14])
+@pytest.mark.parametrize("i", [-1, -12, -14])
 def test_non_negative_int_error(i):
     """."""
     with pytest.raises(ValueError):
@@ -40,20 +41,20 @@ def test_non_negative_int_error(i):
 
 
 @pytest.mark.parametrize(
-    'in1,expected',
+    "in1,expected",
     [
-        ('pdb_1.pdb', 1),
-        ('pdb2.pdb', 2),
-        ('pdb2.pdb', 2),
-        ('pdb_3.pdb', 3),
-        ('pdb_1231.pdb', 1231),
-        ('pdb_0011.pdb', 11),
-        ('pdb_1_.pdb', 1),
-        ('pdb_1', 1),
-        ('5', 5),
-        ('pdb_20200101_1.pdb', 1),
-        ],
-    )
+        ("pdb_1.pdb", 1),
+        ("pdb2.pdb", 2),
+        ("pdb2.pdb", 2),
+        ("pdb_3.pdb", 3),
+        ("pdb_1231.pdb", 1231),
+        ("pdb_0011.pdb", 11),
+        ("pdb_1_.pdb", 1),
+        ("pdb_1", 1),
+        ("5", 5),
+        ("pdb_20200101_1.pdb", 1),
+    ],
+)
 def test_get_number(in1, expected):
     """Test get number from path."""
     result = get_number_from_path_stem(in1)
@@ -61,17 +62,15 @@ def test_get_number(in1, expected):
 
 
 @pytest.mark.parametrize(
-    'in1,expected',
+    "in1,expected",
     [
         (
-            ['f_1.pdb', 'f_11.pdb', 'f_2.pdb'],
-            ['f_1.pdb', 'f_2.pdb', 'f_11.pdb'],
-            ),
-        (
-            ['b.pdb', 'c.pdb', 'a.pdb'],
-            ['a.pdb', 'b.pdb', 'c.pdb']),
-        ],
-    )
+            ["f_1.pdb", "f_11.pdb", "f_2.pdb"],
+            ["f_1.pdb", "f_2.pdb", "f_11.pdb"],
+        ),
+        (["b.pdb", "c.pdb", "a.pdb"], ["a.pdb", "b.pdb", "c.pdb"]),
+    ],
+)
 def test_sort_numbered_input_1(in1, expected):
     """Test sort numbered inputs."""
     result = sort_numbered_paths(*in1)
@@ -79,11 +78,11 @@ def test_sort_numbered_input_1(in1, expected):
 
 
 @pytest.mark.parametrize(
-    'in1,error',
+    "in1,error",
     [
-        (['f_1.pdb', 'f_11.pdb', 'f_2.pdb'], TypeError),
-        ]
-    )
+        (["f_1.pdb", "f_11.pdb", "f_2.pdb"], TypeError),
+    ],
+)
 def test_sort_numbered_inputs_error(in1, error):
     """Test sort numbered inputs raised Errors."""
     with pytest.raises(error):
@@ -114,7 +113,7 @@ def test_recursive_dict_update_empty():
 a = {
     "param1": 1,
     "param2": {"param3": 4, "param4": {"param5": {"param6": 7, "param7": 8}}},
-    }
+}
 b = {"param1", "param3", "param6", "param7"}
 
 
@@ -122,8 +121,8 @@ b = {"param1", "param3", "param6", "param7"}
     "inp,expected",
     [
         (a, b),
-        ]
-    )
+    ],
+)
 def test_extract_keys_recursive(inp, expected):
     """Test extract keys recursive."""
     result = set(extract_keys_recursive(inp))
@@ -142,8 +141,8 @@ def test_extract_keys_recursive(inp, expected):
         [set([1, 2, 3]), [1, 2, 3]],
         [{"a": 1}, ["a"]],
         [None, [None]],
-        ]
-    )
+    ],
+)
 def test_transform_to_list(value, expected):
     result = transform_to_list(value)
     assert result == expected
@@ -158,8 +157,8 @@ def test_convert_paths_to_strings_recursive():
         "v2": {
             "v3": EmptyPath(),
             "v4": Path("file2"),
-            }
-        }
+        },
+    }
 
     e = {
         "a": 1,
@@ -168,8 +167,8 @@ def test_convert_paths_to_strings_recursive():
         "v2": {
             "v3": "",
             "v4": "file2",
-            }
-        }
+        },
+    }
 
     r = recursive_convert_paths_to_strings(i)
     assert r == e
@@ -183,7 +182,7 @@ def test_cpu_count():
 
 
 @pytest.mark.parametrize(
-    'n,njobs,maxcpus,expected',
+    "n,njobs,maxcpus,expected",
     [
         (10, 10, 10, 10),
         (10, 10, 5, 5),
@@ -194,8 +193,8 @@ def test_cpu_count():
         (1000, 1, False, 1),
         (5, 10, False, min(5, cpu_count() - 1)),
         (None, None, None, cpu_count() - 1),
-        ]
-    )
+    ],
+)
 def test_parse_ncores(n, njobs, maxcpus, expected):
     """Test parse_ncores function."""
     r = parse_ncores(n, njobs, maxcpus)
@@ -203,16 +202,37 @@ def test_parse_ncores(n, njobs, maxcpus, expected):
 
 
 @pytest.mark.parametrize(
-    'maxcpus',
+    "maxcpus",
     [
         1.1,
         {},
         (1, 2),
         set([1, 3]),
-        '1',
-        ]
-    )
+        "1",
+    ],
+)
 def test_parse_ncores_error(maxcpus):
     """Test parse_ncores function."""
     with pytest.raises(TypeError):
         parse_ncores(max_cpus=maxcpus)
+
+
+def test_get_cns_cuda_executable(monkeypatch, tmp_path):
+    """Test get_cns_cuda_executable function."""
+    from unittest.mock import patch
+
+    from haddock.libs.libutil import get_cns_cuda_executable
+
+    # Test with custom environment variable pointing to temporary binary
+    fake_cuda_cns = tmp_path / "cns_solve_CUDA"
+    fake_cuda_cns.touch(mode=0o755)
+    monkeypatch.setenv("CNS_CUDA_EXEC", str(fake_cuda_cns))
+
+    found = get_cns_cuda_executable()
+    assert found == fake_cuda_cns
+
+    # Test when environment variable is unset and binary not found
+    monkeypatch.delenv("CNS_CUDA_EXEC", raising=False)
+    with patch("shutil.which", return_value=None):
+        # Should return None cleanly without error
+        assert get_cns_cuda_executable() is None

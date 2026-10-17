@@ -219,15 +219,29 @@ def calculate_fcc_nc(list_a, list_b):
     return ncommon, ncommon
 
 
-def calculate_pairwise_matrix(contacts, ignore_chain):
+def calculate_pairwise_matrix(
+    contacts,
+    ignore_chain,
+    use_gpu: bool = False,
+    device: str = "cpu",
+):
     """Calculates a matrix of pairwise fraction of common contacts (FCC).
     Outputs numeric indexes.
 
     contacts: list_of_unique_pairs_of_residues [set/list]
+    ignore_chain: bool, whether to ignore chain IDs
+    use_gpu: bool, whether to use GPU or accelerated sparse computation
+    device: str, computational device ('cpu', 'cuda', 'mps', etc.)
 
     Returns pairwise matrix as an iterator, each entry in the form:
     FCC(cplx_1/cplx_2) FCC(cplx_2/cplx_1)
     """
+    if use_gpu and not ignore_chain:
+        from haddock.libs.libfcc_gpu import calculate_pairwise_matrix_gpu
+
+        matrix = calculate_pairwise_matrix_gpu(contacts, device=device)
+        yield from matrix
+        return
 
     contact_lengths = []
     for con in contacts:
@@ -247,3 +261,4 @@ def calculate_pairwise_matrix(contacts, ignore_chain):
             cc, cc_v = calc_fcc(contacts[i], contacts[k])
             fcc, fcc_v = cc * contact_lengths[i], cc * contact_lengths[k]
             yield i + 1, k + 1, fcc, fcc_v
+

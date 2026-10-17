@@ -125,36 +125,38 @@ class HaddockModule(BaseHaddockModule):
         #  - Run as many jobs in parallel as that memory can feed, down to a single one
         #  - Only when even one job does not fit, fail graciously
         engine_params = self.params
-        per_job_memory = get_necessary_memory(models)
-        current_memory = get_available_memory()
-        # Each job holds one distance matrix, and at most `ncores` of them run at once
-        concurrent_jobs = min(self.params["ncores"], len(contact_jobs))
-        if current_memory < per_job_memory * concurrent_jobs:
-            # Running slower is better than not running at all, so keep only as many
-            # cores as the available memory can feed
-            affordable_jobs = int(current_memory // per_job_memory)
-            if affordable_jobs < 1:
+        use_gpu = self.params.get("use_gpu", False)
+        if not use_gpu:
+            per_job_memory = get_necessary_memory(models)
+            current_memory = get_available_memory()
+            # Each job holds one distance matrix, and at most `ncores` of them run at once
+            concurrent_jobs = min(self.params["ncores"], len(contact_jobs))
+            if current_memory < per_job_memory * concurrent_jobs:
+                # Running slower is better than not running at all, so keep only as many
+                # cores as the available memory can feed
+                affordable_jobs = int(current_memory // per_job_memory)
+                if affordable_jobs < 1:
+                    self.log(
+                        msg=(
+                            f"Not enough memory to execute `contactmap` (needs "
+                            f"{per_job_memory:.2f}Gb for a single model, has "
+                            f"{current_memory:.2f}Gb). ! Skipping this module !"
+                        ),
+                        level="warning",
+                    )
+                    self.output_models = models
+                    self.export_io_models()
+                    return
                 self.log(
                     msg=(
-                        f"Not enough memory to execute `contactmap` (needs "
-                        f"{per_job_memory:.2f}Gb for a single model, has "
-                        f"{current_memory:.2f}Gb). ! Skipping this module !"
+                        f"Not enough memory to run {concurrent_jobs} `contactmap` jobs in "
+                        f"parallel (needs {per_job_memory * concurrent_jobs:.2f}Gb has "
+                        f"{current_memory:.2f}Gb); reducing the number of cores to "
+                        f"{affordable_jobs}."
                     ),
                     level="warning",
                 )
-                self.output_models = models
-                self.export_io_models()
-                return
-            self.log(
-                msg=(
-                    f"Not enough memory to run {concurrent_jobs} `contactmap` jobs in "
-                    f"parallel (needs {per_job_memory * concurrent_jobs:.2f}Gb has "
-                    f"{current_memory:.2f}Gb); reducing the number of cores to "
-                    f"{affordable_jobs}."
-                ),
-                level="warning",
-            )
-            engine_params = {**self.params, "ncores": affordable_jobs}
+                engine_params = {**self.params, "ncores": affordable_jobs}
 
         # ==============================================================================
 

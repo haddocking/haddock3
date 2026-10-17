@@ -109,6 +109,8 @@ class HaddockModule(BaseHaddockModule):
             scoring = self.params["scoring"]
             cores = self.params['ncores'] or 1
             cmd = f"lightdock3.py setup.json {steps} -c {cores} -s {scoring}"
+            if self.params.get("use_gpu", False):
+                cmd += " -g"
             subprocess.call(cmd, shell=True)
 
         # Clustering

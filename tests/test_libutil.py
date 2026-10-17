@@ -216,3 +216,26 @@ def test_parse_ncores_error(maxcpus):
     """Test parse_ncores function."""
     with pytest.raises(TypeError):
         parse_ncores(max_cpus=maxcpus)
+
+
+def test_get_cns_cuda_executable(monkeypatch, tmp_path):
+    """Test get_cns_cuda_executable function."""
+    from unittest.mock import patch
+
+    from haddock.libs.libutil import get_cns_cuda_executable
+
+    # Test with custom environment variable pointing to temporary binary
+    fake_cuda_cns = tmp_path / "cns_solve_CUDA"
+    fake_cuda_cns.touch(mode=0o755)
+    monkeypatch.setenv("CNS_CUDA_EXEC", str(fake_cuda_cns))
+
+    found = get_cns_cuda_executable()
+    assert found == fake_cuda_cns
+
+    # Test when environment variable is unset and binary not found
+    monkeypatch.delenv("CNS_CUDA_EXEC", raising=False)
+    with patch("shutil.which", return_value=None):
+        # Should return None cleanly without error
+        assert get_cns_cuda_executable() is None
+
+

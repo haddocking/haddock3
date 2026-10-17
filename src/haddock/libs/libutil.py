@@ -481,6 +481,41 @@ def get_cns_executable() -> tuple[Path, Path]:
     return cns_exec, cns_exec_linux
 
 
+def get_cns_cuda_executable() -> Optional[Path]:
+    """Locate CUDA-accelerated CNS executable (cns_solve_CUDA) if available.
+
+    Checks:
+    1. Environment variable CNS_CUDA_EXEC
+    2. Path in cns/bin/cns_solve_CUDA or varia/cns1.3/bin/cns_solve_CUDA
+    3. PATH executable search for 'cns_solve_cuda' or 'cns_solve_CUDA'
+
+    Returns:
+        Optional[Path]: Path to the CUDA CNS binary, or None if not found.
+    """
+    cns_cuda_env = os.environ.get("CNS_CUDA_EXEC")
+    if cns_cuda_env:
+        p = Path(cns_cuda_env)
+        if p.exists() and os.access(p, os.X_OK):
+            return p
+
+    try:
+        cns_exec_dir = Path(files(haddock).joinpath("cns/bin"))  # type: ignore
+        for candidate in ("cns_solve_CUDA", "cns_solve_cuda.bin", "cns_cuda.bin"):
+            p = Path(cns_exec_dir, candidate)
+            if p.exists() and os.access(p, os.X_OK):
+                return p
+    except (OSError, ValueError, TypeError):
+        pass
+
+    for candidate in ("cns_solve_CUDA", "cns_solve_cuda"):
+        found = shutil.which(candidate)
+        if found:
+            return Path(found)
+
+    return None
+
+
+
 def get_prodrg_exec() -> tuple[Optional[Path], Optional[Path]]:
     """
     Locate the prodrg binary and its parameter file.

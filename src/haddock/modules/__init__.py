@@ -427,6 +427,8 @@ def get_engine(
             target_queue=params["queue"],
             queue_limit=params["queue_limit"],
             concat=params["concat"],
+            use_gpu=params.get("use_gpu", False),
+            gpu_devices=params.get("gpu_devices", None),
         )
 
     elif mode == "local":
@@ -434,6 +436,8 @@ def get_engine(
             Scheduler,
             ncores=params["ncores"],
             max_cpus=params["max_cpus"],
+            use_gpu=params.get("use_gpu", False),
+            gpu_devices=params.get("gpu_devices", None),
         )
     elif mode == "mpi":
         return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore
@@ -451,6 +455,8 @@ def get_engine(
                 Scheduler,
                 ncores=params["ncores"],
                 max_cpus=params["max_cpus"],
+                use_gpu=params.get("use_gpu", False),
+                gpu_devices=params.get("gpu_devices", None),
             )
 
     else:

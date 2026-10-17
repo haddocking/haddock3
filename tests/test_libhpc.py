@@ -138,3 +138,20 @@ def test_hpcworker_update_status(
     status = hpcworker.update_status()
     assert status == hpcworker.job_status
     assert status == 'running'
+
+
+def test_create_slurm_header_gpu():
+    """Test create_slurm_header with GPU configuration."""
+    from haddock.libs.libhpc import create_slurm_header
+
+    header = create_slurm_header(use_gpu=True, gpus=2)
+    assert "#SBATCH --gres=gpu:2" in header
+
+
+def test_create_slurm_header_no_gpu():
+    """Test create_slurm_header without GPU configuration."""
+    from haddock.libs.libhpc import create_slurm_header
+
+    header = create_slurm_header(use_gpu=False)
+    assert "--gres=gpu" not in header
+

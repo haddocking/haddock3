@@ -36,7 +36,12 @@ from pathlib import Path
 from haddock import RMSD_path, log
 from haddock.core.defaults import FAST_RMSDMATRIX_EXEC, MODULE_DEFAULT_YAML
 from haddock.core.typing import Any, AtomsDict, FilePath
-from haddock.libs.libalign import check_common_atoms, rearrange_xyz_files
+from haddock.libs.libalign import (
+    check_common_atoms,
+    get_atoms,
+    load_coords,
+    rearrange_xyz_files,
+)
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
@@ -137,6 +142,43 @@ class HaddockModule(BaseHaddockModule):
             self.params["allatoms"],
             self.params["atom_similarity"],
         )
+
+        use_gpu = self.params.get("use_gpu", False)
+        tot_npairs = nmodels * (nmodels - 1) // 2
+
+        if use_gpu:
+            import numpy as np
+            from haddock.libs.libalign_gpu import (
+                compute_rmsd_matrix,
+                write_rmsd_matrix_file,
+            )
+
+            log.info("Running GPU-accelerated RMSD matrix calculation")
+            coords_list = []
+            for mod in models:
+                atoms: AtomsDict = get_atoms(mod, self.params["allatoms"])
+                ref_coord_dic, _ = load_coords(mod, atoms, filter_resdic)
+                common_coords = [ref_coord_dic[k] for k in common_keys]
+                coords_list.append(common_coords)
+
+            coords_arr = np.array(coords_list, dtype=np.float64)
+            i_idx, j_idx, rmsds = compute_rmsd_matrix(
+                coords_arr,
+                use_gpu=True,
+                device=self.params.get("gpu_platform", "auto"),
+            )
+            final_output_name = "rmsd.matrix"
+            write_rmsd_matrix_file(final_output_name, i_idx, j_idx, rmsds)
+
+            # Sending models to the next step of the workflow
+            self.output_models = models
+            self.export_io_models()
+            # Sending matrix path to the next step of the workflow
+            matrix_io = ModuleIO()
+            rmsd_matrix_file = RMSDFile(final_output_name, npairs=tot_npairs)
+            matrix_io.add(rmsd_matrix_file)
+            matrix_io.save(filename="rmsd_matrix.json")
+            return
 
         xyzwriter_jobs: list[XYZWriterJob] = []
         for core in range(ncores):

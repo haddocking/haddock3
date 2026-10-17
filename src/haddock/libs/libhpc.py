@@ -52,6 +52,8 @@ class HPCWorker:
         job_id: Optional[int] = None,
         workfload_manager: str = "slurm",
         queue: Optional[str] = None,
+        use_gpu: bool = False,
+        gpu_devices: Optional[list[int]] = None,
     ) -> None:
         """
         Define the HPC job.
@@ -68,6 +70,8 @@ class HPCWorker:
         self.job_num = num
         self.job_id = job_id
         self.job_status = "unknown"
+        self.use_gpu = use_gpu
+        self.gpu_devices = gpu_devices
 
         self.moddir = Path(tasks[0].envvars["MODDIR"])
         self.toppar = tasks[0].envvars["TOPPAR"]
@@ -79,14 +83,19 @@ class HPCWorker:
 
     def prepare_job_file(self, queue_type: str = "slurm") -> None:
         """Prepare the job file for all the jobs in the task list."""
-        job_file_contents = create_job_header_funcs[queue_type](
-            job_name="haddock3",
-            queue=self.queue,
-            ncores=1,
-            work_dir=self.moddir,
-            stdout_path=self.job_fname.with_suffix(".out"),
-            stderr_path=self.job_fname.with_suffix(".err"),
-        )
+        header_kwargs: dict[str, Any] = {
+            "job_name": "haddock3",
+            "queue": self.queue,
+            "ncores": 1,
+            "work_dir": self.moddir,
+            "stdout_path": self.job_fname.with_suffix(".out"),
+            "stderr_path": self.job_fname.with_suffix(".err"),
+        }
+        if queue_type == "slurm":
+            header_kwargs["use_gpu"] = self.use_gpu
+            header_kwargs["gpus"] = len(self.gpu_devices) if self.gpu_devices else 1
+
+        job_file_contents = create_job_header_funcs[queue_type](**header_kwargs)
 
         job_file_contents += create_CNS_export_envvars(
             MODDIR=self.moddir,
@@ -96,9 +105,7 @@ class HPCWorker:
 
         job_file_contents += f"cd {self.moddir}{os.linesep}"
         for job in self.tasks:
-            cmd = (
-                f"{job.cns_exec} < {job.input_file} > {job.output_file}" f"{os.linesep}"
-            )
+            cmd = f"{job.cns_exec} < {job.input_file} > {job.output_file}{os.linesep}"
             job_file_contents += cmd
 
         self.job_fname.write_text(job_file_contents)
@@ -142,19 +149,29 @@ class HPCScheduler:
         target_queue: str = HPCWorker_QUEUE_DEFAULT,
         queue_limit: int = HPCWorker_QUEUE_LIMIT_DEFAULT,
         concat: int = HPCScheduler_CONCAT_DEFAULT,
+        use_gpu: bool = False,
+        gpu_devices: Optional[list[int]] = None,
     ) -> None:
         self.num_tasks = len(task_list)
         self.queue_limit = queue_limit
         self.concat = concat
+        self.use_gpu = use_gpu
+        self.gpu_devices = gpu_devices
 
         # split tasks according to concat level
         if concat > 1:
-            log.info(
-                f"Concatenating, each .job will produce {concat} " "(or less) models"
-            )
+            log.info(f"Concatenating, each .job will produce {concat} (or less) models")
         job_list = [task_list[i : i + concat] for i in range(0, len(task_list), concat)]
 
-        self.worker_list = [HPCWorker(t, j) for j, t in enumerate(job_list, start=1)]
+        self.worker_list = [
+            HPCWorker(
+                t,
+                j,
+                use_gpu=self.use_gpu,
+                gpu_devices=self.gpu_devices,
+            )
+            for j, t in enumerate(job_list, start=1)
+        ]
 
         # set the queue
         #  (this is outside the comprehension for clarity)
@@ -190,9 +207,7 @@ class HPCScheduler:
                         worker.update_status()
                         # Log status if not finished
                         if worker.job_status != "finished":
-                            log.info(
-                                f">> {worker.job_fname.name}" f" {worker.job_status}"
-                            )
+                            log.info(f">> {worker.job_fname.name} {worker.job_status}")
                         # Increment number of terminated works
                         if worker.job_status in TERMINATED_STATUS:
                             terminated_count += 1
@@ -240,6 +255,8 @@ def create_slurm_header(
     stderr_path: FilePath = "haddock3_job.err",
     queue: Optional[str] = None,
     ncores: int = 48,
+    use_gpu: bool = False,
+    gpus: int = 1,
 ) -> str:
     """
     Create HADDOCK3 Slurm Batch job file.
@@ -256,6 +273,12 @@ def create_slurm_header(
     time : int
         Time in minutes before job reach TIMEOUT status.
 
+    use_gpu : bool
+        Whether to request GPU resources in SLURM.
+
+    gpus : int
+        Number of GPUs to request via --gres=gpu:X.
+
     **job_params
         According to `job_setup`.
 
@@ -270,6 +293,8 @@ def create_slurm_header(
         header += f"#SBATCH -p {queue}{os.linesep}"
     header += f"#SBATCH --nodes=1{os.linesep}"
     header += f"#SBATCH --tasks-per-node={str(ncores)}{os.linesep}"
+    if use_gpu:
+        header += f"#SBATCH --gres=gpu:{gpus}{os.linesep}"
     header += f"#SBATCH --output={stdout_path}{os.linesep}"
     header += f"#SBATCH --error={stderr_path}{os.linesep}"
     # commenting the workdir option (not supported by all versions of slurm)

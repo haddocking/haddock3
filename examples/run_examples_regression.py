@@ -56,7 +56,7 @@ CURRENT_JSON = Path(OUTDIR, "current.json")
 REPORT_MD = Path(OUTDIR, "report.md")
 DEFAULT_WORKTREE = Path(REPO.parent, "haddock3-main-ref")
 
-# configuration files that need an existing run (see run_tests.py)
+# configuration files that need an existing run (--extend-run / --restart)
 FOLLOW_UPS = {
     "docking-extend-run-exit-test.cfg": "needs an existing run (--extend-run)",
     "docking-extend-run-test.cfg": "needs an existing run (--extend-run)",

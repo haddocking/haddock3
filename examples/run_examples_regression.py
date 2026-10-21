@@ -323,7 +323,7 @@ def save(path, label, commit, tests, results, previous=None):
             "date": datetime.now().isoformat(timespec="seconds"),
         }
     )
-    data["tests"].update(results)
+    data["tests"].update({t: {**r, "commit": commit} for t, r in results.items()})
     data["skipped"].update({t[0]: t[2] for t in tests if t[2] is not None})
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=1))
@@ -333,6 +333,42 @@ def save(path, label, commit, tests, results, previous=None):
 def load_json(path):
     """Load a results file if it exists."""
     return json.loads(path.read_text()) if path.exists() else None
+
+
+def _hash(commit):
+    """Strip the "(+ local changes)" note from a commit label."""
+    return commit.split()[0] if commit else commit
+
+
+def commits_by_test(data):
+    """Map each test to the commit its results come from."""
+    return {t: r.get("commit", data.get("commit")) for t, r in data["tests"].items()}
+
+
+def load_previous(path, commit, tests, allow_mixed, hint):
+    """
+    Load the results that `--only` results will be merged with.
+
+    Stop if results that are kept come from another commit, unless
+    `allow_mixed` is set.
+    """
+    previous = load_json(path)
+    if previous is None:
+        return None
+    rerun = {t[0] for t in tests if t[2] is None}
+    others = {
+        _hash(c)
+        for t, c in commits_by_test(previous).items()
+        if t not in rerun and _hash(c) != _hash(commit)
+    }
+    if others and not allow_mixed:
+        printf(
+            f"{path} has results from commit(s) {', '.join(sorted(others))}, "
+            f"not {commit}. Merging would mix results from different commits."
+        )
+        printf(f"Either rerun without --only, {hint}, or use --allow-mixed.")
+        sys.exit(1)
+    return previous
 
 
 def git(*args, cwd=REPO):
@@ -677,8 +713,8 @@ def compare(ref, cur, tol_dockq, tol_irmsd, tol_runtime):
     report = [
         "# Example regression report",
         "",
-        f"- Reference: {ref.get('label')} `{ref.get('commit')}` ({ref.get('date')})",
-        f"- Current: {cur.get('label')} `{cur.get('commit')}` ({cur.get('date')})",
+        *describe_run("Reference", ref),
+        *describe_run("Current", cur),
         (
             f"- Tolerances: DockQ {tol_dockq}, i-RMSD/il-RMSD {tol_irmsd} Å, "
             f"runtime {tol_runtime * 100:.0f}%"
@@ -711,6 +747,21 @@ def compare(ref, cur, tol_dockq, tol_irmsd, tol_runtime):
         "",
     ]
     return report, summary
+
+
+def describe_run(name, data):
+    """Report header lines for a results file, flagging mixed commits."""
+    commit = data.get("commit")
+    lines = [f"- {name}: {data.get('label')} `{commit}` ({data.get('date')})"]
+    others = {
+        t: c for t, c in commits_by_test(data).items() if _hash(c) != _hash(commit)
+    }
+    if others:
+        lines.append(
+            f"  - **Mixed commits:** {len(others)} tests come from other commits:"
+        )
+        lines.extend(f"    - {t}: `{c}`" for t, c in sorted(others.items()))
+    return lines
 
 
 def write_report(args):
@@ -785,6 +836,11 @@ def load_args():
         action="store_true",
         help="Stop as soon as a test fails.",
     )
+    ap.add_argument(
+        "--allow-mixed",
+        action="store_true",
+        help="With --only, allow merging with results from another commit.",
+    )
     ap.add_argument("--tol-dockq", type=float, default=0.05)
     ap.add_argument("--tol-irmsd", type=float, default=0.5)
     ap.add_argument(
@@ -834,6 +890,15 @@ def main():
             filter(None, [str(Path(worktree, "src")), env.get("PYTHONPATH")])
         )
         ref_tests = select(discover_tests(Path(worktree, "examples")), args.only)
+        previous = None
+        if args.only:
+            previous = load_previous(
+                REFERENCE_JSON,
+                commit,
+                ref_tests,
+                args.allow_mixed,
+                "use --ref-branch <commit> to run at the stored commit",
+            )
         results = run_all(
             ref_tests,
             env,
@@ -841,7 +906,6 @@ def main():
             args.timeout,
             args.break_on_errors,
         )
-        previous = load_json(REFERENCE_JSON) if args.only else None
         save(REFERENCE_JSON, args.ref_branch, commit, ref_tests, results, previous)
         return
 
@@ -849,10 +913,18 @@ def main():
     commit = git("rev-parse", "--short", "HEAD")
     if git("status", "--porcelain", "--untracked-files=no"):
         commit += " (+ local changes)"
+    previous = None
+    if args.only:
+        previous = load_previous(
+            CURRENT_JSON,
+            commit,
+            tests,
+            args.allow_mixed,
+            "check out the stored commit",
+        )
     results = run_all(
         tests, env, Path(OUTDIR, "logs", "current"), args.timeout, args.break_on_errors
     )
-    previous = load_json(CURRENT_JSON) if args.only else None
     save(CURRENT_JSON, branch, commit, tests, results, previous)
     if REFERENCE_JSON.exists():
         write_report(args)

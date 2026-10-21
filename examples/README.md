@@ -41,6 +41,8 @@ python run_examples_regression.py compare   # compare saved results only
   `extract-capri-stats-dockq.sh` script (and `extract-capri-stats-ligand.sh`
   for the protein-ligand examples).
 - Use `--only PATTERN` (repeatable) to run a subset, e.g. `--only scoring/`.
+  Merging with saved results from another commit is refused unless
+  `--allow-mixed` is given.
   `-h` lists the tolerances and other options.
 - Results, logs and the report (`report.md`) are written to
   `examples/regression/`.

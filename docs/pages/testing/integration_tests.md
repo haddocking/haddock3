@@ -64,6 +64,11 @@ something went wrong.
 - `--only PATTERN` (repeatable) runs a subset, e.g.
   `--only docking-protein-DNA --only scoring/`. The results are merged with
   those already saved, so you can rerun a single example and compare again.
+  Each result records the commit it was run on. If the saved results come from
+  another commit (e.g. `main` has moved since `init`), the script stops: rerun
+  without `--only`, use `--ref-branch <commit>` (for `init`) or check out the
+  stored commit (for `run`), or pass `--allow-mixed`. Tests from other commits
+  are then listed in the report header.
 - `compare` rewrites the report from the saved results without running
   anything, e.g. with other tolerances (`--tol-dockq`, `--tol-irmsd`,
   `--tol-runtime`).

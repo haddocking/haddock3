@@ -189,3 +189,33 @@ def test_compare_failures(regression, tmp_path):
     ref["tests"]["x/test"].update(status="FAILED", problems=["exit code 1"])
     _, summary = regression.compare(ref, cur, 0.05, 0.5, 0.5)
     assert summary == [("x/test", "FAILED (also on main)")]
+
+
+def test_only_runs_refuse_mixed_commits(regression, tmp_path):
+    """Merging --only results from another commit stops unless allowed."""
+    path = Path(tmp_path, "reference.json")
+    ref = _results(regression, tmp_path)
+    tests = [("x/test", None, None), ("y/test", None, None)]
+    regression.save(path, "main", "abc1234", tests, ref["tests"])
+    only_y = [("y/test", None, None)]
+
+    # same commit, or rerunning every saved test, is fine
+    assert regression.load_previous(
+        path, "abc1234 (+ local changes)", only_y, False, ""
+    )
+    assert regression.load_previous(path, "def5678", tests, False, "")
+
+    with pytest.raises(SystemExit):
+        regression.load_previous(path, "def5678", only_y, False, "")
+
+    previous = regression.load_previous(path, "def5678", only_y, True, "")
+    new = {"y/test": copy.deepcopy(ref["tests"]["x/test"])}
+    regression.save(path, "main", "def5678", only_y, new, previous)
+    data = regression.load_json(path)
+    assert regression.commits_by_test(data) == {
+        "x/test": "abc1234",
+        "y/test": "def5678",
+    }
+    header = "\n".join(regression.describe_run("Reference", data))
+    assert "Mixed commits:** 1 tests" in header
+    assert "x/test: `abc1234`" in header

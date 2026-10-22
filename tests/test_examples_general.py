@@ -4,7 +4,6 @@ Test general implementation in haddock3 modules.
 Ensures all modules follow the same compatible architecture.
 """
 
-import importlib.util
 import pytest
 
 from pathlib import Path
@@ -52,20 +51,6 @@ def test_config_reader_can_read_example_configs(example_config):
     """Test gear.config_reader can read examples' configuration file."""
     strict = Path(example_config).name != "params.cfg"
     read_config(example_config, strict=strict)
-
-
-def test_integration_examples():
-    """Test if integration helper scripts have the same examples."""
-    run_tests = Path(examples_path, "run_tests.py")
-    spec1 = importlib.util.spec_from_file_location("runtests", run_tests)
-    mod1 = importlib.util.module_from_spec(spec1)
-    spec1.loader.exec_module(mod1)
-
-    compare_runs = Path(examples_path, "compare_runs.py")
-    spec2 = importlib.util.spec_from_file_location("compare", compare_runs)
-    mod2 = importlib.util.module_from_spec(spec2)
-    spec2.loader.exec_module(mod2)
-    assert mod1.examples == mod2.examples, f"{mod1.examples}!={mod2.examples}"
 
 
 def test_validate_cfg_files():

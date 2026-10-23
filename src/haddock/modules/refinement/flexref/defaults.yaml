@@ -205,10 +205,10 @@ contactairs:
   type: boolean
   title: Contact restraints
   short: Contact restraints between molecules
-  long: Contact restraints between molecules. These are defined as ambiguous distance restraint
-    between each residue of a molecule and all residues of the other molecules with 5A from that residue.
-    This can be used to restraint the contacts between the interfaces. Note that this can generate a large number of ambiguous restraints
-    and slow down the computations
+  long: Contact restraints between molecules. These are defined as ambiguous distance restraints
+    between each residue of a molecule within 5A of another molecule and all residues of the other molecules
+    within 5A of that molecule. This can be used to restrain the contacts between the interfaces.
+    Note that this can generate a large number of ambiguous restraints and slow down the computations.
   group: 'distance restraints'
   explevel: expert
 kcont:

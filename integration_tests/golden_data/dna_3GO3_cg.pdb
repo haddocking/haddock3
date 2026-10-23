@@ -1,6 +1,6 @@
 REMARK FILENAME="3GO3_dna_haddock_cg_martini2.pdb"
 REMARK this is a macro to define cg nucleid acid links
-REMARK DATE:11-Oct-2026  20:35:06       created by user: unknown
+REMARK DATE:12-Oct-2026  15:15:47       created by user: unknown
 REMARK VERSION:1.3U
 ATOM      1  BB1 DA  A   1      -4.295  -5.402 -13.408  1.00  1.00      A    N  
 ATOM      2  BB2 DA  A   1      -4.336  -7.533 -13.885  1.00  1.00      A    N  

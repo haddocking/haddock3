@@ -1,5 +1,11 @@
 # Changelog
 
+- 2026-10-17: Added python script to automate regressions tests using the examples - Issue #1731
+- 2026-10-14: Corrected the restraints definition in contactairs - Issue #1727
+- 2026-10-13: Lowered the CG nucleic acid chain break cutoff from 10 to 6 Å to detect single missing nucleotide - Issue #1722
+- 2026-10-13: Fixed nucleobase selection for DNA default caprieval - Issue #1658
+- 2026-10-13: Made CG DNA/RNA base ring angles consistent with the ring bonds (deviating from original Martini values) - PR #1721
+- 2026-10-12: Corrected adenine CG parameters - issue #1720
 - 2026-10-13: Caps the number of core used for the cleaning - Issue #1708
 - 2026-10-11: Updated h-bond detection for DNA/RNA in both AA and CG modes and added Hoogsteen pairs detections - Issue #1659
 - 2026-09-23: Adapted the memory estimate of the contactmap module - Issue #1699

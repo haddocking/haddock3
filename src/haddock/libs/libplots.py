@@ -138,7 +138,7 @@ def create_html(
     """
     # Check if plotly javascript must be flushed in this file
     if not plotly_js_import:
-        plotly_js_import = f'<script src="{plotly_cdn_url()}"></script>'
+        plotly_js_import = f'<script charset="utf-8" src="{plotly_cdn_url()}"></script>'
 
     # Write HTML content
     html_content = f"""

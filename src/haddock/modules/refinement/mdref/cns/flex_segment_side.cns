@@ -1,3 +1,17 @@
+! flex_segment_side.cns
+!     Define semi-flexible segments (side-chains only)
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+do (store5 = 0) (all)
+do (store6 = 0) (all)
 
 !first flexible segments for docking
 evaluate($nchain1 = 0)

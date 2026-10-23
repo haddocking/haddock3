@@ -611,7 +611,7 @@ energy end
 evaluate ($cdih = 0.0)
 evaluate ($etot = $ener - $noe)
 evaluate ($noe = $bestair)
-evaluate ($etot = $etot + $noe)
+evaluate ($etot = $vdw + $elec + $noe)
 
 evaluate ($Data.flags.dihed = false)
 inline @MODULE:print_coorheader.cns

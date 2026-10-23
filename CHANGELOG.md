@@ -1,6 +1,8 @@
 # Changelog
 
 - 2026-10-16: Improved the consistency of CNS scripts across modules - Issue #1729
+- 2026-10-23: Specify usage of charset utf-8 when generating a plotly figure - Issue #1734
+- 2026-10-17: Added python script to automate regressions tests using the examples - Issue #1731
 - 2026-10-14: Corrected the restraints definition in contactairs - Issue #1727
 - 2026-10-13: Lowered the CG nucleic acid chain break cutoff from 10 to 6 Å to detect single missing nucleotide - Issue #1722
 - 2026-10-13: Fixed nucleobase selection for DNA default caprieval - Issue #1658

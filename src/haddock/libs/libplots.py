@@ -138,7 +138,7 @@ def create_html(
     """
     # Check if plotly javascript must be flushed in this file
     if not plotly_js_import:
-        plotly_js_import = f'<script src="{plotly_cdn_url()}"></script>'
+        plotly_js_import = f'<script charset="utf-8" src="{plotly_cdn_url()}"></script>'
 
     # Write HTML content
     html_content = f"""
@@ -1742,10 +1742,10 @@ def offline_js_manager(fpath: FilePath, offline: bool) -> str:
             # Write the plotly java script content
             plotly_js_fpath.write_text(get_plotlyjs())
         # Build HTML string
-        plotly_js_import = f'<script src="{plotly_js_fpath}"></script>'
+        plotly_js_import = f'<script charset="utf-8" src="{plotly_js_fpath}"></script>'
     else:
         # Use CDN url to obtain the script
-        plotly_js_import = f'<script src="{plotly_cdn_url()}"></script>'
+        plotly_js_import = f'<script charset="utf-8" src="{plotly_cdn_url()}"></script>'
     return plotly_js_import
 
 

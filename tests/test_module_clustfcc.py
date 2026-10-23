@@ -19,7 +19,7 @@ def fixture_fcc_module(monkeypatch):
             order=1,
             path=Path("."),
             initial_params=clustfcc_pars,
-            )
+        )
 
 
 def test_io_json(fcc_module, protprot_input_list):
@@ -45,6 +45,16 @@ def test_one_model_one_cluster(fcc_module, protprot_input_list):
     """Test the creation of a single cluster when one input model provided."""
     single_model_list = [protprot_input_list[0]]
     # set the input and output models
+    fcc_module.previous_io.output = single_model_list
+    fcc_module.output_models = single_model_list
+    fcc_module.run()
+    assert fcc_module.output_models[0].clt_id == 1
+
+
+def test_one_model_one_cluster_gpu(fcc_module, protprot_input_list):
+    """Test clustfcc execution with use_gpu=True."""
+    single_model_list = [protprot_input_list[0]]
+    fcc_module.params["use_gpu"] = True
     fcc_module.previous_io.output = single_model_list
     fcc_module.output_models = single_model_list
     fcc_module.run()

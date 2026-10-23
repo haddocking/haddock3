@@ -33,6 +33,40 @@ max_cpus:
     in the machine minus 1. This calculation is done automatically.
   group: "execution"
   explevel: expert
+use_gpu:
+  default: false
+  type: boolean
+  title: Enable GPU acceleration
+  short: Enable optional GPU acceleration where available.
+  long: If true, HADDOCK3 will leverage available GPUs for supported modules (OpenMM, matrix computations, deep learning scoring, etc.). Falls back to CPU if no GPU or required libraries are available.
+  group: "execution"
+  explevel: easy
+gpu_devices:
+  default: [0]
+  type: list
+  minitems: 1
+  maxitems: 128
+  title: GPU device indices
+  short: List of GPU device indices to utilize.
+  long: Specify which GPU devices can be used for execution (e.g., [0], [0, 1]). Workers will be assigned across these devices.
+  group: "execution"
+  explevel: expert
+gpu_platform:
+  default: "auto"
+  type: string
+  minchars: 3
+  maxchars: 10
+  choices:
+    - auto
+    - cuda
+    - opencl
+    - mps
+    - cpu
+  title: GPU acceleration platform
+  short: Acceleration platform/backend to target.
+  long: Target acceleration platform for supported modules (such as OpenMM). Options include auto, cuda, opencl, mps, and cpu.
+  group: "execution"
+  explevel: expert
 mode:
   default: local
   type: string

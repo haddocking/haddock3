@@ -15,6 +15,7 @@
 - 2026-10-11: Fixed the martinise library (libaa2cg) to make it deterministic - Issue #1657
 - 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709
 - 2026-10-02: Corrected ssdihed: range for automatic alpha/beta dihedrals and the definition in yaml - Issue #1668 
+- 2026-10-03: Added optional GPU acceleration for pairwise matrix analysis (rmsdmatrix, ilrmsdmatrix, clustfcc, contactmap) and OpenMM refinement
 - 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-21: Corrected seperate.cns - Issue #1392
 - 2026-09-18: Added `dnascan` module for mutagenesis scanning of DNA base pairs - Issue #1634

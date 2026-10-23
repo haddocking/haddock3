@@ -2,6 +2,7 @@
 
 import builtins
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 
@@ -93,3 +94,38 @@ def test_run_ensemble(deeprank_wrapper_ensemble):
     model1, model2 = deeprank_wrapper_ensemble.models
     assert scores[str(model1)] == pytest.approx(0.147, abs=1e-3)
     assert scores[str(model2)] == pytest.approx(0.102, abs=1e-3)
+
+
+def test_deeprank_wrapper_gpu_env(monkeypatch):
+    """Test that DeeprankWrapper sets and restores CUDA_VISIBLE_DEVICES."""
+    import os
+    from unittest.mock import MagicMock
+
+    recorded_cuda_device = None
+
+    def fake_deeprank_main():
+        nonlocal recorded_cuda_device
+        recorded_cuda_device = os.environ.get("CUDA_VISIBLE_DEVICES")
+
+    mock_predict = MagicMock()
+    mock_predict.main = fake_deeprank_main
+
+    wrapper = DeeprankWrapper(
+        models=[Path("dummy.pdb")],
+        ncores=1,
+        chain_i="A",
+        chain_j="B",
+        use_gpu=True,
+        gpu_device=2,
+    )
+
+    monkeypatch.setattr(wrapper, "_make_ensemble", lambda ws: ws / "ens.pdb")
+    monkeypatch.setattr(wrapper, "_retrieve_scores", lambda ws: {"dummy.pdb": 0.85})
+
+    with monkeypatch.context() as m:
+        m.setitem(sys.modules, "deeprank_gnn.predict", mock_predict)
+        scores = wrapper.run()
+
+    assert recorded_cuda_device == "2"
+    assert scores["dummy.pdb"] == 0.85
+    assert os.environ.get("CUDA_VISIBLE_DEVICES") != "2"

@@ -259,6 +259,57 @@ class HaddockModule(BaseHaddockModule):
             self.params["atom_similarity"],
         )
 
+        use_gpu = self.params.get("use_gpu", False)
+        tot_npairs = nmodels * (nmodels - 1) // 2
+
+        if use_gpu:
+            import numpy as np
+            from haddock.libs.libalign_gpu import (
+                compute_ilrmsd_matrix,
+                write_rmsd_matrix_file,
+            )
+
+            log.info("Running GPU-accelerated ilRMSD matrix calculation")
+            rec_coords_list = []
+            lig_coords_list = []
+            for mod in models:
+                atoms = get_atoms(mod, self.params["allatoms"])
+                ref_coord_dic_rec, _ = load_coords(mod, atoms, res_resdic_rec)
+                ref_coord_dic_lig, _ = load_coords(mod, atoms, res_resdic_lig)
+
+                common_coords_rec = [ref_coord_dic_rec[k] for k in common_keys_rec]
+                common_coords_lig = [ref_coord_dic_lig[k] for k in common_keys_lig]
+
+                rec_coords_list.append(common_coords_rec)
+                lig_coords_list.append(common_coords_lig)
+
+            rec_arr = np.array(rec_coords_list, dtype=np.float64)
+            lig_arr = np.array(lig_coords_list, dtype=np.float64)
+
+            try:
+                i_idx, j_idx, rmsds = compute_ilrmsd_matrix(
+                    rec_arr,
+                    lig_arr,
+                    use_gpu=True,
+                    device=self.params.get("gpu_platform", "auto"),
+                )
+                output_name = "ilrmsd.matrix"
+                write_rmsd_matrix_file(output_name, i_idx, j_idx, rmsds)
+
+                # Sending models to the next step of the workflow
+                self.output_models = models
+                self.export_io_models()
+                # Sending matrix path to the next step of the workflow
+                matrix_io = ModuleIO()
+                ilrmsd_matrix_file = RMSDFile(output_name, npairs=tot_npairs)
+                matrix_io.add(ilrmsd_matrix_file)
+                matrix_io.save(filename="rmsd_matrix.json")
+                return
+            except Exception as err:
+                log.warning(
+                    f"GPU ilRMSD calculation failed ({err}). Falling back to CPU."
+                )
+
         xyzwriter_jobs: list[XYZWriterJob] = []
         for core in range(ncores):
             output_name_rec = Path("traj_rec_" + str(core) + ".xyz")

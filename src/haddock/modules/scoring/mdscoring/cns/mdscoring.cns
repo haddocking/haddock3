@@ -299,7 +299,7 @@ for $bath in (100 200 300) loop heat
     do (vz=maxwell($bath)) (all)
 
     dynamics cartesian
-        nstep=$refine.heatsteps timest=0.002{ps}
+        nstep=$refine.heatsteps timest=$refine.timestep{ps}
         temperature=$bath  tcoupling = true
         nprint=50
     end
@@ -326,7 +326,7 @@ do (harm = 20) (resn DAN and name OO)
 
 ! MD refinement
 dynamics cartesian
-   nstep=$refine.steps timest=0.002{ps}
+   nstep=$refine.steps timest=$refine.timestep{ps}
    temperature=$bath  tcoupling = true
    nprint=50
 end
@@ -353,7 +353,7 @@ do (harm = 20) (resn DAN and name OO)
 for $bath in (300 200 100) loop cool
 
     dynamics cartesian
-       nstep=$refine.coolsteps timest=0.002{ps}
+       nstep=$refine.coolsteps timest=$refine.timestep{ps}
        temperature=$bath  tcoupling = true
        nprint=50
     end

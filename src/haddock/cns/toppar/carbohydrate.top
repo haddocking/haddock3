@@ -1,5 +1,5 @@
 REMARKS toppar/carbohydrate.top 
-REMARKS for use with carbohydrate.param for N-linked glycans
+REMARKS for use with carbohydrate.param for N- and O-linked glycans
 REMARKS ==========================================================
 REMARKS Joao Rodrigues 11-June-2020
 REMARKS Topologies updated to Feng, PLoS One, 2017
@@ -14,44 +14,55 @@ REMARKS glucopyranose; fixed malformed NGM C4 improper; A2G added as
 REMARKS alpha(2,3)/alpha(2,6) sialylation acceptor;
 REMARKS added the missing N-acetyl planarity impropers to NGA, NAG, MAG, A2G;
 REMARKS GXL can now be linked and RAM, GXL use the A1xL patches, as L-sugars;
-REMARKS MMA excluded as (1,x) donor, its O1 carrying a methyl (see bondglycans.cns)
+REMARKS MMA excluded as (1,x) donor, its O1 carrying a methyl (see bondglycans.cns);
+REMARKS removed the duplicate B1S, B1SL and A1SL patch definitions (haddock3 #1739);
+REMARKS residue and link lists below brought in line with bondglycans.cns
 REMARKS Continuous updated and additions under HADDOCK project 2020 to present
 REMARKS ----------------------------------------------------------
 REMARKS Currently supported carbohydrates and their anomers:
 REMARK (codes in parenthesis are commonly used alternatives - currently not recognized by CNS):
 REMARKS GLC:       alpha-D-glucopyranose
-REMARKS BGC:       beta -D-glucopyranose  
+REMARKS BGC:       beta-D-glucopyranose  
 REMARKS GLA:       alpha-D-galactopyranose
-REMARKS GAL (GLB): beta- D-galactopyranose
+REMARKS GAL (GLB): beta-D-galactopyranose
 REMARKS MAN:       alpha-D-mannopyranose
-REMARKS BMA:       beta -D-mannopyronose
+REMARKS BMA:       beta-D-mannopyranose
 REMARKS MAG:       2-N-Acetyl-beta-D-glucopyranose + Methyl at O1
 REMARKS NDG:       2-N-acetyl-alpha-D-glucopyranose
 REMARKS A2G:       2-N-acetyl-alpha-D-galactopyranose (alpha-GalNAc) - alpha anomer of NGA
-REMARKS GCS:       2-N-beta-D-glucopyranose (glucosamine)
+REMARKS GCS:       2-amino-2-deoxy-beta-D-glucopyranose (glucosamine)
 REMARKS NAG:       2-N-acetyl-beta-D-glucopyranose
 REMARKS NAM:       1-O-methyl-2-N-Acetyl-beta-D-glucopyranose
 REMARKS NAA:       1-O-methyl-2-N-Acetyl-alpha-D-glucopyranose
 REMARKS NGA:       2-N-acetyl-beta-D-galactopyranose
 REMARKS NGM:       1-O-methyl-2-N-Acetyl-alpha-D-galactopyranose
 REMARKS FUC:       alpha-L-fucopyranose
-REMARKS FUL:       beta -L-fucopyranose
+REMARKS FUL:       beta-L-fucopyranose
 REMARKS FCA:       alpha-D-fucopyranose
-REMARKS FCB:       beta -D-fucopyranose
+REMARKS FCB:       beta-D-fucopyranose
 REMARKS SIA:       alpha-N-acetyl neuraminic acid
 REMARKS SIB:       beta-N-acetyl neuraminic acid - A. Bonvin
 REMARKS XYP:       beta-D-xylopyranose
-REMARKS BDP:       beta-D-glucoronic acid
+REMARKS BDP:       beta-D-glucuronic acid
 REMARKS MMA:       methyl alpha-D-mannopyranoside
 REMARKS XYS:       alpha-D-xylopyranose
 REMARKS ABE:       alpha-D-Abequopyranose
+REMARKS RAM:       alpha-L-rhamnopyranose
+REMARKS GXL:       alpha-L-galactopyranose
 REMARKS ----------------------------------------------------------
 REMARKS Links
-REMARKS B1N: N-linked glycan beta link from NAG and NDG to ASN (asparagine)
+!            bondglycans.cns applies a link automatically when the donor C1
+!            (C2 for SIA, SIB) is within 2.0 A of the acceptor atom
+REMARKS B1N: N-linked glycan beta link from NAG, NGA, NDG, BGC, GCS to ASN (asparagine)
 !            note: PDB files with unusual NDG to ASN links are likely incorrect assignments 
 !            they will be forced into the beta anomer by the B1N link.
-REMARKS B12: beta(1,2)  link from BGC, GAL, BMA, NAG, GCS, FCB, XYP to any
-REMARKS B14: beta(1,4)  link from BGC, GAL, BMA, NAG, GCS, FCB, XYP to any
+REMARKS B12: beta(1,2)  link from BGC, GAL, BMA, NAG, NGA, FCB, XYP, BDP, GCS to any
+REMARKS B13: beta(1,3)  link from BGC, GAL, BMA, NAG, NGA, FCB, XYP, BDP, GCS to any
+REMARKS B14: beta(1,4)  link from BGC, GAL, BMA, NAG, NGA, FCB, XYP, BDP, GCS to any
+REMARKS B16: beta(1,6)  link from BGC, GAL, BMA, NAG, NGA, FCB, XYP, BDP, GCS to any
+!            note: the 1-O-methylated NAM and MAG cannot donate a (1,x)
+!            link - they have no O1 hydroxyl to substitute - but can accept one
+REMARKS A11: alpha(1,1) link from GLC to GLC (trehalose)
 REMARKS A12: alpha(1,2) link from GLC, GLA, MAN, NDG, A2G, FCA, XYS, ABE to any
 REMARKS A13: alpha(1,3) link from GLC, GLA, MAN, NDG, A2G, FCA, XYS, ABE to any
 REMARKS A14: alpha(1,4) link from GLC, GLA, MAN, NDG, A2G, FCA, XYS, ABE to any
@@ -59,7 +70,9 @@ REMARKS A16: alpha(1,6) link from GLC, GLA, MAN, NDG, A2G, FCA, XYS, ABE to any
 !            note: the 1-O-methylated NAA, NGM and MMA cannot donate a (1,x)
 !            link - they have no O1 hydroxyl to substitute - but can accept one
 REMARKS B12L: beta(1,2)  link from FUL to any
+REMARKS B13L: beta(1,3)  link from FUL to any
 REMARKS B14L: beta(1,4)  link from FUL to any
+REMARKS B16L: beta(1,6)  link from FUL to any
 REMARKS A12L: alpha(1,2) link from FUC, RAM, GXL to any
 REMARKS A13L: alpha(1,3) link from FUC, RAM, GXL to any
 REMARKS A14L: alpha(1,4) link from FUC, RAM, GXL to any
@@ -69,19 +82,18 @@ REMARKS A16L: alpha(1,6) link from FUC, RAM, GXL to any
 REMARKS A23: alpha(2,3) link from SIA, SIB to GAL, NGA, A2G
 !            note: there is no A23S patch - A23 already has SIA, SIB as the
 !            '-' reference, so it serves both link directions
-REMARKS A26: alpha(2,6) link from GAL, NGA to SIA, SIB
+REMARKS A26: alpha(2,6) link from SIA, SIB to GAL, NGA - older variant, not applied
+!            by bondglycans.cns, which uses A26S
 REMARKS A26S: alpha(2,6)  link from SIA, SIB to GAL, NGA, A2G
 !            note: A2G as acceptor gives sialyl-Tn (SIA alpha(2,6) alpha-GalNAc)
 REMARKS A28S: alpha(2,8)  link from SIA, SIB to SIA, SIB
-REMARKS RAM: alpha-L-rhamnose
-REMARKS GXL: alpha-L-galactopyranose
-REMARKS B13: beta(1,3)  link from beta-D-sugar to any
-REMARKS B13L: beta(1,3)  link from beta-L-sugar to any
-REMARKS B16: beta(1,6)  link from beta-D-sugar to any
-REMARKS B16L: beta(1,6)  link from beta-L-sugar to any
 REMARKS B1S: beta link from C1(D-) to Ser OG.
-REMARKS A1S: alpha link from C1(D-) to Ser OG.
 REMARKS B1T: beta link from C1(D-) to Thr OG1.
+!            note: B1S and B1T are applied to NAG, NGA, NDG, BGC, GCS (NDG
+!            forced to beta). The Ser/Thr/Cys links below (A1S, A1T, B1C,
+!            A1C and all the L variants) are defined but are not applied
+!            by bondglycans.cns
+REMARKS A1S: alpha link from C1(D-) to Ser OG.
 REMARKS A1T: alpha link from C1(D-) to Thr OG1.
 REMARKS B1C: beta link from C1(D-) to Cys SG.
 REMARKS A1C: alpha link from C1(D-) to Cys SG.
@@ -2043,7 +2055,7 @@ RESIdue XYP  !beta-D-xylopyranose
 END
 
 !-------------------------------------------------------------------
-RESIdue RAM  !alpha-L-rhampyranose
+RESIdue RAM  !alpha-L-rhamnopyranose
  GROUP
   ATOM C1   TYPE=CCE  CHARge= 0.350   END
   ATOM H1   TYPE=HAS  CHARge= 0.100   END
@@ -2188,7 +2200,7 @@ RESIdue GXL  !alpha-L-galactopyranose
 
 END
 
-RESIdue BDP  !beta-D-glucoronic acid
+RESIdue BDP  !beta-D-glucuronic acid
 GROUP
 
 ATOM C1   TYPE=CCE  CHARge= 0.340   END
@@ -3278,14 +3290,14 @@ PRESidue B16 { beta(1,6) link }
  ADD DIHEdral  +C6  +O6  -C1  -O5 
  ADD DIHEdral  +C6  +O6  -C1  -C2 
 
- {re-specify alpha-anomer ATB 12/26/10 - except FUC}
- IMPRoper -H1 +O6 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ {re-specify beta-anomer - D-sugars}
+ IMPRoper -H1 +O6 -O5 -C2    ! beta-anomer definition using non-hydrogen atoms
  
 END
 
 !-------------------------------------------------------------------
 
-PRESidue B16L {FUC alpha(1,6) link }
+PRESidue B16L {FUL beta(1,6) link }
  MODIfy  ATOM +O6   TYPE=OAS CHARge=-0.40  END 
  MODIfy  ATOM +C6            CHARge= 0.00  END
  DELEte  ATOM +HO6                         END
@@ -3304,8 +3316,8 @@ PRESidue B16L {FUC alpha(1,6) link }
  ADD DIHEdral  +C6  +O6  -C1  -O5 
  ADD DIHEdral  +C6  +O6  -C1  -C2 
 
- {re-specify alpha-anomer ATB 12/26/10 - FUC}
- IMPRoper -H1 -O5 +O6 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ {re-specify beta-anomer - L-sugars (FUL)}
+ IMPRoper -H1 -O5 +O6 -C2    ! beta-anomer definition using non-hydrogen atoms
  
 END
 

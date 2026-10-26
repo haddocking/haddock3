@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-25: Made the `timestep` parameter of `mdref` and `mdscoring` effective; the CNS scripts hardcoded `timest=0.002` - Issue #1680
 - 2026-10-23: Specify usage of charset utf-8 when generating a plotly figure - Issue #1734
 - 2026-10-17: Added python script to automate regressions tests using the examples - Issue #1731
 - 2026-10-14: Corrected the restraints definition in contactairs - Issue #1727

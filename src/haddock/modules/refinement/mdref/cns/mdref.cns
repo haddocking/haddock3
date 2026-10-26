@@ -21,9 +21,9 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
-evaluate ($saprotocol.timestep=$timestep)
-evaluate ($saprotocol.fbeta=100)
-evaluate ($saprotocol.mass=100)
+evaluate ($refine.timestep=$timestep)
+evaluate ($refine.fbeta=100)
+evaluate ($refine.mass=100)
 
 evaluate ($ini_count    =1)
 
@@ -341,10 +341,10 @@ end loop nloop1
 
 ! Start MD refinement
 
-do (mass =$Saprotocol.mass) (all)
+do (mass =$refine.mass) (all)
 do (mass=1000) (resn ANI or resn DAN or resn XAN)
 do (fbeta = 0) (all)
-do (fbeta = $Saprotocol.fbeta {1/ps} ) ( all )
+do (fbeta = $refine.fbeta {1/ps} ) ( all )
 
 ! heat to 300 K
 for $bath in (100 200 300) loop heat
@@ -354,7 +354,7 @@ for $bath in (100 200 300) loop heat
     do (vz=maxwell($bath)) (all)
 
     dynamics cartesian
-        nstep=$refine.heatsteps timest=0.002{ps}
+        nstep=$refine.heatsteps timest=$refine.timestep{ps}
         temperature=$bath  tcoupling = true
         nprint=50
     end
@@ -381,7 +381,7 @@ do (harm = 20) (resn DAN and name OO)
 
 ! MD refinement
 dynamics cartesian
-   nstep=$refine.steps timest=0.002{ps}
+   nstep=$refine.steps timest=$refine.timestep{ps}
    temperature=$bath  tcoupling = true
    nprint=50
 end
@@ -408,7 +408,7 @@ do (harm = 20) (resn DAN and name OO)
 for $bath in (300 200 100) loop cool
 
     dynamics cartesian
-       nstep=$refine.coolsteps timest=0.002{ps}
+       nstep=$refine.coolsteps timest=$refine.timestep{ps}
        temperature=$bath  tcoupling = true
        nprint=50
     end

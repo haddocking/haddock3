@@ -1,6 +1,7 @@
 # Changelog
 
-- 2026-10-16: Improved the consistency of CNS scripts across modules - Issue #1729
+- 2026-10-26: Improved the consistency of CNS scripts across modules - Issue #1729
+- 2026-10-25: Removed the duplicate `B1S`, `B1SL` and `A1SL` PRESidue definitions from `carbohydrate.top` that CNS reported as `RTFRDR-ERR` on every topology read - Issue #1717
 - 2026-10-25: Made the `timestep` parameter of `mdref` and `mdscoring` effective; the CNS scripts hardcoded `timest=0.002` - Issue #1680
 - 2026-10-23: Specify usage of charset utf-8 when generating a plotly figure - Issue #1734
 - 2026-10-17: Added python script to automate regressions tests using the examples - Issue #1731

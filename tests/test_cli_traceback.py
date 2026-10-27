@@ -106,7 +106,7 @@ def test_get_steps_without_pdbs():
             os.mkdir(Path(run_dir, st))
 
         # create fake, empty pdb files
-        fake_pdb_path = Path(run_dir, steps[1] , f"rigidbody_1.pdb")
+        fake_pdb_path = Path(run_dir, steps[1] , "rigidbody_1.pdb")
         open(fake_pdb_path, "w").close()
 
         # get steps without pdbs

@@ -125,6 +125,23 @@ def test_get_steps_without_pdbs():
         assert obs_steps == exp_steps
 
 
+def test_get_steps_without_pdbs_caprieval_with_pdbs():
+    """Test caprieval/caprifilter are skipped even if they contain PDBs."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        run_dir = Path(tmpdir)
+        steps = ["0_topoaa", "1_rigidbody", "2_caprieval", "3_caprifilter"]
+        for st in steps:
+            os.mkdir(Path(run_dir, st))
+
+            # create fake, empty pdb files (calling it reference, since that
+            # is only PDB that would be present in caprieval)
+            fake_pdb_path = Path(run_dir, st, "reference_model_1.pdb")
+            open(fake_pdb_path, "w").close()
+
+        obs_steps = get_steps_without_pdbs(run_dir, steps)
+        assert obs_steps == ["0_topoaa", "2_caprieval", "3_caprifilter"]
+
+
 def test_subset_traceback(expected_traceback):
     """Test subset_traceback."""
     with tempfile.TemporaryDirectory() as tmpdir:

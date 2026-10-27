@@ -44,7 +44,7 @@ def get_steps_without_pdbs(run_dir, all_steps):
     """
     steps_without_pdbs = []
     for step in all_steps:
-        if step.endswith("topoaa"):
+        if step.endswith(("topoaa", "caprieval", "caprifilter")):
             steps_without_pdbs.append(step)
         else:
             step_dir = Path(run_dir, step)

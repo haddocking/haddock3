@@ -4,9 +4,9 @@ Traces back PDB files from a HADDOCK run directory.
 Given an input run directory, haddock3-traceback traces back each model to the
 initial input molecules used, providing the rank of each intermediate model.
 
-USAGE::
+USAGE:
 
-    haddock3-traceback -r <run_dir>
+    haddock3-traceback <run_dir>
 
 """
 import argparse

@@ -427,19 +427,13 @@ end if
 
 {* ======================= calculate free molecules internal energy *}
 
-igroup
-    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
-                (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
-end
-
 do (refx=x) (all)
 do (refy=y) (all)
 do (refz=z) (all)
 
 fix sele=(resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DMS) end
 
-flag excl noe dani sani vean xrdc xpcs coll cdih zhar end
-flag include bond angle dihe impr vdw end
+flag excl * include bond angle dihe impr vdw end
 
 evaluate ($elec = 0.0)
 evaluate ($eintfree = 0.0)
@@ -447,13 +441,6 @@ if ($Data.flags.elec eq true) then
     flag include elec end
 end if
 
-if ($Data.dielec eq "rdie") then
-    parameter nbonds eps=$Data.epsilon rdie shift switch end end
-    ! shift statement needed first to activate switch (CNS bug?)
-else
-    parameter nbonds eps=$Data.epsilon cdie end end
-end if
-parameter nbonds ? end end
 inline @MODULE:calc_free-ene.cns
 
 fix sele=(not all) end
@@ -563,14 +550,10 @@ else
     end if
 end if
 
-if ($Data.dnarest eq true ) then
-    @MODULE:dna-rna_restraints.cns
-end if
-
 energy end
 evaluate ($etot = $ener - $noe)
 evaluate ($noe = $eair)
-evaluate ($etot = $etot + $noe)
+evaluate ($etot = $vdw + $elec + $noe)
 
 inline @MODULE:print_coorheader.cns
 

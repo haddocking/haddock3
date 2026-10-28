@@ -380,19 +380,13 @@ mini powell nstep=$nemsteps drop=10 nprint=10 end
 
 {* ======================= calculate free molecules internal energy ============ *}
 
-igroup
-    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
-                (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
-end
-
 do (refx=x) (all)
 do (refy=y) (all)
 do (refz=z) (all)
 
 fix sele=(resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DMS) end
 
-flag excl noe dani sani vean xrdc xpcs coll cdih zhar end
-flag include bond angle dihe impr vdw end
+flag excl * include bond angle dihe impr vdw end
 
 evaluate ($elec = 0.0)
 evaluate ($eintfree = 0.0)
@@ -454,7 +448,7 @@ evaluate ($violations_noe=$violations)
 energy end
 evaluate ($etot = $ener - $noe)
 evaluate ($noe = $eair)
-evaluate ($etot = $etot + $noe)
+evaluate ($etot = $vdw + $elec + $noe)
 
 inline @MODULE:print_coorheader.cns
 

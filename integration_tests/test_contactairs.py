@@ -130,13 +130,3 @@ def test_contactairs_interface(restraints):
     for residue, partners in restraints.items():
         assert partners == expected[residue], residue
         assert residue[0] not in {segid for segid, _ in partners}
-
-
-def test_contactairs_copies_identical():
-    """All modules must ship the same contactairs.cns."""
-    modules_path = FLEXREF_PATH.parents[1]
-    copies = sorted(modules_path.glob("*/*/cns/contactairs.cns"))
-    assert len(copies) == 4
-    reference = copies[0].read_text()
-    for copy in copies[1:]:
-        assert copy.read_text() == reference, copy

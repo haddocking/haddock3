@@ -169,6 +169,25 @@ def swap_segid_chain(pdb_file_path: FilePath, new_pdb_file_path: FilePath) -> No
                     output_handler.write(line)
 
 
+def find_insertion_codes(pdb_file_path: FilePath) -> list[str]:
+    """Find the residues with an insertion code (e.g. 52A).
+
+    Returns
+    -------
+    list[str]
+        The residues, as ``"<resname> (chain <chain>, residue <resid>)"``, in
+        the order of the file.
+    """
+    found: dict[str, None] = {}
+    for line in Path(pdb_file_path).read_text().splitlines():
+        if line.startswith(("ATOM", "HETATM")) and line[slc_icode].strip():
+            chain = line[slc_chainid].strip() or "-"
+            resid = f"{line[slc_resseq].strip()}{line[slc_icode]}"
+            resname = line[slc_resname].strip()
+            found[f"{resname} (chain {chain}, residue {resid})"] = None
+    return list(found)
+
+
 def sanitize(
     pdb_file_path: FilePathT,
     overwrite: bool = True,

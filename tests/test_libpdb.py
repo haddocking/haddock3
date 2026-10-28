@@ -332,3 +332,24 @@ def test_rename_residues_aliases(tmp_path):
     sanitize(pdb, overwrite=True)
     assert "TPO" not in pdb.read_text()
     assert " TOP A   1" in pdb.read_text()
+
+
+def test_rename_residues_selenocysteine(tmp_path):
+    """PDB selenocysteines become cysteines; HADDOCK3 SEC (serine) is kept."""
+    pdb = Path(tmp_path, "sec.pdb")
+    pdb.write_text(
+        "ATOM      1  CB  SEC A   1       0.000   0.000   0.000  1.00  0.00           C\n"
+        "ATOM      2 SE   SEC A   1       1.900   0.000   0.000  1.00  0.00          SE\n"
+        "ATOM      3  CB  SEC A   2       5.000   0.000   0.000  1.00  0.00           C\n"
+        "ATOM      4  OG  SEC A   2       6.400   0.000   0.000  1.00  0.00           O\n"
+        "END\n"
+    )
+    converted = rename_residues(pdb)
+    assert converted == ["chain A, residue 1"]
+    lines = pdb.read_text().splitlines()
+    assert lines[0][17:20] == "CYS"
+    assert lines[1] == (
+        "ATOM      2  SG  CYS A   1       1.900   0.000   0.000  1.00  0.00           S"
+    )
+    # the HADDOCK3 SEC residue (serine for covalent docking) is not changed
+    assert [line[17:20] for line in lines[2:4]] == ["SEC", "SEC"]

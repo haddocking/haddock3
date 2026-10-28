@@ -317,7 +317,15 @@ class HaddockModule(BaseCNSModule):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
                 # rename first, so that e.g. TPO is not reported as unknown
-                libpdb.rename_residues(model)
+                selenocysteines = libpdb.rename_residues(model)
+                if selenocysteines:
+                    self.log(
+                        f"Selenocysteine(s) in {model.name} converted to cysteine "
+                        f"(SE renamed to SG): {'; '.join(selenocysteines)}. "
+                        "HADDOCK3 has no selenocysteine; its own SEC residue is a "
+                        "serine variant for covalent docking.",
+                        level="warning",
+                    )
 
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]

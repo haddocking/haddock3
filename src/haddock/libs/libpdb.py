@@ -193,16 +193,55 @@ def _rename_line(line: str) -> str:
     return line
 
 
-def rename_residues(pdb_file_path: FilePath) -> None:
+def rename_residues(pdb_file_path: FilePath) -> list[str]:
     """Give HADDOCK3 names to the residues of a PDB file, in place.
 
     Running this before looking for unknown residues ensures that residues
     known under another name (e.g. TPO for TOP) are not reported as unknown.
+
+    Selenocysteines (PDB residue SEC with an SE atom) are converted to
+    cysteines, with SE renamed to SG: HADDOCK3 has no selenocysteine, and its
+    own SEC residue is a serine variant for covalent docking.
+
+    Returns
+    -------
+    list[str]
+        The selenocysteines converted to cysteines, as
+        ``"chain <chain>, residue <resid>"``.
     """
-    lines = Path(pdb_file_path).read_text().splitlines()
-    Path(pdb_file_path).write_text(
-        "".join(_rename_line(line) + os.linesep for line in lines)
-    )
+    lines = [
+        _rename_line(line) for line in Path(pdb_file_path).read_text().splitlines()
+    ]
+    atom_lines = ("ATOM", "HETATM")
+    selenocysteines = {
+        (line[slc_chainid], line[22:27])
+        for line in lines
+        if line.startswith(atom_lines)
+        and line[slc_resname].strip() == "SEC"
+        and line[slc_name].strip() == "SE"
+    }
+    for i, line in enumerate(lines):
+        if (
+            line.startswith(atom_lines)
+            and line[slc_resname].strip() == "SEC"
+            and (line[slc_chainid], line[22:27]) in selenocysteines
+        ):
+            line = line[:17] + "CYS" + line[20:]
+            if line[slc_name].strip() == "SE":
+                line = line.ljust(78)
+                line = (
+                    line[:12]
+                    + format_atom_name("SG", "S")
+                    + line[16:76]
+                    + " S"
+                    + line[78:]
+                )
+            lines[i] = line
+    Path(pdb_file_path).write_text("".join(line + os.linesep for line in lines))
+    return [
+        f"chain {chain.strip() or '-'}, residue {resid.strip()}"
+        for chain, resid in sorted(selenocysteines)
+    ]
 
 
 def sanitize(

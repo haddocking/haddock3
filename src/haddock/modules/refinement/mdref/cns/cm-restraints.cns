@@ -51,25 +51,12 @@ while ($ncount < $data.ncomponents) loop nloop1
         evaluate ($dim_$ncount = ($xdim + $ydim + $zdim - $corr)/4.0)
     end if
 
-    ! check if the molecule is a DNA
+    ! check for anything not protein
     do (store6 = 0) (all)
-    do (store6 = 1) (segid $prot_segid_$ncount and tag)
-    show sum (store6) (all)
-    evaluate ($nresmol = $result)
-    do (store6 = 0) (all)
-    do (store6 = 1) (segid $prot_segid_$ncount and (resn DA or resn DC or resn DG or resn DT) and tag)
-    show sum (store6) (all)
-    if ($result eq $nresmol) then
-        ! we are dealing with DNA set dimension to 0
-        evaluate ($dim_$ncount = 0.0)
-    end if
-
-    ! check if the molecule is a small ligand
-    do (store6 = 0) (all)
-    do (store6 = 1) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    do (store6 = 1) (segid $prot_segid_$ncount and (name CA or name BB))
     show sum (store6) (all)
     if ($result eq 0) then
-        ! we are dealing with a ligand set dimension to 0
+        ! we are dealing with a ligand, nucleic acid or glycan -> set dimension to 0
         evaluate ($dim_$ncount = 0.0)
     end if
     
@@ -131,7 +118,7 @@ noe
     end loop nloop1
 
     averaging  contact center
-    scale      contact $Data.kcm
+    scale      contact $data.kcm
     sqconstant contact 1.0
     sqexponent contact 2
     soexponent contact 1

@@ -190,15 +190,14 @@ end
 
 {* Define various interaction and energetics settings *}
 
+igroup interaction (not all) (not all) end
+
 igroup
     interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
                  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
     interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
                  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
     interaction  (resn SHA) (not resn SHA) weight * 0 end
-    ! turn off vdw interaction of CG charged beads with all other particles
-    interaction  (name SCD1) (all) weight vdw 0.0 end
-    interaction  (name SCD2) (all) weight vdw 0.0 end
 end
 
 flag include bond angle impr vdw end
@@ -460,15 +459,10 @@ if ($nemsteps > 0) then
     minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
 end if
 
-! final energy
 fix sele=(not all) end
 
-{* ======================= calculate free molecules internal energy *}
 
-igroup
-    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
-                (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
-end
+{* ======================= calculate free molecules internal energy *}
 
 do (refx=x) (all)
 do (refy=y) (all)
@@ -476,8 +470,7 @@ do (refz=z) (all)
 
 fix sele=(resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DMS) end
 
-flag excl noe dani sani vean xrdc xpcs coll cdih zhar end
-flag include bond angle dihe impr vdw end
+flag excl * include bond angle dihe impr vdw end
 
 evaluate ($elec = 0.0)
 evaluate ($eintfree = 0.0)
@@ -485,13 +478,6 @@ if ($Data.flags.elec eq true) then
     flag include elec end
 end if
 
-if ($Data.dielec eq "rdie") then
-    parameter nbonds eps=$Data.epsilon rdie shift switch end end
-    ! shift statement needed first to activate switch (CNS bug?)
-else
-    parameter nbonds eps=$Data.epsilon cdie end end
-end if
-parameter nbonds ? end end
 inline @MODULE:calc_free-ene.cns
 
 fix sele=(not all) end
@@ -504,13 +490,13 @@ do (z = refz) (all)
 {* ===================== calculate complex internal energy *}
 
 evaluate ($kinter = 1.0)
-flag include bond angle dihe impr vdw end
-energy end
-
 @MODULE:scale_intra_only.cns
 
 evaluate ($elec = 0.0)
 evaluate ($eintcplx = 0.0)
+
+flag excl * include bond angle dihe impr vdw end
+
 if ($Data.flags.elec eq true) then
     flag include elec end
 end if
@@ -555,7 +541,7 @@ noe
     scale cont 0.0
 end
 energy end
-evaluate ($eair= $noe)
+evaluate ($eair = $noe)
 
 evaluate ($esym = 0.0)
 evaluate ($ncs = 0.0)
@@ -603,14 +589,10 @@ else
     end if
 end if
 
-if ($Data.dnarest eq true ) then
-    @MODULE:dna-rna_restraints.cns
-end if
-
 energy end
 evaluate ($etot = $ener - $noe)
 evaluate ($noe = $eair)
-evaluate ($etot = $etot + $noe)
+evaluate ($etot = $vdw + $elec + $noe)
 
 inline @MODULE:print_coorheader.cns
 

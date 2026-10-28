@@ -1,0 +1,13 @@
+name: haddock3-binder
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.14
+  - pip
+  - jupyterlab
+  - ipykernel
+  - pip:
+      - haddock3==2026.10.1
+      - py3Dmol==2.5.5

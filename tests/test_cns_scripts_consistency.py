@@ -10,6 +10,8 @@ script must be identical, unless the script is listed in
 ``INTENDED_VARIANTS`` records, for scripts whose copies are meant to differ,
 which modules share each version. A copy that drifts from its own group, or a
 variant that becomes identical to another, therefore also fails the test.
+
+Note: All other ``.cns`` scripts not recorded in ``INTENDED_VARIANTS`` must be identical.
 """
 
 from collections import defaultdict

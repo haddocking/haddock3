@@ -10,6 +10,12 @@ class HaddockError(Exception):
     pass
 
 
+class HaddockTaskExecutionError(HaddockError):
+    """Expected error while executing a scheduled HADDOCK task."""
+
+    pass
+
+
 class ConfigurationError(HaddockError):
     """Error in the configuration file."""
 
@@ -34,7 +40,7 @@ class JobRunningError(HaddockError):
     pass
 
 
-class CNSRunningError(HaddockError):
+class CNSRunningError(HaddockTaskExecutionError):
     """CNS run error."""
 
     pass

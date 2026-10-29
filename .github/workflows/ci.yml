@@ -60,6 +60,8 @@ jobs:
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.event.pull_request.head.sha }}
         run: |
+          # without pipefail, a failing git diff would give an empty patch id
+          set -o pipefail
           # same paths as the filters above
           paths=(src tests integration_tests end-to-end_tests docs pyproject.toml setup.py Dockerfile
                  ':(exclude,glob)src/**/*.md' ':(exclude,glob)tests/**/*.md'
@@ -71,8 +73,10 @@ jobs:
               | git patch-id --stable | cut -d' ' -f1
           }
           skip=false
+          # any failure to fetch or compare the commits runs the tests
           if git fetch -q --no-tags origin "$BEFORE" "$AFTER" \
-            && [ "$(patch_id "$BEFORE")" = "$(patch_id "$AFTER")" ]; then
+            && before=$(patch_id "$BEFORE") && after=$(patch_id "$AFTER") \
+            && [ "$before" = "$after" ]; then
             # skipped required checks count as passed: only skip when the tests
             # passed on the previous head
             passed=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${BEFORE}/check-runs?per_page=100" \

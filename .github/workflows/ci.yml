@@ -11,22 +11,16 @@ on:
 jobs:
   # Detect which file categories changed so downstream jobs can filter themselves.
   # On non-PR events (schedule, workflow_dispatch) all outputs are forced to true.
-  # On a PR update that does not change the code of the PR (e.g. a CHANGELOG.md
-  # conflict resolution, or a merge of main), the outputs are false when the
-  # tests passed on the previous head.
   changes:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
       contents: read
-      checks: read
     outputs:
-      python: ${{ (github.event_name != 'pull_request' || steps.filter.outputs.python_any_changed == 'true') && steps.unchanged.outputs.skip != 'true' }}
-      docker: ${{ (github.event_name != 'pull_request' || steps.filter.outputs.docker_any_changed == 'true') && steps.unchanged.outputs.skip != 'true' }}
+      python: ${{ github.event_name != 'pull_request' || steps.filter.outputs.python_any_changed == 'true' }}
+      docker: ${{ github.event_name != 'pull_request' || steps.filter.outputs.docker_any_changed == 'true' }}
     steps:
       - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
 
       - uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
         id: filter
@@ -42,6 +36,7 @@ jobs:
               - end-to-end_tests/**
               - "!end-to-end_tests/**/*.md"
               - docs/**
+              - "!docs/**/*.md"
               - pyproject.toml
               - setup.py
             docker:
@@ -50,46 +45,6 @@ jobs:
               - "!src/**/*.md"
               - pyproject.toml
               - setup.py
-
-      - name: check whether the code of the PR changed since the previous push
-        id: unchanged
-        if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          BASE: ${{ github.event.pull_request.base.sha }}
-          BEFORE: ${{ github.event.before }}
-          AFTER: ${{ github.event.pull_request.head.sha }}
-        run: |
-          # without pipefail, a failing git diff would give an empty patch id
-          set -o pipefail
-          # same paths as the filters above
-          paths=(src tests integration_tests end-to-end_tests docs pyproject.toml setup.py Dockerfile
-                 ':(exclude,glob)src/**/*.md' ':(exclude,glob)tests/**/*.md'
-                 ':(exclude,glob)integration_tests/**/*.md' ':(exclude,glob)end-to-end_tests/**/*.md')
-          # diff of the PR itself (against its merge base with main); patch-id
-          # ignores line numbers, so that merging main does not count as a change
-          patch_id() {
-            git diff "$(git merge-base "$BASE" "$1")" "$1" -- "${paths[@]}" \
-              | git patch-id --stable | cut -d' ' -f1
-          }
-          skip=false
-          # any failure to fetch or compare the commits runs the tests
-          if git fetch -q --no-tags origin "$BEFORE" "$AFTER" \
-            && before=$(patch_id "$BEFORE") && after=$(patch_id "$AFTER") \
-            && [ "$before" = "$after" ]; then
-            # skipped required checks count as passed: only skip when the tests
-            # passed on the previous head
-            passed=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${BEFORE}/check-runs?per_page=100" \
-              --jq '[.check_runs[] | select(.name | startswith("test-"))]
-                    | (length > 0) and all(.conclusion == "success")' || echo false)
-            if [ "$passed" = "true" ]; then
-              skip=true
-              echo "The code of the PR is unchanged and the tests passed on ${BEFORE}: skipping the tests."
-            else
-              echo "The code of the PR is unchanged, but the tests did not all pass on ${BEFORE}: running them."
-            fi
-          fi
-          echo "skip=${skip}" >> "$GITHUB_OUTPUT"
 
   format:
     needs: [changes]

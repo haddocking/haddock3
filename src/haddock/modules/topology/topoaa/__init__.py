@@ -273,6 +273,21 @@ class HaddockModule(BaseCNSModule):
             for _task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
+                # several steps identify residues by their number only
+                insertions = libpdb.find_insertion_codes(model)
+                if insertions:
+                    self.finish_with_error(
+                        f"Residue(s) with an insertion code in {model.name}: "
+                        f"{', '.join(insertions)}.\n"
+                        "HADDOCK3 does not support insertion codes: several "
+                        "steps (e.g. caprieval, the scanning modules) identify "
+                        "residues by their number only, so that e.g. residues "
+                        "52 and 52A would be confused. Renumber the residues, "
+                        "for example with `pdb_fixinsert` from pdb-tools "
+                        f"(`pdb_fixinsert {model.name} > renumbered.pdb`), and "
+                        "apply the same renumbering to your restraint files and "
+                        "reference structures."
+                    )
 
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]

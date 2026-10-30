@@ -36,6 +36,7 @@ jobs:
               - end-to-end_tests/**
               - "!end-to-end_tests/**/*.md"
               - docs/**
+              - "!docs/**/*.md"
               - pyproject.toml
               - setup.py
             docker:

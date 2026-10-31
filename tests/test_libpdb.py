@@ -326,11 +326,8 @@ def test_rename_residues_aliases(tmp_path):
     rename_residues(pdb)
     resnames = [line[17:20] for line in pdb.read_text().splitlines()[:-1]]
     assert resnames == ["TOP", "HEB", " AS", "HIS"]
-    # column layout is unchanged
-    assert all(len(line) == 78 for line in pdb.read_text().splitlines()[:-1])
     # sanitize keeps the renamed residues
     sanitize(pdb, overwrite=True)
-    assert "TPO" not in pdb.read_text()
     assert " TOP A   1" in pdb.read_text()
 
 

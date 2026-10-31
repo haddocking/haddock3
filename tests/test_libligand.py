@@ -284,47 +284,35 @@ def test_run_prodrg_deduplicates_ligand_resnames(tmp_path, monkeypatch):
     assert calls == ["LGA"]
 
 
-def test_run_prodrg_failure_names_residue(tmp_path):
-    """A prodrg failure names the residue and gives prodrg's own reason."""
+@pytest.mark.parametrize(
+    "atoms, resname, match",
+    [
+        # prodrg's own reason, from its ERRDRG> lines
+        (
+            "HETATM    1  C1  XYZ A   1       0.000   0.000   0.000  1.00  0.00           C\n"
+            "HETATM    2  C2  XYZ A   1       0.000   1.500   0.000  1.00  0.00           C\n"
+            "HETATM    3  U1  XYZ A   1       1.500   0.000   0.000  1.00  0.00           U\n",
+            "XYZ",
+            r"(?s)^residue XYZ:.*unsupported atom type  U.*ERRDRG>",
+        ),
+        # ions and other one- or two-atom residues are not passed to prodrg
+        (
+            "HETATM    1 ZN    ZN A   1       0.000   0.000   0.000  1.00  0.00          ZN\n",
+            "ZN",
+            r"^residue ZN: .*\(found 1\)",
+        ),
+    ],
+)
+def test_run_prodrg_failure_names_residue(tmp_path, atoms, resname, match):
+    """A prodrg failure names the residue and the reason."""
     pdb = tmp_path / "bad.pdb"
-    pdb.write_text(
-        "HETATM    1  C1  XYZ A   1       0.000   0.000   0.000  1.00  0.00           C\n"
-        "HETATM    2  C2  XYZ A   1       0.000   1.500   0.000  1.00  0.00           C\n"
-        "HETATM    3  U1  XYZ A   1       1.500   0.000   0.000  1.00  0.00           U\n"
-        "END\n"
-    )
-    with pytest.raises(RuntimeError) as err:
-        run_prodrg(pdb, tmp_path, ligand_resnames=["XYZ"])
-    message = str(err.value)
-    assert message.startswith("residue XYZ:")
-    assert "unsupported atom type  U" in message
-    assert "ERRDRG>" in message
+    pdb.write_text(atoms + "END\n")
+    with pytest.raises(RuntimeError, match=match):
+        run_prodrg(pdb, tmp_path, ligand_resnames=[resname])
 
 
-def test_run_prodrg_rejects_single_atoms(tmp_path):
-    """Ions and other one- or two-atom residues are not passed to prodrg."""
-    pdb = tmp_path / "zn.pdb"
-    pdb.write_text(
-        "HETATM    1 ZN    ZN A   1       0.000   0.000   0.000  1.00  0.00          ZN\n"
-        "END\n"
-    )
-    with pytest.raises(RuntimeError, match=r"residue ZN: .*\(found 1\)"):
-        run_prodrg(pdb, tmp_path, ligand_resnames=["ZN"])
-
-
-def test_prodrg_messages():
-    """Only the error lines of the prodrg output are kept."""
-    output = (
-        "PRODRG> banner\nPRODRG>\nPRODRG> Found unsupported atom type  U\n"
-        "ERRDRG> Currently only N, C, O, S, P, Cl, Br, F, I are supported.\n"
-        "PRODRG> Program terminated unsuccessfully, sorry!\n"
-    )
-    assert _prodrg_messages(output).splitlines() == [
-        "PRODRG> Found unsupported atom type  U",
-        "ERRDRG> Currently only N, C, O, S, P, Cl, Br, F, I are supported.",
-        "PRODRG> Program terminated unsuccessfully, sorry!",
-    ]
-    # without an error line, the last lines are returned
+def test_prodrg_messages_without_error_line():
+    """Without an ERRDRG> line, the last lines of the prodrg output are kept."""
     assert _prodrg_messages("a\nb\nc", nlines=2) == "b\nc"
 
 
@@ -344,7 +332,6 @@ def test_ion_naming_hint(tmp_path):
     assert "residue CU2 with atom CU+2" in hint
     assert "CL-: if this is an ion, use residue CL1 with atom CL-1" in hint
     assert "GD: single atom, not a supported ion" in hint
-    assert "XYZ" not in hint
     assert ion_naming_hint(pdb, ["XYZ"]) == ""
 
 

@@ -14,6 +14,7 @@ from haddock.libs.libpdb import (
     handle_input_reference,
     read_chainids,
     read_segids,
+    rename_residues,
     sanitize,
     split_ensemble,
 )
@@ -310,3 +311,42 @@ def test_handle_remark_only_raises(tmp_path):
     ref.write_text("REMARK this file has no coordinates\nEND\n")
     with pytest.raises(ValueError, match="No atoms found"):
         handle_input_reference(ref)
+
+
+def test_rename_residues_aliases(tmp_path):
+    """PDB residue names are renamed to the HADDOCK3 ones (e.g. TPO to TOP)."""
+    pdb = Path(tmp_path, "aliases.pdb")
+    pdb.write_text(
+        "ATOM      1  P   TPO A   1       0.000   0.000   0.000  1.00  0.00           P\n"
+        "HETATM    2 FE   HEM A   2       0.000   0.000   0.000  1.00  0.00          FE\n"
+        "HETATM    3 AS   ARS A   3       0.000   0.000   0.000  1.00  0.00          AS\n"
+        "ATOM      4  CA  HSD A   4       0.000   0.000   0.000  1.00  0.00           C\n"
+        "END\n"
+    )
+    rename_residues(pdb)
+    resnames = [line[17:20] for line in pdb.read_text().splitlines()[:-1]]
+    assert resnames == ["TOP", "HEB", " AS", "HIS"]
+    # sanitize keeps the renamed residues
+    sanitize(pdb, overwrite=True)
+    assert " TOP A   1" in pdb.read_text()
+
+
+def test_rename_residues_selenocysteine(tmp_path):
+    """PDB selenocysteines become cysteines; HADDOCK3 SEC (serine) is kept."""
+    pdb = Path(tmp_path, "sec.pdb")
+    pdb.write_text(
+        "ATOM      1  CB  SEC A   1       0.000   0.000   0.000  1.00  0.00           C\n"
+        "ATOM      2 SE   SEC A   1       1.900   0.000   0.000  1.00  0.00          SE\n"
+        "ATOM      3  CB  SEC A   2       5.000   0.000   0.000  1.00  0.00           C\n"
+        "ATOM      4  OG  SEC A   2       6.400   0.000   0.000  1.00  0.00           O\n"
+        "END\n"
+    )
+    converted = rename_residues(pdb)
+    assert converted == ["chain A, residue 1"]
+    lines = pdb.read_text().splitlines()
+    assert lines[0][17:20] == "CYS"
+    assert lines[1] == (
+        "ATOM      2  SG  CYS A   1       1.900   0.000   0.000  1.00  0.00           S"
+    )
+    # the HADDOCK3 SEC residue (serine for covalent docking) is not changed
+    assert [line[17:20] for line in lines[2:4]] == ["SEC", "SEC"]

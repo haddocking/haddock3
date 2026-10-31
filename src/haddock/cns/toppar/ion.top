@@ -1,11 +1,13 @@
 remarks file toppar/ion.top
 remarks topology and masses for common ions
-remarks Dingle atom ion residues are given the name of the element.
-remarks By default the atom will be uncharged (eg. the residue MG will
-remarks contain the atom called MG with zero charge).
-remarks To use the charged species the charge state is appended to
-remarks the atom name (eg to use MG2+ the residue name is MG2, and the
-remarks atom name is MG+2 and has charge +2.0).
+remarks Single atom ion residues are named after the element and the
+remarks absolute charge, and their atom after the element and the exact
+remarks charge (eg. for MG2+ the residue name is MG2, and the atom name
+remarks is MG+2 and has charge +2.0; for CL- they are CL1 and CL-1).
+remarks Neutral residues (eg. MG) are only kept for the elements without
+remarks a charged species (AR, AS, KR, XE): a PDB-style ion name without
+remarks charge is then reported as unknown instead of being silently
+remarks treated as a neutral atom.
 remarks NOTE: not all ionic species are represented
 remarks PDA 02/09/99
 
@@ -105,175 +107,25 @@ MASS  OWF    15.9994   ! tungstate anion oxygen
 
 {- ========================== uncharged states ============================ -}
 
-RESIdue F {fluorine}
-  GROUp
-    ATOM F TYPE=F CHARge=0.0 END
-END {F}
-
-RESIdue NA {sodium}
-  GROUp
-    ATOM NA TYPE=NA CHARge=0.0 END
-END {NA}
-
-RESIdue MG {magnesium}
-  GROUp
-    ATOM MG TYPE=MG CHARge=0.0 END
-END {MG}
-
-RESIdue AL {aluminum}
-  GROUp
-    ATOM AL TYPE=AL CHARge=0.0 END
-END {AL}
-
-RESIdue CL {chlorine}
-  GROUp
-    ATOM CL TYPE=CL CHARge=0.0 END
-END {CL}
-
-RESIdue K {potassium}
-  GROUp
-    ATOM K TYPE=K CHARge=0.0 END
-END {K}
-
 RESIdue AR {argon}
   GROUp
     ATOM AR TYPE=AR CHARge=0.0 END
 END {AR}
-
-RESIdue CA {calcium}
-  GROUp
-    ATOM CA TYPE=CA CHARge=0.0 END
-END {CA}
-
-RESIdue V {vanadium}
-  GROUp
-    ATOM V TYPE=V CHARge=0.0 END
-END {V}
-
-RESIdue CR {chromium}
-  GROUp
-    ATOM CR TYPE=CR CHARge=0.0 END
-END {CR}
-
-RESIdue MN {manganese}
-  GROUp
-    ATOM MN TYPE=MN CHARge=0.0 END
-END {MN}
-
-RESIdue FE {iron}
-  GROUp
-    ATOM FE TYPE=FE CHARge=0.0 END
-END {FE}
-
-RESIdue NI {nickel}
-  GROUp
-    ATOM NI TYPE=NI CHARge=0.0 END
-END {NI}
-
-RESIdue CO {cobalt}
-  GROUp
-    ATOM CO TYPE=CO CHARge=0.0 END
-END {CO}
-
-RESIdue CU {copper}
-  GROUp
-    ATOM CU TYPE=CU CHARge=0.0 END
-END {CU}
-
-RESIdue ZN {zinc}
-  GROUp
-    ATOM ZN TYPE=ZN CHARge=0.0 END
-END {ZN}
 
 RESIdue AS {arsenic}
   GROUp
     ATOM AS TYPE=AS CHARge=0.0 END
 END {AS}
 
-RESIdue BR {bromine}
-  GROUp
-    ATOM BR TYPE=BR CHARge=0.0 END
-END {BR}
-
 RESIdue KR {krypton}
   GROUp
     ATOM KR TYPE=KR CHARge=0.0 END
 END {KR}
 
-RESIdue SR {strontium}
-  GROUp
-    ATOM SR TYPE=SR CHARge=0.0 END
-END {SR}
-
-RESIdue MO {molybdenum}
-  GROUp
-    ATOM MO TYPE=MO CHARge=0.0 END
-END {MO}
-
-RESIdue AG {silver}
-  GROUp
-    ATOM AG TYPE=AG CHARge=0.0 END
-END {AG}
-
-RESIdue CD {cadmium}
-  GROUp
-    ATOM CD TYPE=CD CHARge=0.0 END
-END {CD}
-
-RESIdue I {iodine}
-  GROUp
-    ATOM I TYPE=I CHARge=0.0 END
-END {I}
-
 RESIdue XE {xenon}
   GROUp
     ATOM XE TYPE=XE CHARge=0.0 END
 END {XE}
-
-RESIdue CS {cesium}
-  GROUp
-    ATOM CS TYPE=CS CHARge=0.0 END
-END {CS}
-
-RESIdue HO {holmium}
-  GROUp
-    ATOM HO TYPE=HO CHARge=0.0 END
-END {HO}
-
-RESIdue YB {ytterbium}
-  GROUp
-    ATOM YB TYPE=YB CHARge=0.0 END
-END {YB}
-
-RESIdue OS {osmium}
-  GROUp
-    ATOM OS TYPE=OS CHARge=0.0 END
-END {OS}
-
-RESIdue IR {iridium}
-  GROUp
-    ATOM IR TYPE=IR CHARge=0.0 END
-END {IR}
-
-RESIdue PT {platinum}
-  GROUp
-    ATOM PT TYPE=PT CHARge=0.0 END
-END {PT}
-
-RESIdue AU {gold}
-  GROUp
-    ATOM AU TYPE=AU CHARge=0.0 END
-END {AU}
-
-RESIdue HG {mercury}
-  GROUp
-    ATOM HG TYPE=HG CHARge=0.0 END
-END {HG}
-
-RESIdue PB {lead}
-  GROUp
-    ATOM PB TYPE=PB CHARge=0.0 END
-END {PB}
 
 !RESIdue U {uranium}
 !  GROUp

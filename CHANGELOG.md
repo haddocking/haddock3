@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-28: Turned true by default the generation of ligand topo/param files - Issue #1743
 - 2026-10-27: Fixed traceback when running caprieval with multimodel reference pdb - Issue #1737
 - 2026-10-26: Improved the consistency of CNS scripts across modules - Issue #1729
 - 2026-10-25: Removed the duplicate `B1S`, `B1SL` and `A1SL` PRESidue definitions from `carbohydrate.top` that CNS reported as `RTFRDR-ERR` on every topology read - Issue #1717

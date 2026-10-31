@@ -114,6 +114,15 @@ _to_rename = {
     " 0.00969": " 0.00   ",
 }
 
+# PDB residue names of molecules that HADDOCK3 defines under another name
+_resname_aliases = {
+    "TPO": "TOP",  # phosphothreonine
+    "HEM": "HEB",  # heme B
+    "SLB": "SIB",  # beta-N-acetylneuraminic acid
+    "CMO": "COM",  # carbon monoxide
+    "ARS": "AS",  # arsenic
+}
+
 # Get list of supported residues to keep when pre-processing
 _to_keep = list(supported_residues)
 
@@ -169,6 +178,72 @@ def swap_segid_chain(pdb_file_path: FilePath, new_pdb_file_path: FilePath) -> No
                     output_handler.write(line)
 
 
+def _rename_line(line: str) -> str:
+    """Give HADDOCK3 names to the residue of a PDB line.
+
+    Applies ``_to_rename`` and the PDB residue name aliases of
+    ``_resname_aliases`` (e.g. TPO becomes TOP).
+    """
+    for tag, new_tag in _to_rename.items():
+        line = line.replace(tag, new_tag)
+    if line.startswith(("ATOM", "HETATM")):
+        alias = _resname_aliases.get(line[slc_resname].strip())
+        if alias:
+            line = line[:17] + alias.rjust(3) + line[20:]
+    return line
+
+
+def rename_residues(pdb_file_path: FilePath) -> list[str]:
+    """Give HADDOCK3 names to the residues of a PDB file, in place.
+
+    Running this before looking for unknown residues ensures that residues
+    known under another name (e.g. TPO for TOP) are not reported as unknown.
+
+    Selenocysteines (PDB residue SEC with an SE atom) are converted to
+    cysteines, with SE renamed to SG: HADDOCK3 has no selenocysteine, and its
+    own SEC residue is a serine variant for covalent docking.
+
+    Returns
+    -------
+    list[str]
+        The selenocysteines converted to cysteines, as
+        ``"chain <chain>, residue <resid>"``.
+    """
+    lines = [
+        _rename_line(line) for line in Path(pdb_file_path).read_text().splitlines()
+    ]
+    atom_lines = ("ATOM", "HETATM")
+    selenocysteines = {
+        (line[slc_chainid], line[22:27])
+        for line in lines
+        if line.startswith(atom_lines)
+        and line[slc_resname].strip() == "SEC"
+        and line[slc_name].strip() == "SE"
+    }
+    for i, line in enumerate(lines):
+        if (
+            line.startswith(atom_lines)
+            and line[slc_resname].strip() == "SEC"
+            and (line[slc_chainid], line[22:27]) in selenocysteines
+        ):
+            line = line[:17] + "CYS" + line[20:]
+            if line[slc_name].strip() == "SE":
+                line = line.ljust(78)
+                line = (
+                    line[:12]
+                    + format_atom_name("SG", "S")
+                    + line[16:76]
+                    + " S"
+                    + line[78:]
+                )
+            lines[i] = line
+    Path(pdb_file_path).write_text("".join(line + os.linesep for line in lines))
+    return [
+        f"chain {chain.strip() or '-'}, residue {resid.strip()}"
+        for chain, resid in sorted(selenocysteines)
+    ]
+
+
 def sanitize(
     pdb_file_path: FilePathT,
     overwrite: bool = True,
@@ -186,8 +261,7 @@ def sanitize(
             line = line.rstrip(os.linesep)
             # Ignoring lines containing any tag from __to_remove
             if not any([tag in line for tag in _to_remove]):
-                for tag, new_tag in _to_rename.items():
-                    line = line.replace(tag, new_tag)
+                line = _rename_line(line)
                 # check if this residue is known
                 res = line[17:20].strip()
                 if res and res in to_keep:

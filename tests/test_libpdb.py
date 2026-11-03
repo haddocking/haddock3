@@ -6,15 +6,15 @@ import tempfile
 
 from pathlib import Path
 
-from . import data_folder, golden_data
+from . import broken_pdb, corrected_pdb, data_folder, golden_data
 from haddock.libs.libio import PDBFile
 from haddock.libs.libpdb import (
     add_TER_on_chain_breaks,
     check_combination_chains,
+    find_insertion_codes,
     handle_input_reference,
     read_chainids,
     read_segids,
-    find_insertion_codes,
     rename_residues,
     sanitize,
     split_ensemble,
@@ -353,19 +353,7 @@ def test_rename_residues_selenocysteine(tmp_path):
     assert [line[17:20] for line in lines[2:4]] == ["SEC", "SEC"]
 
 
-def test_find_insertion_codes(tmp_path):
+def test_find_insertion_codes():
     """Residues with an insertion code are listed once each."""
-    pdb = Path(tmp_path, "insertion.pdb")
-    pdb.write_text(
-        "ATOM      1  CA  SER A  52       0.000   0.000   0.000  1.00  0.00           C\n"
-        "ATOM      2  N   LYS A  52A      1.000   0.000   0.000  1.00  0.00           N\n"
-        "ATOM      3  CA  LYS A  52A      2.000   0.000   0.000  1.00  0.00           C\n"
-        "ATOM      4  CA  GLY B 100B      3.000   0.000   0.000  1.00  0.00           C\n"
-        "END\n"
-    )
-    assert find_insertion_codes(pdb) == [
-        "LYS (chain A, residue 52A)",
-        "GLY (chain B, residue 100B)",
-    ]
-    pdb.write_text(pdb.read_text().replace("52A", "53 ").replace("100B", "101 "))
-    assert find_insertion_codes(pdb) == []
+    assert find_insertion_codes(broken_pdb) == ["ALA (chain A, residue 27A)"]
+    assert find_insertion_codes(corrected_pdb) == []

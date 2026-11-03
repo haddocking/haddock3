@@ -274,6 +274,17 @@ class HaddockModule(BaseCNSModule):
             models_dic[i] = []
             # Copy the molecule to the step folder
 
+            insertions = libpdb.find_insertion_codes(molecule.with_parent)
+            if insertions:
+                self.finish_with_error(
+                    "Residue(s) with an insertion code in "
+                    f"{molecule.file_name.name}: {'; '.join(insertions)}.\n"
+                    "HADDOCK3 does not support insertion codes, as several steps "
+                    "identify residues by their number only. Renumber the residues "
+                    "(e.g. with `pdb_fixinsert` from pdb-tools) and apply the same "
+                    "renumbering to your restraint files and reference structures."
+                )
+
             # Split models
             self.log(
                 f"Split models if needed for {molecule.with_parent}",
@@ -316,21 +327,6 @@ class HaddockModule(BaseCNSModule):
             for _task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
-                # several steps identify residues by their number only
-                insertions = libpdb.find_insertion_codes(model)
-                if insertions:
-                    self.finish_with_error(
-                        f"Residue(s) with an insertion code in {model.name}: "
-                        f"{', '.join(insertions)}.\n"
-                        "HADDOCK3 does not support insertion codes: several "
-                        "steps (e.g. caprieval, the scanning modules) identify "
-                        "residues by their number only, so that e.g. residues "
-                        "52 and 52A would be confused. Renumber the residues, "
-                        "for example with `pdb_fixinsert` from pdb-tools "
-                        f"(`pdb_fixinsert {model.name} > renumbered.pdb`), and "
-                        "apply the same renumbering to your restraint files and "
-                        "reference structures."
-                    )
                 # rename first, so that e.g. TPO is not reported as unknown
                 selenocysteines = libpdb.rename_residues(model)
                 if selenocysteines:

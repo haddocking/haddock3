@@ -253,14 +253,14 @@ def find_insertion_codes(pdb_file_path: FilePath) -> list[str]:
         The residues, as ``"<resname> (chain <chain>, residue <resid>)"``, in
         the order of the file.
     """
-    found: dict[str, None] = {}
-    for line in Path(pdb_file_path).read_text().splitlines():
-        if line.startswith(("ATOM", "HETATM")) and line[slc_icode].strip():
-            chain = line[slc_chainid].strip() or "-"
-            resid = f"{line[slc_resseq].strip()}{line[slc_icode]}"
-            resname = line[slc_resname].strip()
-            found[f"{resname} (chain {chain}, residue {resid})"] = None
-    return list(found)
+    return list(
+        dict.fromkeys(
+            f"{line[slc_resname].strip()} (chain {line[slc_chainid].strip() or '-'}, "
+            f"residue {line[22:27].strip()})"
+            for line in Path(pdb_file_path).read_text().splitlines()
+            if line.startswith(("ATOM", "HETATM")) and line[slc_icode].strip()
+        )
+    )
 
 
 def sanitize(

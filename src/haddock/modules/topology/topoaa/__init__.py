@@ -274,17 +274,6 @@ class HaddockModule(BaseCNSModule):
             models_dic[i] = []
             # Copy the molecule to the step folder
 
-            insertions = libpdb.find_insertion_codes(molecule.with_parent)
-            if insertions:
-                self.finish_with_error(
-                    "Residue(s) with an insertion code in "
-                    f"{molecule.file_name.name}: {'; '.join(insertions)}.\n"
-                    "HADDOCK3 does not support insertion codes, as several steps "
-                    "identify residues by their number only. Renumber the residues "
-                    "(e.g. with `pdb_fixinsert` from pdb-tools) and apply the same "
-                    "renumbering to your restraint files and reference structures."
-                )
-
             # Split models
             self.log(
                 f"Split models if needed for {molecule.with_parent}",

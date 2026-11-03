@@ -78,6 +78,7 @@ from haddock.gear.yaml2cfg import (
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
 from haddock.libs.libio import make_writeable_recursive, extract_files_flat
+from haddock.libs.libpdb import find_insertion_codes
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_convert_paths_to_strings,
@@ -403,6 +404,8 @@ def setup_run(
             raise ConfigurationError(
                 f"Too many molecules defined, max is {max_molecules_allowed}."
             )  # noqa: E501
+
+        check_insertion_codes(modules_params["topoaa.1"]["molecules"])
 
         zero_fill.read(modules_params)
 
@@ -1409,6 +1412,37 @@ def populate_mol_parameters(modules_params: ParamMap) -> None:
                 defaults[param],
             )
     return
+
+
+def check_insertion_codes(molecules: Iterable[FilePath]) -> None:
+    """
+    Stop if input molecules have residues with an insertion code (e.g. 52A).
+
+    Several steps identify residues by their number only, so that e.g.
+    residues 52 and 52A would be confused. The original input is checked,
+    also when it is preprocessed: preprocessing renumbers insertion codes,
+    which would no longer match the restraints and reference structures.
+
+    Raises
+    ------
+    ConfigurationError
+        If any input molecule has a residue with an insertion code.
+    """
+    found = []
+    for molecule in molecules:
+        check_if_path_exists(molecule)
+        insertions = find_insertion_codes(molecule)
+        if insertions:
+            found.append(f"{Path(molecule).name}: {'; '.join(insertions)}")
+    if found:
+        raise ConfigurationError(
+            "Residue(s) with an insertion code in the input molecules:\n"
+            + "\n".join(found)
+            + "\nHADDOCK3 does not support insertion codes, as several steps "
+            "identify residues by their number only. Renumber the residues "
+            "(e.g. with `pdb_fixinsert` from pdb-tools) and apply the same "
+            "renumbering to your restraint files and reference structures."
+        )
 
 
 def check_if_path_exists(path: FilePath) -> None:

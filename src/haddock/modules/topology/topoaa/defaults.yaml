@@ -12,7 +12,7 @@ autohis:
   group: molecule
   explevel: expert
 autotoppar:
-  default: false
+  default: true
   type: boolean
   title: Automatically generate topologies and parameters for unknown atoms
   short: Automatically generate topologies and parameters for unknown atoms

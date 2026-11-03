@@ -28,15 +28,21 @@ jobs:
           files_yaml: |
             python:
               - src/**
+              - "!src/**/*.md"
               - tests/**
+              - "!tests/**/*.md"
               - integration_tests/**
+              - "!integration_tests/**/*.md"
               - end-to-end_tests/**
+              - "!end-to-end_tests/**/*.md"
               - docs/**
+              - "!docs/**/*.md"
               - pyproject.toml
               - setup.py
             docker:
               - Dockerfile
               - src/**
+              - "!src/**/*.md"
               - pyproject.toml
               - setup.py
 

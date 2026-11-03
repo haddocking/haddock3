@@ -128,6 +128,7 @@ RES_3L1L = dict(
         ("PTR", "Y"),
         ("SEP", "S"),
         ("TOP", "T"),
+        ("TPO", "T"),
         ("TYP", "Y"),
         ("TYS", "Y"),
     ]

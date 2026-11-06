@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-28: Added check to detect insertion codes and return an error message - Issue #1746
 - 2026-10-28: Turned true by default the generation of ligand topo/param files - Issue #1743
 - 2026-10-27: Fixed traceback when running caprieval with multimodel reference pdb - Issue #1737
 - 2026-10-26: Improved the consistency of CNS scripts across modules - Issue #1729

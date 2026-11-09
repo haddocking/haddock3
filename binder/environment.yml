@@ -11,3 +11,5 @@ dependencies:
   - pip:
       - haddock3==2026.10.1
       - py3Dmol==2.5.5
+      - marimo
+      - jupyter-marimo-proxy

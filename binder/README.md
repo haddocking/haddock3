@@ -1,4 +1,4 @@
-### Run HADDOCK3 tutorials online
+### Run HADDOCK3 in Binder
 
-Launch the antibody–antigen docking tutorial directly in Binder.
+Launch the Haddock3 docking tutorials and analysis directly in Binder.
 

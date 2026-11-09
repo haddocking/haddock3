@@ -4,6 +4,7 @@ import math
 from multiprocessing import Process, Queue
 
 from haddock import log
+from haddock.core.exceptions import HaddockTaskExecutionError
 from haddock.core.typing import (
     AnyT,
     FilePath,
@@ -92,7 +93,7 @@ class Worker(Process):
             r = None
             try:
                 r = task.run()
-            except Exception as e:
+            except HaddockTaskExecutionError as e:
                 log.warning(f"Exception in task execution: {e}")
 
             results.append(r)

@@ -243,7 +243,7 @@ mol1:
     title: C-ter topology
     short: Define if C-terminus should be charged or uncharged
     long:
-      This option defines how N-terminus residue should be. If false (default), C-ter will be an uncharged CO,
+      This option defines how C-terminus residue should be. If false (default), C-ter will be an uncharged CO,
       as it would be in a peptide bond. If true, C-ter will be a charged COO-.
     group: molecule
     explevel: easy

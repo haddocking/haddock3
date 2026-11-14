@@ -1,7 +1,5 @@
 import glob
-import math
 import os
-import random
 import re
 import shutil
 import subprocess
@@ -36,6 +34,21 @@ warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarni
 # =====================================================================#
 JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
 MAX_RETRIES = 10
+
+# Number of models (CNS jobs) packed into one grid job, per module.
+#  The values for rigidbody, flexref, emref and emscoring are the ones
+#  used by the HADDOCK2.5 grid service.
+MODELS_PER_JOB = {
+    "topoaa": 2,
+    "topocg": 2,
+    "rigidbody": 20,
+    "flexref": 5,
+    "emref": 5,
+    "emscoring": 5,
+    "mdref": 2,
+    "mdscoring": 2,
+    "cgtoaa": 2,
+}
 
 # Important patterns to adjust the paths in the `.inp` file
 OUTPUT_PATTERN = r'\$output_\w+\s*=\s*"([^"]+)"|\$output_\w+\s*=\s*([^\s;]+)'
@@ -95,11 +108,6 @@ class JobStatus(Enum):
         return cls.UNKNOWN
 
 
-class Tag(Enum):
-    PROBING = "Probing"
-    DEFAULT = "Default"
-
-
 class GridInterface(ABC):
 
     def __init__(
@@ -137,8 +145,6 @@ class GridInterface(ABC):
         self.retries = 0
         # Tracker for timings
         self.timings: dict[JobStatus, datetime] = {}
-        # Tag for the job
-        self.tag = Tag.DEFAULT
         # `input_str` is the content of the `.inp` file
         self.input_str = ""
         # `input_str_list` is a list of separate recipes`
@@ -558,56 +564,20 @@ class CompositeGridJob(GridInterface):
 class GRIDScheduler:
     """Scheduler to manage and run jobs on the GRID via DIRAC."""
 
-    def __init__(
-        self, tasks: list[CNSJob], params: dict, probing: float = 0.05
-    ) -> None:
+    def __init__(self, tasks: list[CNSJob], params: dict) -> None:
 
-        self.probing: bool = True
         self.ncores = parse_ncores(params["ncores"])
-        self.batch_size = 1
+        self.tasks = tasks
+        self.workload: list[CompositeGridJob] = []
 
-        self.workload: list[GridJob] = [
-            GridJob(
-                input=t.input_file,
-                toppar_path=t.envvars["TOPPAR"],
-                module_path=t.envvars["MODULE"],
-            )
-            for t in tasks
-        ]
-
-        # ===============================================================#
-        #
-        # ! IMPORTANT !
-        #
-        # The `subset_size` is the number of jobs to be used for probing the grid
-        # In theory we could send any number of jobs, but in practice we need to
-        #  consider that the submission itself takes time. So we can come to the
-        #  scenario in which we spend more time submitting jobs than measuring,
-        #  this means that we would not be able to properly evaluate the grid
-        #  capacity.
-        # Here we set the `subset_size` to be the minimum between `ncores`
-        # and the 5% of the total number of jobs. By setting it to the number
-        # of cores, we can be sure that we will be able to measure the metrics.
-        # We also need to ensure there is at least one job to probe the grid.
-        #
-        # HACK: This is not ideal, but it is a compromise between accuracy and speed.
-        subset_size = min(self.ncores, max(1, math.ceil(len(self.workload) * probing)))
-        # ===============================================================#
-
-        # Randomly select that many jobs
-        if len(self.workload) >= subset_size:
-            for i in random.sample(range(len(self.workload)), subset_size):
-                self.workload[i].tag = Tag.PROBING
-        else:
-            log.warning("> Not enough jobs to probe the grid, skipping probing step <")
-            self.probing = False
+        # Modules run inside their step folder, named `<step>_<module>`
+        module = Path.cwd().name.split("_", 1)[-1]
+        self.batch_size = MODELS_PER_JOB.get(module, 1)
 
     def run(self) -> None:
         """Execute the tasks."""
         log.info("#" * 42)
         log.info("=== Running tasks with GRID Scheduler ===")
-
-        self.probe_grid_efficiency()
 
         self.create_batches()
 
@@ -619,28 +589,27 @@ class GRIDScheduler:
 
     def create_batches(self) -> None:
         """Create batches of jobs to be submitted together."""
-        log.info("++ Concatenating jobs to increase efficiency...")
+        toppar_path = self.tasks[0].envvars["TOPPAR"]
+        module_path = self.tasks[0].envvars["MODULE"]
 
-        jobs = [j for j in self.workload if j.tag == Tag.DEFAULT]
+        # `input_file` is either the path to the `.inp` file or its content
+        inputs = [
+            t.input_file.read_text() if isinstance(t.input_file, Path) else t.input_file
+            for t in self.tasks
+        ]
 
-        toppar_path = jobs[0].toppar_path
-        module_path = jobs[0].module_path
-
-        composite_jobs = []
-        for i, batch in enumerate(range(0, len(jobs), self.batch_size), start=1):
-            input = [j.input_str for j in jobs[batch : batch + self.batch_size]]
-            log.debug(f" Payload {i}, n={len(input)} job(s)")
-            job = CompositeGridJob(
-                input=input,
+        self.workload = [
+            CompositeGridJob(
+                input=inputs[i : i + self.batch_size],
                 toppar_path=toppar_path,
                 module_path=module_path,
             )
-            composite_jobs.append(job)
+            for i in range(0, len(inputs), self.batch_size)
+        ]
 
         log.info(
-            f"++ Created {len(composite_jobs)} payload(s) with up to {self.batch_size} job(s) each"
+            f"++ Created {len(self.workload)} payload(s) with up to {self.batch_size} job(s) each"
         )
-        self.workload = composite_jobs
 
     def wait_for_completion(self) -> None:
         """Wait for jobs with status WAITING or RUNNING to complete."""
@@ -660,111 +629,14 @@ class GRIDScheduler:
             else:
                 complete = True
 
-    def submit_jobs(self, tag: Tag = Tag.DEFAULT) -> None:
+    def submit_jobs(self) -> None:
         """Submit jobs to the GRID in parallel."""
-        queue = [
-            job
-            for job in self.workload
-            if job.tag == tag and job.status == JobStatus.STAGED
-        ]
-
-        log.info(f"++ Submitting {len(queue)} '{tag.value}' payloads to the grid...")
+        log.info(f"++ Submitting {len(self.workload)} payloads to the grid...")
         with ThreadPoolExecutor(max_workers=self.ncores) as executor:
-            executor.map(lambda job: job.package(), queue)
+            executor.map(lambda job: job.package(), self.workload)
 
         with ThreadPoolExecutor(max_workers=self.ncores) as executor:
-            executor.map(lambda job: job.submit(), queue)
-
-    def probe_grid_efficiency(self) -> None:
-        """Submit a small number of jobs to probe the efficiency of the GRID."""
-        if not self.probing:
-            return
-
-        log.info("++ Probing grid efficiency...")
-
-        # Submit
-        self.submit_jobs(tag=Tag.PROBING)
-
-        # Wait
-        self.wait_for_completion()
-
-        # Calculate actual durations from timestamps
-        waiting_durations = []
-        running_durations = []
-
-        for job in self.workload:
-            wait_start = job.timings.get(JobStatus.WAITING)
-            run_start = job.timings.get(JobStatus.RUNNING)
-            done_time = job.timings.get(JobStatus.DONE)
-
-            if wait_start is None or run_start is None or done_time is None:
-                continue  # Skip jobs without complete timing info
-
-            else:
-                log.debug(f"Job {job.expected_outputs}")
-                log.debug(f"   timings: {job.timings}")
-
-            # Calculate waiting duration (WAITING to RUNNING)
-            waiting_duration = (run_start - wait_start).total_seconds()
-            waiting_durations.append(waiting_duration)
-
-            # Calculate running duration (RUNNING to DONE)
-            running_duration = (done_time - run_start).total_seconds()
-            running_durations.append(running_duration)
-
-        if not running_durations or not waiting_durations:
-            log.warning(
-                "> Average running time is zero, cannot calculate optimal batch size <"
-            )
-            return
-
-        # Calculate average durations
-        avg_waiting = sum(waiting_durations) / len(waiting_durations)
-        avg_running = sum(running_durations) / len(running_durations)
-
-        target_efficiency = 0.9
-        batch_size = self.calculate_optimal_batch_size(
-            N=self.batch_size,
-            W=avg_waiting,
-            R=avg_running,
-            T=target_efficiency,
-        )
-
-        # Make sure batch size is not larger than the number of default jobs
-        # TODO: Add a warning if this happens?
-        batch_size = min(
-            batch_size, len([j for j in self.workload if j.tag == Tag.DEFAULT])
-        )
-
-        self.batch_size = batch_size
-
-    @staticmethod
-    def calculate_optimal_batch_size(N: int, W: float, R: float, T: float) -> int:
-        """Calculate the optimal batch size to achieve target efficiency."""
-        # The efficiency of a given batch can be described as:
-        #
-        #  E = N * R / W + N * R
-        #
-        # Where E is efficiency, N is the number of jobs running at the same time
-        #  R is the average running time, W is the average waiting time
-        #
-        # The current efficiency is then:
-        E = (N * R) / (W + N * R)
-
-        log.info(f"+ Current efficiency with {N} job(s) per payload: {E:.1%}")
-
-        # So to achieve a target efficiency T
-        # We solve for N, which is the batch size:
-        #  E = N * R / W + N * R
-        #  T * (W + N * R) = N * R
-        #  T * W + T * N * R = N * R
-        #  T * W = N * R - T * N * R
-        #  T * W = N * R * (1 - T)
-        #  N = T * W / R * (1 - T)
-        batch_size = (T * W) / (R * (1 - T))
-
-        batch_size = max(1, round(batch_size))  # Ensure at least 1 job
-        return batch_size
+            executor.map(lambda job: job.submit(), self.workload)
 
     @staticmethod
     def process_job(job: GridJob) -> None:

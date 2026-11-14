@@ -1,10 +1,12 @@
+from types import SimpleNamespace
+
 import pytest
 
 from haddock.libs.libgrid import (
+    GRIDScheduler,
     GridJob,
     CompositeGridJob,
     JobStatus,
-    Tag,
     ping_dirac,
     validate_dirac,
 )
@@ -69,11 +71,6 @@ def test_gridjob_repr(dummy_paths):
 def test_jobstatus_from_string():
     assert JobStatus.from_string("Running") == JobStatus.RUNNING
     assert JobStatus.from_string("unknown") == JobStatus.UNKNOWN
-
-
-def test_tag_enum():
-    assert Tag.PROBING.value == "Probing"
-    assert Tag.DEFAULT.value == "Default"
 
 
 def test_parse_output():
@@ -156,3 +153,26 @@ def test_find_output():
     line3 = "no output here"
     output3 = GridJob._find_output(line3)
     assert output3 is None
+
+
+@pytest.mark.parametrize(
+    "module, n_tasks, expected",
+    [("rigidbody", 41, [20, 20, 1]), ("flexref", 1, [1])],
+)
+def test_scheduler_create_batches(
+    tmp_path, monkeypatch, dummy_paths, module, n_tasks, expected
+):
+    toppar, module_path = dummy_paths
+    step = tmp_path / f"1_{module}"
+    step.mkdir()
+    monkeypatch.chdir(step)
+    envvars = {"TOPPAR": toppar, "MODULE": module_path}
+    tasks = [
+        SimpleNamespace(input_file=f"model{i}\nstop\n", envvars=envvars)
+        for i in range(n_tasks)
+    ]
+    scheduler = GRIDScheduler(tasks, params={"ncores": 1})
+    scheduler.create_batches()
+    assert [len(job.input_str_list) for job in scheduler.workload] == expected
+    for job in scheduler.workload:
+        job.clean()

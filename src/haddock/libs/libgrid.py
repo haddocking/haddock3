@@ -109,7 +109,6 @@ class JobStatus(Enum):
 
 
 class GridInterface(ABC):
-
     def __init__(
         self,
         input: Union[Path, str, list[str]],
@@ -458,7 +457,6 @@ class GridJob(GridInterface):
         self.payload_fnames.append(inp_name)
         with open(inp_name, "w") as f:
             for line in self.input_str.splitlines(keepends=True):
-
                 # Parse this line and try to identify output files
                 output = self._find_output(line)
                 if output:
@@ -478,7 +476,6 @@ class GridJob(GridInterface):
 
 
 class CompositeGridJob(GridInterface):
-
     def __init__(
         self,
         input: list[str],

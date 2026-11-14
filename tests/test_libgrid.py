@@ -157,7 +157,7 @@ def test_find_output():
 
 @pytest.mark.parametrize(
     "module, n_tasks, expected",
-    [("rigidbody", 41, [20, 20, 1]), ("flexref", 1, [1])],
+    [("rigidbody", 21, [10, 10, 1]), ("flexref", 1, [1])],
 )
 def test_scheduler_create_batches(
     tmp_path, monkeypatch, dummy_paths, module, n_tasks, expected

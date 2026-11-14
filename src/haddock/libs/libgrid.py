@@ -36,15 +36,15 @@ JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
 MAX_RETRIES = 10
 
 # Number of models (CNS jobs) packed into one grid job, per module.
-#  The values for rigidbody, flexref, emref and emscoring are the ones
-#  used by the HADDOCK2.5 grid service.
+#  Chosen from grid tests on the protein-protein docking example (#1768):
+#  smaller jobs return results faster, as the waiting time dominates.
 MODELS_PER_JOB = {
     "topoaa": 2,
     "topocg": 2,
-    "rigidbody": 20,
-    "flexref": 5,
-    "emref": 5,
-    "emscoring": 5,
+    "rigidbody": 10,
+    "flexref": 2,
+    "emref": 2,
+    "emscoring": 2,
     "mdref": 2,
     "mdscoring": 2,
     "cgtoaa": 2,

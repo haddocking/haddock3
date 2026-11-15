@@ -1,4 +1,6 @@
+import subprocess
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import pytest
 
@@ -176,3 +178,23 @@ def test_scheduler_create_batches(
     assert [len(job.input_str_list) for job in scheduler.workload] == expected
     for job in scheduler.workload:
         job.clean()
+
+
+def test_submit_retries_failed_submission(dummy_paths):
+    toppar, module = dummy_paths
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    job.packaged = True
+    error = subprocess.CalledProcessError(
+        2, "dirac-wms-job-submit", output="Peer closed connection"
+    )
+    ok = subprocess.CompletedProcess([], 0, stdout="JobID = 123")
+    with (
+        patch("haddock.libs.libgrid.subprocess.run", side_effect=[error, error, ok]),
+        patch("haddock.libs.libgrid.time.sleep") as sleep,
+        patch.object(GridJob, "update_status"),
+    ):
+        job.submit()
+    assert job.id == 123
+    assert job.retries == 2
+    assert [c.args[0] for c in sleep.call_args_list] == [30, 60]
+    job.clean()

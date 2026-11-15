@@ -6,7 +6,6 @@ import subprocess
 import tempfile
 import time
 import uuid
-import warnings
 import zipfile
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
@@ -20,10 +19,6 @@ from haddock.core.defaults import cns_exec_linux as CNS_EXEC
 from haddock.libs.libsubprocess import CNSJob
 from haddock.libs.libutil import parse_ncores
 
-# NOTE: When creating the payload.zip, this warning appears because we are replicating `toppar_path`
-#  subdirectory structure. It can be ignored safely, but keep an eye on it to make sure
-#  not many operations are being duplicated
-warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarning)
 # =====================================================================#
 # EXPLANATION #
 # =====================================================================#
@@ -33,12 +28,14 @@ warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarni
 #  associated with it.
 # There is an explanation about this in the user manual.
 # =====================================================================#
-JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
+JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR")
 MAX_RETRIES = 10
 # Seconds to wait before retrying a failed submission, doubled after each
 #  retry up to SUBMIT_RETRY_MAX_DELAY (10 retries then cover ~37 minutes)
 SUBMIT_RETRY_DELAY = 30
 SUBMIT_RETRY_MAX_DELAY = 300
+# Seconds between two status checks of the submitted jobs
+POLL_INTERVAL = 30
 
 # Number of models (CNS jobs) packed into one grid job, per module.
 #  Chosen from grid tests on the protein-protein docking example (#1768):
@@ -107,6 +104,10 @@ class JobStatus(Enum):
     def from_string(cls, value):
         """Convert string to JobStatus enum."""
         value = value.strip().lower()
+        # Stalled, killed or deleted jobs will not finish, handle them as
+        #  failed so they are resubmitted
+        if value in ("stalled", "killed", "deleted"):
+            return cls.FAILED
         for status in cls:
             if status.value.lower() == value:
                 return status
@@ -236,9 +237,10 @@ class GridInterface(ABC):
             )
             raise
 
-        output_dict = self.parse_output(result.stdout)
+        self.set_status(self.parse_output(result.stdout))
 
-        self.id = output_dict["JobID"]
+    def set_status(self, output_dict: dict[str, str]) -> None:
+        """Set the status of the job from the parsed DIRAC status output."""
         self.status = JobStatus.from_string(output_dict["Status"])
         self.site = output_dict.get("Site", "Unknown")
 
@@ -268,15 +270,21 @@ class GridInterface(ABC):
             #  It must contain the CNS executable and the input file,
             # z.write(self.input_f, arcname=f"{self.input_f.name}")
             z.write(CNS_EXEC, arcname="cns")
+            arcnames = {"cns"}
             for f in set(self.payload_fnames):
                 # NOTE: Preserve the relative path structure from `toppar_path`!
                 #  This is important because some CNS scripts have relative paths
                 #   hardcoded in it
                 if f.is_relative_to(toppar_path):
-                    relative_path = f.relative_to(toppar_path)
-                    z.write(f, arcname=str(relative_path))
+                    arcname = str(f.relative_to(toppar_path))
                 else:
-                    z.write(f, arcname=Path(f).name)
+                    arcname = Path(f).name
+                # A toppar file the `.inp` refers to is also copied next to it,
+                #  add it only once or `unzip` asks whether to overwrite it
+                if arcname in arcnames:
+                    continue
+                arcnames.add(arcname)
+                z.write(f, arcname=arcname)
 
     def submit(self) -> None:
         """Interface to submit the job to DIRAC."""
@@ -633,20 +641,43 @@ class GRIDScheduler:
     def wait_for_completion(self) -> None:
         """Wait for jobs with status WAITING or RUNNING to complete."""
         log.info("++ Waiting...")
-        complete = False
-        while not complete:
+        while True:
             jobs_to_check = [
                 job
                 for job in self.workload
                 if job.status
                 not in {JobStatus.STAGED, JobStatus.DONE, JobStatus.FAILED}
             ]
-            if jobs_to_check:
-                log.debug(f"+ Checking status of {len(jobs_to_check)} payload(s)...")
-                with ThreadPoolExecutor(max_workers=self.ncores) as executor:
-                    executor.map(self.process_job, jobs_to_check)
-            else:
-                complete = True
+            if not jobs_to_check:
+                break
+            time.sleep(POLL_INTERVAL)
+            log.debug(f"+ Checking status of {len(jobs_to_check)} payload(s)...")
+            self.update_statuses(jobs_to_check)
+            with ThreadPoolExecutor(max_workers=self.ncores) as executor:
+                executor.map(self.process_job, jobs_to_check)
+
+    @staticmethod
+    def update_statuses(jobs: list[CompositeGridJob]) -> None:
+        """Update the status of all jobs with a single DIRAC call."""
+        result = subprocess.run(
+            ["dirac-wms-job-status", *[str(job.id) for job in jobs]],
+            shell=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            log.warning(f"> Checking the job status failed: {result.stdout.strip()} <")
+
+        # DIRAC prints one line per job; jobs it does not report keep their status
+        #  and are checked again in the next round
+        statuses = {}
+        for line in result.stdout.splitlines():
+            output_dict = GridInterface.parse_output(line)
+            if "JobID" in output_dict and "Status" in output_dict:
+                statuses[output_dict["JobID"]] = output_dict
+        for job in jobs:
+            if str(job.id) in statuses:
+                job.set_status(statuses[str(job.id)])
 
     def submit_jobs(self) -> None:
         """Submit jobs to the GRID in parallel."""
@@ -659,15 +690,12 @@ class GRIDScheduler:
 
     @staticmethod
     def process_job(job: GridJob) -> None:
-        """Process a single job: update status, retrieve output if done, handle retries if failed.
+        """Process a single job: retrieve output if done, handle retries if failed.
 
         NOTE: This function is parallelized, that is why things like cleaning, download, retry
          are here. If you are adding new functionality, consider if it should be here or in the
          sequential part of the code.
         """
-
-        job.update_status()
-
         if job.status == JobStatus.FAILED:
             # Jobs on the grid can fail for many reasons outside our control
             #  So if the job is failed, resubmit it up to MAX_RETRIES times

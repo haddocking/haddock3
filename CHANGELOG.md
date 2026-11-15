@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-15: More efficient grid job polling - Issue #1766
 - 2026-11-15: Proper cleaning of grid /tmp directories - Issue #1771
 - 2026-11-15: Added retrial when dirac communication fails - Issue #1769
 - 2026-11-14: Modified the packaging of jobs for grid submission - Issue #1768

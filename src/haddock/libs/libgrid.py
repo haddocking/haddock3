@@ -4,6 +4,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 import uuid
 import warnings
 import zipfile
@@ -34,6 +35,10 @@ warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarni
 # =====================================================================#
 JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
 MAX_RETRIES = 10
+# Seconds to wait before retrying a failed submission, doubled after each
+#  retry up to SUBMIT_RETRY_MAX_DELAY (10 retries then cover ~37 minutes)
+SUBMIT_RETRY_DELAY = 30
+SUBMIT_RETRY_MAX_DELAY = 300
 
 # Number of models (CNS jobs) packed into one grid job, per module.
 #  Chosen from grid tests on the protein-protein docking example (#1768):
@@ -285,22 +290,34 @@ class GridInterface(ABC):
 
         self.timings[JobStatus.WAITING] = datetime.now()
 
-        try:
-            # The SUBMIT_CMD returns the job ID in stdout
-            result = subprocess.run(
-                ["dirac-wms-job-submit", f"{self.loc}/job.jdl"],
-                shell=False,
-                capture_output=True,
-                text=True,
-                cwd=self.loc,
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            log.error(
-                f"Job submission failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
-            )
-            # TODO: Add some sort of retry/fallback mechanism here?
-            raise
+        # Submissions can fail when DIRAC is briefly unavailable, retry them
+        #  and count them towards the same MAX_RETRIES as failed jobs
+        while True:
+            try:
+                # The SUBMIT_CMD returns the job ID in stdout
+                result = subprocess.run(
+                    ["dirac-wms-job-submit", f"{self.loc}/job.jdl"],
+                    shell=False,
+                    capture_output=True,
+                    text=True,
+                    cwd=self.loc,
+                    check=True,
+                )
+                break
+            except subprocess.CalledProcessError as e:
+                if self.retries >= MAX_RETRIES:
+                    log.error(
+                        f"Job submission failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
+                    )
+                    raise
+                self.retries += 1
+                delay = min(
+                    SUBMIT_RETRY_DELAY * 2 ** (self.retries - 1), SUBMIT_RETRY_MAX_DELAY
+                )
+                log.warning(
+                    f"> Submission of job {self.name} failed ({e.stdout.strip()}), retrying in {delay}s - {self.retries}/{MAX_RETRIES} <"
+                )
+                time.sleep(delay)
 
         # Add the ID to the object
         self.id = int(result.stdout.split()[-1])

@@ -32,7 +32,7 @@ jobs:
       - name: install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
+          sudo apt-get install -y openmpi-bin libopenmpi-dev
 
       - name: install haddock3 with extra dependencies
         run: pip install '.[dev,docs]'

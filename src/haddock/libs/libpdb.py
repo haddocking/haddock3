@@ -244,6 +244,25 @@ def rename_residues(pdb_file_path: FilePath) -> list[str]:
     ]
 
 
+def find_insertion_codes(pdb_file_path: FilePath) -> list[str]:
+    """Find the residues with an insertion code (e.g. 52A).
+
+    Returns
+    -------
+    list[str]
+        The residues, as ``"<resname> (chain <chain>, residue <resid>)"``, in
+        the order of the file.
+    """
+    return list(
+        dict.fromkeys(
+            f"{line[slc_resname].strip()} (chain {line[slc_chainid].strip() or '-'}, "
+            f"residue {line[22:27].strip()})"
+            for line in Path(pdb_file_path).read_text().splitlines()
+            if line.startswith(("ATOM", "HETATM")) and line[slc_icode].strip()
+        )
+    )
+
+
 def sanitize(
     pdb_file_path: FilePathT,
     overwrite: bool = True,

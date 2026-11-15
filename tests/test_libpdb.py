@@ -6,11 +6,12 @@ import tempfile
 
 from pathlib import Path
 
-from . import data_folder, golden_data
+from . import broken_pdb, corrected_pdb, data_folder, golden_data
 from haddock.libs.libio import PDBFile
 from haddock.libs.libpdb import (
     add_TER_on_chain_breaks,
     check_combination_chains,
+    find_insertion_codes,
     handle_input_reference,
     read_chainids,
     read_segids,
@@ -350,3 +351,9 @@ def test_rename_residues_selenocysteine(tmp_path):
     )
     # the HADDOCK3 SEC residue (serine for covalent docking) is not changed
     assert [line[17:20] for line in lines[2:4]] == ["SEC", "SEC"]
+
+
+def test_find_insertion_codes():
+    """Residues with an insertion code are listed once each."""
+    assert find_insertion_codes(broken_pdb) == ["ALA (chain A, residue 27A)"]
+    assert find_insertion_codes(corrected_pdb) == []

@@ -10,6 +10,7 @@ from haddock.core.exceptions import ConfigurationError
 from haddock.core.typing import Union
 from haddock.gear.prepare_run import (
     check_if_path_exists,
+    check_insertion_codes,
     copy_molecules_to_topology,
     fuzzy_match,
     get_expandable_parameters,
@@ -30,7 +31,7 @@ from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.modules import modules_names
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG
 
-from . import data_folder, steptmp
+from . import broken_pdb, corrected_pdb, data_folder, steptmp
 
 
 DEFAULT_DICT = read_from_yaml_config(DEFAULT_CONFIG)
@@ -589,3 +590,12 @@ def test_validate_ncs_params_wrong_suffix_value(proper_ncs_params):
     # Except error as _3 != (nncs = 2)
     with pytest.raises(ConfigurationError):
         assert validate_ncs_params(proper_ncs_params) is None
+
+
+def test_check_insertion_codes():
+    """Input molecules with an insertion code stop the run."""
+    check_insertion_codes([corrected_pdb])
+    with pytest.raises(
+        ConfigurationError, match=r"broken.pdb: ALA \(chain A, residue 27A\)"
+    ):
+        check_insertion_codes([corrected_pdb, broken_pdb])

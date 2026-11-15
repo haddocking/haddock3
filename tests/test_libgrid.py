@@ -1,4 +1,5 @@
 import subprocess
+import zipfile
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -74,6 +75,7 @@ def test_gridjob_repr(dummy_paths):
 def test_jobstatus_from_string():
     assert JobStatus.from_string("Running") == JobStatus.RUNNING
     assert JobStatus.from_string("unknown") == JobStatus.UNKNOWN
+    assert JobStatus.from_string("Stalled") == JobStatus.FAILED
 
 
 def test_parse_output():
@@ -234,3 +236,47 @@ def test_given_up_job_is_cleaned(dummy_paths):
             unsubmitted.submit()
     assert not failed.loc.exists()
     assert not unsubmitted.loc.exists()
+
+
+def test_wait_for_completion_checks_all_jobs_at_once(dummy_paths):
+    toppar, module = dummy_paths
+    jobs = [
+        GridJob(input="input", toppar_path=toppar, module_path=module) for _ in range(2)
+    ]
+    for job_id, job in enumerate(jobs, start=1):
+        job.id, job.status = job_id, JobStatus.WAITING
+    scheduler = GRIDScheduler([], params={"ncores": 1})
+    scheduler.workload = jobs
+    status = subprocess.CompletedProcess(
+        [],
+        0,
+        stdout="JobID=1 MinorStatus=Execution Complete; Status=Done; Site=A;\n"
+        "JobID=2 MinorStatus=Execution Complete; Status=Done; Site=B;\n",
+    )
+    with (
+        patch("haddock.libs.libgrid.subprocess.run", return_value=status) as run,
+        patch("haddock.libs.libgrid.time.sleep") as sleep,
+        patch.object(GRIDScheduler, "process_job"),
+    ):
+        scheduler.wait_for_completion()
+    run.assert_called_once()
+    assert run.call_args.args[0] == ["dirac-wms-job-status", "1", "2"]
+    sleep.assert_called_once_with(30)
+    assert [job.site for job in jobs] == ["A", "B"]
+    for job in jobs:
+        job.clean()
+
+
+def test_payload_has_no_duplicate_files(dummy_paths):
+    toppar, module = dummy_paths
+    (toppar / "protein.top").write_text("top")
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    # The `.inp` refers to the toppar file, so it is also copied next to it
+    copied = job.loc / "protein.top"
+    copied.write_text("top")
+    job.payload_fnames.append(copied)
+    job.prepare_payload(cns_script_path=module, toppar_path=toppar)
+    with zipfile.ZipFile(job.loc / "payload.zip") as z:
+        names = z.namelist()
+    assert sorted(names) == ["cns", "protein.top"]
+    job.clean()

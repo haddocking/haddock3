@@ -25,6 +25,9 @@ def deeprank_wrapper():
         yield DeeprankWrapper(
             models=[dst],
             ncores=1,
+            score_type="mean",
+            chain_i="A",
+            chain_j="B",
         )
 
 
@@ -40,6 +43,9 @@ def deeprank_wrapper_two_models():
         yield DeeprankWrapper(
             models=models,
             ncores=2,
+            score_type="mean",
+            chain_i="A",
+            chain_j="B",
         )
 
 
@@ -60,23 +66,15 @@ def test_deeprank_is_available_requires_sqlite3(monkeypatch):
 
 
 @has_deeprank
-def test_run(deeprank_wrapper, tmp_path):
-    """`run()` must return the score for the single input model."""
-    scores = deeprank_wrapper.run(output_dir=tmp_path)
-
-    model = deeprank_wrapper.models[0]
-    assert str(model) in scores
-    assert isinstance(scores[str(model)], float)
-
-
-@has_deeprank
-def test_run_leaves_no_files_behind(deeprank_wrapper, tmp_path):
-    """Only deeprank's csv files must be written, in `output_dir`."""
+def test_run(deeprank_wrapper, tmp_path, monkeypatch):
+    """`run()` must score the model and write only deeprank's csv files."""
     model = deeprank_wrapper.models[0]
     model_dir = Path(model).parent
+    monkeypatch.chdir(tmp_path)
 
-    deeprank_wrapper.run(output_dir=tmp_path)
+    scores = deeprank_wrapper.run()
 
+    assert isinstance(scores[str(model)], float)
     assert list(model_dir.iterdir()) == [model]
     assert sorted(p.name for p in tmp_path.iterdir()) == [
         DeeprankWrapper.INTERFACES_CSV,
@@ -85,9 +83,10 @@ def test_run_leaves_no_files_behind(deeprank_wrapper, tmp_path):
 
 
 @has_deeprank
-def test_run_two_models(deeprank_wrapper_two_models, tmp_path):
+def test_run_two_models(deeprank_wrapper_two_models, tmp_path, monkeypatch):
     """Scores from a multi-model run must map back to the correct model."""
-    scores = deeprank_wrapper_two_models.run(output_dir=tmp_path)
+    monkeypatch.chdir(tmp_path)
+    scores = deeprank_wrapper_two_models.run()
 
     assert len(scores) == 2
     model1, model2 = deeprank_wrapper_two_models.models

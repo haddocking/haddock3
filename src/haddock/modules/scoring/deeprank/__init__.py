@@ -78,9 +78,9 @@ class HaddockModule(ScoringModule):
             chain_j=self.params["chain_j"],
         )
 
-        # `run()` executes inside a temporary directory, only deeprank's csv
-        # files land here, and returns the predicted fnat per model
-        result_dic: dict[str, float] = deeprank_wrapper.run(output_dir=Path.cwd())
+        # `run()` writes only deeprank's csv files in the step folder, and
+        # returns the predicted fnat per model
+        result_dic: dict[str, float] = deeprank_wrapper.run()
 
         # Deeprank predicts fnat (0 to 1, higher is better), but the rest of
         # the pipeline expects lower scores to be better, so the sign is

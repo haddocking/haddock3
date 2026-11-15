@@ -1,10 +1,7 @@
 """Wrapper around deeprank-gnn-esm for use as a HADDOCK3 scoring backend."""
 
 import csv
-import os
-import shutil
 import sys
-import tempfile
 from pathlib import Path
 
 
@@ -36,58 +33,44 @@ class DeeprankWrapper:
     INTERFACES_CSV = "GNN_esm_prediction.csv"
     SUMMARY_CSV = "GNN_esm_prediction_summary.csv"
 
-    def __init__(self, models, ncores, score_type="mean", chain_i="A", chain_j="B"):
+    def __init__(self, models, ncores, score_type, chain_i, chain_j):
         self.models = models
         self.ncores = ncores
         self.score_type = score_type
         self.chain_i = chain_i
         self.chain_j = chain_j
 
-    def run(self, output_dir: Path) -> dict[str, float]:
+    def run(self) -> dict[str, float]:
         """Score all models and return the predicted fnat per model.
 
         deeprank-gnn-esm predicts the fnat of every chain pair (interface) of
-        each model and writes the per-interface and per-model csv files in the
-        directory it is executed in. So it runs inside a temporary directory
-        that is discarded on exit, and only these two csv files are copied to
-        `output_dir`.
+        each model. It keeps its intermediate files in a temporary directory
+        that it removes, and writes only the per-interface and per-model csv
+        files in the current directory, from where the scores are read.
         """
         # This import needs to be exactly here
         from deeprank_gnn.main import main as deeprank_main
 
-        # absolute paths, as deeprank is executed in another directory
-        model_paths = [str(Path(model).resolve()) for model in self.models]
+        # NOTE: Since we are using the `main` function that takes `sys.argv`
+        #  we need a hacky solution to override. Here we can simply re-write
+        #  it and pass the arguments we need
+        original_argv = sys.argv
+        sys.argv = [
+            "deeprank",
+            *map(str, self.models),
+            "--num_cores",
+            str(self.ncores),
+        ]
+        try:
+            deeprank_main()
+        finally:
+            # NOTE: !!! VERY IMPORTANT !!!
+            #  `sys.argv` must be restored, whatever happens in deeprank
+            sys.argv = original_argv
 
-        with tempfile.TemporaryDirectory() as workspace_str:
-            workspace = Path(workspace_str)
+        return self._retrieve_scores(Path.cwd())
 
-            # NOTE: Since we are using the `main` function that takes `sys.argv`
-            #  we need a hacky solution to override. Here we can simply re-write
-            #  it and pass the arguments we need
-            original_argv = sys.argv
-            original_cwd = os.getcwd()
-            sys.argv = ["deeprank", *model_paths, "--num_cores", str(self.ncores)]
-
-            try:
-                # NOTE: deeprank writes its csv files in the path its being executed,
-                #  so here we need to move into the workspace to trigger the function
-                os.chdir(workspace)
-                deeprank_main()
-            finally:
-                # NOTE: !!! VERY IMPORTANT !!!
-                #  Since we moved directories and overrode the `sys.argv` we NEED to have this
-                #  `finally` here - it means this branch of the code will always be executed.
-                #  With this we can hopely guarantee we go back to where we should be before
-                #  the execution moves on
-                sys.argv = original_argv
-                os.chdir(original_cwd)
-
-            for fname in (self.INTERFACES_CSV, self.SUMMARY_CSV):
-                shutil.copy(workspace / fname, Path(output_dir, fname))
-
-            return self._retrieve_scores(workspace)
-
-    def _retrieve_scores(self, workspace: Path) -> dict[str, float]:
+    def _retrieve_scores(self, directory: Path) -> dict[str, float]:
         """Parse the output from deeprank and return the score per input model.
 
         deeprank names each model after its input file name without extension.
@@ -98,20 +81,19 @@ class DeeprankWrapper:
         gets a fnat of 0.
         """
         if self.score_type == "pair":
-            with open(Path(workspace, self.INTERFACES_CSV)) as f:
-                fnat_by_pdb_id = {
-                    row["pdb_id"]: row["predicted_fnat"]
-                    for row in csv.DictReader(f)
-                    # deeprank sorts the chain IDs of each pair
-                    if (row["chain_i"], row["chain_j"])
-                    == tuple(sorted((self.chain_i, self.chain_j)))
-                }
+            # deeprank sorts the chain IDs of each pair
+            pair = tuple(sorted((self.chain_i, self.chain_j)))
+            csv_name, column = self.INTERFACES_CSV, "predicted_fnat"
         else:
-            with open(Path(workspace, self.SUMMARY_CSV)) as f:
-                fnat_by_pdb_id = {
-                    row["pdb_id"]: row[f"{self.score_type}_fnat"]
-                    for row in csv.DictReader(f)
-                }
+            pair = None
+            csv_name, column = self.SUMMARY_CSV, f"{self.score_type}_fnat"
+
+        with open(Path(directory, csv_name)) as f:
+            fnat_by_pdb_id = {
+                row["pdb_id"]: row[column]
+                for row in csv.DictReader(f)
+                if pair is None or (row["chain_i"], row["chain_j"]) == pair
+            }
 
         scores = {}
         for model in self.models:

@@ -9,6 +9,7 @@ from haddock.libs.libgrid import (
     GridJob,
     CompositeGridJob,
     JobStatus,
+    MAX_RETRIES,
     ping_dirac,
     validate_dirac,
 )
@@ -198,3 +199,38 @@ def test_submit_retries_failed_submission(dummy_paths):
     assert job.retries == 2
     assert [c.args[0] for c in sleep.call_args_list] == [30, 60]
     job.clean()
+
+
+def test_retrieve_output_skips_missing_cns_log(tmp_path, monkeypatch, dummy_paths):
+    toppar, module = dummy_paths
+    monkeypatch.chdir(tmp_path)
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    job.id = 123
+    job.expected_outputs = ["model_1.pdb", "0_job.out"]
+    sandbox = job.loc / "123"
+    sandbox.mkdir()
+    (sandbox / "model_1.pdb").write_text("ATOM")
+    with patch("haddock.libs.libgrid.subprocess.run"):
+        job.retrieve_output()
+    assert (tmp_path / "model_1.pdb").read_text() == "ATOM"
+    job.clean()
+
+
+def test_given_up_job_is_cleaned(dummy_paths):
+    toppar, module = dummy_paths
+    failed, unsubmitted = (
+        GridJob(input="input", toppar_path=toppar, module_path=module) for _ in range(2)
+    )
+    failed.retries = unsubmitted.retries = MAX_RETRIES
+    failed.status = JobStatus.FAILED
+    unsubmitted.packaged = True
+    error = subprocess.CalledProcessError(2, "dirac-wms-job-submit", output="")
+    with (
+        patch.object(GridJob, "update_status"),
+        patch("haddock.libs.libgrid.subprocess.run", side_effect=error),
+    ):
+        GRIDScheduler.process_job(failed)
+        with pytest.raises(subprocess.CalledProcessError):
+            unsubmitted.submit()
+    assert not failed.loc.exists()
+    assert not unsubmitted.loc.exists()

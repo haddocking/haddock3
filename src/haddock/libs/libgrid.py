@@ -309,6 +309,8 @@ class GridInterface(ABC):
                     log.error(
                         f"Job submission failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
                     )
+                    # Giving up on this job, remove its temporary folder
+                    self.clean()
                     raise
                 self.retries += 1
                 delay = min(
@@ -360,9 +362,12 @@ class GridInterface(ABC):
         log.debug(f"Files in the output sandbox: {ls}")
         log.debug(f"Expected outputs: {self.expected_outputs}")
 
-        # Copy the output to the expected location
+        # Copy the output to the expected location; the CNS `.out` logs are
+        #  only in the sandbox if CNS failed, as `job.sh` removes them otherwise
         for output_f in self.expected_outputs:
             src = Path(f"{self.loc}/{self.id}/{output_f}")
+            if not src.exists():
+                continue
             dst = Path(self.wd / f"{output_f}")
             shutil.copy(src, dst)
 
@@ -674,8 +679,10 @@ class GRIDScheduler:
                 )
                 log.debug(f"job {job.name} at {job.loc}")
                 job.submit()
-
-            # TODO: Add some sort of fallback mechanism here if it reaches the MAX_RETRIES
+            else:
+                # TODO: Add some sort of fallback mechanism here
+                log.error(f"> Job {job.name} failed {MAX_RETRIES} times, giving up <")
+                job.clean()
 
         if job.status == JobStatus.DONE:
             log.debug(f"Job {job.name} is done, retrieving output...")

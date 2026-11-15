@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-15: Ensure that only CNS-related jobs are sent to the grid - Issue #1765
 - 2026-11-15: More efficient grid job polling - Issue #1766
 - 2026-11-15: Proper cleaning of grid /tmp directories - Issue #1771
 - 2026-11-15: Added retrial when dirac communication fails - Issue #1769

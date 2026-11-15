@@ -1,5 +1,10 @@
+import importlib
 from functools import partial
+from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
+
+import pytest
 
 from haddock.libs.libgrid import GRIDScheduler
 from haddock.libs.libhpc import HPCScheduler
@@ -47,3 +52,27 @@ def test_get_engine_mpi():
     assert isinstance(engine, partial)
     assert engine.func is MPIScheduler
     assert engine.keywords["ncores"] == 4
+
+
+@pytest.mark.parametrize(
+    "module_name",
+    [
+        "haddock.modules.refinement.openmm",
+        "haddock.modules.scoring.prodigyligand",
+        "haddock.modules.scoring.prodigyprotein",
+    ],
+)
+def test_non_cns_modules_run_locally_in_grid_mode(module_name, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    module = importlib.import_module(module_name)
+    step = module.HaddockModule(order=1, path=Path("."))
+    step.params["mode"] = "grid"
+    step.previous_io = SimpleNamespace(retrieve_models=lambda **_: [])
+    with (
+        patch.object(module, "get_engine", side_effect=RuntimeError) as get_engine,
+        patch.object(step, "create_directories", create=True),
+        patch.object(step, "set_max_cpu", create=True),
+        pytest.raises(RuntimeError),
+    ):
+        step._run()
+    assert get_engine.call_args.args[0] == "local"

@@ -1,8 +1,15 @@
 """Deeprank scoring module.
 
 This module scores complexes using deeprank-gnn-esm, a graph neural network
-that predicts the fraction of native contacts (fnat) between two chains of
-an interface.
+that predicts the fraction of native contacts (fnat) of an interface between
+two chains. Every chain pair of a model is scored, and the model is ranked by
+the mean (default) or minimum predicted fnat over its interfaces, or by the
+predicted fnat of one chain pair (`score_type = "pair"`, with `chain_i` and
+`chain_j`).
+
+The predicted fnat of every interface is written to `GNN_esm_prediction.csv`
+and the number of scored interfaces and their mean, standard deviation and
+minimum fnat per model to `GNN_esm_prediction_summary.csv`.
 
 For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/scoring.html>`_
@@ -66,13 +73,14 @@ class HaddockModule(ScoringModule):
         deeprank_wrapper = DeeprankWrapper(
             models=model_paths,
             ncores=ncores,
+            score_type=self.params["score_type"],
             chain_i=self.params["chain_i"],
             chain_j=self.params["chain_j"],
         )
 
-        # `run()` executes entirely inside a temporary directory and returns
-        # only the scores - none of deeprank's intermediate files land here
-        result_dic: dict[str, float] = deeprank_wrapper.run()
+        # `run()` executes inside a temporary directory, only deeprank's csv
+        # files land here, and returns the predicted fnat per model
+        result_dic: dict[str, float] = deeprank_wrapper.run(output_dir=Path.cwd())
 
         # Deeprank predicts fnat (0 to 1, higher is better), but the rest of
         # the pipeline expects lower scores to be better, so the sign is

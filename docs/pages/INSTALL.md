@@ -37,6 +37,19 @@ pip install 'haddock3[mpi]'
 pip install 'haddock3[notebooks]'
 ```
 
+## (Optional) Install deeprank dependencies
+
+The `[deeprank]` scoring module needs `deeprank-gnn-esm`:
+
+```bash
+pip install 'haddock3[deeprank-gnn-esm]'
+```
+
+> Python must be built with `sqlite3` support (check with `python -c "import sqlite3"`).
+> On a machine without GPU, install the CPU-only PyTorch first to avoid downloading the CUDA libraries (about 3 GB):
+> `pip install torch --extra-index-url https://download.pytorch.org/whl/cpu`.
+> At its first use, the ESM model (about 2.5 GB) is downloaded into `~/.cache/torch/hub/checkpoints`.
+
 ## Troubleshooting the CNS executable
 
 Depending on your architecture, the CNS executable coming with the `pip install` command (see above), might give errors because of some missing libraries.

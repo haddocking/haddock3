@@ -55,7 +55,7 @@ class DeeprankWrapper:
         # NOTE: Since we are using the `main` function that takes `sys.argv`
         #  we need a hacky solution to override. Here we can simply re-write
         #  it and pass the arguments we need
-        original_argv = sys.argv
+        original_argv = copy.deepcopy(sys.argv)
         sys.argv = [
             "deeprank",
             *map(str, self.models),

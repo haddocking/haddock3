@@ -1,6 +1,7 @@
 """Wrapper around deeprank-gnn-esm for use as a HADDOCK3 scoring backend."""
 
 import csv
+import copy
 import sys
 from pathlib import Path
 

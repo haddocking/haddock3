@@ -49,7 +49,7 @@ class DeeprankWrapper:
         files in the current directory, from where the scores are read.
         """
         # This import needs to be exactly here
-        from deeprank_gnn.main import _main as deeprank_main
+        from deeprank_gnn.main import run_predictions as deeprank_main
         deeprank_main(
             *map(str, self.models),
             num_cores=int(self.ncores),

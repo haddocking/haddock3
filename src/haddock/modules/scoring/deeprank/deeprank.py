@@ -1,8 +1,6 @@
 """Wrapper around deeprank-gnn-esm for use as a HADDOCK3 scoring backend."""
 
 import csv
-import copy
-import sys
 from pathlib import Path
 
 
@@ -50,24 +48,9 @@ class DeeprankWrapper:
         files in the current directory, from where the scores are read.
         """
         # This import needs to be exactly here
-        from deeprank_gnn.main import main as deeprank_main
+        from deeprank_gnn.main import run_predictions
 
-        # NOTE: Since we are using the `main` function that takes `sys.argv`
-        #  we need a hacky solution to override. Here we can simply re-write
-        #  it and pass the arguments we need
-        original_argv = copy.deepcopy(sys.argv)
-        sys.argv = [
-            "deeprank",
-            *map(str, self.models),
-            "--num_cores",
-            str(self.ncores),
-        ]
-        try:
-            deeprank_main()
-        finally:
-            # NOTE: !!! VERY IMPORTANT !!!
-            #  `sys.argv` must be restored, whatever happens in deeprank
-            sys.argv = original_argv
+        run_predictions(self.models, num_cores=self.ncores)
 
         return self._retrieve_scores(Path.cwd())
 

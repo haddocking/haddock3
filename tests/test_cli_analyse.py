@@ -1,4 +1,5 @@
 """Test haddock3-analyse client."""
+
 import os
 import shutil
 from pathlib import Path
@@ -12,10 +13,9 @@ from haddock.clis.cli_analyse import (
     main,
     update_capri_dict,
     zip_top_ranked,
-    )
+)
 from haddock.gear.yaml2cfg import read_from_yaml_config
-from haddock.modules.analysis.caprieval import \
-    DEFAULT_CONFIG as caprieval_params
+from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
 
 from . import golden_data
 
@@ -58,7 +58,7 @@ def test_get_cluster_ranking(example_capri_clt):
         13: 3,
         4: 4,
         5: 5,
-        }
+    }
     assert exp_cl_ranking == obs_cl_ranking
 
 
@@ -86,7 +86,7 @@ def test_main(example_capri_ss, example_capri_clt, monkeypatch):
             scale=None,
             is_cleaned=False,
             inter=False,
-            )
+        )
 
         # check analysis directory exists
         ana_dir = Path(run_dir, "analysis/")
@@ -108,14 +108,17 @@ def test_zip_top_ranked(example_capri_ss, monkeypatch):
         os.mkdir(rigid_dir)
         os.mkdir(rigid_dir_analysis)
         # fill rigidbody directory with one file
-        shutil.copy(Path(golden_data, "protprot_complex_1.pdb"), Path(rigid_dir, "rigidbody_383.pdb"))
+        shutil.copy(
+            Path(golden_data, "protprot_complex_1.pdb"),
+            Path(rigid_dir, "rigidbody_383.pdb"),
+        )
         monkeypatch.chdir(rigid_dir_analysis)
-        
+
         exp_cl_ranking = {1: 2}
         top_ranked_mapping = get_top_ranked_mapping(
             example_capri_ss,
             exp_cl_ranking,
-            )
+        )
         # Archive version
         zip_top_ranked(top_ranked_mapping, "summary", True)
         assert os.path.isfile("summary.tgz") is True
@@ -150,7 +153,7 @@ def test_main_offline(example_capri_ss, example_capri_clt, tmp_path):
         is_cleaned=False,
         inter=False,
         offline=True,
-        )
+    )
 
     # check analysis directory exists
     ana_dir = run_dir / "analysis/"

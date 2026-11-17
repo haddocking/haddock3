@@ -7,6 +7,7 @@ https://cdn.jsdelivr.net/npm/molstar@5.13.1/build/viewer/molstar.js
 and
 https://cdn.jsdelivr.net/npm/molstar@5.13.1/build/viewer/molstar.css
 """
+
 import importlib.resources as importlib_resources
 
 haddock_ui_path = importlib_resources.files("haddock.libs.assets")

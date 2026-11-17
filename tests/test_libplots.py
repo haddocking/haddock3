@@ -499,4 +499,3 @@ def test_unclustered_table_html():
     html = _generate_unclustered_table_html(df)
     assert '<td data-value="-12.3">-12.3</td>' in html
     assert 'data-url="../../01_rigidbody/rigidbody_62.pdb.gz"' in html
-

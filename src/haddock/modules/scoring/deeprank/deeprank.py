@@ -1,7 +1,6 @@
 """Wrapper around deeprank-gnn-esm for use as a HADDOCK3 scoring backend."""
 
 import csv
-import sys
 from pathlib import Path
 
 
@@ -50,11 +49,15 @@ class DeeprankWrapper:
         """
         # This import needs to be exactly here
         from deeprank_gnn.main import run_predictions as deeprank_main
-        deeprank_main(
-            *map(str, self.models),
-            num_cores=int(self.ncores),
-        )
-        return self._retrieve_scores(Path.cwd())
+        try:
+            deeprank_main(
+                *map(str, self.models),
+                num_cores=int(self.ncores),
+            )
+        except ValueError as err:
+            pass
+        finally:
+            return self._retrieve_scores(Path.cwd())
 
     def _retrieve_scores(self, directory: Path) -> dict[str, float]:
         """Parse the output from deeprank and return the score per input model.

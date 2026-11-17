@@ -10,6 +10,8 @@ import pytest
 import tempfile
 
 from haddock.libs.libplots import (
+    _generate_clustered_table_html,
+    _generate_unclustered_table_html,
     box_plot_handler,
     clt_table_handler,
     create_other_cluster,
@@ -471,3 +473,30 @@ def test_clt_table_handler_model_paths_relative_to_report_cleaned():
                 "'../../')"
             )
             assert model_path.endswith(".pdb.gz")
+
+
+def test_clustered_table_html():
+    """Cluster table cells show mean ± std and models get a View button."""
+    df = clt_table_handler(
+        Path(golden_data, "capri_clt_example.tsv"),
+        Path(golden_data, "capri_ss_example.tsv"),
+    )
+    html = _generate_clustered_table_html(df)
+    assert '<td data-value="-36.38">-36.38 &plusmn; 1.39</td>' in html
+    assert 'data-url="../../1_rigidbody/rigidbody_373.pdb"' in html
+
+
+def test_unclustered_table_html():
+    """Structure table has one row per model, with a View button."""
+    df = pd.DataFrame(
+        {
+            "caprieval_rank": [1],
+            "model": ["../../01_rigidbody/rigidbody_62.pdb.gz"],
+            "score": [-12.3],
+            "id": ["62"],
+        }
+    )
+    html = _generate_unclustered_table_html(df)
+    assert '<td data-value="-12.3">-12.3</td>' in html
+    assert 'data-url="../../01_rigidbody/rigidbody_62.pdb.gz"' in html
+

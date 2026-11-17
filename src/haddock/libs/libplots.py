@@ -1,7 +1,7 @@
 """Plotting functionalities."""
 
-import json
 import shutil
+from html import escape
 
 import numpy as np
 import pandas as pd
@@ -25,7 +25,7 @@ from haddock.core.typing import (
     Optional,
     Union,
 )
-from haddock.libs.assets import haddock_ui_path
+from haddock.libs.assets import MOLSTAR_VERSION, haddock_ui_path
 
 
 SCATTER_PAIRS = [
@@ -1038,20 +1038,71 @@ def _css_styles_for_report(offline: bool) -> str:
     tr:nth-child(even) {
         background-color: #f2f2f2
     }
-    .js-plotly-plot .plotly .modebar svg {
-	    display: inline;
+    th.sortable {
+        cursor: pointer;
+    }
+    th[data-dir="asc"]::after {
+        content: " \\25B2";
+    }
+    th[data-dir="desc"]::after {
+        content: " \\25BC";
+    }
+    button.view {
+        border: none;
+        background: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+    }
+    a:hover, button.view:hover {
+        text-decoration: underline;
+    }
+    #viewer-dialog {
+        width: 75vw;
+        height: 75vh;
+        padding: 0;
+    }
+    #viewer-dialog[open] {
+        display: flex;
+        flex-direction: column;
+    }
+    #viewer-dialog header {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5em;
+    }
+    #viewer {
+        flex: 1;
+        position: relative;
     }
     """
-    css_link = (
-        "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/index.css"
-    )
+    css_link = _molstar_url("molstar.css", offline)
+    return f'<link href="{css_link}" rel="stylesheet" /><style>{custom_css}</style>'
+
+
+def _molstar_url(fname: str, offline: bool) -> str:
+    """
+    Return the URL of a Mol* viewer file for the report.
+
+    Parameters
+    ----------
+    fname : str
+        Name of the file, `molstar.js` or `molstar.css`.
+    offline : bool
+        If True, copy the file shipped with haddock3 to the run directory
+        and return its relative path, otherwise return the CDN URL.
+
+    Returns
+    -------
+    url : str
+        The URL of the file, relative to the report.
+    """
     if offline:
-        # copy the css file to the report directory
-        src = haddock_ui_path / "index.css"
-        shutil.copyfile(str(src), "../data/ui/index.css")
-        css_link = "../../data/ui/index.css"
-    table_css = f' <link href="{css_link}" rel="stylesheet" />'
-    return f"{table_css}<style>{custom_css}</style>"
+        shutil.copyfile(str(haddock_ui_path / fname), f"../data/ui/{fname}")
+        return f"../../data/ui/{fname}"
+    return (
+        f"https://cdn.jsdelivr.net/npm/molstar@{MOLSTAR_VERSION}/build/viewer/{fname}"
+    )
 
 
 def _generate_html_report(
@@ -1106,77 +1157,120 @@ def _generate_html_head(step, offline):
     head += f"<title>Analysis report of step {step}</title>"
     head += f"<p class='title'>Analysis report of step {step}</p>"
     head += _css_styles_for_report(offline)
+    head += f'<script src="{_molstar_url("molstar.js", offline)}"></script>'
     head += "</head>"
     return head
 
 
-def _generate_unclustered_table_html(
-    table_id: str,
+def _table_cell(value: Any, kind: str = "") -> str:
+    """
+    Return the HTML cell of a report table.
+
+    Parameters
+    ----------
+    value : Any
+        The value of the cell, a dict with `mean` and `std` for the
+        statistics of a cluster.
+    kind : str
+        `structure` for the path of a model, which gets a download link
+        and a button to open it in the viewer.
+
+    Returns
+    -------
+    cell : str
+        The `<td>` element, with the value to sort on in `data-value`.
+    """
+    if isinstance(value, dict):
+        mean, std = value["mean"], value["std"]
+        text = mean if std == 0 else f"{mean} &plusmn; {std}"
+        return f'<td data-value="{mean}">{text}</td>'
+    if pd.isna(value):
+        return "<td>NA</td>"
+    if kind == "structure":
+        if not value:
+            return "<td></td>"
+        url = escape(value)
+        name = escape(Path(value).name)
+        return (
+            f'<td><a href="{url}" download="{name}">&#8595;&nbsp;Download</a>'
+            f'<br><button type="button" class="view" data-url="{url}">'
+            "&#x1F441;&nbsp;View</button></td>"
+        )
+    text = escape(str(value))
+    return f'<td data-value="{text}">{text}</td>'
+
+
+def _table_html(
+    headers: list[tuple[str, str, str]],
     df: pd.DataFrame,
-    bundle_url: str,
+    one_row_per_record: bool,
 ) -> str:
-    data = df.to_json(orient="records")
+    """
+    Return the HTML table of a report.
+
+    Parameters
+    ----------
+    headers : list of (key, label, kind)
+        The columns of `df` to show, with their label and kind (see
+        `_table_cell`). The columns of models cannot be sorted on.
+    df : pandas DataFrame
+        The data of the table.
+    one_row_per_record : bool
+        If True, each record of `df` is a row, otherwise a column, with
+        the labels as row headers.
+
+    Returns
+    -------
+    table : str
+        The `<table>` element.
+    """
+    records = df.to_dict(orient="records")
+
+    def header(label: str, kind: str, scope: str) -> str:
+        sortable = "" if kind == "structure" else ' class="sortable"'
+        return f'<th scope="{scope}"{sortable}>{escape(label)}</th>'
+
+    if one_row_per_record:
+        head = "".join(header(label, kind, "col") for _, label, kind in headers)
+        rows = [
+            "".join(_table_cell(record[key], kind) for key, _, kind in headers)
+            for record in records
+        ]
+        body = "".join(f"<tr>{row}</tr>" for row in rows)
+        return f"<table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>"
+    rows = [
+        header(label, kind, "row")
+        + "".join(_table_cell(record[key], kind) for record in records)
+        for key, label, kind in headers
+    ]
+    body = "".join(f"<tr>{row}</tr>" for row in rows)
+    return f"<table><tbody>{body}</tbody></table>"
+
+
+def _generate_unclustered_table_html(df: pd.DataFrame) -> str:
+    """Return the HTML table of the best structures of an unclustered run."""
     headers = (
-        [
-            {"key": "caprieval_rank", "label": "Structure Rank", "sorted": "asc"},
-            {
-                "key": "model",
-                "label": "Structure",
-                "sortable": False,
-                "type": "structure",
-            },
-        ]
-        + [
-            {"key": k, "label": v, "type": "stats"}
-            for k, v in AXIS_NAMES.items()
-            if k in df.columns
-        ]
-        + [
-            {"key": "id", "label": "Structure ID"},
-        ]
+        [("caprieval_rank", "Structure Rank", ""), ("model", "Structure", "structure")]
+        + [(k, v, "") for k, v in AXIS_NAMES.items() if k in df.columns]
+        + [("id", "Structure ID", "")]
     )
-    return f"""
-            <div id="{table_id}"></div>
-            <script id="data{table_id}" type="application/json">
-            {{
-                "structures": {data},
-                "headers": {json.dumps(headers)}
-            }}
-            </script>
-            <script type="module">
-            import {{ renderStructureTable }} from "{bundle_url}";
-
-            const props = JSON.parse(document.getElementById("data{table_id}").text)
-
-            renderStructureTable(document.getElementById('{table_id}'), props.headers, props.structures)
-            </script>"""  # noqa : E501
+    return "<p><i>Click on a column header to sort the table</i></p>" + _table_html(
+        headers, df, one_row_per_record=True
+    )
 
 
-def _generate_clustered_table_html(
-    table_id: str,
-    df: pd.DataFrame,
-    bundle_url: str,
-) -> str:
-    data = df.to_json(orient="records")
+def _generate_clustered_table_html(df: pd.DataFrame) -> str:
+    """Return the HTML table of the clusters, with their best structures."""
     nr_best_columns = df.filter(like="best").shape[1]
     headers = (
         [
-            {"key": "cluster_rank", "label": "Cluster Rank", "sorted": "asc"},
-            {"key": "cluster_id", "label": "Cluster ID"},
-            {"key": "n", "label": "Cluster size"},
+            ("cluster_rank", "Cluster Rank", ""),
+            ("cluster_id", "Cluster ID", ""),
+            ("n", "Cluster size", ""),
         ]
+        + [(k, v, "") for k, v in AXIS_NAMES.items() if k in df.columns]
         + [
-            {"key": k, "label": v, "type": "stats"}
-            for k, v in AXIS_NAMES.items()
-            if k in df.columns
-        ]
-        + [
-            {
-                "key": f"best{i}",
-                "label": f"Nr {i} best structure",
-                "sortable": False,
-                "type": "structure",
-            }
+            (f"best{i}", f"Nr {i} best structure", "structure")
             for i in range(1, nr_best_columns + 1)
         ]
     )
@@ -1187,22 +1281,106 @@ def _generate_clustered_table_html(
             'The "Other" cluster is not a real cluster it contains'
             "all structures that are not in the top 10 clusters."
         )
+    return (
+        "<p><i>Click on a row header to sort the table</i></p>"
+        f"{_table_html(headers, df, one_row_per_record=False)}<div>{caption}</div>"
+    )
 
-    return f"""
-            <div id="{table_id}"></div>
-            <div>{caption}</div>
-            <script id="data{table_id}" type="application/json">
-            {{
-                "clusters": {data},
-                "headers": {json.dumps(headers)}
-            }}
-            </script>
-            <script type="module">
-            import {{ renderClusterTable }} from "{bundle_url}";
-            const props = JSON.parse(document.getElementById("data{table_id}").text)
 
-            renderClusterTable(document.getElementById('{table_id}'), props.headers, props.clusters);
-            </script>"""  # noqa : E501
+# Sorts the tables on a click on a header, again to reverse; for tables
+# with one column per record (row headers), the columns are reordered.
+# Opens the models in the Mol* viewer; models may be gzipped.
+REPORT_SCRIPT = """
+<dialog id="viewer-dialog">
+  <header>
+    <a id="viewer-file"></a><span id="viewer-error"></span>
+    <button type="button" onclick="this.closest('dialog').close()">X</button>
+  </header>
+  <div id="viewer"></div>
+</dialog>
+<script>
+function sortValue(cell) {
+  const value = cell.dataset.value;
+  const x = parseFloat(value);
+  return isNaN(x) ? value : x;
+}
+
+document.querySelectorAll('th.sortable').forEach(th => {
+  th.title = 'Click to sort';
+  th.addEventListener('click', () => {
+    const table = th.closest('table');
+    const dir = th.dataset.dir === 'asc' ? -1 : 1;
+    table.querySelectorAll('th.sortable').forEach(h => delete h.dataset.dir);
+    th.dataset.dir = dir === 1 ? 'asc' : 'desc';
+    // Cells without value (NA) go last.
+    const compare = (a, b) => {
+      const x = sortValue(a), y = sortValue(b);
+      if (x === undefined || y === undefined) {
+        return (x === undefined) - (y === undefined);
+      }
+      return dir * (x < y ? -1 : x > y ? 1 : 0);
+    };
+    if (th.scope === 'row') {
+      const cells = [...th.parentElement.cells].slice(1);
+      const order = cells.map((_, i) => i)
+        .sort((i, j) => compare(cells[i], cells[j]));
+      for (const row of table.rows) {
+        const rowCells = [...row.cells].slice(1);
+        order.forEach(i => row.appendChild(rowCells[i]));
+      }
+    } else {
+      const body = table.tBodies[0];
+      [...body.rows]
+        .sort((a, b) => compare(a.cells[th.cellIndex], b.cells[th.cellIndex]))
+        .forEach(row => body.appendChild(row));
+    }
+  });
+});
+
+let viewer;
+async function view(url) {
+  const dialog = document.getElementById('viewer-dialog');
+  const link = document.getElementById('viewer-file');
+  const error = document.getElementById('viewer-error');
+  link.href = url;
+  link.download = link.textContent = url.split('/').pop();
+  error.textContent = '';
+  dialog.showModal();
+  try {
+    viewer ??= await molstar.Viewer.create('viewer', {
+      layoutIsExpanded: false,
+      layoutShowControls: true,
+      layoutShowLog: false,
+      collapseLeftPanel: true,
+      // no list of states from the Mol* server
+      layoutShowRemoteState: false,
+      viewportShowExpand: true,
+    });
+    await viewer.plugin.clear();
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+    let data = new Uint8Array(await response.arrayBuffer());
+    // A server may already have decompressed a .gz file, so look at
+    // the gzip magic number rather than at the file name.
+    if (data[0] === 0x1f && data[1] === 0x8b) {
+      const stream = new Blob([data]).stream()
+        .pipeThrough(new DecompressionStream('gzip'));
+      data = new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+    await viewer.loadStructureFromData(
+      new TextDecoder().decode(data), 'pdb');
+  } catch (e) {
+    error.textContent = ` Could not load the structure: ${e.message}`;
+  }
+}
+
+document.querySelectorAll('button.view').forEach(button => {
+  button.addEventListener('click', () => view(button.dataset.url));
+});
+</script>
+"""  # noqa : E501
 
 
 def _generate_html_body(
@@ -1228,31 +1406,22 @@ def _generate_html_body(
         The generated HTML body as a string.
     """
     body = "<body>"
-    table_index: int = 1
     fig_index: int = 1
     for figure in figures:
         if isinstance(figure, pd.DataFrame):  # tables
-            table_index += 1
-            table_id = f"table{table_index}"
-
-            is_unclustered = "cluster_rank" not in figure
-            bundle_url = "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/report.bundle.js"
-            if offline:
-                # copy the bundle to the run_dir folder
-                src = haddock_ui_path / "report.bundle.js"
-                shutil.copyfile(str(src), "../data/ui/report.bundle.js")
-                bundle_url = "../../data/ui/report.bundle.js"
-            if is_unclustered:
-                inner_html = _generate_unclustered_table_html(
-                    table_id, figure, bundle_url
-                )
+            if "cluster_rank" not in figure:
+                inner_html = _generate_unclustered_table_html(figure)
             else:
-                inner_html = _generate_clustered_table_html(
-                    table_id, figure, bundle_url
-                )
+                inner_html = _generate_clustered_table_html(figure)
         else:  # plots
             inner_json = figure.to_json()
-            inner_html = create_html(
+            inner_html = ""
+            if fig_index == 1:
+                inner_html += (
+                    "<p><i>Click on the clusters on the right side "
+                    "to hide/show clusters</i></p>"
+                )
+            inner_html += create_html(
                 inner_json,
                 fig_index,
                 plotly_js_import=offline_js_manager(report_path, offline),
@@ -1262,6 +1431,7 @@ def _generate_html_body(
             fig_index += 1  # type: ignore
         body += "<br>"  # add a break between tables and plots
         body += inner_html
+    body += REPORT_SCRIPT
     body += "</body>"
     return body
 

@@ -157,6 +157,6 @@ def test_main_offline(example_capri_ss, example_capri_clt, tmp_path):
     assert ana_dir.is_dir()
 
     # check whether there are js and css files
-    assert (run_dir / "data/ui/report.bundle.js").is_file()
-    assert (run_dir / "data/ui/index.css").is_file()
+    assert (run_dir / "data/ui/molstar.js").is_file()
+    assert (run_dir / "data/ui/molstar.css").is_file()
     assert (ana_dir / "2_caprieval_analysis/plotly_bundle.js").is_file()

@@ -12,7 +12,7 @@ autohis:
   group: molecule
   explevel: expert
 autotoppar:
-  default: false
+  default: true
   type: boolean
   title: Automatically generate topologies and parameters for unknown atoms
   short: Automatically generate topologies and parameters for unknown atoms
@@ -24,15 +24,34 @@ delenph:
   type: boolean
   title: Keep or remove non-polar hydrogen atoms
   short:
-    If set to true, non-polar hydrogen atoms will be discarded to save computing
+    If set to true, non-polar hydrogen atoms (except the HA kept for CA improper definition) will be discarded to save computing
     time
   long:
     Since HADDOCK uses a united atom force field, the non-polar hydrogen atoms
     can be in principle discarded. This saves computing time. However this should
     not be done if you are defining distance restraints to specific hydrogen atoms
-    (e.g. when using NMR distance restraints).
+    (e.g. when using NMR distance restraints). Note the HA hydrogen atoms are kept 
+    for the definition of the CA improper dihedral angle.
   group: molecule
   explevel: easy
+hydrogen_build:
+  default: "all"
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - all
+    - unknown
+  title: Building of hydrogen atoms
+  short:
+    If set to all, all hydrogen atoms will be regenerated
+  long:
+    By default, all hydrogen atoms are generated (which gives the most robust behavior). But in some cases
+    it might be better to only rebuild the unknown ones (e.g. for small ligand, or very large molecules to save time).
+    In that case the hydrogen_build should be set to unknown.
+  group: molecule
+  explevel: easy
+
 log_level:
   default: quiet
   type: string
@@ -131,6 +150,17 @@ disulphide_dist:
   long: Cutoff distance in Angstroms for identification of disulphide bonds (SH - SH)
   group: molecule
   explevel: guru
+acecys_dist:
+  default: 4.00
+  type: float
+  precision: 2
+  min: 0.00
+  max: 999999.99
+  title: Cutoff distance for detecting ACE-CYS cyclisation
+  short: Cutoff distance in Angstroms for identification of ACE-CYS cyclisation 
+  long: Cutoff distance in Angstroms for identification of ACE-CYS cyclisation (CYS S - ACE CA)
+  group: molecule
+  explevel: guru
 mol1:
   type: dict
   group: input molecules
@@ -213,7 +243,7 @@ mol1:
     title: C-ter topology
     short: Define if C-terminus should be charged or uncharged
     long:
-      This option defines how N-terminus residue should be. If false (default), C-ter will be an uncharged CO,
+      This option defines how C-terminus residue should be. If false (default), C-ter will be an uncharged CO,
       as it would be in a peptide bond. If true, C-ter will be a charged COO-.
     group: molecule
     explevel: easy

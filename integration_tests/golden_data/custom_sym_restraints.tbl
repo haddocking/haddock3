@@ -1,0 +1,18 @@
+assign (segid A and resi 1  and (name CA or name BB)) (segid B and resi 31 and (name CA or name BB)) 0.0 0.0 0.0
+assign (segid A and resi 31 and (name CA or name BB)) (segid B and resi 1  and (name CA or name BB)) 0.0 0.0 0.0
+
+assign (segid A and resi 6  and (name CA or name BB)) (segid B and resi 25 and (name CA or name BB)) 0.0 0.0 0.0
+assign (segid A and resi 25 and (name CA or name BB)) (segid B and resi 6  and (name CA or name BB)) 0.0 0.0 0.0
+
+assign (segid A and resi 11 and (name CA or name BB)) (segid B and resi 20 and (name CA or name BB)) 0.0 0.0 0.0
+assign (segid A and resi 20 and (name CA or name BB)) (segid B and resi 11 and (name CA or name BB)) 0.0 0.0 0.0
+
+assign (segid A and resi 16 and (name CA or name BB)) (segid B and resi 15 and (name CA or name BB)) 0.0 0.0 0.0
+assign (segid A and resi 15 and (name CA or name BB)) (segid B and resi 16 and (name CA or name BB)) 0.0 0.0 0.0
+
+assign (segid A and resi 21 and (name CA or name BB)) (segid B and resi 21 and (name CA or name BB)) 0.0 0.0 0.0
+assign (segid A and resi 10 and (name CA or name BB)) (segid B and resi 10 and (name CA or name BB)) 0.0 0.0 0.0
+
+assign (segid A and resi 26 and (name CA or name BB)) (segid B and resi 5  and (name CA or name BB)) 0.0 0.0 0.0
+assign (segid A and resi 5  and (name CA or name BB)) (segid B and resi 26 and (name CA or name BB)) 0.0 0.0 0.0
+

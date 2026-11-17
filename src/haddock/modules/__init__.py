@@ -71,7 +71,9 @@ incompatible_defaults_params = find_incompatible_parameters(modules_defaults_pat
 
 config_readers = {
     ".yaml": read_from_yaml_config,
-    ".cfg": config.load,
+    # module params are internally generated as a mix of toml and cfg format
+    # set strict to false
+    ".cfg": partial(config.load, strict=False),
 }
 
 _step_folder_regex = tuple(
@@ -397,7 +399,7 @@ class BaseHaddockModule(ABC):
                 self._params[param] = EmptyPath()
 
 
-EngineMode = Literal["batch", "local", "mpi"]
+EngineMode = Literal["batch", "local", "mpi", "grid"]
 
 
 def get_engine(
@@ -491,6 +493,9 @@ def get_module_steps_folders(
     list of str
         List containing strings with the names of the step folders.
     """
+    # Make sure the folder exists, otherwise this might throw an error
+    if not Path(folder).exists():
+        return []
     folders = (p.name for p in Path(folder).iterdir() if p.is_dir())
     steps = sorted(
         (f for f in folders if step_folder_regex_re.search(f)),

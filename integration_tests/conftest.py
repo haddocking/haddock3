@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from haddock.modules.analysis.caprieval.capri import load_contacts
+from haddock.libs.libcapri import load_contacts
 from haddock.libs.libontology import PDBFile
 
 

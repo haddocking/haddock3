@@ -6,13 +6,16 @@ import tempfile
 
 from pathlib import Path
 
-from . import data_folder, golden_data
+from . import broken_pdb, corrected_pdb, data_folder, golden_data
 from haddock.libs.libio import PDBFile
 from haddock.libs.libpdb import (
     add_TER_on_chain_breaks,
     check_combination_chains,
+    find_insertion_codes,
+    handle_input_reference,
     read_chainids,
     read_segids,
+    rename_residues,
     sanitize,
     split_ensemble,
 )
@@ -262,3 +265,95 @@ def test_split_ensemble_non_sequential_model_numbers(tmp_path, monkeypatch, atom
     assert len(result) == 2
     assert [r.name for r in result] == ["non_sequential_1.pdb", "non_sequential_2.pdb"]
     assert all(r.stat().st_size > 0 for r in result)
+
+
+# test handle_input_reference for capri
+
+# Minimal ATOM line shared across fixtures
+_ATOM_LINE = (
+    "ATOM      1  CA  ALA A   1       1.000   2.000   3.000  1.00  0.00           C"
+)
+
+
+def test_handle_single_model_reference(tmp_path):
+    ref = tmp_path / "single.pdb"
+    ref.write_text(f"{_ATOM_LINE}\nEND\n")
+    result = handle_input_reference(ref)
+    assert len(result) == 1
+    assert result[0] == ref
+
+
+def test_handle_ensemble_reference(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    ref = tmp_path / "ensemble.pdb"
+    ref.write_text(
+        f"MODEL        1\n{_ATOM_LINE}\nENDMDL\n"
+        f"MODEL        2\n{_ATOM_LINE}\nENDMDL\n"
+        "END\n"
+    )
+    result = handle_input_reference(ref)
+    assert len(result) == 2
+    assert [p.name for p in result] == [
+        "reference_model_1.pdb",
+        "reference_model_2.pdb",
+    ]
+    assert all(p.exists() for p in result)
+
+
+def test_handle_empty_file_raises(tmp_path):
+    ref = tmp_path / "empty.pdb"
+    ref.write_text("")
+    with pytest.raises(ValueError, match="No atoms found"):
+        handle_input_reference(ref)
+
+
+def test_handle_remark_only_raises(tmp_path):
+    ref = tmp_path / "remark_only.pdb"
+    ref.write_text("REMARK this file has no coordinates\nEND\n")
+    with pytest.raises(ValueError, match="No atoms found"):
+        handle_input_reference(ref)
+
+
+def test_rename_residues_aliases(tmp_path):
+    """PDB residue names are renamed to the HADDOCK3 ones (e.g. TPO to TOP)."""
+    pdb = Path(tmp_path, "aliases.pdb")
+    pdb.write_text(
+        "ATOM      1  P   TPO A   1       0.000   0.000   0.000  1.00  0.00           P\n"
+        "HETATM    2 FE   HEM A   2       0.000   0.000   0.000  1.00  0.00          FE\n"
+        "HETATM    3 AS   ARS A   3       0.000   0.000   0.000  1.00  0.00          AS\n"
+        "ATOM      4  CA  HSD A   4       0.000   0.000   0.000  1.00  0.00           C\n"
+        "END\n"
+    )
+    rename_residues(pdb)
+    resnames = [line[17:20] for line in pdb.read_text().splitlines()[:-1]]
+    assert resnames == ["TOP", "HEB", " AS", "HIS"]
+    # sanitize keeps the renamed residues
+    sanitize(pdb, overwrite=True)
+    assert " TOP A   1" in pdb.read_text()
+
+
+def test_rename_residues_selenocysteine(tmp_path):
+    """PDB selenocysteines become cysteines; HADDOCK3 SEC (serine) is kept."""
+    pdb = Path(tmp_path, "sec.pdb")
+    pdb.write_text(
+        "ATOM      1  CB  SEC A   1       0.000   0.000   0.000  1.00  0.00           C\n"
+        "ATOM      2 SE   SEC A   1       1.900   0.000   0.000  1.00  0.00          SE\n"
+        "ATOM      3  CB  SEC A   2       5.000   0.000   0.000  1.00  0.00           C\n"
+        "ATOM      4  OG  SEC A   2       6.400   0.000   0.000  1.00  0.00           O\n"
+        "END\n"
+    )
+    converted = rename_residues(pdb)
+    assert converted == ["chain A, residue 1"]
+    lines = pdb.read_text().splitlines()
+    assert lines[0][17:20] == "CYS"
+    assert lines[1] == (
+        "ATOM      2  SG  CYS A   1       1.900   0.000   0.000  1.00  0.00           S"
+    )
+    # the HADDOCK3 SEC residue (serine for covalent docking) is not changed
+    assert [line[17:20] for line in lines[2:4]] == ["SEC", "SEC"]
+
+
+def test_find_insertion_codes():
+    """Residues with an insertion code are listed once each."""
+    assert find_insertion_codes(broken_pdb) == ["ALA (chain A, residue 27A)"]
+    assert find_insertion_codes(corrected_pdb) == []

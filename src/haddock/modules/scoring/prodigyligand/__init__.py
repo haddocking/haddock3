@@ -3,6 +3,9 @@
 This module performs the scoring of input complexes using PRODIGY-ligand.
 It predicts deltaG of the complex and can return predictions as either deltaG
 or pKd values.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/scoring.html#prodigyligand-module>`_
 """
 
 from pathlib import Path
@@ -26,11 +29,11 @@ class HaddockModule(ScoringModule):
     name = RECIPE_PATH.name
 
     def __init__(
-            self,
-            order: int,
-            path: Path,
-            initial_params: FilePath = DEFAULT_CONFIG,
-            ) -> None:
+        self,
+        order: int,
+        path: Path,
+        initial_params: FilePath = DEFAULT_CONFIG,
+    ) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
@@ -57,12 +60,14 @@ class HaddockModule(ScoringModule):
                 model,
                 self.params,
                 index=mi,
-                )
+            )
             jobs.append(prodigy_job)
 
         # Run CNS Jobs
         self.log(f"Running {len(jobs)} Prodigy Jobs")
-        Engine = get_engine(self.params["mode"], self.params)
+        # Only CNS jobs can be sent to the grid, run these locally in grid mode
+        mode = "local" if self.params["mode"] == "grid" else self.params["mode"]
+        Engine = get_engine(mode, self.params)
         engine = Engine(jobs)
         engine.run()
         self.log("Prodigy jobs have finished")
@@ -77,12 +82,12 @@ class HaddockModule(ScoringModule):
             self.output_models[model_index].score = prodigy_score
             if prodigy_score:
                 successes += 1
-        
+
         # Printing number of successful predictions
         self.log(
             f"Number of successful prodigy-ligand predictions: {successes:d} "
             f"({successes * 100 / len(models_to_score):.2f} %)"
-            )
+        )
 
         # Generate a tsv file containing the computed scores
         output_fname = "prodigyligand.tsv"

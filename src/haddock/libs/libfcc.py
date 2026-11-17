@@ -113,7 +113,7 @@ def output_clusters(handle, cluster):
 
 
 def load_matrix(matrix_path) -> list[tuple[int, int, float, float]]:
-    """Read in a four column matrix (1 2 0.123 0.456\n)
+    """Read in a four column matrix (1 2 0.123 0.456\\n)
 
     Parameters
     ----------
@@ -243,7 +243,6 @@ def calculate_pairwise_matrix(contacts, ignore_chain):
         calc_fcc = calculate_fcc
 
     for i in range(len(contacts)):
-
         for k in range(i + 1, len(contacts)):
             cc, cc_v = calc_fcc(contacts[i], contacts[k])
             fcc, fcc_v = cc * contact_lengths[i], cc * contact_lengths[k]

@@ -18,6 +18,10 @@ from haddock.libs.libutil import parse_ncores
 
 def split_tasks(lst: Sequence[AnyT], n: int) -> Generator[Sequence[AnyT], None, None]:
     """Split tasks into N-sized chunks."""
+    # An empty list would make `n` zero below, and `range(0, 0, 0)` raises
+    # ValueError. Nothing to yield in that case.
+    if not lst:
+        return
     n = math.ceil(len(lst) / n)
     for j in range(0, len(lst), n):
         chunk = lst[j : n + j]

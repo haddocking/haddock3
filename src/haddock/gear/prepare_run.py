@@ -6,15 +6,19 @@ import itertools as it
 import json
 import os
 import shutil
-import string
 import sys
-import tarfile
 from contextlib import contextmanager, suppress
 from copy import copy, deepcopy
 from functools import lru_cache, wraps
 from pathlib import Path, PosixPath
 
-from haddock import EmptyPath, contact_us, haddock3_source_path, log
+from haddock import (
+    EmptyPath,
+    contact_us,
+    haddock3_source_path,
+    log,
+    modules_defaults_path,
+)
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.core.typing import (
@@ -54,23 +58,27 @@ from haddock.gear.extend_run import (
 )
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import (
+    MANDATORY_YAML,
+    OPTIONAL_YAML,
     config_mandatory_general_parameters,
     config_optional_general_parameters,
     config_optional_general_parameters_dict,
 )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
-from haddock.gear.restart_run import remove_folders_after_number
+from haddock.gear.restart_run import preprocess_restart_from
 from haddock.gear.validations import (
     v_rundir,
     validate_defaults_yaml,
-    )
+)
+from haddock.gear.workflow_ordering import validate_workflow_order
 from haddock.gear.yaml2cfg import (
     read_from_yaml_config,
     find_incompatible_parameters,
-    )
+)
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
 from haddock.libs.libio import make_writeable_recursive, extract_files_flat
+from haddock.libs.libpdb import find_insertion_codes
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_convert_paths_to_strings,
@@ -95,6 +103,14 @@ ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
     set(config_mandatory_general_parameters),
     set(non_mandatory_general_parameters_defaults),
     config_optional_general_parameters,
+)
+
+# Python3 types accepted for the path-like parameter types
+PATH_LIKE_TYPES = (
+    str,
+    Path,
+    PosixPath,
+    EmptyPath,
 )
 
 # Dict mapping string types (in default.yaml) into python3 objects types
@@ -122,21 +138,10 @@ TYPES_MAPPER = {
     "str": (str,),
     "list": (list,),
     "array": (list,),
-    "path": (
-        str,
-        Path,
-        PosixPath,
-        EmptyPath,
-    ),
-    "file": (
-        str,
-        Path,
-        PosixPath,
-        EmptyPath,
-    ),
-    "dict": (
-        dict,
-    )
+    "path": PATH_LIKE_TYPES,
+    "file": PATH_LIKE_TYPES,
+    "dir": PATH_LIKE_TYPES,
+    "dict": (dict,),
 }
 
 
@@ -159,6 +164,30 @@ def with_config_error(func: Callable[..., Any]) -> Callable[..., Any]:
             return func(*args, **kwargs)
 
     return wrapper
+
+
+@lru_cache
+def _read_general_defaults() -> dict:
+    """Read the full schemes of the general (non-module) parameters.
+
+    General parameters are spread over three YAML files: the mandatory ones
+    (``core/mandatory.yaml``), the optional ones (``core/optional.yaml``) and
+    the execution ones (``modules/defaults.yaml``). The latter can also be
+    defined inside a module section, where they overwrite the global value.
+
+    Return
+    ------
+    general_config : dict
+        A dict of dict, containing all the information present in the three
+        general parameter YAML files.
+    """
+    # only modules/defaults.yaml follows the full parameter scheme; the
+    # mandatory and optional ones have no 'group' nor 'default' keys.
+    validate_defaults_yaml(modules_defaults_path)
+    general_config: dict = {}
+    for yaml_fpath in (MANDATORY_YAML, OPTIONAL_YAML, modules_defaults_path):
+        general_config.update(read_from_yaml_config(yaml_fpath, default_only=False))
+    return general_config
 
 
 @lru_cache
@@ -231,6 +260,7 @@ def setup_run(
     #. validate the config file
        * confirm modules' names are correctly spelled
        * check if requested modules are installed
+       * validate the module ordering (except for ``--extend-run``)
        * check additional validations
     #. validate modules' parameters
     #. copy input files to data/ directory
@@ -298,11 +328,14 @@ def setup_run(
         reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
     )
 
+    # Validate the types and ranges/choices of the global parameters
+    validate_general_params_values(general_params)
+
     # Validate there is no incompatible parameters in global parameters
     validate_parameters_are_not_incompatible(
         general_params,
         incompatible_defaults_params,
-        )
+    )
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -313,6 +346,10 @@ def setup_run(
         general_params[RUNDIR] = extend_run
 
     check_if_modules_are_installed(modules_params)
+    # --extend-run configs describe only the modules to append to an existing
+    # run, so the full workflow order is not known here and cannot be validated.
+    if extend_run is None:
+        validate_workflow_order([get_module_name(step) for step in modules_params])
     check_specific_validations(general_params)
 
     # define starting conditions
@@ -330,9 +367,7 @@ def setup_run(
         check_mandatory_argments_are_present(general_params)
 
     if restarting_from:
-        remove_folders_after_number(general_params[RUNDIR], restart_from)
-        _data_dir = Path(general_params[RUNDIR], "data")
-        remove_folders_after_number(_data_dir, restart_from)
+        preprocess_restart_from(general_params[RUNDIR], restart_from)
 
     if restarting_from or starting_from_copy:
         # get run files in folder
@@ -340,7 +375,7 @@ def setup_run(
 
         log.info(
             "Uncompressing previous output files for folders: "
-            f'{", ".join(step_folders)}'
+            f"{', '.join(step_folders)}"
         )
         # unpack the possible compressed and archived files
         _step_folders = (Path(general_params[RUNDIR], p) for p in step_folders)
@@ -370,6 +405,8 @@ def setup_run(
                 f"Too many molecules defined, max is {max_molecules_allowed}."
             )  # noqa: E501
 
+        check_insertion_codes(modules_params["topoaa.1"]["molecules"])
+
         zero_fill.read(modules_params)
 
         populate_topology_molecule_params(modules_params["topoaa.1"])
@@ -397,7 +434,7 @@ def setup_run(
     enhanced_haddock_params = deepcopy(general_params)
     enhanced_haddock_params.update(modules_params)
     config_files["enhanced_haddock_params"] = enhanced_haddock_params
-    config_saves = save_configuration_files(config_files, data_dir)  # noqa : F841
+    _config_saves = save_configuration_files(config_files, data_dir)  # noqa : F841
 
     if scratch_rest0:
         copy_molecules_to_data_dir(
@@ -453,7 +490,7 @@ def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
     # Initiate files data
     infofile = {
         "raw_input": (
-            "An untouched copy of the raw input file, " "as provided by the user."
+            "An untouched copy of the raw input file, as provided by the user."
         ),
         "cleaned_input": (
             "Pre-parsed input file where (eventually) "
@@ -498,8 +535,8 @@ def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
     readmepath = Path(confpaths, "README.txt")
     with open(readmepath, "w") as f:
         f.write(
-            f"{'#'*80}\n# Information about configuration "
-            f"files present in the same directory #\n{'#'*80}\n"
+            f"{'#' * 80}\n# Information about configuration "
+            f"files present in the same directory #\n{'#' * 80}\n"
         )
         for confname in list_save_conf:
             if confname not in added_files.keys():
@@ -572,17 +609,16 @@ def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
         # Check for parameter incompatibilities
         module_incompatibilities = find_incompatible_parameters(
             gen_defaults_module_param_path(module_name)
-            )
+        )
         try:
             validate_parameters_are_not_incompatible(
                 args,
                 module_incompatibilities,
-                )
+            )
         except ValueError as e:
             raise ConfigurationError(
-                f"An issue was discovered in module [{module_name}]: "
-                f"{e.args[0]}"
-                )
+                f"An issue was discovered in module [{module_name}]: {e.args[0]}"
+            )
 
         if module_name in modules_using_resdic:
             confirm_resdic_chainid_length(args)
@@ -646,11 +682,58 @@ def validate_module_params_values(module_name: str, args: dict) -> None:
         If there is any parameter given by the user that is not following the
         types or ranges/choices allowed in the defaults.cfg of the module.
     """
-    # Load all parameters information from 'defaults.cfg'
-    default_conf_params = _read_defaults(module_name, default_only=False)
-    # Loop over user queried parameters keys/values
-    for key, val in args.items():
-        validate_value(default_conf_params, key, val)
+    # Load all parameters information from 'defaults.cfg'. General parameters
+    # can also be set inside a module section, where they overwrite the global
+    # value, but are not described in the module `defaults.yaml`; hence the
+    # module scheme is completed with (and takes precedence over) the general
+    # one.
+    default_conf_params = {
+        **_read_general_defaults(),
+        **_read_defaults(module_name, default_only=False),
+    }
+    _validate_params_values(default_conf_params, args)
+
+
+def validate_general_params_values(general_params: dict) -> None:
+    """Validate the values of the general parameters.
+
+    General parameters are not described in any module `defaults.yaml`, and
+    were therefore never checked against their type and range/choices.
+
+    Parameters
+    ----------
+    general_params : dict
+        Dictionnary of key/value of the general parameters, as obtained after
+        completion of the user config file with the default values.
+
+    Raises
+    ------
+    ConfigError
+        If there is any general parameter given by the user that is not
+        following the types or ranges/choices allowed in the general
+        parameters YAML files.
+    """
+    _validate_params_values(_read_general_defaults(), general_params)
+
+
+def _validate_params_values(default_yaml: dict, params: dict) -> None:
+    """Validate every user value against its parameter scheme.
+
+    Parameters
+    ----------
+    default_yaml : dict
+        Dictionnary of schemes, holding one entry per known parameter.
+    params : dict
+        Dictionnary of key/value provided by the user.
+
+    Raises
+    ------
+    ConfigError
+        If there is any parameter given by the user that is not following the
+        types or ranges/choices allowed in its scheme.
+    """
+    for key, val in params.items():
+        validate_value(default_yaml, key, val)
 
 
 def validate_value(default_yaml: dict, key: str, value: Any) -> None:
@@ -659,7 +742,7 @@ def validate_value(default_yaml: dict, key: str, value: Any) -> None:
     Parameters
     ----------
     default_yaml : dict
-        Dictionnary of key/value present in user config file for a module
+        Dictionnary of schemes, holding one entry per known parameter.
     key : str
         Key to be analyzed
     value : [bool, int, float, str, list]
@@ -671,10 +754,14 @@ def validate_value(default_yaml: dict, key: str, value: Any) -> None:
         If there is any parameter given by the user that is not following the
         types or ranges/choices allowed in the defaults.cfg of the module.
     """
-    # Special case for molecules...
-    if key not in default_yaml.keys():
+    # Parameters without a scheme are the dynamically generated ones
+    # (expandable parameters such as `mol_fix_origin_2` or `ncs_sta1_1`);
+    # their names were already validated upstream, so nothing to check here.
+    if key not in default_yaml:
         return
-    if "group" in default_yaml[key].keys():
+
+    # Special case for molecules...
+    if "group" in default_yaml[key]:
         if default_yaml[key]["group"] == "molecules":
             return
 
@@ -712,7 +799,7 @@ def validate_param_type(param: dict, val: Any) -> Optional[str]:
         return (
             f'Wrong provided type "{query_type}" with value "{val}". '
             f'It should be of type "{param["type"]}" '
-            f'(e.g: {param["default"]})'
+            f"(e.g: {param['default']})"
         )
 
 
@@ -732,14 +819,21 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
     """
     # Case for choices
     if "choices" in param.keys():
-        if val not in (choices := param["choices"]):
-            return f'Value "{val}" is not among the accepted choices: {choices}'  # noqa : E501
+        if param.get("type") == "list":
+            if set(val) - set(param["choices"]):
+                return (
+                    f'Value "{val}" is not among the accepted choices: '
+                    f"{param['choices']}"
+                )
+        else:
+            if val not in (choices := param["choices"]):
+                return f'Value "{val}" is not among the accepted choices: {choices}'  # noqa : E501
     # Case for ranges
     elif "min" in param.keys() and "max" in param.keys():
         if val < param["min"] or val > param["max"]:
             return (
                 f'Value "{val}" is not in the allowed boundaries '
-                f'ranging from {param["min"]} to {param["max"]}'
+                f"ranging from {param['min']} to {param['max']}"
             )
     # Case for lists
     elif "minitems" in param.keys() and "maxitems" in param.keys():
@@ -748,16 +842,16 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
             return (
                 f'Number of items found in "{val}" is {_desc} the '
                 "permitted limit. It should range from "
-                f'{param["minitems"]} to {param["maxitems"]}'
+                f"{param['minitems']} to {param['maxitems']}"
             )
     # Case for strings
     elif "minchars" in param.keys() and "maxchars" in param.keys():
         if (nbchars := len(val)) < param["minchars"] or nbchars > param["maxchars"]:
-            _desc = "under" if nbchars < param["minitems"] else "exceeding"
+            _desc = "under" if nbchars < param["minchars"] else "exceeding"
             return (
                 f'Number of items found in "{val}" is {_desc} the '
                 "permitted limit. It should range from "
-                f'{param["minchars"]} to {param["maxchars"]}'
+                f"{param['minchars']} to {param['maxchars']}"
             )
 
 
@@ -787,7 +881,11 @@ def validate_ncs_params(params: dict) -> None:
     except KeyError:
         return None
     # At this stage, ncs_on == True
-    base_ncs_param_names = ("ncs_sta", "ncs_end", "ncs_seg", )
+    base_ncs_param_names = (
+        "ncs_sta",
+        "ncs_end",
+        "ncs_seg",
+    )
     # Read and group ncs parameters together
     groupped_ncs: dict[int, dict[str, dict[int, Union[int, str]]]] = {}
     for paramname, value in params.items():
@@ -797,7 +895,7 @@ def validate_ncs_params(params: dict) -> None:
             first_or_second = int(paramname[7])
             x = int(paramname[-1])
             # Point param type ("sta", "end", or "seg")
-            param_type = paramname.split('_')[1][:-1]
+            param_type = paramname.split("_")[1][:-1]
             # Point/Create holding dict(s)
             ncs_group = groupped_ncs.setdefault(x, {})
             ncs_type = ncs_group.setdefault(param_type, {})
@@ -816,13 +914,16 @@ def validate_ncs_params(params: dict) -> None:
                 msg = f"Not two values set of `ncs_{paramtype}Y_{x}"
                 error_list.append(msg)
                 continue
-            if paramtype in ("sta", "end", ):
+            if paramtype in (
+                "sta",
+                "end",
+            ):
                 # Check they are not similar (wrong!)
                 if not len(set(two_values)) == 1:
                     msg = (
                         f"Values set of `ncs_{paramtype}Y_{x} must be equal: "
                         f"we parsed `{two_values[0]}` and `{two_values[1]}`"
-                        )
+                    )
                     error_list.append(msg)
             else:  # paramtype == "seg"
                 # Check they are similar (wrong!)
@@ -831,7 +932,7 @@ def validate_ncs_params(params: dict) -> None:
                         f"Chain/Segment IDs for `ncs_{paramtype}Y_{x} must be "
                         f"different: we parsed `{two_values[0]}` and"
                         f" `{two_values[1]}`"
-                        )
+                    )
                     error_list.append(msg)
 
     # Validate value of `numncs`
@@ -839,19 +940,19 @@ def validate_ncs_params(params: dict) -> None:
     # Case when number of definition do not match
     if params["nncs"] != len(ncs_suffixes):
         msg = (
-            f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
+            f"Number of NCS restraints (`nncs = {params['nncs']}`) "
             " do not match with the number of defined NCS restraints "
             f"({len(ncs_suffixes)})"
-            )
+        )
         error_list.append(msg)
     else:
         # Case when numbers do not match
         if max(ncs_suffixes) != params["nncs"]:
             msg = (
-                f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
+                f"Number of NCS restraints (`nncs = {params['nncs']}`) "
                 " do not match with the number of defined NCS restraints "
                 f"({', '.join([str(s) for s in ncs_suffixes])})"
-                )
+            )
             error_list.append(msg)
 
     # Here we fall into the error case
@@ -861,7 +962,7 @@ def validate_ncs_params(params: dict) -> None:
             "Some errors were discovered in the NCS restraints definition:"
             f"{os.linesep}"
             f"{os.linesep.join(error_list)}"
-            )
+        )
         # Raise error
         raise ConfigurationError(_msg)
     return None
@@ -1067,9 +1168,7 @@ def inject_in_modules(modules_params: ParamMap, key: Any, value: Any) -> None:
     """Inject a parameter in each module."""
     for params in modules_params.values():
         if key in params:
-            raise ValueError(
-                "key {key!r} already in {module!r} parameters. " "Can't inject."
-            )
+            raise ValueError(f"key {key!r} already in module parameters. Can't inject.")
         params[key] = value
 
 
@@ -1097,9 +1196,9 @@ def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
 
 
 def validate_parameters_are_not_incompatible(
-        params: ParamMap,
-        incompatible_params: ParamMap,
-        ) -> None:
+    params: ParamMap,
+    incompatible_params: ParamMap,
+) -> None:
     """
     Validate parameters are not incompatible.
 
@@ -1122,14 +1221,17 @@ def validate_parameters_are_not_incompatible(
                 continue
             active_incompatibilities = incompatibilities[params[limiting_param]]
             # Check each incompatibility for the limiting parameter
-            for incompatible_param, incompatible_value in active_incompatibilities.items():
+            for (
+                incompatible_param,
+                incompatible_value,
+            ) in active_incompatibilities.items():
                 # Check if the incompatible parameter is present and has the incompatible value
                 if params.get(incompatible_param) == incompatible_value:
                     raise ValueError(
                         f"Parameter `{limiting_param}` with value "
                         f"`{params[limiting_param]}` is incompatible with "
                         f"`{incompatible_param}={incompatible_value}`."
-                        )
+                    )
 
 
 def validate_parameters_are_not_misspelled(
@@ -1216,14 +1318,14 @@ def _get_expandable(
     news_t1, counts_t1 = read_single_idx_groups_user_config(
         user_config,
         get_single_index_groups(defaults),
-        )
+    )
     allowed_params.update(news_t1)
     all_counts.update(counts_t1)
     # Read multiple indexed groups (terminating by `_X_Y`)
     news_t2, counts_t2 = read_multiple_idx_groups_user_config(
         user_config,
         get_multiple_index_groups(defaults),
-        )
+    )
     allowed_params.update(news_t2)
     all_counts.update(counts_t2)
 
@@ -1231,14 +1333,14 @@ def _get_expandable(
         news_t3 = read_simplest_expandable(
             user_config,
             type_simplest_ep[get_module_name(module_name)],
-            )
+        )
         allowed_params.update(news_t3)
     # Read molecule paramters (starting by `mol_`)
     _ = read_mol_parameters(
         user_config,
         get_mol_parameters(defaults),
         max_mols=max_mols,
-        )
+    )
     allowed_params.update(_)
 
     # Add counted parameters to hidden user parameters
@@ -1310,6 +1412,37 @@ def populate_mol_parameters(modules_params: ParamMap) -> None:
                 defaults[param],
             )
     return
+
+
+def check_insertion_codes(molecules: Iterable[FilePath]) -> None:
+    """
+    Stop if input molecules have residues with an insertion code (e.g. 52A).
+
+    Several steps identify residues by their number only, so that e.g.
+    residues 52 and 52A would be confused. The original input is checked,
+    also when it is preprocessed: preprocessing renumbers insertion codes,
+    which would no longer match the restraints and reference structures.
+
+    Raises
+    ------
+    ConfigurationError
+        If any input molecule has a residue with an insertion code.
+    """
+    found = []
+    for molecule in molecules:
+        check_if_path_exists(molecule)
+        insertions = find_insertion_codes(molecule)
+        if insertions:
+            found.append(f"{Path(molecule).name}: {'; '.join(insertions)}")
+    if found:
+        raise ConfigurationError(
+            "Residue(s) with an insertion code in the input molecules:\n"
+            + "\n".join(found)
+            + "\nHADDOCK3 does not support insertion codes, as several steps "
+            "identify residues by their number only. Renumber the residues "
+            "(e.g. with `pdb_fixinsert` from pdb-tools) and apply the same "
+            "renumbering to your restraint files and reference structures."
+        )
 
 
 def check_if_path_exists(path: FilePath) -> None:
@@ -1390,9 +1523,7 @@ def fuzzy_match(
     for user_word in transform_to_list(user_input):
         best: tuple[float, Any] = (-1, "")
         for possibility in possibilities:
-            distance = difflib.SequenceMatcher(
-                a=user_word, b=possibility
-            ).ratio()  # noqa: E501
+            distance = difflib.SequenceMatcher(a=user_word, b=possibility).ratio()  # noqa: E501
             if distance > best[0]:
                 best = (distance, possibility)
         results.append((user_word, best[1]))

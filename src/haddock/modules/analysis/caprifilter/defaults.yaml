@@ -1,0 +1,321 @@
+reference_fname:
+  default: ''
+  type: file
+  title: Reference structure
+  short: Reference structure for CAPRI metric calculation.
+  long: Path to the reference PDB structure used to calculate CAPRI metrics.
+    This parameter is mandatory, the module will stop with an error if reference not found.
+  group: analysis
+  explevel: easy
+
+filter_by:
+  default:
+    - rmsd
+  type: list
+  minitems: 1
+  maxitems: 6
+  choices:
+    - rmsd
+    - irmsd
+    - lrmsd
+    - ilrmsd
+    - fnat
+    - dockq
+  title: Metrics to filter by.
+  short: List of CAPRI metrics to use for filtering.
+  long: List of CAPRI metrics to filter on. Each metric must have its corresponding
+    {metric}_filter_cutoff and {metric}_filter_out parameters set. All
+    filters are applied simultaneously (AND logic), so a model must pass
+    every active filter to be kept.
+  group: analysis
+  explevel: easy
+
+rmsd_filter_cutoff:
+  default: 10.0
+  type: float
+  min: 0.0
+  max: 99999.99
+  precision: 3
+  title: RMSD filter cutoff (Å).
+  short: Filtering threshold for RMSD.
+  long: Filtering threshold for RMSD. 
+  group: analysis
+  explevel: easy
+
+rmsd_filter_out:
+  default: above
+  type: string
+  minchars: 1
+  maxchars: 10
+  choices:
+    - above
+    - below
+  title: RMSD filtering direction.
+  short: Filter out models with RMSD above or below the cutoff.
+  long: if 'above' - filter out models that are over the cutoff value (rmsd_filter_cutoff).
+    if 'below' - filter out models with rmsd under the cutoff value (rmsd_filter_cutoff).
+  group: analysis
+  explevel: easy
+
+irmsd_filter_cutoff:
+  default: 5.0
+  type: float
+  min: 0.0
+  max: 99999.99
+  precision: 3
+  title: iRMSD filter cutoff (Å).
+  short: Filtering threshold for interface-RMSD.
+  long: Filtering threshold for interface-RMSD.
+  group: analysis
+  explevel: easy
+
+irmsd_filter_out:
+  default: above
+  type: string
+  minchars: 1
+  maxchars: 10
+  choices:
+    - above
+    - below
+  title: iRMSD filtering direction.
+  short: Filter out models with iRMSD above or below the cutoff.
+  long: if 'above' - filter out models that are over the cutoff value (irmsd_filter_cutoff).
+    if 'below' - filter out models with irmsd under the cutoff value (irmsd_filter_cutoff).
+  group: analysis
+  explevel: easy
+
+lrmsd_filter_cutoff:
+  default: 10.0
+  type: float
+  min: 0.0
+  max: 99999.99
+  precision: 3
+  title: lRMSD filter cutoff (Å).
+  short: Filtering threshold for ligand-RMSD
+  long: Filtering threshold for ligand-RMSD. 
+  group: analysis
+  explevel: easy
+
+lrmsd_filter_out:
+  default: above
+  type: string
+  minchars: 1
+  maxchars: 10
+  choices:
+    - above
+    - below
+  title: lRMSD filtering direction.
+  short: Filter out models with lRMSD above or below the cutoff.
+  long: if 'above' - filter out models that are over the cutoff value (lrmsd_filter_cutoff).
+    if 'below' - filter out models with lRMSD under the cutoff value (lrmsd_filter_cutoff).
+  group: analysis
+  explevel: easy
+
+ilrmsd_filter_cutoff:
+  default: 10.0
+  type: float
+  min: 0.0
+  max: 99999.99
+  precision: 3
+  title: ilRMSD filter cutoff (Å).
+  short: Filtering threshold for interface-ligand-RMSD.
+  long: Filtering threshold for interface-ligand-RMSD.
+  group: analysis
+  explevel: easy
+
+ilrmsd_filter_out:
+  default: above
+  type: string
+  minchars: 1
+  maxchars: 10
+  choices:
+    - above
+    - below
+  title: ilRMSD filtering direction.
+  short: Filter out models with ilRMSD above or below the cutoff.
+  long: if 'above' - filter out models that are over the cutoff value (ilrmsd_filter_cutoff).
+    if 'below' - filter out models with ilRMSD under the cutoff value (ilrmsd_filter_cutoff).
+  group: analysis
+  explevel: easy
+
+fnat_filter_cutoff:
+  default: 0.3
+  type: float
+  min: 0.0
+  max: 1.0
+  precision: 3
+  title: FNAT filter cutoff.
+  short: Filtering threshold for fraction of native contacts.
+  long: Filtering threshold for fraction of native contacts.
+  group: analysis
+  explevel: easy
+
+fnat_filter_out:
+  default: below
+  type: string
+  minchars: 1
+  maxchars: 10
+  choices:
+    - above
+    - below
+  title: FNAT filtering direction.
+  short: Filter out models with FNAT above or below the cutoff.
+  long: if 'above' - filter out models that are over the cutoff value (fnat_filter_cutoff).
+    if 'below' - filter out models with FNAT under the cutoff value (fnat_filter_cutoff).
+  group: analysis
+  explevel: easy
+
+dockq_filter_cutoff:
+  default: 0.23
+  type: float
+  min: 0.0
+  max: 1.0
+  precision: 3
+  title: DockQ filter cutoff.
+  short: Filtering threshold for DockQ.
+  long: Filtering threshold for DockQ.
+  group: analysis
+  explevel: easy
+
+dockq_filter_out:
+  default: below
+  type: string
+  minchars: 1
+  maxchars: 10
+  choices:
+    - above
+    - below
+  title: DockQ filtering direction.
+  short: Filter out models with DockQ above or below the cutoff.
+  long: if 'above' - filter out models that are over the cutoff value (dockq_filter_cutoff).
+    if 'below' - filter out models with DockQ under the cutoff value (dockq_filter_cutoff).
+  group: analysis
+  explevel: easy
+
+irmsd_cutoff:
+  default: 10.0
+  type: float
+  min: 3.0
+  max: 20.0
+  precision: 3
+  title: Distance cutoff (Å) used to define interface residues.
+  short: Distance cutoff (Å) used to define interface residues.
+  long: Distance cutoff (Å) used to define interface residues based on intermolecular contacts. 
+  group: analysis
+  explevel: easy
+
+fnat_cutoff:
+  default: 5.0
+  type: float
+  min: 3.0
+  max: 20.0
+  precision: 3
+  title: Distance cutoff (Å) used to define interface contacts.
+  short: Distance cutoff (Å) used to define interface contacts.
+  long: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
+  group: analysis
+  explevel: easy
+
+receptor_chain:
+  default: A
+  type: string
+  minchars: 1
+  maxchars: 1
+  title: Receptor ChainID
+  short: Receptor ChainID for RMSD calculations.
+  long: Receptor ChainID to be considered for the lRMSD and ilRMSD calculations.
+  group: analysis
+  explevel: easy
+
+ligand_chains:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: Ligand ChainIDs
+  short: Ligand ChainIDs for RMSD calculations.
+  long: Ligand ChainIDs to be considered for the lRMSD and ilRMSD calculations.
+  group: analysis
+  explevel: easy
+
+sortby:
+  default: score
+  type: string
+  minchars: 0
+  maxchars: 20
+  choices:
+    - score
+    - irmsd
+    - lrmsd
+    - ilrmsd
+    - fnat
+    - dockq
+    - rmsd
+  title: Sort the output file by this value
+  short: Which value should be used to sort the output.
+  long: Which value should be used to sort the output caprifilter.tsv.
+  group: analysis
+  explevel: easy
+
+sort_ascending:
+  default: true
+  type: boolean
+  title: Sort in ascending order
+  short: Sort models in ascending order.
+  long: Sort models in ascending order inside the output file caprifilter.tsv.
+  group: analysis
+  explevel: easy
+
+alignment_method:
+  default: sequence
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - structure
+    - sequence
+  title: Alignment method
+  short: Alignment method used to match residue numbering.
+  long: Alignment method used to match residue numbering between model and reference.
+    Sequence alignment is the default. Structure alignment requires LovoAlign.
+  group: analysis
+  explevel: easy
+
+lovoalign_exec:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 200
+  title: LovoAlign executable path
+  short: Path to the LovoAlign executable.
+  long: Path to the LovoAlign executable. Only required when alignment_method=structure.
+  group: analysis
+  explevel: easy
+
+caprifilter_full:
+  default: false
+  type: boolean
+  title: Write all-models table
+  short: Write caprifilter_all_models.tsv with all models, status (kept/filtered) and requested metrics.
+  long: Write caprifilter_all_models.tsv with all models, status (kept/filtered) and requested metrics.
+  group: analysis
+  explevel: easy
+
+allatoms:
+  default: false
+  type: boolean
+  title: Use all heavy atoms
+  short: Use all heavy atoms (including side chains).
+  long: If false (default), only backbone atoms are used. If true, all heavy atoms.
+  group: analysis
+  explevel: easy
+
+keep_hetatm:
+  default: false
+  type: boolean
+  title: Consider HETATM records
+  short: Include HETATM atoms from the reference.
+  long: If false (default), only ATOM lines are used. If true, HETATM from the
+    reference are also included.
+  group: analysis
+  explevel: easy

@@ -1,7 +1,0 @@
-sphinx>=2
-sphinx-argparse
-karma-sphinx-theme
-CommonMark
-mock
-myst-parser
-jsonpickle

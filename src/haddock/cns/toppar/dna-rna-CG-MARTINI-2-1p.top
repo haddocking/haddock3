@@ -2,10 +2,13 @@
 ! Topology file for CG nucleic acid based on martinize script and parameters  !
 ! Authors: Rodrigo Honorato & Jorge Roel, MAY-2018                            !
 !-----------------------------------------------------------------------------!
-
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
 set message=off echo=off end
 
+autogenerate
+  angles=false
+  dihedrals=false
+end
 !------------!
 !  Backbone  !
 !------------!
@@ -27,11 +30,13 @@ MASS RNB3 45.00 ! MARTINI bead SNda
 MASS ANS1 45.00
 MASS ANS2 45.00
 MASS ANS3 45.00
+MASS ANS4 45.00
 
 ! A 
 MASS ARS1 45.00
 MASS ARS2 45.00
 MASS ARS3 45.00
+MASS ARS4 45.00
 
 ! DC
 MASS CNS4 45.00
@@ -69,14 +74,14 @@ MASS URS2 45.00
 
 ! SPECIAL HBONDing
 ! DNA
-MASS NH1 45.00
-MASS NH2 45.00
-MASS NH3 45.00
-MASS NH4 45.00
-MASS NH5 45.00
-MASS NH6 45.00
-MASS NH7 45.00
-MASS NH8 45.00
+MASS NH1N 45.00
+MASS NH2N 45.00
+MASS NH3N 45.00
+MASS NH4N 45.00
+MASS NH5N 45.00
+MASS NH6N 45.00
+MASS NH7N 45.00
+MASS NH8N 45.00
 ! RNA
 MASS RH1 45.00
 MASS RH2 45.00
@@ -100,7 +105,7 @@ RESIdue DA
     ATOM BB1  type=NB1     charge=0.000 end
     ATOM BB2  type=NB2     charge=0.000 end
     ATOM BB3  type=NB3     charge=0.000 end
-    ATOM SC1  type=ANS1    charge=0.000 end
+    ATOM SC1  type=ANS4    charge=0.000 end
     ATOM SC2  type=ANS1    charge=0.000 end
     ATOM SC3  type=ANS3    charge=0.000 end
     ATOM SC4  type=ANS2    charge=0.000 end
@@ -110,7 +115,6 @@ RESIdue DA
   BOND BB3 SC1
   BOND SC1 SC2
   BOND SC2 SC3
-  BOND SC2 SC4
   BOND SC2 SC4
   BOND SC3 SC4
   BOND SC4 SC1
@@ -236,7 +240,7 @@ RESIdue A
     ATOM BB1  type=RNB1   charge=0.000 end
     ATOM BB2  type=RNB2   charge=0.000 end
     ATOM BB3  type=RNB3   charge=0.000 end
-    ATOM SC1  type=ARS1   charge=0.000 end
+    ATOM SC1  type=ARS4   charge=0.000 end
     ATOM SC2  type=ARS1   charge=0.000 end
     ATOM SC3  type=ARS2   charge=0.000 end
     ATOM SC4  type=ARS3   charge=0.000 end
@@ -246,7 +250,6 @@ RESIdue A
   BOND BB3 SC1
   BOND SC1 SC2
   BOND SC2 SC3
-  BOND SC2 SC4
   BOND SC2 SC4
   BOND SC3 SC4
   BOND SC4 SC1
@@ -374,23 +377,23 @@ END
 ! DNA
 
 PRESidue DA1
-  MODIFY ATOM SC2   TYPE=NH1 END
-  MODIFY ATOM SC3   TYPE=NH2 END
+  MODIFY ATOM SC2   TYPE=NH1N END
+  MODIFY ATOM SC3   TYPE=NH2N END
 END
 
 PRESidue DC1
-  MODIFY ATOM SC2   TYPE=NH7 END
-  MODIFY ATOM SC3   TYPE=NH8 END
+  MODIFY ATOM SC2   TYPE=NH7N END
+  MODIFY ATOM SC3   TYPE=NH8N END
 END
 
 PRESidue DG1
-  MODIFY ATOM SC2   TYPE=NH3 END
-  MODIFY ATOM SC3   TYPE=NH4 END
+  MODIFY ATOM SC2   TYPE=NH3N END
+  MODIFY ATOM SC3   TYPE=NH4N END
 END
 
 PRESidue DT1
-  MODIFY ATOM SC2   TYPE=NH5 END
-  MODIFY ATOM SC3   TYPE=NH6 END
+  MODIFY ATOM SC2   TYPE=NH5N END
+  MODIFY ATOM SC3   TYPE=NH6N END
 END
 
 ! RNA
@@ -444,5 +447,22 @@ END
 
 !----------------------------------------------------------------
 
+!---------------------------------!
+! Patch for detected chain breaks !
+!    *same for DNA and RNA*       !
+!---------------------------------!
+
+PRESidue DNCG
+
+  DELETE BOND -BB3 +BB1
+  DELETE ANGLE -BB2 -BB3 +BB1
+  DELETE ANGLE -BB3 +BB1 +BB2
+  DELETE DIHEdral -BB1 -BB2 -BB3 +BB1
+  DELETE DIHEdral -BB2 -BB3 +BB1 +BB2
+  DELETE DIHEdral -BB3 +BB1 +BB2 +BB3
+  DELETE ANGLE -SC1 -BB3 +BB1
+
+END {DNCG}
 
 set message=$old_message echo=$old_echo end
+

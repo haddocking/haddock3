@@ -32,11 +32,48 @@ def flexref_json():
 @pytest.fixture
 def expected_traceback():
     "Provide expected traceback dataframe."
-    exp_tr = [["00_topo1", "00_topo2", "1_rigidbody", "1_rigidbody_rank", "4_flexref", "4_flexref_rank"],  # noqa: E501
-              ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_3.pdb", "1", "flexref_1.pdb", "1"],  # noqa: E501
-              ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_1.pdb", "2", "flexref_2.pdb", "2"],  # noqa: E501
-              ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_4.pdb", "3", "-", "-"],  # noqa: E501
-              ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_2.pdb", "4", "-", "-"]]  # noqa: E501
+    exp_tr = [
+        [
+            "00_topo1",
+            "00_topo2",
+            "1_rigidbody",
+            "1_rigidbody_rank",
+            "4_flexref",
+            "4_flexref_rank",
+        ],  # noqa: E501
+        [
+            "4G6K_fv_haddock.psf",
+            "4I1B-matched_haddock.psf",
+            "rigidbody_3.pdb",
+            "1",
+            "flexref_1.pdb",
+            "1",
+        ],  # noqa: E501
+        [
+            "4G6K_fv_haddock.psf",
+            "4I1B-matched_haddock.psf",
+            "rigidbody_1.pdb",
+            "2",
+            "flexref_2.pdb",
+            "2",
+        ],  # noqa: E501
+        [
+            "4G6K_fv_haddock.psf",
+            "4I1B-matched_haddock.psf",
+            "rigidbody_4.pdb",
+            "3",
+            "-",
+            "-",
+        ],  # noqa: E501
+        [
+            "4G6K_fv_haddock.psf",
+            "4I1B-matched_haddock.psf",
+            "rigidbody_2.pdb",
+            "4",
+            "-",
+            "-",
+        ],
+    ]  # noqa: E501
     exp_tr_df = pd.DataFrame(exp_tr[1:], columns=exp_tr[0])
     return exp_tr_df
 
@@ -46,8 +83,10 @@ def test_main(rigid_json, flexref_json, expected_traceback):
     with tempfile.TemporaryDirectory() as tmpdir:
         # build fake run_dir
         run_dir = Path(tmpdir, "example_dir")
-        step_dirs = [os.path.join(run_dir, "1_rigidbody"),
-                     os.path.join(run_dir, "4_flexref")]
+        step_dirs = [
+            os.path.join(run_dir, "1_rigidbody"),
+            os.path.join(run_dir, "4_flexref"),
+        ]
 
         # Loop over directories to be created
         for d in [run_dir, *step_dirs]:
@@ -82,8 +121,10 @@ def test_analysis():
     # build fake run_dir
     with tempfile.TemporaryDirectory() as tmpdir:
         run_dir = Path(tmpdir, "example_dir")
-        step_dirs = [os.path.join(run_dir, "0_topoaa"),
-                     os.path.join(run_dir, "1_caprieval")]
+        step_dirs = [
+            os.path.join(run_dir, "0_topoaa"),
+            os.path.join(run_dir, "1_caprieval"),
+        ]
 
         for d in [run_dir, *step_dirs]:
             os.mkdir(d)
@@ -101,12 +142,12 @@ def test_get_steps_without_pdbs():
         # build fake run_dir
         run_dir = Path(tmpdir)
         steps = ["0_topoaa", "1_rigidbody", "2_caprieval"]
-        
+
         for st in steps:
             os.mkdir(Path(run_dir, st))
 
         # create fake, empty pdb files
-        fake_pdb_path = Path(run_dir, steps[1] , f"rigidbody_1.pdb")
+        fake_pdb_path = Path(run_dir, steps[1], "rigidbody_1.pdb")
         open(fake_pdb_path, "w").close()
 
         # get steps without pdbs
@@ -116,13 +157,30 @@ def test_get_steps_without_pdbs():
         exp_steps = ["0_topoaa", "2_caprieval"]
         assert obs_steps == exp_steps
 
-        # now we remove the fake pdb file
+        # now we remove the fake pdb file
         os.remove(fake_pdb_path)
 
         # get steps without pdbs
         obs_steps = get_steps_without_pdbs(run_dir, steps)
         exp_steps = ["0_topoaa", "1_rigidbody", "2_caprieval"]
         assert obs_steps == exp_steps
+
+
+def test_get_steps_without_pdbs_caprieval_with_pdbs():
+    """Test caprieval/caprifilter are skipped even if they contain PDBs."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        run_dir = Path(tmpdir)
+        steps = ["0_topoaa", "1_rigidbody", "2_caprieval", "3_caprifilter"]
+        for st in steps:
+            os.mkdir(Path(run_dir, st))
+
+            # create fake, empty pdb files (calling it reference, since that
+            # is only PDB that would be present in caprieval)
+            fake_pdb_path = Path(run_dir, st, "reference_model_1.pdb")
+            open(fake_pdb_path, "w").close()
+
+        obs_steps = get_steps_without_pdbs(run_dir, steps)
+        assert obs_steps == ["0_topoaa", "2_caprieval", "3_caprifilter"]
 
 
 def test_subset_traceback(expected_traceback):
@@ -134,9 +192,11 @@ def test_subset_traceback(expected_traceback):
         # assert consensus file exists
         assert cons_filename.exists()
         # check subset
-        exp_tr = [["Model", "1_rigidbody_rank", "4_flexref_rank", "Sum-of-Ranks"],  # noqa: E501
-                  ["flexref_1.pdb", 1, 1, 2],  # noqa: E501
-                  ["flexref_2.pdb", 2, 2, 4]]  # noqa: E501
+        exp_tr = [
+            ["Model", "1_rigidbody_rank", "4_flexref_rank", "Sum-of-Ranks"],  # noqa: E501
+            ["flexref_1.pdb", 1, 1, 2],  # noqa: E501
+            ["flexref_2.pdb", 2, 2, 4],
+        ]  # noqa: E501
         exp_tr_df = pd.DataFrame(exp_tr[1:], columns=exp_tr[0])
         assert obs_tr.columns.tolist() == exp_tr_df.columns.tolist()
         assert obs_tr.equals(exp_tr_df)

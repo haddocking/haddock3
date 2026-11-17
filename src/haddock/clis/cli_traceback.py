@@ -4,11 +4,12 @@ Traces back PDB files from a HADDOCK run directory.
 Given an input run directory, haddock3-traceback traces back each model to the
 initial input molecules used, providing the rank of each intermediate model.
 
-USAGE::
+USAGE:
 
-    haddock3-traceback -r <run_dir>
+    haddock3-traceback <run_dir>
 
 """
+
 import argparse
 import sys
 from pathlib import Path
@@ -17,14 +18,12 @@ import numpy as np
 import pandas as pd
 
 from haddock import log
+from haddock.core.defaults import TRACEBACK_FOLDER
 from haddock.core.typing import Any, FilePath
 from haddock.libs import libcli
 from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.libs.libplots import make_traceback_plot
 from haddock.modules import get_module_steps_folders
-
-
-TRACK_FOLDER = "traceback"  # name of the traceback folder
 
 
 def get_steps_without_pdbs(run_dir, all_steps):
@@ -35,10 +34,10 @@ def get_steps_without_pdbs(run_dir, all_steps):
     ----------
     run_dir : str or pathlib.Path
         Path to the run directory.
-    
+
     all_steps : list
         List of all the steps in the run directory.
-    
+
     Returns
     -------
     steps_without_pdbs : list
@@ -46,7 +45,7 @@ def get_steps_without_pdbs(run_dir, all_steps):
     """
     steps_without_pdbs = []
     for step in all_steps:
-        if step.endswith("topoaa"):
+        if step.endswith(("topoaa", "caprieval", "caprifilter")):
             steps_without_pdbs.append(step)
         else:
             step_dir = Path(run_dir, step)
@@ -121,7 +120,7 @@ def traceback_dataframe(
     df_data.reset_index(inplace=True)
     # assign columns
     data_cols = [el for el in reversed(sel_step)]
-    data_cols.extend([f"00_topo{i+1}" for i in range(max_topo_len)])
+    data_cols.extend([f"00_topo{i + 1}" for i in range(max_topo_len)])
     df_data.columns = data_cols
 
     # same for the rank_dict
@@ -149,10 +148,10 @@ def order_traceback_df(df_output, sel_step):
     ----------
     df_output : pandas.DataFrame
         Dataframe containing the traceback data.
-    
+
     sel_step : list
         List of selected steps.
-    
+
     Returns
     -------
     df_output : pandas.DataFrame
@@ -184,17 +183,17 @@ def subset_traceback(traceback_df: pd.DataFrame, cons_filename: Path) -> pd.Data
     ----------
     traceback_df : pandas.DataFrame
         Dataframe containing the traceback data.
-    
+
     cons_filename : pathlib.Path
         name of the consensus file.
-    
+
     Returns
     -------
     rank_data_subset : pandas.DataFrame
         Dataframe containing the subset of the traceback data.
     """
     red_traceback_df = traceback_df.head(40)
-    rank_data = red_traceback_df.filter(regex='rank$')
+    rank_data = red_traceback_df.filter(regex="rank$")
     # get the last column: this will define the name of the models
     last_column = red_traceback_df.columns[-2]
     last_column_data = red_traceback_df[last_column]
@@ -203,11 +202,13 @@ def subset_traceback(traceback_df: pd.DataFrame, cons_filename: Path) -> pd.Data
     # the rank of the last column must be defined
     last_column_rank = last_column + "_rank"
     # copy avoids SettingWithCopyWarning
-    rank_data_subset = rank_data[rank_data[last_column_rank] != '-'].copy()
+    rank_data_subset = rank_data[rank_data[last_column_rank] != "-"].copy()
     rank_columns = rank_data_subset.columns[1:].tolist()
-    rank_data_subset[rank_columns] = rank_data_subset[rank_columns].apply(pd.to_numeric, errors='coerce')
+    rank_data_subset[rank_columns] = rank_data_subset[rank_columns].apply(
+        pd.to_numeric, errors="coerce"
+    )
     rank_data_subset = rank_data_subset.sort_values(by=last_column_rank, ascending=True)
-    
+
     # rename the columns
     rank_data_subset.columns = ["Model"] + rank_columns
     # sum the ranks
@@ -270,7 +271,7 @@ def main(run_dir: FilePath, offline: bool = False) -> None:
         log.info(f"Steps to trace back: {', '.join(sel_step)}")
 
     # creating traceback folder
-    outdir = Path(run_dir, TRACK_FOLDER)
+    outdir = Path(run_dir, TRACEBACK_FOLDER)
     try:
         outdir.mkdir(exist_ok=False)
         log.info(f"Created directory: {str(outdir.resolve())}")
@@ -317,7 +318,11 @@ def main(run_dir: FilePath, offline: bool = False) -> None:
                     unk_idx += 1
                 else:
                     # we've already seen this pdb before.
-                    idxs = [i for i, el in enumerate(ls_values) if el==str(pdbfile.rel_path)]
+                    idxs = [
+                        i
+                        for i, el in enumerate(ls_values)
+                        if el == str(pdbfile.rel_path)
+                    ]
                     keys = [list(data_dict.keys())[idx // delta] for idx in idxs]
 
                 # assignment
@@ -350,18 +355,16 @@ def main(run_dir: FilePath, offline: bool = False) -> None:
     # ordering the dataframe
     df_output = order_traceback_df(df_output, sel_step)
     # dumping the dataframe
-    track_filename = Path(run_dir, TRACK_FOLDER, "traceback.tsv")
-    log.info(
-        f"Output dataframe {track_filename} " f"created with shape {df_output.shape}"
-    )
+    track_filename = Path(run_dir, TRACEBACK_FOLDER, "traceback.tsv")
+    log.info(f"Output dataframe {track_filename} created with shape {df_output.shape}")
     df_output.to_csv(track_filename, sep="\t", index=False)
 
     # taking (and writing) a subset of the dataframe
-    consensus_filename = Path(run_dir, TRACK_FOLDER, "consensus.tsv")
+    consensus_filename = Path(run_dir, TRACEBACK_FOLDER, "consensus.tsv")
     rank_data_subset = subset_traceback(df_output, consensus_filename)
 
     # plotting the traceback dataframe
-    plot_filename = Path(run_dir, TRACK_FOLDER, "traceback.html")
+    plot_filename = Path(run_dir, TRACEBACK_FOLDER, "traceback.html")
     make_traceback_plot(rank_data_subset, plot_filename, offline=offline)
     return
 

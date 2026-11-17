@@ -9,6 +9,7 @@ import pytest
 
 from haddock.libs.libmpi import MPIScheduler
 from haddock.core.exceptions import HaddockTermination
+from . import has_mpi_launcher
 
 
 @pytest.fixture
@@ -31,6 +32,7 @@ def test_mpischeduler_init():
     assert mpi.ncores == cores
 
 
+@has_mpi_launcher
 def test_mpischduler_run(mocker, mpischeduler):
     # Mock the necessary methods and objects
     mock_pickle_tasks = mocker.patch.object(

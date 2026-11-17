@@ -13,8 +13,12 @@ Protocol described in: [https://doi.org/10.1021/acs.jctc.2c00075](https://doi.or
 
 ==================================================
 
-Two cyclic peptide examples are provided:
+Three cyclic peptide examples are provided
 
 1) 1SFI, a 14 residue cyclic peptide with both backbone and disulphide bridge cyclisation
 
 2) 3WNE, a 6 residue backbone cyclic peptide
+
+And as new addition (not related to the paper above):
+
+3) A peptide with ACE-CYS cyclisation (no reference provided)

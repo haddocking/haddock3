@@ -5,6 +5,9 @@ conjugate gradient method implemented in CNS.
 
 Coordinates of the energy minimized structures are saved, and each
 complex is then evaluated using the HADDOCK scoring function.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#emref-module>`_
 """
 
 from pathlib import Path
@@ -89,7 +92,14 @@ class HaddockModule(BaseCNSModule):
                 ambig_fname = self.params["ambig_fname"]
             model_idx += 1
 
-            for _ in range(self.params["sampling_factor"]):
+            for s_ind in range(self.params["sampling_factor"]):
+                # offset the seed per sampling_factor
+                # so that each refinement with same staring point
+                # gets different seed and produce different end models
+                if isinstance(model, PDBFile) and model.seed is not None:
+                    offsetted_seed = model.seed + s_ind
+                else:
+                    offsetted_seed = None
                 emref_input = prepare_cns_input(
                     idx,
                     model,
@@ -100,7 +110,7 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     debug=self.params["debug"],
-                    seed=model.seed if isinstance(model, PDBFile) else None,
+                    seed=offsetted_seed,
                 )
                 out_file = f"emref_{idx}.out"
                 err_fname = f"emref_{idx}.cnserr"

@@ -8,16 +8,11 @@ include setup.py
 exclude .gitmodules
 exclude .bumpversion.cfg
 exclude .coveragerc
-exclude .readthedocs.yml
-prune devtools
 prune examples
 prune src/fcc
 prune tests
-# exclude params*.rst documentation that is generated with
-# sphinx-apidoc
-exclude docs/modules/*/params/*.rst
-exclude docs/reference/core/mandatory_parameters.rst
-exclude docs/modules/general_module_params.rst
+# docs/src is generated at build time by sphinx-apidoc, not committed
+prune docs/src
 global-exclude *.py[cod] __pycache__/* *.so *.dylib 
 global-exclude tags
 global-exclude *.swp

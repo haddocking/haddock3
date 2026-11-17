@@ -4,15 +4,18 @@ import os
 import math
 from pathlib import Path
 from haddock.core.typing import Union
+from haddock.libs.libclust import rank_clusters
 from haddock.libs.libontology import PDBFile
 
 
 def select_top_clusts_models(
-        sortby: str,
-        models_to_select: list[PDBFile],
-        top_clusters: int,
-        top_models: Union[int, float],
-        ) -> tuple[list[PDBFile], list[str]]:
+    sortby: str,
+    reverse: bool,
+    models_to_select: list[PDBFile],
+    top_clusters: int,
+    top_models: Union[int, float],
+    cluster_score_threshold: int = 4,
+) -> tuple[list[PDBFile], list[str]]:
     """Select best clusters based on structures scores.
 
     Parameters
@@ -25,6 +28,9 @@ def select_top_clusts_models(
         Number of best clusters to take into account.
     top_models : int
         Number of best models in each cluster to take into account.
+    cluster_score_threshold : int
+        Number of best-scoring models per cluster used to compute its
+        average score when ranking by `score`.
 
     Returns
     -------
@@ -40,7 +46,11 @@ def select_top_clusts_models(
     if sortby == "size":
         cluster_rankings = size_clust_order(by_clusters)
     else:
-        cluster_rankings = rank_clust_order(by_clusters)
+        cluster_rankings = rank_clust_order(
+            by_clusters,
+            reverse,
+            cluster_score_threshold,
+        )
 
     # Check if number of clusters >= set of rank
     if top_clusters >= len(cluster_rankings):
@@ -51,23 +61,22 @@ def select_top_clusts_models(
         # select top_clusters clusters
         cluster_rankings = cluster_rankings[:top_clusters]
         cluster_rankins_str = ",".join(map(str, cluster_rankings))
-        notes.append(
-            f"Selecting top {top_clusters} clusters: "
-            f"{cluster_rankins_str}"
-            )
+        notes.append(f"Selecting top {top_clusters} clusters: {cluster_rankins_str}")
 
     # Initiate set of selected models to export
     models_to_export: list[PDBFile] = []
-    # Loop over cluster ranks
-    for clt_rank in cluster_rankings:
+    # Loop over cluster ranks. `new_clt_rank` reflects the ordering computed
+    # above (by average score or size), so the exported model names follow
+    # that ranking rather than the original cluster rank.
+    for new_clt_rank, clt_key in enumerate(cluster_rankings, start=1):
         # Sort models by model rank
-        clt_mdls, note = sort_models(by_clusters[clt_rank])
+        clt_mdls, note = sort_models(by_clusters[clt_key])
         if note:
             notes.append(note)
 
         # Set new ranks to models
         for mdl_rank, pdb in enumerate(clt_mdls, start=1):
-            pdb.clt_rank = clt_rank
+            pdb.clt_rank = new_clt_rank
             pdb.clt_model_rank = mdl_rank
         # In case number of models is not set (nan.)
         if math.isnan(top_models):
@@ -81,9 +90,7 @@ def select_top_clusts_models(
     return models_to_export, notes
 
 
-def sort_models(
-        models: list[PDBFile]
-        ) -> tuple[list[PDBFile], Union[None, str]]:
+def sort_models(models: list[PDBFile]) -> tuple[list[PDBFile], Union[None, str]]:
     """Sort models based on their rank in cluster.
 
     Parameters
@@ -101,16 +108,18 @@ def sort_models(
         sorted_mdls = sorted(
             models,
             key=lambda k: k.clt_model_rank,
-            )
+        )
     except TypeError:
-        note = 'model rank unavailable, falling back to input order'
+        note = "model rank unavailable, falling back to input order"
         sorted_mdls = models
     return sorted_mdls, note
-    
+
 
 def rank_clust_order(
-        by_clusters: dict[int, list[PDBFile]],
-        ) -> list[int]:
+    by_clusters: dict[int, list[PDBFile]],
+    reverse: bool = False,
+    cluster_score_threshold: int = 4,
+) -> list[int]:
     """Select best clusters based on structures scores.
 
     Parameters
@@ -121,6 +130,11 @@ def rank_clust_order(
         Number of best clusters to take into account.
     top_models : int
         Number of best models in each cluster to take into account.
+    reverse : boolean
+        Reverse the ranking (from high to low average score)
+    cluster_score_threshold : int
+        Number of best-scoring models per cluster used to compute its
+        average score.
 
     Returns
     -------
@@ -129,14 +143,20 @@ def rank_clust_order(
     notes : list[str]
         List of notes to be printed.
     """
-    # Generate set of all cluster rank available
-    cluster_rankings = sorted(by_clusters)
+    # Rank clusters by their average score (best/lowest score first)
+    _score_dic, sorted_score_dic = rank_clusters(
+        by_clusters,
+        cluster_score_threshold,
+    )
+    cluster_rankings = [clt_key for clt_key, _score in sorted_score_dic]
+    if reverse:
+        cluster_rankings.reverse()
     return cluster_rankings
 
 
 def size_clust_order(
-        by_clusters: dict[int, list[PDBFile]],
-        ) -> list[int]:
+    by_clusters: dict[int, list[PDBFile]],
+) -> list[int]:
     """Select best clusters based on structures scores.
 
     Parameters
@@ -160,7 +180,7 @@ def size_clust_order(
         by_clusters,
         key=lambda k: len(by_clusters[k]),
         reverse=True,
-        )
+    )
     return cluster_rankings
 
 
@@ -179,9 +199,8 @@ def map_clusters_models(models: list[PDBFile]) -> dict[int, list[PDBFile]]:
     """
     # Preset dictionary keys
     by_clusters: dict[int, list[PDBFile]] = {
-        clrank: []
-        for clrank in list(set([pdb.clt_rank for pdb in models]))
-        }
+        clrank: [] for clrank in list(set([pdb.clt_rank for pdb in models]))
+    }
     # Loop over models
     for pdb in models:
         # Add model to cluster
@@ -190,10 +209,10 @@ def map_clusters_models(models: list[PDBFile]) -> dict[int, list[PDBFile]]:
 
 
 def write_selected_models(
-        output_path: Union[str, Path],
-        models: list[PDBFile],
-        module_path: Union[str, Path],
-        ) -> list[PDBFile]:
+    output_path: Union[str, Path],
+    models: list[PDBFile],
+    module_path: Union[str, Path],
+) -> list[PDBFile]:
     """Dump selected models and new names in a file.
 
     Parameters
@@ -211,26 +230,20 @@ def write_selected_models(
         Updated list of selected models.
     """
     # dump the models to disk and change their attributes
-    with open(output_path, 'w') as fh:
+    with open(output_path, "w") as fh:
         fh.write("rel_path\tori_name\tcluster_name\tmd5" + os.linesep)
         for model in models:
-            name = (
-                f"cluster_{model.clt_rank}_model"
-                f"_{model.clt_model_rank}.pdb"
-                )
+            name = f"cluster_{model.clt_rank}_model_{model.clt_model_rank}.pdb"
             # writing name
             fh.write(
-                f"{model.rel_path}\t"
-                f"{model.ori_name}\t"
-                f"{name}\t"
-                f"{model.md5}" + os.linesep
-                )
+                f"{model.rel_path}\t{model.ori_name}\t{name}\t{model.md5}" + os.linesep
+            )
             # changing attributes
             name_path = Path(name)
             name_path.write_text(model.rel_path.read_text())
             model.ori_name = model.file_name
             model.file_name = name
             model.full_name = name
-            model.rel_path = Path('..', Path(module_path).name, name)
+            model.rel_path = Path("..", Path(module_path).name, name)
             model.path = str(Path(".").resolve())
     return models

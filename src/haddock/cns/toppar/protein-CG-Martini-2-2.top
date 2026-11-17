@@ -512,6 +512,22 @@ PRESidue PEPT     ! PEPTide bond link, for all
   add bond -BB +BB
 END
 
+PRESidue BBBA     ! Add angle between BB of three consecutive residue
+  add angle 1BB 2BB 3BB
+END
+
+PRESidue SBBA     ! Add angle between SC1 and BB of residue and BB of the next residue
+  add angle 1SC1 2BB 3BB
+END
+
+PRESidue BBSA     ! Add angle between BB of residue and BB and SC1 of the next residue
+  add angle 1BB 2BB 3SC1
+END
+
+PRESidue CGDI  ! Patch to add a dihedral angle between four BB beads
+                add dihedral 1BB 2BB 3BB 4BB
+END
+
 PRESidue DCGP
     ! Delete bonds that are too long to exist
   DELETE BOND -BB +BB

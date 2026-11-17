@@ -42,10 +42,97 @@ from haddock.libs.libpdb import (
     slc_y,
     slc_z,
     split_by_chain,
-    )
+)
 
 
 RES_TO_BE_IGNORED = ["SHA", "WAT"]
+
+ResCode = Literal[
+    "C",
+    "D",
+    "S",
+    "Q",
+    "K",
+    "I",
+    "P",
+    "T",
+    "F",
+    "N",
+    "G",
+    "H",
+    "L",
+    "R",
+    "W",
+    "A",
+    "V",
+    "E",
+    "Y",
+    "M",
+    "A",
+    "G",
+    "C",
+    "T",
+    "X",
+]
+"""
+The single letter code of a residue.
+
+Unrecognized residues' code is `X`.
+"""
+
+RES_3L1L = dict(
+    [
+        ("CYS", "C"),
+        ("ASP", "D"),
+        ("SER", "S"),
+        ("GLN", "Q"),
+        ("LYS", "K"),
+        ("ILE", "I"),
+        ("PRO", "P"),
+        ("THR", "T"),
+        ("PHE", "F"),
+        ("ASN", "N"),
+        ("GLY", "G"),
+        ("HIS", "H"),
+        ("LEU", "L"),
+        ("ARG", "R"),
+        ("TRP", "W"),
+        ("ALA", "A"),
+        ("VAL", "V"),
+        ("GLU", "E"),
+        ("TYR", "Y"),
+        ("MET", "M"),
+        ("DA", "A"),
+        ("DG", "G"),
+        ("DC", "C"),
+        ("DT", "T"),
+        # 9/8/2023: adding non-standard amino-acids (src/haddock/cns/toppar/protein-allhdg5-4.top) # noqa: E501
+        ("ALY", "K"),
+        ("ASH", "D"),
+        ("CFE", "C"),
+        ("CSP", "C"),
+        ("CYC", "C"),
+        ("CYF", "C"),
+        ("CYM", "C"),
+        ("DDZ", "A"),
+        ("GLH", "E"),
+        ("HLY", "P"),
+        ("HY3", "P"),
+        ("HYP", "P"),
+        ("M3L", "K"),
+        ("MLY", "K"),
+        ("MLZ", "K"),
+        ("MSE", "M"),
+        ("NEP", "H"),
+        ("PNS", "S"),
+        ("PTR", "Y"),
+        ("SEP", "S"),
+        ("TOP", "T"),
+        ("TPO", "T"),
+        ("TYP", "Y"),
+        ("TYS", "Y"),
+    ]
+)
 
 PROT_RES = [
     "ALA",
@@ -73,6 +160,13 @@ PROT_RES = [
 DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
 PROT_ATOMS = ["C", "N", "CA", "O"]
+PROT_ATOMS_MARTINI2 = ["BB"]
+PROT_ATOMS_all = {
+    "aa": PROT_ATOMS,
+    "martini2": PROT_ATOMS_MARTINI2,
+    "martini3": PROT_ATOMS_MARTINI2,  # The backbone particle is identical between MARTINI 2 and 3
+}
+
 # Side chains
 PROT_SIDE_CHAINS_DICT = {
     "ALA": ["C", "N", "CA", "O", "CB"],
@@ -125,7 +219,79 @@ PROT_SIDE_CHAINS_DICT = {
     "VAL": ["C", "N", "CA", "O", "CB", "CG1", "CG2"],
 }
 
-# Bases
+PROT_SIDE_CHAINS_DICT_MARTINI2 = {
+    "GLY": ["BB"],
+    "ALA": ["BB"],
+    "CYS": ["BB", "SC1"],
+    "VAL": ["BB", "SC1"],
+    "LEU": ["BB", "SC1"],
+    "ILE": ["BB", "SC1"],
+    "MET": ["BB", "SC1"],
+    "PRO": ["BB", "SC1"],
+    "ASN": ["BB", "SC1"],
+    "GLN": ["BB", "SC1"],
+    "ASP": ["BB", "SC1"],
+    "ASP0": ["BB", "SC1"],
+    "GLU": ["BB", "SC1"],
+    "GLU0": ["BB", "SC1"],
+    "THR": ["BB", "SC1"],
+    "SER": ["BB", "SC1"],
+    "LYS": ["BB", "SC1", "SC2"],
+    "LSN": ["BB", "SC1", "SC2"],
+    "ARG": ["BB", "SC1", "SC2"],
+    "ARG0": ["BB", "SC1", "SC2"],
+    "HIS": ["BB", "SC1", "SC2", "SC3"],
+    "HSE": ["BB", "SC1", "SC2", "SC3"],
+    "HSD": ["BB", "SC1", "SC2", "SC3"],
+    "HSP": ["BB", "SC1", "SC2", "SC3"],
+    "PHE": ["BB", "SC1", "SC2", "SC3"],
+    "TYR": ["BB", "SC1", "SC2", "SC3"],
+    "TRP": ["BB", "SC1", "SC2", "SC3", "SC4"],
+}
+
+PROT_SIDE_CHAINS_DICT_MARTINI3 = {
+    "GLY": ["BB"],
+    "ALA": ["BB", "SC1"],
+    "CYS": ["BB", "SC1"],
+    "VAL": ["BB", "SC1"],
+    "LEU": ["BB", "SC1"],
+    "ILE": ["BB", "SC1"],
+    "MET": ["BB", "SC1"],
+    "PRO": ["BB", "SC1"],
+    "HYP": ["BB", "SC1"],
+    "ASN": ["BB", "SC1"],
+    "GLN": ["BB", "SC1"],
+    "ASP": ["BB", "SC1"],
+    "ASPP": ["BB", "SC1"],
+    "ASH": ["BB", "SC1"],
+    "GLU": ["BB", "SC1"],
+    "GLUP": ["BB", "SC1"],
+    "GLH": ["BB", "SC1"],
+    "LYS": ["BB", "SC1", "SC2"],
+    "LSN": ["BB", "SC1", "SC2"],
+    "LYN": ["BB", "SC1", "SC2"],
+    "THR": ["BB", "SC1"],
+    "SER": ["BB", "SC1"],
+    "ARG": ["BB", "SC1", "SC2"],
+    "HIS": ["BB", "SC1", "SC2", "SC3"],
+    "HIE": ["BB", "SC1", "SC2", "SC3"],
+    "HSE": ["BB", "SC1", "SC2", "SC3"],
+    "HSD": ["BB", "SC1", "SC2", "SC3"],
+    "HID": ["BB", "SC1", "SC2", "SC3"],
+    "HSP": ["BB", "SC1", "SC2", "SC3"],
+    "HIP": ["BB", "SC1", "SC2", "SC3"],
+    "PHE": ["BB", "SC1", "SC2", "SC3"],
+    "TYR": ["BB", "SC1", "SC2", "SC3", "SC4"],
+    "TRP": ["BB", "SC1", "SC2", "SC3", "SC4", "SC5"],
+}
+
+PROT_SIDE_CHAINS_DICT_all = {
+    "aa": PROT_SIDE_CHAINS_DICT,
+    "martini2": PROT_SIDE_CHAINS_DICT_MARTINI2,
+    "martini3": PROT_SIDE_CHAINS_DICT_MARTINI3,
+}
+
+# For DNA, we use nucleo-bases as default atom selection
 DNA_ATOMS = [
     "C5",
     "N9",
@@ -144,12 +310,20 @@ DNA_ATOMS = [
     "C4",
     "O6",
 ]
+DNA_ATOMS_MARTINI2 = ["SC1", "SC2", "SC3", "SC4"]
+DNA_ATOMS_MARTINI3 = ["SC1", "SC2", "SC3", "SC4"]
+DNA_ATOMS_all = {
+    "aa": DNA_ATOMS,
+    "martini2": DNA_ATOMS_MARTINI2,
+    "martini3": DNA_ATOMS_MARTINI3,
+}
 
+# Definition of all atoms in DNA
 DNA_FULL_DICT = {
     "DA": [
         "P",
-        "O1P",
-        "O2P",
+        "OP1",
+        "OP2",
         "O5'",
         "C5'",
         "C4'",
@@ -177,8 +351,8 @@ DNA_FULL_DICT = {
     ],
     "DG": [
         "P",
-        "O1P",
-        "O2P",
+        "OP1",
+        "OP2",
         "O5'",
         "C5'",
         "C4'",
@@ -206,8 +380,8 @@ DNA_FULL_DICT = {
     ],
     "DC": [
         "P",
-        "O1P",
-        "O2P",
+        "OP1",
+        "OP2",
         "O5'",
         "C5'",
         "C4'",
@@ -235,8 +409,8 @@ DNA_FULL_DICT = {
     ],
     "DT": [
         "P",
-        "O1P",
-        "O2P",
+        "OP1",
+        "OP2",
         "O5'",
         "C5'",
         "C4'",
@@ -264,9 +438,32 @@ DNA_FULL_DICT = {
     ],
 }
 
+DNA_FULL_DICT_MARTINI2 = {
+    "DA": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "DC": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
+    "DG": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "DT": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
+}
+DNA_FULL_DICT_MARTINI3 = DNA_FULL_DICT_MARTINI2
+DNA_FULL_DICT_all = {
+    "aa": DNA_FULL_DICT,
+    "martini2": DNA_FULL_DICT_MARTINI2,
+    "martini3": DNA_FULL_DICT_MARTINI3,
+}
+
+# RNA definitions
+# Backbone
 RNA_RES = ["A", "G", "C", "U"]
 RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
+RNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
+RNA_ATOMS_MARTINI3 = RNA_ATOMS_MARTINI2
+RNA_ATOMS_all = {
+    "aa": RNA_ATOMS,
+    "martini2": RNA_ATOMS_MARTINI2,
+    "martini3": RNA_ATOMS_MARTINI3,
+}
 
+# All atoms in RNA
 RNA_FULL_DICT = {
     "A": [
         "P",
@@ -330,13 +527,11 @@ RNA_FULL_DICT = {
         "C2'",
         "O2'",
         "C1'",
-        "N9",
         "C5",
         "C6",
-        "O6",
         "N1",
         "C2",
-        "N2",
+        "O2",
         "N3",
         "C4",
         "N4",
@@ -363,6 +558,25 @@ RNA_FULL_DICT = {
         "C5",
         "C6",
     ],
+}
+
+RNA_FULL_DICT_MARTINI2 = {
+    "A": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "C": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
+    "G": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "U": ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
+}
+RNA_FULL_DICT_MARTINI3 = RNA_FULL_DICT_MARTINI2
+RNA_FULL_DICT_all = {
+    "aa": RNA_FULL_DICT,
+    "martini2": RNA_FULL_DICT_MARTINI2,
+    "martini3": RNA_FULL_DICT_MARTINI3,
+}
+
+# Backmapping of PDB to HADDOCK-like nulecotide backbone oxygen namings
+NUCLEOTIDE_BACKBONE_OXYGEN_MAP = {
+    "O1P": "OP1",
+    "O2P": "OP2",
 }
 
 
@@ -464,7 +678,7 @@ def load_coords(
 
     add_resname : bool
         use the residue name in the identifier
-    
+
     keep_hetatm : bool
         Should HETATM lines be considered ?
 
@@ -481,9 +695,12 @@ def load_coords(
     idx: int = 0
     # Set types of coordinates lines to extract
     if keep_hetatm:
-        coordinates_line_to_extract = ("ATOM", "HETATM", )
+        coordinates_line_to_extract = (
+            "ATOM",
+            "HETATM",
+        )
     else:
-        coordinates_line_to_extract = ("ATOM", )
+        coordinates_line_to_extract = ("ATOM",)
     # Check filetype
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
@@ -496,12 +713,20 @@ def load_coords(
             # Extract PDB line data
             atom_name = line[slc_name].strip()
             resname = line[slc_resname].strip()
+
+            # Special case happens for OP1 -> PO1 and O2P -> PO2
+            # map atom to HADDOCK-like naming convention
+            if resname in list(DNA_FULL_DICT) + list(RNA_FULL_DICT):
+                if atom_name in NUCLEOTIDE_BACKBONE_OXYGEN_MAP.keys():
+                    atom_name = NUCLEOTIDE_BACKBONE_OXYGEN_MAP[atom_name]
+
             # Skip entries to be ignored
             if resname in RES_TO_BE_IGNORED:
                 continue
             else:
                 if atom_name not in atoms[resname]:
                     continue
+
             # Continue parsing of the PDB line
             chain = line[slc_chainid]
             resnum = int(line[slc_resseq])
@@ -581,7 +806,7 @@ def load_coords(
     return coord_dic, chain_ranges
 
 
-def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
+def get_atoms(pdb: PDBPath, full: bool = False, ff: str = "aa") -> AtomsDict:
     """Identify what is the molecule type of each PDB.
 
     Parameters
@@ -592,6 +817,8 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
         Weather or not to take `full` atoms into consideration.
         If False, only main-chain atoms retrieved.
         If True, all heavy atoms retrieved.
+    ff : string
+        Force-field information : all-atom, martini2 or martini3
 
     Returns
     -------
@@ -599,13 +826,13 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
         dictionary of atoms
     """
     atom_dic: AtomsDict = {}
-    atom_dic.update((r, PROT_ATOMS) for r in PROT_RES)
-    atom_dic.update((r, DNA_ATOMS) for r in DNA_RES)
-    atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
+    atom_dic.update((r, PROT_ATOMS_all[ff]) for r in PROT_RES)
+    atom_dic.update((r, DNA_ATOMS_all[ff]) for r in DNA_RES)
+    atom_dic.update((r, RNA_ATOMS_all[ff]) for r in RNA_RES)
     if full:
-        atom_dic.update(PROT_SIDE_CHAINS_DICT)
-        atom_dic.update(DNA_FULL_DICT)
-        atom_dic.update(RNA_FULL_DICT)
+        atom_dic.update(PROT_SIDE_CHAINS_DICT_all[ff])
+        atom_dic.update(DNA_FULL_DICT_all[ff])
+        atom_dic.update(RNA_FULL_DICT_all[ff])
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path
@@ -644,41 +871,10 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
     return atom_dic
 
 
-ResCode = Literal[
-    "C",
-    "D",
-    "S",
-    "Q",
-    "K",
-    "I",
-    "P",
-    "T",
-    "F",
-    "N",
-    "G",
-    "H",
-    "L",
-    "R",
-    "W",
-    "A",
-    "V",
-    "E",
-    "Y",
-    "M",
-    "A",
-    "G",
-    "C",
-    "T",
-    "X",
-]
-"""
-The single letter code of a residue.
-
-Unrecognized residues' code is `X`.
-"""
-
-
-def pdb2fastadic(pdb_f: PDBPath, keep_hetatm: bool = False) -> dict[str, dict[int, str]]:
+def pdb2fastadic(
+    pdb_f: PDBPath,
+    keep_hetatm: bool = False,
+) -> dict[str, dict[int, str]]:
     """
     Write the sequence as a fasta.
 
@@ -694,68 +890,22 @@ def pdb2fastadic(pdb_f: PDBPath, keep_hetatm: bool = False) -> dict[str, dict[in
     seq_dic : dict
         dict of fasta sequences (one per chain)
     """
-    res_codes = dict(
-        [
-            ("CYS", "C"),
-            ("ASP", "D"),
-            ("SER", "S"),
-            ("GLN", "Q"),
-            ("LYS", "K"),
-            ("ILE", "I"),
-            ("PRO", "P"),
-            ("THR", "T"),
-            ("PHE", "F"),
-            ("ASN", "N"),
-            ("GLY", "G"),
-            ("HIS", "H"),
-            ("LEU", "L"),
-            ("ARG", "R"),
-            ("TRP", "W"),
-            ("ALA", "A"),
-            ("VAL", "V"),
-            ("GLU", "E"),
-            ("TYR", "Y"),
-            ("MET", "M"),
-            ("DA", "A"),
-            ("DG", "G"),
-            ("DC", "C"),
-            (
-                "DT",
-                "T",
-            ),  # 9/8/2023: adding non-standard amino-acids (src/haddock/cns/toppar/protein-allhdg5-4.top) # noqa: E501
-            ("ALY", "K"),
-            ("ASH", "D"),
-            ("CFE", "C"),
-            ("CSP", "C"),
-            ("CYC", "C"),
-            ("CYF", "C"),
-            ("CYM", "C"),
-            ("DDZ", "A"),
-            ("GLH", "E"),
-            ("HLY", "P"),
-            ("HY3", "P"),
-            ("HYP", "P"),
-            ("M3L", "K"),
-            ("MLY", "K"),
-            ("MLZ", "K"),
-            ("MSE", "M"),
-            ("NEP", "H"),
-            ("PNS", "S"),
-            ("PTR", "Y"),
-            ("SEP", "S"),
-            ("TOP", "T"),
-            ("TYP", "Y"),
-            ("TYS", "Y"),
-        ]
-    )
 
     seq_dic: dict[str, dict[int, str]] = {}
 
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
 
-    coord_req = ("ATOM", "HETATM", ) if keep_hetatm else ("ATOM", )
-    with open(pdb_f) as fh:
+    coord_req = (
+        (
+            "ATOM",
+            "HETATM",
+        )
+        if keep_hetatm
+        else ("ATOM",)
+    )
+
+    with open(pdb_f, "r") as fh:
         for line in fh.readlines():
             if line.startswith(coord_req):
                 res_num = int(line[slc_resseq])
@@ -764,7 +914,7 @@ def pdb2fastadic(pdb_f: PDBPath, keep_hetatm: bool = False) -> dict[str, dict[in
                 if res_name in RES_TO_BE_IGNORED:
                     continue
                 try:
-                    one_letter = res_codes[res_name]
+                    one_letter = RES_3L1L[res_name]
                 except KeyError:
                     one_letter = "X"
                 if chain not in seq_dic:
@@ -774,7 +924,9 @@ def pdb2fastadic(pdb_f: PDBPath, keep_hetatm: bool = False) -> dict[str, dict[in
 
 
 def get_align(
-    method: str, lovoalign_exec: FilePath, keep_hetatm: bool = False,
+    method: str,
+    lovoalign_exec: FilePath,
+    keep_hetatm: bool = False,
 ) -> partial[dict[str, dict[int, int]]]:
     """
     Get the alignment function.
@@ -835,12 +987,12 @@ def align_strct(
     """
     if lovoalign_exec is None:
         log.error(
-            "Structural alignment needs LovoAlign " "get it at github.com/m3g/lovoalign"
+            "Structural alignment needs LovoAlign get it at github.com/m3g/lovoalign"
         )
         raise ALIGNError("Path to LovoAlign executable required.")
 
     if not lovoalign_exec:
-        raise ALIGNError("lovoalign_exec parameter not defined ")
+        raise ALIGNError("lovoalign_exec parameter not defined.")
 
     if not os.access(lovoalign_exec, os.X_OK):
         raise ALIGNError(f"{lovoalign_exec!r} for LovoAlign is not executable")
@@ -886,7 +1038,7 @@ def align_strct(
                 alignment_end_index = i - 2
             elif "ERROR" in line:
                 failed_pdb = line.split()[-1]
-                _msg = f"LovoAlign could not read {failed_pdb} " "is it a ligand?"
+                _msg = f"LovoAlign could not read {failed_pdb} is it a ligand?"
                 log.warning(_msg)
                 alignment_pass = False
 
@@ -896,7 +1048,7 @@ def align_strct(
         if not alignment_pass:
             # This alignment failed, move on to the next
             log.warning(
-                f"Skipping alignment of chain {chain}, " "used sequential matching"
+                f"Skipping alignment of chain {chain}, used sequential matching"
             )
             continue
 
@@ -1254,9 +1406,7 @@ def dump_as_izone(fname, numbering_dic, model2ref_chain_dict=None):
                     unb_chain = model2ref_chain_dict[chain]
                 #
                 izone_str = (
-                    "ZONE "
-                    f"{chain}{bound_res}:{unb_chain}{unbound_res}"
-                    f"{os.linesep}"
+                    f"ZONE {chain}{bound_res}:{unb_chain}{unbound_res}{os.linesep}"
                 )
                 fh.write(izone_str)
 
@@ -1341,14 +1491,16 @@ def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
         # but still the user may want to see a warning
         log.warning(
             "Not all the atoms are common to all the models."
-            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) higher than allowed ({atom_similarity:.2f}%)."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. "
+            f"Similarity ({perc:.2f}%) higher than allowed ({atom_similarity:.2f}%)."
         )
     else:
         # common keys are less than 90% of the previous keys
         # something is likely wrong
         _err_msg = (
             "Input atoms are not the same for all the models."
-            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) lower than allowed ({atom_similarity:.2f}%)."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. "
+            f"Similarity ({perc:.2f}%) lower than allowed ({atom_similarity:.2f}%)."
             " Please check the input ensemble."
         )
         raise ALIGNError(_err_msg)

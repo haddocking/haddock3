@@ -30,7 +30,7 @@ from pathlib import Path
 from haddock import log
 from haddock.clis.cli_unpack import main as haddock3_unpack
 from haddock.clis.cli_clean import main as haddock3_clean
-from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX, ANA_FOLDER
 from haddock.core.typing import (
     Any,
     ArgumentParser,
@@ -63,7 +63,6 @@ from haddock.modules.analysis.caprieval import (
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
-ANA_FOLDER = "analysis"  # name of the analysis folder
 INTER_STR = INTERACTIVE_RE_SUFFIX  # suffix of interactive analysis folders
 
 
@@ -758,9 +757,15 @@ def main(
     # get the module folders from the run_dir input
     sel_steps = get_module_steps_folders(Path("./"), modules)
     if inter:
-        sel_steps = [st for st in sel_steps if st.endswith(INTER_STR)]
+        sel_steps = [
+            st for st in sel_steps
+            if st.endswith(INTERACTIVE_RE_SUFFIX)
+            ]
     else:
-        sel_steps = [st for st in sel_steps if not st.endswith(INTER_STR)]
+        sel_steps = [
+            st for st in sel_steps
+            if not st.endswith(INTERACTIVE_RE_SUFFIX)
+            ]
     log.info(f"selected steps: {', '.join(sel_steps)}")
 
     # analysis

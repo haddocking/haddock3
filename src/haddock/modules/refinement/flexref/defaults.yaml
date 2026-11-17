@@ -205,10 +205,10 @@ contactairs:
   type: boolean
   title: Contact restraints
   short: Contact restraints between molecules
-  long: Contact restraints between molecules. These are defined as ambiguous distance restraint
-    between each residue of a molecule and all residues of the other molecules with 5A from that residue.
-    This can be used to restraint the contacts between the interfaces. Note that this can generate a large number of ambiguous restraints
-    and slow down the computations
+  long: Contact restraints between molecules. These are defined as ambiguous distance restraints
+    between each residue of a molecule within 5A of another molecule and all residues of the other molecules
+    within 5A of that molecule. This can be used to restrain the contacts between the interfaces.
+    Note that this can generate a large number of ambiguous restraints and slow down the computations.
   group: 'distance restraints'
   explevel: expert
 kcont:
@@ -332,11 +332,14 @@ ssdihed:
     - alphabeta
   title: Define automatically backbone dihedral angle restraints
   short: If turned on, this option will automatically defined backbone dihedral angle restraints for the selected regions.
-  long: This option allows to utomatically defined backbone dihedral angle restraints for the selected regions.
+  long: This option allows to automatically defined backbone dihedral angle restraints for the selected regions.
     The restraints will be defined for the phi and psi backbone dihedral angles of amino acids, with the target value taken from
-    the measured angle in the input structure, and the error bound defined by the error_dih parameter.
+    the measured angle in the input structure if the measured values lies within the corresponding window. 
+    The window within which alpha helix is detected is phi in [-77;-37] and psi in [-67;-27].
+    The window within which beta strand is detected is phi in [-145;-105] and psi in [105;145]. 
+    The error bound for all angles is defined by the error_dih parameter. 
     Those restraints can be applied to the entire structure (all), the alpha/beta secondary structure elements (alphabeta) or
-    only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations.
+    only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations. 
   group: 'dihedral restraints'
   explevel: easy
 error_dih:
@@ -361,8 +364,8 @@ dnarest_on:
     The following restraints will be automatically defined:
     - single base planarity
     - sugar pucker
-    - phosphate backbone diherdral angle restraints
-    - Watson-Crick base pairing"
+    - phosphate backbone dihedral angle restraints
+    - Watson-Crick and Hoogsteen base pairing"
   group: 'other restraints'
   explevel: easy
 
@@ -1654,7 +1657,7 @@ dielec:
   short: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
   long: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
     A distance dependent dielectric constant will effectively scale down the electrostatic energy 
-    by having a 1/r**2 dependency instead of 1/r
+    by having a 1/r**2 dependency instead of 1/r. Note that with coarse graining cdie will be used.
   group: 'force field'
   explevel: expert
 epsilon:
@@ -1666,6 +1669,17 @@ epsilon:
   title: Dielectric constant
   short: Dielectric constant for the electrostatic Coulomb energy term.
   long: Dielectric constant for the electrostatic Coulomb energy term.
+  group: 'force field'
+  explevel: expert
+epsilon_cg:
+  default: 10.0
+  type: float
+  min: 1
+  max: 78
+  precision: 1
+  title: Dielectric constant for coarse-grained mode
+  short: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
+  long: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
   group: 'force field'
   explevel: expert
 dihedflag:
@@ -1750,14 +1764,23 @@ mdsteps_cool3:
   long: Number of MD steps for the third cooling phase of torsion angle dynamics of the simulated annealing protocol with flexible side-chains and backbone at the interface. Full flexibility is applied to the segments defined as fully flexible (see nfle and related parameters).
   group: 'sampling'
   explevel: expert
-randorien:
+separate:
   default: false
   type: boolean
-  title: Randomize starting orientations
-  short: Randomize starting orientations
-  long: Randomize starting orientations by separating the molecules in space and randomly rotating those
+  title: Separate molecules
+  short: Translate molecules to separate them
+  long: Translate molecules to separate them ensuring a minimum distance
+    that allows rotations (controlled by the randrot parameter) without clashes
   group: 'sampling'
-  explevel: guru
+  explevel: easy
+randrot:
+  default: false
+  type: boolean
+  title: Random rotations
+  short: Randomly rotate the molecules around their respective center of mass
+  long: Randomly rotate the molecules around their respective center of mass
+  group: 'sampling'
+  explevel: easy
 timestep:
   default: 0.002
   type: float

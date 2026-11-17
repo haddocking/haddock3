@@ -1,14 +1,17 @@
 """Parse molecular structures in PDB format."""
 
+from contextlib import redirect_stdout
 import os
 from copy import deepcopy
 from functools import partial
+from io import StringIO
 from pathlib import Path
 
 from pdbtools.pdb_segxchain import run as place_seg_on_chain
 from pdbtools.pdb_splitchain import run as split_chain
 from pdbtools.pdb_splitmodel import run as split_model
 from pdbtools.pdb_tidy import run as tidy_pdbfile
+from pdbtools.pdb_wc import run as pdb_wc
 
 from haddock import log
 from haddock.core.exceptions import SetupError
@@ -22,6 +25,7 @@ from haddock.core.typing import (
     TypeVar,
     Union,
 )
+from haddock import log as haddock_log
 from haddock.libs.libio import PDBFile, working_directory
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
 
@@ -111,6 +115,15 @@ _to_rename = {
     " 0.00969": " 0.00   ",
 }
 
+# PDB residue names of molecules that HADDOCK3 defines under another name
+_resname_aliases = {
+    "TPO": "TOP",  # phosphothreonine
+    "HEM": "HEB",  # heme B
+    "SLB": "SIB",  # beta-N-acetylneuraminic acid
+    "CMO": "COM",  # carbon monoxide
+    "ARS": "AS",  # arsenic
+}
+
 # Get list of supported residues to keep when pre-processing
 _to_keep = list(supported_residues)
 
@@ -166,6 +179,91 @@ def swap_segid_chain(pdb_file_path: FilePath, new_pdb_file_path: FilePath) -> No
                     output_handler.write(line)
 
 
+def _rename_line(line: str) -> str:
+    """Give HADDOCK3 names to the residue of a PDB line.
+
+    Applies ``_to_rename`` and the PDB residue name aliases of
+    ``_resname_aliases`` (e.g. TPO becomes TOP).
+    """
+    for tag, new_tag in _to_rename.items():
+        line = line.replace(tag, new_tag)
+    if line.startswith(("ATOM", "HETATM")):
+        alias = _resname_aliases.get(line[slc_resname].strip())
+        if alias:
+            line = line[:17] + alias.rjust(3) + line[20:]
+    return line
+
+
+def rename_residues(pdb_file_path: FilePath) -> list[str]:
+    """Give HADDOCK3 names to the residues of a PDB file, in place.
+
+    Running this before looking for unknown residues ensures that residues
+    known under another name (e.g. TPO for TOP) are not reported as unknown.
+
+    Selenocysteines (PDB residue SEC with an SE atom) are converted to
+    cysteines, with SE renamed to SG: HADDOCK3 has no selenocysteine, and its
+    own SEC residue is a serine variant for covalent docking.
+
+    Returns
+    -------
+    list[str]
+        The selenocysteines converted to cysteines, as
+        ``"chain <chain>, residue <resid>"``.
+    """
+    lines = [
+        _rename_line(line) for line in Path(pdb_file_path).read_text().splitlines()
+    ]
+    atom_lines = ("ATOM", "HETATM")
+    selenocysteines = {
+        (line[slc_chainid], line[22:27])
+        for line in lines
+        if line.startswith(atom_lines)
+        and line[slc_resname].strip() == "SEC"
+        and line[slc_name].strip() == "SE"
+    }
+    for i, line in enumerate(lines):
+        if (
+            line.startswith(atom_lines)
+            and line[slc_resname].strip() == "SEC"
+            and (line[slc_chainid], line[22:27]) in selenocysteines
+        ):
+            line = line[:17] + "CYS" + line[20:]
+            if line[slc_name].strip() == "SE":
+                line = line.ljust(78)
+                line = (
+                    line[:12]
+                    + format_atom_name("SG", "S")
+                    + line[16:76]
+                    + " S"
+                    + line[78:]
+                )
+            lines[i] = line
+    Path(pdb_file_path).write_text("".join(line + os.linesep for line in lines))
+    return [
+        f"chain {chain.strip() or '-'}, residue {resid.strip()}"
+        for chain, resid in sorted(selenocysteines)
+    ]
+
+
+def find_insertion_codes(pdb_file_path: FilePath) -> list[str]:
+    """Find the residues with an insertion code (e.g. 52A).
+
+    Returns
+    -------
+    list[str]
+        The residues, as ``"<resname> (chain <chain>, residue <resid>)"``, in
+        the order of the file.
+    """
+    return list(
+        dict.fromkeys(
+            f"{line[slc_resname].strip()} (chain {line[slc_chainid].strip() or '-'}, "
+            f"residue {line[22:27].strip()})"
+            for line in Path(pdb_file_path).read_text().splitlines()
+            if line.startswith(("ATOM", "HETATM")) and line[slc_icode].strip()
+        )
+    )
+
+
 def sanitize(
     pdb_file_path: FilePathT,
     overwrite: bool = True,
@@ -183,8 +281,7 @@ def sanitize(
             line = line.rstrip(os.linesep)
             # Ignoring lines containing any tag from __to_remove
             if not any([tag in line for tag in _to_remove]):
-                for tag, new_tag in _to_rename.items():
-                    line = line.replace(tag, new_tag)
+                line = _rename_line(line)
                 # check if this residue is known
                 res = line[17:20].strip()
                 if res and res in to_keep:
@@ -510,3 +607,80 @@ def check_combination_chains(combination: list[PDBFile]) -> list[str]:
             raise ValueError(f"Chain/seg IDs are not unique for pdbs {combination}.")
         chainid_list.extend(chainsegs)
     return chainid_list
+
+
+def check_mol_shape(input_mol: Path) -> bool:
+    """
+    Checks if molecules provided is a shape or not.
+
+    Args:
+        input_pdb (PDBFile): input PDB to check if shape.
+
+    Returns:
+        bool: True if shape, False if not.
+    """
+    shape: bool = False
+    with open(input_mol, "rt") as input_file_mol:
+        if any("SHA SHA " in line for line in input_file_mol):
+            shape = True
+    return shape
+
+
+def handle_input_reference(reference: Path) -> list[Path]:
+    """Validate the reference file by returning only one model.
+
+    Parameters
+    ----------
+    reference : Path
+        Path to the input reference structure, possibly containing
+        an ensemble.
+
+    Returns
+    -------
+    reference or first_model_path : Path
+        Path to the reference structure to be used downstream.
+    """
+    # Check that the file contains at least one coordinate record before
+    # doing anything else — catches empty files, REMARK-only files, non-PDB text.
+    with open(reference, "r") as fh:
+        has_atoms = any(line.startswith(("ATOM", "HETATM")) for line in fh)
+    if not has_atoms:
+        raise ValueError(
+            f"No atoms found in reference file! "
+            "Please check that it is a valid PDB file containing ATOM/HETATM records."
+        )
+
+    # pdb_wc writes to stdout; capture it without touching sys.stdout globally.
+    buf = StringIO()
+    with open(reference, "r") as fh, redirect_stdout(buf):
+        pdb_wc(fh, "m")
+    wc_return = buf.getvalue()
+
+    # Parse output
+    # using here `\n` (and not os.linesep) as it is the output for pdb_wc
+    nb_models = 1  # pdb_wc treats a file without MODEL records as a single model
+    for line in wc_return.split("\n"):
+        if "No. models" in line:
+            nb_models = int(line.strip().split()[-1])
+            break
+    # Return reference as only one structure present
+    if nb_models == 1:
+        return [reference]
+    # If more than one model in reference
+    haddock_log.info(
+        f"Multiple structures ({nb_models}) found in reference file. "
+        "Using all conformations as reference."
+    )
+    # Split models
+    with open(reference, "r") as ref_in:
+        split_model(ref_in, "reference_model")
+    # Gather individual references and sort them
+    references = sorted(
+        list(Path(".").glob("reference_model_*.pdb")),
+        key=lambda k: int(k.stem.split("_")[-1]),
+    )
+    assert len(references) == nb_models, (
+        "Issue while splitting references conformation: "
+        f"{nb_models} detected, {len(references)} generated"
+    )
+    return references

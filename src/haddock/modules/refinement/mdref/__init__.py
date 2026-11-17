@@ -7,10 +7,10 @@ A layer of solvent (8A for water, 12.5A for DMSO) is generated around
 surface residues.
 
 The `mdref` protocol is composed of 4 sequential steps:
-- Short energy minimization
-- 3 stages of molecular dynamics to reach 300K (at 100, 200 and 300K)
-- Molecular dynamics at 300K.
-- 3 stages of molecular dynamics, to reach 100K (at 300, 200 and 100K)
+1. Short energy minimization
+2. 3 stages of molecular dynamics to reach 300K (at 100, 200 and 300K)
+3. Molecular dynamics at 300K.
+4. 3 stages of molecular dynamics, to reach 100K (at 300, 200 and 100K)
 
 Using this protocol, with default parameters, no spectacular changes are
 expected, however, the scoring of the various structures might be improved.
@@ -18,6 +18,9 @@ expected, however, the scoring of the various structures might be improved.
 
 Number of MD steps can be modified using the ``waterheatsteps``, ``watersteps``
 and ``watercoolsteps``.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#mdref-module>`_
 """
 
 from pathlib import Path
@@ -102,7 +105,14 @@ class HaddockModule(BaseCNSModule):
                 ambig_fname = self.params["ambig_fname"]
             model_idx += 1
 
-            for _ in range(self.params["sampling_factor"]):
+            for s_ind in range(sampling_factor):
+                # offset the seed per sampling_factor
+                # so that each refinement with same staring point
+                # gets different seed and produce different end models
+                if isinstance(model, PDBFile) and model.seed is not None:
+                    offsetted_seed = model.seed + s_ind
+                else:
+                    offsetted_seed = None
                 mdref_input = prepare_cns_input(
                     idx,
                     model,
@@ -113,7 +123,7 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     debug=self.params["debug"],
-                    seed=model.seed if isinstance(model, PDBFile) else None,
+                    seed=offsetted_seed,
                 )
                 out_file = f"mdref_{idx}.out"
                 err_fname = f"mdref_{idx}.cnserr"

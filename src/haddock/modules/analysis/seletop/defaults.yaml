@@ -8,3 +8,11 @@ select:
   long: Number of best-ranked models to select for further steps of the workflow. Typically only 200 models produced at the rigid-body docking stage are selected for further refinement.
   group: analysis
   explevel: easy
+sort_ascending:
+  default: true
+  type: boolean
+  title: Sort in ascending order
+  short: Sort in ascending order.
+  long: Sort in ascending order. “sort_ascending = false” should be used when a higher score corresponds to a better predicted model quality.  
+  group: analysis
+  explevel: easy

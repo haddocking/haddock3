@@ -1,0 +1,38 @@
+# See https://ai-declaration.org/ for more information.
+schema_version: 1.0.0
+project:
+  name: haddock3
+  repository: https://github.com/haddocking/haddock3
+  license: Apache-2.0
+  content_type: software
+ai_usage:
+  used: true
+  summary: Claude was used, but always reviewed by human
+  level: significant
+  scope:
+    code_completion: true
+    code_review: true
+    code_generation: true
+    documentation: true
+    refactoring: true
+  tools:
+    - name: Claude-code
+      type: assistant
+      hosting: cloud_vendor
+      purpose:
+        - code completion
+        - agent in terminal session
+    - name: Claude-code
+      type: agent
+      hosting: cloud_vendor
+      purpose:
+        - agent in terminal session
+        - code review on GitHub
+    - name: GitHub Copilot
+      type: agent
+      hosting: cloud_vendor
+      purpose:
+        - code review on GitHub
+declaration:
+  declared_by: Alexandre Bonvin
+  date: "2026-10-14"

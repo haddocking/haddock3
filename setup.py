@@ -260,7 +260,7 @@ class PostInstallCommand(install):
                     "Please refer to the installation instructions for troubleshooting steps:\n"
                 )
                 tty.write(
-                    "`https://github.com/haddocking/haddock3/blob/main/docs/CNS.md`\n\n"
+                    "`https://github.com/haddocking/haddock3/blob/main/docs/pages/CNS.md`\n\n"
                 )
                 tty.write("=" * 79 + "\n")
                 tty.write("=" * 79 + "\n")

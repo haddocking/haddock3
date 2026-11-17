@@ -1,0 +1,100 @@
+! check_coordinates.cns
+!    Check max/min coordinates for compatibility with PDB format
+!
+! ***********************************************************************
+! * Copyright 2025      Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+evaluate ($failure = false)
+
+!check for coordinates >9999.999 (max writable in PDB format)
+
+show max (x) (all)
+evaluate ($maxcoor = $result)
+show max (y) (all)
+if ($result gt $maxcoor) then
+    evaluate ($maxcoor = $result)
+end if
+show max (z) (all)
+if ($result gt $maxcoor) then
+    evaluate ($maxcoor = $result)
+end if
+if ($maxcoor gt 9999.999) then
+    evaluate ($failure = true)
+end if
+
+!check for coordinates <-999.999 (min writable in PDB format)
+
+show min (x) (all)
+evaluate ($mincoor = $result)
+show min (y) (all)
+if ($result lt $mincoor) then
+    evaluate ($maxcoor = $result)
+end if
+show min (z) (all)
+if ($result lt $mincoor) then
+    evaluate ($mincoor = $result)
+end if
+if ($mincoor lt -999.999) then
+    evaluate ($failure = true)
+end if
+
+!if problem detected try correcting it by centering the system around 4500,4500,4500
+!but only if no EM restraints are used
+
+if ($failure eq true) then
+    if ($data.flags.em eq false) then
+  
+        evaluate ($xc = 0.0)
+        evaluate ($yc = 0.0)
+        evaluate ($zc = 0.0)
+        show ave (x) (all)
+        evaluate ($xc = 4500 - $result)
+        show ave (y) (all)
+        evaluate ($yc = 4500 - $result)
+        show ave (z) (all)
+        evaluate ($zc = 4500 -$result)
+
+        do (x = x + $xc) (all)
+        do (y = y + $yc) (all)
+        do (z = z + $zc) (all)
+
+        evaluate ($failure = false)
+        evaluate ($maxcoor = -999)
+        evaluate ($mincoor = 9999)
+        !check again for coordinates >9999.999 (max writable in PDB format)
+        show max (x) (all)
+        evaluate ($maxcoor = $result)
+        show max (y) (all)
+        if ($result gt $maxcoor) then
+            evaluate ($maxcoor = $result)
+        end if
+        show max (z) (all)
+        if ($result gt $maxcoor) then
+            evaluate ($maxcoor = $result)
+        end if
+        if ($maxcoor gt 9999.999) then
+            evaluate ($failure = true)
+        end if
+
+        !check for coordinates <-999.999 (min writable in PDB format)
+        show min (x) (all)
+        evaluate ($mincoor = $result)
+        show min (y) (all)
+        if ($result lt $mincoor) then
+            evaluate ($maxcoor = $result)
+        end if
+        show min (z) (all)
+        if ($result lt $mincoor) then
+            evaluate ($mincoor = $result)
+        end if
+        if ($mincoor lt -999.999) then
+            evaluate ($failure = true)
+        end if
+    end if
+end if
+

@@ -1,4 +1,5 @@
 """ilRMSD calculations."""
+
 import os
 from pathlib import Path
 
@@ -8,19 +9,15 @@ from haddock import log
 from haddock.core.typing import NDFloat, Any
 from haddock.libs.libalign import (
     get_atoms,
-    )
+)
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.caprieval.capri import load_contacts
+from haddock.libs.libcapri import load_contacts
 
 
 class ContactJob:
     """A Job dedicated to the fast retrieval of receptor contacts."""
 
-    def __init__(
-            self,
-            output,
-            params,
-            contact_obj):
+    def __init__(self, output, params, contact_obj):
 
         log.info(f"core {contact_obj.core}, initialising Contact...")
         self.params = params
@@ -40,14 +37,14 @@ class Contact:
     """Contact class."""
 
     def __init__(
-            self,
-            model_list: list[PDBFile],
-            output_name: str,
-            core: int,
-            path: Path,
-            contact_distance_cutoff: float = 5.0,
-            **params: dict[str, Any],
-            ):
+        self,
+        model_list: list[PDBFile],
+        output_name: str,
+        core: int,
+        path: Path,
+        contact_distance_cutoff: float = 5.0,
+        **params: dict[str, Any],
+    ):
         """Initialise Contact class."""
         self.model_list = model_list
         self.output_name = output_name
@@ -61,7 +58,7 @@ class Contact:
         self.unique_lig_res: NDFloat = []
         for m in model_list:
             self.atoms.update(get_atoms(m))
-        
+
     def run(self):
         """Run contact calculations."""
         nmodels = len(self.model_list)
@@ -72,15 +69,13 @@ class Contact:
             contacts = load_contacts(
                 self.model_list[n],
                 cutoff=self.contact_distance_cutoff,
-                )
+            )
             rec_resids = [
-                con[1] if con[0] == self.receptor_chain
-                else con[3] for con in contacts
-                ]
+                con[1] if con[0] == self.receptor_chain else con[3] for con in contacts
+            ]
             lig_resids = [
-                con[1] if con[0] in self.ligand_chains
-                else con[3] for con in contacts
-                ]
+                con[1] if con[0] in self.ligand_chains else con[3] for con in contacts
+            ]
             if rec_resids != []:
                 receptor_interface_residues.append(np.unique(rec_resids))
             if lig_resids != []:
@@ -93,7 +88,7 @@ class Contact:
         if ligand_interface_residues != []:
             lig_np_arr = np.concatenate(ligand_interface_residues)
             self.unique_lig_res = np.unique(lig_np_arr)
-       
+
     def output(self):
         """Write down unique contacts to file."""
         output_fname = Path(self.path, self.output_name)

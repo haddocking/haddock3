@@ -52,6 +52,7 @@ BOND CCA  OAS    1000.0    1.398  !  "       "    "   "    "     "      "
 BOND CCS  OAS    1000.0    1.44   !force constant as for other exocylic OH
 BOND CC6  OAS    1000.0    1.44 
 BOND CCS  NH1    1000.0    1.45   !as extended atom carbon-N
+BOND CCS  NH2    1000.0    1.45   !as extended atom carbon-N
 BOND CCE  NH1    1000.0    1.45   !as extended atom carbon-N
 BOND CCA  NH1    1000.0    1.45   !as extended atom carbon-N
 BOND CH1E OAS    1000.0    1.385
@@ -120,15 +121,20 @@ ANGLe CCA  OAS  CC6   500.0   111.5 !alpha 1,6 link
 ANGLe O    C    CCS   500.0   120.0 !Mo & Jensen, Acta B, 31, 2867 (1975), 8/30/93
 ANGLe C    CCS  HAS   500.0   109.5 !  8/30/93
 ANGLe CCS  CCS  NH1   500.0   110.0
+ANGLe CCS  CCS  NH2   500.0   110.0
 ANGLe CCE  CCS  NH1   500.0   110.0
+ANGLe CCE  CCS  NH2   500.0   110.0
 ANGLe CCA  CCS  NH1   500.0   110.0
 ANGLe CCS  CCE  NH1   500.0   110.0
 ANGLe CCS  CCA  NH1   500.0   110.0
 ANGLe HAS  CCS  NH1   500.0   109.5
+ANGLe HAS  CCS  NH2   500.0   109.5
 ANGLe HAS  CCE  NH1   500.0   109.5
 ANGLe HAS  CCA  NH1   500.0   109.5
 ANGLe CCS  NH1  H     500.0   120.0
+ANGLe CCS  NH2  H     500.0   120.0
 ANGLe CCE  NH1  H     500.0   120.0
+ANGLe CCE  NH2  H     500.0   120.0
 ANGLe CCA  NH1  H     500.0   120.0
 ANGLe CCS  NH1  C     500.0   120.0
 ANGLe CCE  NH1  C     500.0   120.0
@@ -175,6 +181,7 @@ DIHEdral  X    CCA   OES   X      2.0  3   0.0
 DIHEdral  HAS  CCS   NH1   H      2.0  3 180.0 !for NAG and NANA
 DIHEdral  X    CCS   NH1   X      2.0  3   0.0 !beta link to Asn Nd1
 DIHEdral  X    CCE   NH1   X      2.0  3   0.0 !beta link to Asn Nd1
+DIHEdral  X    CCE   NH2   X      2.0  3   0.0 !beta link to Asn Nd1
 DIHEdral  X    CCA   NH1   X      2.0  3   0.0 !beta link to Asn Nd1
 DIHEdral  X    C     CCE   X      2.0  3   0.0
 DIHEdral  X    C     CCA   X      2.0  3   0.0
@@ -225,6 +232,7 @@ IMPRoper  HAS HAS  OH1  CCS    500.00    0  70.3 !GLC,GLA,MAN,NAG,A2G C6
 IMPRoper  HAS HAS  OAS  CCS    500.00    0  70.3
 IMPRoper  HAS CCA  NH1  CCS    500.00    0  66.8 !NAG,A2G C2
 IMPRoper  HAS CCE  NH1  CCS    500.00    0  66.8
+IMPRoper  HAS CCE  NH2  CCS    500.00    0  66.8
 IMPRoper  HAS CCS  NH1  CCS    500.00    0  66.8 !SIA C5
 IMPRoper  HAS CCS  CCS  OES    500.00    0  66.8 !SIA C6
 IMPRoper  HAS CCS  CCS  OAS    500.00    0  66.8 !NGA C4

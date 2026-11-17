@@ -150,14 +150,7 @@ examples/thirdparty/*/run*
 
 # ignore generated data for docs
 haddock3-docs/
-docs/modules/**/*.rst
-docs/reference/**/*rst
-docs/modules.rst
-docs/haddock.rst
-docs/haddock.modules.rst
-docs/haddock.modules.base_cns_module.rst
-docs/setup.rst
-docs/clients/*rst
+docs/src/
 log
 end-to-end_tests/ab-grid
 end-to-end_tests/prot-grid

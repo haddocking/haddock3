@@ -22,9 +22,9 @@ for $id1 in id ( name CA and resn ACE ) loop ace
     show (chem) (id $id1)
     evaluate ($chem1=$result)
 
-    evaluate ($mindis = 3.0)
+    evaluate ($mindis = 999.0)
     evaluate ($minid  = 0)
-    for $id2 in id ( name SG and (id $id1) around 3.0 and
+    for $id2 in id ( name SG and (id $id1) around $acecys_dist and
                      (resn CYS or resn CYF) ) loop search
 
         pick bond (id $id1) (id $id2) geometry
@@ -51,7 +51,11 @@ for $id1 in id ( name CA and resn ACE ) loop ace
         evaluate ($pat1 = "1"+$name1)
         evaluate ($pat2 = "2"+$name2)
         patch accy refe=1=(resid $resid1 and segid $segid1) refe=2=(resid $resid2 and segid $segid2) end
-        display COVAL-ACE-CYS: ADDED ONE COVALENT BOND BETWEEN $name1 $resid1 AND $name2 $resname2 $resid2
+        buffer message
+            display COVAL-ACE-CYS: ADDED ONE COVALENT BOND BETWEEN $name1 $resid1 AND $name2 $resname2 $resid2
+        end
+        ! next is to avoid also detecting a cyclic peptide bond
+        evaluate ($cyclicpept = FALSE)
     end if
 
 end loop ace

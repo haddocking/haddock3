@@ -37,7 +37,7 @@ if ($nfixed < $data.ncomponents) then
         show ave (y) (attribute store4 = 1)
         evaluate ($yc = $result)
         show ave (z) (attribute store4 = 1)
-        evaluatee ($zc = $result)
+        evaluate ($zc = $result)
     end if
 
     do (xcomp = x) (all)
@@ -223,7 +223,7 @@ if ($nfixed < $data.ncomponents) then
   
         while ($sum_random > 0) loop placemol
             evaluate ($maximum = 0)
-            evaluate ($maxid = 0)
+            evaluate ($maxid = 1)
             evaluate ($ncount = 0)
   
             ! Select molecule with largest random number
@@ -265,3 +265,33 @@ if ($nfixed < $data.ncomponents) then
     do (z = refz) (resn ANI or resn DAN or resn XAN)
   
 end if
+
+if ($homosymmetry eq false) then
+    if ($membrane eq true) then
+        ! Random translation along x and y within a 25A plane
+        ! assumes the membrane is oriented parallel to the xy plane
+        evaluate ($ncount = 0)
+        while ($ncount < $data.ncomponents) loop randtrans
+            evaluate ($ncount = $ncount +1)
+            if ($mol_fix_origin_$ncount eq false) then
+                evaluate ($xd = 50.0 * (0.5 - ran()))
+                evaluate ($yd = 50.0 * (0.5 - ran()))
+                evaluate ($zd = 0.0)
+                coor trans sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) vector=($xd,$yd,$zd) end
+            end if
+        end loop randtrans
+    else
+        ! Random translation within a 10A cube
+        evaluate ($ncount = 0)
+        while ($ncount < $data.ncomponents) loop randtrans
+            evaluate ($ncount = $ncount +1)
+            if ($mol_fix_origin_$ncount eq false) then
+                evaluate ($xd = 10.0 * (0.5 - ran()))
+                evaluate ($yd = 10.0 * (0.5 - ran()))
+                evaluate ($zd = 10.0 * (0.5 - ran()))
+                coor trans sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) vector=($xd,$yd,$zd) end
+            end if
+        end loop randtrans
+    end if
+end if
+

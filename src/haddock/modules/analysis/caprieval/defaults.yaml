@@ -194,7 +194,7 @@ allatoms:
   title: Atoms to be considered during the analysis.
   short: Atoms to be considered during the analysis.
   long: Atoms to be considered during the analysis. If false (default), only
-        backbone atoms will be considered, otherwise all the heavy-atoms.
+        backbone atoms (for protein and RNA) and nucleobases (for DNA) will be considered, otherwise all the heavy-atoms.
   group: analysis
   explevel: easy
 

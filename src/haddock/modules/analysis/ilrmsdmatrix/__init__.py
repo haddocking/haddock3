@@ -14,6 +14,9 @@ step of the workflow by means of the json file `rmsd_matrix.json`.
 IMPORTANT: the module assumes coherent numbering for all the receptor and ligand
 chains, as no alignment is performed. The user must ensure that the numbering
 is coherent.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#ilrmsdmatrix-module>`_
 """
 
 import os
@@ -29,7 +32,7 @@ from haddock.libs.libalign import (
     get_atoms,
     load_coords,
     rearrange_xyz_files,
-    )
+)
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
@@ -59,7 +62,7 @@ class HaddockModule(BaseHaddockModule):
         if not os.access(EXEC_PATH, mode=os.F_OK):
             raise Exception(
                 f"Required {str(EXEC_PATH)} file does not exist.{os.linesep}"
-                "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md"  # noqa : E501
+                "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/pages/INSTALL.md"  # noqa : E501
             )
 
         if not os.access(EXEC_PATH, mode=os.X_OK):
@@ -138,11 +141,6 @@ class HaddockModule(BaseHaddockModule):
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        if type(self.previous_io) == iter:
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
-
-        # Get the models generated in previous step
         models = self.previous_io.retrieve_models(individualize=True)
 
         # Parallelisation : optimal dispatching of models
@@ -217,7 +215,7 @@ class HaddockModule(BaseHaddockModule):
         if not_found:
             # Not all contacts were calculated, cannot proceed
             self.finish_with_error(
-                "Several contact files were not generated:" f" {not_found}"
+                f"Several contact files were not generated: {not_found}"
             )
 
         # Post-processing : single file
@@ -350,7 +348,7 @@ class HaddockModule(BaseHaddockModule):
 
         if not_found:
             # Not all distances were calculated, cannot create the full matrix
-            self.finish_with_error("Several files were not generated:" f" {not_found}")
+            self.finish_with_error(f"Several files were not generated: {not_found}")
 
         # Post-processing : single file
         output_name = "ilrmsd.matrix"

@@ -44,8 +44,8 @@ class FileTask:
     def run(self):
         Path(self.input_file).touch()
 
-class TaskWithException:
 
+class TaskWithException:
     def __init__(self):
         pass
 
@@ -117,6 +117,11 @@ def test_split_tasks():
     n = 4
     result = list(split_tasks(lst, n))
     assert result == [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
+
+
+def test_split_tasks_empty():
+    # An empty list must not raise (range(0, 0, 0) ValueError); yields nothing.
+    assert list(split_tasks([], 3)) == []
 
 
 def test_get_index_list():

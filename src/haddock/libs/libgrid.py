@@ -1,13 +1,11 @@
 import glob
-import math
 import os
-import random
 import re
 import shutil
 import subprocess
 import tempfile
+import time
 import uuid
-import warnings
 import zipfile
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
@@ -21,10 +19,6 @@ from haddock.core.defaults import cns_exec_linux as CNS_EXEC
 from haddock.libs.libsubprocess import CNSJob
 from haddock.libs.libutil import parse_ncores
 
-# NOTE: When creating the payload.zip, this warning appears because we are replicating `toppar_path`
-#  subdirectory structure. It can be ignored safely, but keep an eye on it to make sure
-#  not many operations are being duplicated
-warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarning)
 # =====================================================================#
 # EXPLANATION #
 # =====================================================================#
@@ -34,8 +28,29 @@ warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarni
 #  associated with it.
 # There is an explanation about this in the user manual.
 # =====================================================================#
-JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
+JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR")
 MAX_RETRIES = 10
+# Seconds to wait before retrying a failed submission, doubled after each
+#  retry up to SUBMIT_RETRY_MAX_DELAY (10 retries then cover ~37 minutes)
+SUBMIT_RETRY_DELAY = 30
+SUBMIT_RETRY_MAX_DELAY = 300
+# Seconds between two status checks of the submitted jobs
+POLL_INTERVAL = 30
+
+# Number of models (CNS jobs) packed into one grid job, per module.
+#  Chosen from grid tests on the protein-protein docking example (#1768):
+#  smaller jobs return results faster, as the waiting time dominates.
+MODELS_PER_JOB = {
+    "topoaa": 2,
+    "topocg": 2,
+    "rigidbody": 10,
+    "flexref": 2,
+    "emref": 2,
+    "emscoring": 2,
+    "mdref": 2,
+    "mdscoring": 2,
+    "cgtoaa": 2,
+}
 
 # Important patterns to adjust the paths in the `.inp` file
 OUTPUT_PATTERN = r'\$output_\w+\s*=\s*"([^"]+)"|\$output_\w+\s*=\s*([^\s;]+)'
@@ -89,19 +104,17 @@ class JobStatus(Enum):
     def from_string(cls, value):
         """Convert string to JobStatus enum."""
         value = value.strip().lower()
+        # Stalled, killed or deleted jobs will not finish, handle them as
+        #  failed so they are resubmitted
+        if value in ("stalled", "killed", "deleted"):
+            return cls.FAILED
         for status in cls:
             if status.value.lower() == value:
                 return status
         return cls.UNKNOWN
 
 
-class Tag(Enum):
-    PROBING = "Probing"
-    DEFAULT = "Default"
-
-
 class GridInterface(ABC):
-
     def __init__(
         self,
         input: Union[Path, str, list[str]],
@@ -137,8 +150,6 @@ class GridInterface(ABC):
         self.retries = 0
         # Tracker for timings
         self.timings: dict[JobStatus, datetime] = {}
-        # Tag for the job
-        self.tag = Tag.DEFAULT
         # `input_str` is the content of the `.inp` file
         self.input_str = ""
         # `input_str_list` is a list of separate recipes`
@@ -226,9 +237,10 @@ class GridInterface(ABC):
             )
             raise
 
-        output_dict = self.parse_output(result.stdout)
+        self.set_status(self.parse_output(result.stdout))
 
-        self.id = output_dict["JobID"]
+    def set_status(self, output_dict: dict[str, str]) -> None:
+        """Set the status of the job from the parsed DIRAC status output."""
         self.status = JobStatus.from_string(output_dict["Status"])
         self.site = output_dict.get("Site", "Unknown")
 
@@ -258,15 +270,21 @@ class GridInterface(ABC):
             #  It must contain the CNS executable and the input file,
             # z.write(self.input_f, arcname=f"{self.input_f.name}")
             z.write(CNS_EXEC, arcname="cns")
+            arcnames = {"cns"}
             for f in set(self.payload_fnames):
                 # NOTE: Preserve the relative path structure from `toppar_path`!
                 #  This is important because some CNS scripts have relative paths
                 #   hardcoded in it
                 if f.is_relative_to(toppar_path):
-                    relative_path = f.relative_to(toppar_path)
-                    z.write(f, arcname=str(relative_path))
+                    arcname = str(f.relative_to(toppar_path))
                 else:
-                    z.write(f, arcname=Path(f).name)
+                    arcname = Path(f).name
+                # A toppar file the `.inp` refers to is also copied next to it,
+                #  add it only once or `unzip` asks whether to overwrite it
+                if arcname in arcnames:
+                    continue
+                arcnames.add(arcname)
+                z.write(f, arcname=arcname)
 
     def submit(self) -> None:
         """Interface to submit the job to DIRAC."""
@@ -280,22 +298,36 @@ class GridInterface(ABC):
 
         self.timings[JobStatus.WAITING] = datetime.now()
 
-        try:
-            # The SUBMIT_CMD returns the job ID in stdout
-            result = subprocess.run(
-                ["dirac-wms-job-submit", f"{self.loc}/job.jdl"],
-                shell=False,
-                capture_output=True,
-                text=True,
-                cwd=self.loc,
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            log.error(
-                f"Job submission failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
-            )
-            # TODO: Add some sort of retry/fallback mechanism here?
-            raise
+        # Submissions can fail when DIRAC is briefly unavailable, retry them
+        #  and count them towards the same MAX_RETRIES as failed jobs
+        while True:
+            try:
+                # The SUBMIT_CMD returns the job ID in stdout
+                result = subprocess.run(
+                    ["dirac-wms-job-submit", f"{self.loc}/job.jdl"],
+                    shell=False,
+                    capture_output=True,
+                    text=True,
+                    cwd=self.loc,
+                    check=True,
+                )
+                break
+            except subprocess.CalledProcessError as e:
+                if self.retries >= MAX_RETRIES:
+                    log.error(
+                        f"Job submission failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
+                    )
+                    # Giving up on this job, remove its temporary folder
+                    self.clean()
+                    raise
+                self.retries += 1
+                delay = min(
+                    SUBMIT_RETRY_DELAY * 2 ** (self.retries - 1), SUBMIT_RETRY_MAX_DELAY
+                )
+                log.warning(
+                    f"> Submission of job {self.name} failed ({e.stdout.strip()}), retrying in {delay}s - {self.retries}/{MAX_RETRIES} <"
+                )
+                time.sleep(delay)
 
         # Add the ID to the object
         self.id = int(result.stdout.split()[-1])
@@ -338,9 +370,12 @@ class GridInterface(ABC):
         log.debug(f"Files in the output sandbox: {ls}")
         log.debug(f"Expected outputs: {self.expected_outputs}")
 
-        # Copy the output to the expected location
+        # Copy the output to the expected location; the CNS `.out` logs are
+        #  only in the sandbox if CNS failed, as `job.sh` removes them otherwise
         for output_f in self.expected_outputs:
             src = Path(f"{self.loc}/{self.id}/{output_f}")
+            if not src.exists():
+                continue
             dst = Path(self.wd / f"{output_f}")
             shutil.copy(src, dst)
 
@@ -452,7 +487,6 @@ class GridJob(GridInterface):
         self.payload_fnames.append(inp_name)
         with open(inp_name, "w") as f:
             for line in self.input_str.splitlines(keepends=True):
-
                 # Parse this line and try to identify output files
                 output = self._find_output(line)
                 if output:
@@ -472,7 +506,6 @@ class GridJob(GridInterface):
 
 
 class CompositeGridJob(GridInterface):
-
     def __init__(
         self,
         input: list[str],
@@ -558,56 +591,20 @@ class CompositeGridJob(GridInterface):
 class GRIDScheduler:
     """Scheduler to manage and run jobs on the GRID via DIRAC."""
 
-    def __init__(
-        self, tasks: list[CNSJob], params: dict, probing: float = 0.05
-    ) -> None:
+    def __init__(self, tasks: list[CNSJob], params: dict) -> None:
 
-        self.probing: bool = True
         self.ncores = parse_ncores(params["ncores"])
-        self.batch_size = 1
+        self.tasks = tasks
+        self.workload: list[CompositeGridJob] = []
 
-        self.workload: list[GridJob] = [
-            GridJob(
-                input=t.input_file,
-                toppar_path=t.envvars["TOPPAR"],
-                module_path=t.envvars["MODULE"],
-            )
-            for t in tasks
-        ]
-
-        # ===============================================================#
-        #
-        # ! IMPORTANT !
-        #
-        # The `subset_size` is the number of jobs to be used for probing the grid
-        # In theory we could send any number of jobs, but in practice we need to
-        #  consider that the submission itself takes time. So we can come to the
-        #  scenario in which we spend more time submitting jobs than measuring,
-        #  this means that we would not be able to properly evaluate the grid
-        #  capacity.
-        # Here we set the `subset_size` to be the minimum between `ncores`
-        # and the 5% of the total number of jobs. By setting it to the number
-        # of cores, we can be sure that we will be able to measure the metrics.
-        # We also need to ensure there is at least one job to probe the grid.
-        #
-        # HACK: This is not ideal, but it is a compromise between accuracy and speed.
-        subset_size = min(self.ncores, max(1, math.ceil(len(self.workload) * probing)))
-        # ===============================================================#
-
-        # Randomly select that many jobs
-        if len(self.workload) >= subset_size:
-            for i in random.sample(range(len(self.workload)), subset_size):
-                self.workload[i].tag = Tag.PROBING
-        else:
-            log.warning("> Not enough jobs to probe the grid, skipping probing step <")
-            self.probing = False
+        # Modules run inside their step folder, named `<step>_<module>`
+        module = Path.cwd().name.split("_", 1)[-1]
+        self.batch_size = MODELS_PER_JOB.get(module, 1)
 
     def run(self) -> None:
         """Execute the tasks."""
         log.info("#" * 42)
         log.info("=== Running tasks with GRID Scheduler ===")
-
-        self.probe_grid_efficiency()
 
         self.create_batches()
 
@@ -619,164 +616,86 @@ class GRIDScheduler:
 
     def create_batches(self) -> None:
         """Create batches of jobs to be submitted together."""
-        log.info("++ Concatenating jobs to increase efficiency...")
+        toppar_path = self.tasks[0].envvars["TOPPAR"]
+        module_path = self.tasks[0].envvars["MODULE"]
 
-        jobs = [j for j in self.workload if j.tag == Tag.DEFAULT]
+        # `input_file` is either the path to the `.inp` file or its content
+        inputs = [
+            t.input_file.read_text() if isinstance(t.input_file, Path) else t.input_file
+            for t in self.tasks
+        ]
 
-        toppar_path = jobs[0].toppar_path
-        module_path = jobs[0].module_path
-
-        composite_jobs = []
-        for i, batch in enumerate(range(0, len(jobs), self.batch_size), start=1):
-            input = [j.input_str for j in jobs[batch : batch + self.batch_size]]
-            log.debug(f" Payload {i}, n={len(input)} job(s)")
-            job = CompositeGridJob(
-                input=input,
+        self.workload = [
+            CompositeGridJob(
+                input=inputs[i : i + self.batch_size],
                 toppar_path=toppar_path,
                 module_path=module_path,
             )
-            composite_jobs.append(job)
+            for i in range(0, len(inputs), self.batch_size)
+        ]
 
         log.info(
-            f"++ Created {len(composite_jobs)} payload(s) with up to {self.batch_size} job(s) each"
+            f"++ Created {len(self.workload)} payload(s) with up to {self.batch_size} job(s) each"
         )
-        self.workload = composite_jobs
 
     def wait_for_completion(self) -> None:
         """Wait for jobs with status WAITING or RUNNING to complete."""
         log.info("++ Waiting...")
-        complete = False
-        while not complete:
+        while True:
             jobs_to_check = [
                 job
                 for job in self.workload
                 if job.status
                 not in {JobStatus.STAGED, JobStatus.DONE, JobStatus.FAILED}
             ]
-            if jobs_to_check:
-                log.debug(f"+ Checking status of {len(jobs_to_check)} payload(s)...")
-                with ThreadPoolExecutor(max_workers=self.ncores) as executor:
-                    executor.map(self.process_job, jobs_to_check)
-            else:
-                complete = True
-
-    def submit_jobs(self, tag: Tag = Tag.DEFAULT) -> None:
-        """Submit jobs to the GRID in parallel."""
-        queue = [
-            job
-            for job in self.workload
-            if job.tag == tag and job.status == JobStatus.STAGED
-        ]
-
-        log.info(f"++ Submitting {len(queue)} '{tag.value}' payloads to the grid...")
-        with ThreadPoolExecutor(max_workers=self.ncores) as executor:
-            executor.map(lambda job: job.package(), queue)
-
-        with ThreadPoolExecutor(max_workers=self.ncores) as executor:
-            executor.map(lambda job: job.submit(), queue)
-
-    def probe_grid_efficiency(self) -> None:
-        """Submit a small number of jobs to probe the efficiency of the GRID."""
-        if not self.probing:
-            return
-
-        log.info("++ Probing grid efficiency...")
-
-        # Submit
-        self.submit_jobs(tag=Tag.PROBING)
-
-        # Wait
-        self.wait_for_completion()
-
-        # Calculate actual durations from timestamps
-        waiting_durations = []
-        running_durations = []
-
-        for job in self.workload:
-            wait_start = job.timings.get(JobStatus.WAITING)
-            run_start = job.timings.get(JobStatus.RUNNING)
-            done_time = job.timings.get(JobStatus.DONE)
-
-            if wait_start is None or run_start is None or done_time is None:
-                continue  # Skip jobs without complete timing info
-
-            else:
-                log.debug(f"Job {job.expected_outputs}")
-                log.debug(f"   timings: {job.timings}")
-
-            # Calculate waiting duration (WAITING to RUNNING)
-            waiting_duration = (run_start - wait_start).total_seconds()
-            waiting_durations.append(waiting_duration)
-
-            # Calculate running duration (RUNNING to DONE)
-            running_duration = (done_time - run_start).total_seconds()
-            running_durations.append(running_duration)
-
-        if not running_durations or not waiting_durations:
-            log.warning(
-                "> Average running time is zero, cannot calculate optimal batch size <"
-            )
-            return
-
-        # Calculate average durations
-        avg_waiting = sum(waiting_durations) / len(waiting_durations)
-        avg_running = sum(running_durations) / len(running_durations)
-
-        target_efficiency = 0.9
-        batch_size = self.calculate_optimal_batch_size(
-            N=self.batch_size,
-            W=avg_waiting,
-            R=avg_running,
-            T=target_efficiency,
-        )
-
-        # Make sure batch size is not larger than the number of default jobs
-        # TODO: Add a warning if this happens?
-        batch_size = min(
-            batch_size, len([j for j in self.workload if j.tag == Tag.DEFAULT])
-        )
-
-        self.batch_size = batch_size
+            if not jobs_to_check:
+                break
+            time.sleep(POLL_INTERVAL)
+            log.debug(f"+ Checking status of {len(jobs_to_check)} payload(s)...")
+            self.update_statuses(jobs_to_check)
+            with ThreadPoolExecutor(max_workers=self.ncores) as executor:
+                executor.map(self.process_job, jobs_to_check)
 
     @staticmethod
-    def calculate_optimal_batch_size(N: int, W: float, R: float, T: float) -> int:
-        """Calculate the optimal batch size to achieve target efficiency."""
-        # The efficiency of a given batch can be described as:
-        #
-        #  E = N * R / W + N * R
-        #
-        # Where E is efficiency, N is the number of jobs running at the same time
-        #  R is the average running time, W is the average waiting time
-        #
-        # The current efficiency is then:
-        E = (N * R) / (W + N * R)
+    def update_statuses(jobs: list[CompositeGridJob]) -> None:
+        """Update the status of all jobs with a single DIRAC call."""
+        result = subprocess.run(
+            ["dirac-wms-job-status", *[str(job.id) for job in jobs]],
+            shell=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            log.warning(f"> Checking the job status failed: {result.stdout.strip()} <")
 
-        log.info(f"+ Current efficiency with {N} job(s) per payload: {E:.1%}")
+        # DIRAC prints one line per job; jobs it does not report keep their status
+        #  and are checked again in the next round
+        statuses = {}
+        for line in result.stdout.splitlines():
+            output_dict = GridInterface.parse_output(line)
+            if "JobID" in output_dict and "Status" in output_dict:
+                statuses[output_dict["JobID"]] = output_dict
+        for job in jobs:
+            if str(job.id) in statuses:
+                job.set_status(statuses[str(job.id)])
 
-        # So to achieve a target efficiency T
-        # We solve for N, which is the batch size:
-        #  E = N * R / W + N * R
-        #  T * (W + N * R) = N * R
-        #  T * W + T * N * R = N * R
-        #  T * W = N * R - T * N * R
-        #  T * W = N * R * (1 - T)
-        #  N = T * W / R * (1 - T)
-        batch_size = (T * W) / (R * (1 - T))
+    def submit_jobs(self) -> None:
+        """Submit jobs to the GRID in parallel."""
+        log.info(f"++ Submitting {len(self.workload)} payloads to the grid...")
+        with ThreadPoolExecutor(max_workers=self.ncores) as executor:
+            executor.map(lambda job: job.package(), self.workload)
 
-        batch_size = max(1, round(batch_size))  # Ensure at least 1 job
-        return batch_size
+        with ThreadPoolExecutor(max_workers=self.ncores) as executor:
+            executor.map(lambda job: job.submit(), self.workload)
 
     @staticmethod
     def process_job(job: GridJob) -> None:
-        """Process a single job: update status, retrieve output if done, handle retries if failed.
+        """Process a single job: retrieve output if done, handle retries if failed.
 
         NOTE: This function is parallelized, that is why things like cleaning, download, retry
          are here. If you are adding new functionality, consider if it should be here or in the
          sequential part of the code.
         """
-
-        job.update_status()
-
         if job.status == JobStatus.FAILED:
             # Jobs on the grid can fail for many reasons outside our control
             #  So if the job is failed, resubmit it up to MAX_RETRIES times
@@ -788,8 +707,10 @@ class GRIDScheduler:
                 )
                 log.debug(f"job {job.name} at {job.loc}")
                 job.submit()
-
-            # TODO: Add some sort of fallback mechanism here if it reaches the MAX_RETRIES
+            else:
+                # TODO: Add some sort of fallback mechanism here
+                log.error(f"> Job {job.name} failed {MAX_RETRIES} times, giving up <")
+                job.clean()
 
         if job.status == JobStatus.DONE:
             log.debug(f"Job {job.name} is done, retrieving output...")

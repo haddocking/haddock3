@@ -1,10 +1,16 @@
+import subprocess
+import zipfile
+from types import SimpleNamespace
+from unittest.mock import patch
+
 import pytest
 
 from haddock.libs.libgrid import (
+    GRIDScheduler,
     GridJob,
     CompositeGridJob,
     JobStatus,
-    Tag,
+    MAX_RETRIES,
     ping_dirac,
     validate_dirac,
 )
@@ -69,11 +75,7 @@ def test_gridjob_repr(dummy_paths):
 def test_jobstatus_from_string():
     assert JobStatus.from_string("Running") == JobStatus.RUNNING
     assert JobStatus.from_string("unknown") == JobStatus.UNKNOWN
-
-
-def test_tag_enum():
-    assert Tag.PROBING.value == "Probing"
-    assert Tag.DEFAULT.value == "Default"
+    assert JobStatus.from_string("Stalled") == JobStatus.FAILED
 
 
 def test_parse_output():
@@ -156,3 +158,125 @@ def test_find_output():
     line3 = "no output here"
     output3 = GridJob._find_output(line3)
     assert output3 is None
+
+
+@pytest.mark.parametrize(
+    "module, n_tasks, expected",
+    [("rigidbody", 21, [10, 10, 1]), ("flexref", 1, [1])],
+)
+def test_scheduler_create_batches(
+    tmp_path, monkeypatch, dummy_paths, module, n_tasks, expected
+):
+    toppar, module_path = dummy_paths
+    step = tmp_path / f"1_{module}"
+    step.mkdir()
+    monkeypatch.chdir(step)
+    envvars = {"TOPPAR": toppar, "MODULE": module_path}
+    tasks = [
+        SimpleNamespace(input_file=f"model{i}\nstop\n", envvars=envvars)
+        for i in range(n_tasks)
+    ]
+    scheduler = GRIDScheduler(tasks, params={"ncores": 1})
+    scheduler.create_batches()
+    assert [len(job.input_str_list) for job in scheduler.workload] == expected
+    for job in scheduler.workload:
+        job.clean()
+
+
+def test_submit_retries_failed_submission(dummy_paths):
+    toppar, module = dummy_paths
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    job.packaged = True
+    error = subprocess.CalledProcessError(
+        2, "dirac-wms-job-submit", output="Peer closed connection"
+    )
+    ok = subprocess.CompletedProcess([], 0, stdout="JobID = 123")
+    with (
+        patch("haddock.libs.libgrid.subprocess.run", side_effect=[error, error, ok]),
+        patch("haddock.libs.libgrid.time.sleep") as sleep,
+        patch.object(GridJob, "update_status"),
+    ):
+        job.submit()
+    assert job.id == 123
+    assert job.retries == 2
+    assert [c.args[0] for c in sleep.call_args_list] == [30, 60]
+    job.clean()
+
+
+def test_retrieve_output_skips_missing_cns_log(tmp_path, monkeypatch, dummy_paths):
+    toppar, module = dummy_paths
+    monkeypatch.chdir(tmp_path)
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    job.id = 123
+    job.expected_outputs = ["model_1.pdb", "0_job.out"]
+    sandbox = job.loc / "123"
+    sandbox.mkdir()
+    (sandbox / "model_1.pdb").write_text("ATOM")
+    with patch("haddock.libs.libgrid.subprocess.run"):
+        job.retrieve_output()
+    assert (tmp_path / "model_1.pdb").read_text() == "ATOM"
+    job.clean()
+
+
+def test_given_up_job_is_cleaned(dummy_paths):
+    toppar, module = dummy_paths
+    failed, unsubmitted = (
+        GridJob(input="input", toppar_path=toppar, module_path=module) for _ in range(2)
+    )
+    failed.retries = unsubmitted.retries = MAX_RETRIES
+    failed.status = JobStatus.FAILED
+    unsubmitted.packaged = True
+    error = subprocess.CalledProcessError(2, "dirac-wms-job-submit", output="")
+    with (
+        patch.object(GridJob, "update_status"),
+        patch("haddock.libs.libgrid.subprocess.run", side_effect=error),
+    ):
+        GRIDScheduler.process_job(failed)
+        with pytest.raises(subprocess.CalledProcessError):
+            unsubmitted.submit()
+    assert not failed.loc.exists()
+    assert not unsubmitted.loc.exists()
+
+
+def test_wait_for_completion_checks_all_jobs_at_once(dummy_paths):
+    toppar, module = dummy_paths
+    jobs = [
+        GridJob(input="input", toppar_path=toppar, module_path=module) for _ in range(2)
+    ]
+    for job_id, job in enumerate(jobs, start=1):
+        job.id, job.status = job_id, JobStatus.WAITING
+    scheduler = GRIDScheduler([], params={"ncores": 1})
+    scheduler.workload = jobs
+    status = subprocess.CompletedProcess(
+        [],
+        0,
+        stdout="JobID=1 MinorStatus=Execution Complete; Status=Done; Site=A;\n"
+        "JobID=2 MinorStatus=Execution Complete; Status=Done; Site=B;\n",
+    )
+    with (
+        patch("haddock.libs.libgrid.subprocess.run", return_value=status) as run,
+        patch("haddock.libs.libgrid.time.sleep") as sleep,
+        patch.object(GRIDScheduler, "process_job"),
+    ):
+        scheduler.wait_for_completion()
+    run.assert_called_once()
+    assert run.call_args.args[0] == ["dirac-wms-job-status", "1", "2"]
+    sleep.assert_called_once_with(30)
+    assert [job.site for job in jobs] == ["A", "B"]
+    for job in jobs:
+        job.clean()
+
+
+def test_payload_has_no_duplicate_files(dummy_paths):
+    toppar, module = dummy_paths
+    (toppar / "protein.top").write_text("top")
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    # The `.inp` refers to the toppar file, so it is also copied next to it
+    copied = job.loc / "protein.top"
+    copied.write_text("top")
+    job.payload_fnames.append(copied)
+    job.prepare_payload(cns_script_path=module, toppar_path=toppar)
+    with zipfile.ZipFile(job.loc / "payload.zip") as z:
+        names = z.namelist()
+    assert sorted(names) == ["cns", "protein.top"]
+    job.clean()

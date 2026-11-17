@@ -11,6 +11,9 @@ residues (both intramolecular and intermolecular).
 
 **Chordcharts** are describing only intermolecular contacts in circles,
 connecting with *chords* the two residues that are contacting.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#contactmap-module>`_
 """
 
 from copy import deepcopy
@@ -27,7 +30,11 @@ from haddock.modules.analysis.contactmap.contmap import (
     get_clusters_sets,
     make_contactmap_report,
     topX_models,
-    )
+)
+from haddock.libs.libutil import (
+    get_available_memory,
+    get_necessary_memory,
+)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -40,13 +47,13 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-            self,
-            order: int,
-            path: Path,
-            *ignore: Any,
-            init_params: FilePath = DEFAULT_CONFIG,
-            **everything: Any,
-            ) -> None:
+        self,
+        order: int,
+        path: Path,
+        *ignore: Any,
+        init_params: FilePath = DEFAULT_CONFIG,
+        **everything: Any,
+    ) -> None:
         """Initialize class."""
         super().__init__(order, path, init_params)
 
@@ -58,9 +65,7 @@ class HaddockModule(BaseHaddockModule):
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        if type(self.previous_io) == iter:
-            _e = "This module cannot come after one that produced an iterable."
-            self.finish_with_error(_e)
+        models = []
         try:
             models = self.previous_io.retrieve_models(individualize=True)
         except AttributeError as e:
@@ -92,7 +97,7 @@ class HaddockModule(BaseHaddockModule):
                         Path(model.rel_path),
                         Path(jobname),
                         single_models_params,
-                        )
+                    )
                     contact_jobs.append(contmap_job)
 
             # For clustered models
@@ -106,12 +111,56 @@ class HaddockModule(BaseHaddockModule):
                     [Path(model.rel_path) for model in clt_models],
                     Path(name),
                     self.params,
-                    )
+                )
                 contact_jobs.append(contmap_job)
+
+        # === IMPORTANT ================================================================
+        # This modules uses a NxN distance matrix, this means that the memory
+        # requirement will increase quadratically and can fail with an out-of-memory
+        # error. Changing this behaviour would require a total re-write of the module
+        # as of 04-2026 so instead we apply the following workaround:
+        #  - Find the largest input model and count its heavy atoms
+        #  - Calculate the expected matrix size and its memory requirements
+        #  - Get how much memory the current host system has
+        #  - Run as many jobs in parallel as that memory can feed, down to a single one
+        #  - Only when even one job does not fit, fail graciously
+        engine_params = self.params
+        per_job_memory = get_necessary_memory(models)
+        current_memory = get_available_memory()
+        # Each job holds one distance matrix, and at most `ncores` of them run at once
+        concurrent_jobs = min(self.params["ncores"], len(contact_jobs))
+        if current_memory < per_job_memory * concurrent_jobs:
+            # Running slower is better than not running at all, so keep only as many
+            # cores as the available memory can feed
+            affordable_jobs = int(current_memory // per_job_memory)
+            if affordable_jobs < 1:
+                self.log(
+                    msg=(
+                        f"Not enough memory to execute `contactmap` (needs "
+                        f"{per_job_memory:.2f}Gb for a single model, has "
+                        f"{current_memory:.2f}Gb). ! Skipping this module !"
+                    ),
+                    level="warning",
+                )
+                self.output_models = models
+                self.export_io_models()
+                return
+            self.log(
+                msg=(
+                    f"Not enough memory to run {concurrent_jobs} `contactmap` jobs in "
+                    f"parallel (needs {per_job_memory * concurrent_jobs:.2f}Gb has "
+                    f"{current_memory:.2f}Gb); reducing the number of cores to "
+                    f"{affordable_jobs}."
+                ),
+                level="warning",
+            )
+            engine_params = {**self.params, "ncores": affordable_jobs}
+
+        # ==============================================================================
 
         # Find execution engine
         exec_mode = get_analysis_exec_mode(self.params["mode"])
-        Engine = get_engine(exec_mode, self.params)
+        Engine = get_engine(exec_mode, engine_params)
         engine = Engine(contact_jobs)
         engine.run()
 

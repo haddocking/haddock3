@@ -18,9 +18,27 @@ Note that for non-standard bio-molecules
 (apart from standard amino-acids, some modified ones, DNA, RNA, ions
 and carbohydrates ... see `detailed list of supported molecules
 <https://wenmr.science.uu.nl/haddock2.4/library>`_),
-such as small-molecules, parameters and topology must be obtained and provided
-by the user, as there is currently no built-in solution to generate
-them on the fly.
+such as small-molecules, parameters and topology are required.
+By default (`autotoppar = true`), they are generated on-the-fly with PRODRG
+for every unknown residue; the run stops with an error if PRODRG fails or is
+not available.
+They can also be provided by the user, using the `ligand_param_fname` and
+`ligand_top_fname` parameters, in which case PRODRG is not run.
+Set `autotoppar = false` to skip the generation; unknown residues are then
+removed from the models.
+
+To define specific parameters for a given molecule (charge of terminis,
+histidine protonations, peptide cyclisation, ...), you should re-define
+a quasi topoaa module and specify the molecule index, right after
+the ``[topoaa]`` module. e.g.:
+
+``
+[topoaa]
+[topoaa.mol1]
+``
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module>`_
 """
 
 import operator
@@ -171,6 +189,45 @@ class HaddockModule(BaseCNSModule):
                 origin_dic[model_num] = original_name
         return origin_dic
 
+    def _warn_discarded_residues(
+        self,
+        model: Path,
+        custom_topology: Optional[FilePath] = None,
+    ) -> None:
+        """Warn about the unknown residues that will be removed from a model.
+
+        Parameters
+        ----------
+        model : Path
+            PDB file of the model.
+        custom_topology : Optional[FilePath]
+            User-provided topology, whose residues are not unknown.
+        """
+        unknown = libligand.identify_unknown_hetatms(model)
+        if custom_topology:
+            known = set(libpdb.get_supported_residues(custom_topology))
+            unknown = [resname for resname in unknown if resname not in known]
+        if not unknown:
+            return
+        ion_hint = libligand.ion_naming_hint(model, unknown)
+        in_chain = libligand.find_chain_residues(model, unknown)
+        chain_note = (
+            f"Removing these residues breaks their polymer chain: {', '.join(in_chain)}"
+        )
+        linked_sugars = libligand.find_linked_sugars(model, unknown)
+        sugar_note = (
+            "Removing these sugars breaks their glycosidic bonds: "
+            f"{'; '.join(linked_sugars)}"
+        )
+        self.log(
+            f"Unknown residue(s) {', '.join(unknown)} in {model.name} have no "
+            "topology and are removed from the model."
+            + (f"\n{chain_note}" if in_chain else "")
+            + (f"\n{sugar_note}" if linked_sugars else "")
+            + (f"\n{ion_hint}" if ion_hint else ""),
+            level="warning",
+        )
+
     def _run(self) -> None:
         """Execute module."""
         if self.order == 0:
@@ -205,6 +262,9 @@ class HaddockModule(BaseCNSModule):
 
         # Pool of jobs to be executed by the CNS engine
         jobs: list[CNSJob] = []
+
+        # Dictionary to store ligand files for each model
+        model_ligand_files: dict[str, tuple[Path, Path]] = {}
 
         models_dic: dict[int, list[Path]] = {}
         ens_dic: dict[int, dict[int, str]] = {}
@@ -256,10 +316,21 @@ class HaddockModule(BaseCNSModule):
             for _task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
+                # rename first, so that e.g. TPO is not reported as unknown
+                selenocysteines = libpdb.rename_residues(model)
+                if selenocysteines:
+                    self.log(
+                        f"Selenocysteine(s) in {model.name} converted to cysteine "
+                        f"(SE renamed to SG): {'; '.join(selenocysteines)}. "
+                        "HADDOCK3 has no selenocysteine; its own SEC residue is a "
+                        "serine variant for covalent docking.",
+                        level="warning",
+                    )
 
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]
                     self.log(f"Using custom topology {custom_top}")
+                    self._warn_discarded_residues(model, custom_top)
                     libpdb.sanitize(
                         model,
                         overwrite=True,
@@ -271,6 +342,34 @@ class HaddockModule(BaseCNSModule):
                     # No `ligand_top_fname` was provided, check if there are any unknown molecules
                     unknown = libligand.identify_unknown_hetatms(model)
                     if unknown:
+                        # prodrg treats each residue as a free molecule, so it
+                        # cannot handle residues that are part of a chain
+                        in_chain = libligand.find_chain_residues(model, unknown)
+                        if in_chain:
+                            self.finish_with_error(
+                                "Unknown residue(s) inside a polymer chain in "
+                                f"{model.name}: {', '.join(in_chain)}.\n"
+                                "PRODRG cannot generate their topology together "
+                                "with the bonds to the rest of the chain. Use a "
+                                "supported residue name (see "
+                                f"{libligand.SUPPORTED_DOC_URL}), mutate them to "
+                                "their parent residue, or provide their topology, "
+                                "parameters and links yourself."
+                            )
+                        linked_sugars = libligand.find_linked_sugars(model, unknown)
+                        if linked_sugars:
+                            self.finish_with_error(
+                                f"Unknown sugar(s) in {model.name}: "
+                                f"{'; '.join(linked_sugars)}.\n"
+                                "PRODRG cannot generate their topology together "
+                                "with their glycosidic bonds. Check whether they "
+                                "are supported under another name (see "
+                                f"{libligand.SUPPORTED_DOC_URL}#supported-"
+                                "carbohydrates) and rename them, remove them "
+                                "(and the sugars attached beyond them), or "
+                                "provide their topology, parameters and linkage "
+                                "patches yourself."
+                            )
                         self.log(
                             f"Unknown ligand(s) {unknown} detected, "
                             "running PRODRG to generate topology"
@@ -278,10 +377,20 @@ class HaddockModule(BaseCNSModule):
                         top_path = ""
                         par_path = ""
                         try:
-                            top_path, par_path = libligand.run_prodrg(model, Path("."))
+                            top_path, par_path = libligand.run_prodrg(
+                                model, Path("."), ligand_resnames=unknown
+                            )
                         except RuntimeError as e:
+                            ion_hint = libligand.ion_naming_hint(model, unknown)
                             self.finish_with_error(
-                                f"Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: {e}"
+                                "PRODRG could not generate the topology and "
+                                "parameters for the unknown residue(s) "
+                                f"{', '.join(unknown)} in {model.name}.\n{e}\n"
+                                + (f"{ion_hint}\n" if ion_hint else "")
+                                + "Either provide them with `ligand_top_fname` and "
+                                "`ligand_param_fname`, remove these residues from "
+                                "the input, or set `autotoppar = false` to discard "
+                                "them."
                             )
                         # Inject the automated toppar into the params for module
                         _params = {
@@ -289,17 +398,29 @@ class HaddockModule(BaseCNSModule):
                             "ligand_top_fname": top_path,
                             "ligand_param_fname": par_path,
                         }
-                        # Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules
-                        #  this means that if these were NOT defined in other modules, they will take the
-                        #  values defined here
-                        self._output_params["ligand_top_fname"] = top_path
-                        self._output_params["ligand_param_fname"] = par_path
+
+                        # Store ligand files for this specific model
+                        model_ligand_files[model.stem] = (top_path, par_path)
+
+                        # Only set global output params if this is a single model (not ensemble)
+                        # For ensembles, we'll store the files per-model in the PDBFile objects
+
+                        # NOTE: In CNS input generation, PDBFile ligand files take precedence over global params,
+                        # so this ensures backward compatibility, but may be removed in the future
+                        if len(splited_models) == 1:
+                            # Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules
+                            #  this means that if these were NOT defined in other modules, they will take the
+                            #  values defined here
+                            self._output_params["ligand_top_fname"] = top_path
+                            self._output_params["ligand_param_fname"] = par_path
 
                         libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
                     else:
                         self.log("No unknown atoms found")
+                        libpdb.sanitize(model, overwrite=True)
                         _params = self.params
                 else:
+                    self._warn_discarded_residues(model)
                     libpdb.sanitize(model, overwrite=True)
                     _params = self.params
 
@@ -376,11 +497,22 @@ class HaddockModule(BaseCNSModule):
                         )
 
                 topology = TopologyFile(processed_topology, path=".")
+
+                # Get ligand files for this model if they exist
+                ligand_top_fname = None
+                ligand_param_fname = None
+                if model.stem in model_ligand_files:
+                    ligand_top_fname, ligand_param_fname = model_ligand_files[
+                        model.stem
+                    ]
+
                 pdb = PDBFile(
                     file_name=processed_pdb,
                     topology=topology,
                     path=".",
                     md5=md5_hash,
+                    ligand_top_fname=ligand_top_fname,
+                    ligand_param_fname=ligand_param_fname,
                 )
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb

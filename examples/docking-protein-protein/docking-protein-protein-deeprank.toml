@@ -20,8 +20,6 @@ sampling = 1000
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 #####################################################################
 [deeprank]
-chain_i = "A"
-chain_j = "B"
 #####################################################################
 [seletop]
 select = 200
@@ -55,8 +53,6 @@ top_models = 4
 reference_fname = "data/e2a-hpr_1GGR.pdb"
 #####################################################################
 [deeprank]
-chain_i = "A"
-chain_j = "B"
 #####################################################################
 [caprieval]
 reference_fname = "data/e2a-hpr_1GGR.pdb"

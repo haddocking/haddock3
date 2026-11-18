@@ -1,11 +1,32 @@
+score_type:
+  default: mean
+  type: string
+  minchars: 3
+  maxchars: 4
+  choices:
+    - mean
+    - min
+    - pair
+  title: Predicted fnat used to rank the models
+  short: Rank the models by the mean (mean) or minimum (min) predicted fnat over
+    all their interfaces, or by the predicted fnat of one interface (pair).
+  long: deeprank-gnn-esm predicts the fnat of every interface (chain pair) of a
+    model. The models are ranked by the mean (mean) or the minimum (min) of these
+    predicted fnat values, or by the predicted fnat of the interface between the
+    chains chain_i and chain_j (pair). A larger fnat is better. An interface
+    without contacts has no prediction and counts as a fnat of 0 for pair; for
+    mean and min it is left out, and a model without any interface gets 0.
+  group: "scoring"
+  explevel: easy
 chain_i:
   default: "A"
   type: string
   minchars: 1
   maxchars: 1
   title: First chain ID
-  short: Chain ID of the first partner.
-  long: Chain ID of the first partner used by deeprank for scoring.
+  short: Chain ID of the first partner, used when score_type is pair.
+  long: Chain ID of the first partner of the interface used to rank the models
+    when score_type is pair.
   group: "scoring"
   explevel: easy
 chain_j:
@@ -14,7 +35,8 @@ chain_j:
   minchars: 1
   maxchars: 1
   title: Second chain ID
-  short: Chain ID of the second partner.
-  long: Chain ID of the second partner used by deeprank for scoring.
+  short: Chain ID of the second partner, used when score_type is pair.
+  long: Chain ID of the second partner of the interface used to rank the models
+    when score_type is pair.
   group: "scoring"
   explevel: easy

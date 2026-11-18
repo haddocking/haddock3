@@ -49,6 +49,7 @@ class DeeprankWrapper:
         """
         # This import needs to be exactly here
         from deeprank_gnn.main import run_predictions as deeprank_main
+
         try:
             deeprank_main(
                 *map(str, self.models),

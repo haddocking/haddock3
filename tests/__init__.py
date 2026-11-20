@@ -55,7 +55,7 @@ except ImportError:
 has_gdock = pytest.mark.skipif(not GDOCK_ENABLED, reason="gdock dependency not found")
 
 has_disvis = pytest.mark.skipif(
-    not disvis_is_available(), reason="disvis>=3.2.0 dependency not found"
+    not disvis_is_available(), reason="disvis>=3.3.0 dependency not found"
 )
 
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")

@@ -6,13 +6,37 @@ ambiguous restraints, optionally reduced to the centers of their clusters.
 
 When the input molecules are ensembles, a separate search is run for each
 combination of their models (all combinations with `crossdock = true`, else
-models paired by index), and up to `sampling` models are passed on for each
-combination: e.g. 1 receptor and a 10-model ligand ensemble give 10 searches
-and up to 10 x `sampling` models.
+models paired by index). Their complexes are pooled: the threshold of
+consistent restraints is taken over all searches, and they are clustered
+together, so that up to `sampling` models are passed on in total.
+
+The models are written largest cluster first, and their score is minus the
+number of restraints their complex (the cluster center) is consistent with.
+A `seletop` step directly after `disvis` therefore selects the models
+consistent with the most restraints, and among those (often many with the
+same number) the largest clusters first, since its sort keeps the order of
+equal scores. This number of restraints says little about the quality of a
+model: to rank the models on the HADDOCK score before `seletop`, a short
+`emref` can be added, with the restraints and few minimisation steps, e.g.::
+
+    [disvis]
+    ambig_fname = "ambig.tbl"
+    [emref]
+    ambig_fname = "ambig.tbl"
+    nemsteps = 50
+    [seletop]
+    select = 200
+
+On one test case (E2A-HPR, with a 10-model HPR ensemble) this ranked a few
+more near-native models at the top than the disvis score did (4 instead of
+2 of the top 10), while `emscoring`, without the restraints, ranked fewer.
+This needs more benchmarking.
 """
 
 import time
 from pathlib import Path
+
+import numpy as np
 
 from haddock import log
 from haddock.core.defaults import MODULE_DEFAULT_YAML
@@ -23,7 +47,9 @@ from haddock.modules.sampling.disvis.disvis import (
     cluster_centers,
     disvis_is_available,
     read_heavy_atoms,
+    pool,
     search,
+    superposition,
     write_model,
 )
 
@@ -46,13 +72,15 @@ class HaddockModule(BaseHaddockModule):
         **everything: Any,
     ) -> None:
         super().__init__(order, path, initial_params)
+        # The heavy atoms of the input models, by file name
+        self._read: dict[Path, Any] = {}
 
     @classmethod
     def confirm_installation(cls) -> None:
         """Confirm if the module is ready to use."""
         if not disvis_is_available():
             raise Exception(
-                "You are trying to use the `disvis` module but disvis>=3.2.0"
+                "You are trying to use the `disvis` module but disvis>=3.3.0"
                 " is not available, install it with"
                 " `pip install 'haddock3[disvis]'` (Python >= 3.11)"
             )
@@ -67,32 +95,25 @@ class HaddockModule(BaseHaddockModule):
 
         # Each combination is a tuple with one PDBFile per input molecule,
         #  e.g. (receptor, ligand), as produced by `topoaa`.
-        models_to_dock = self.previous_io.retrieve_models(
+        combinations = self.previous_io.retrieve_models(
             crossdock=self.params["crossdock"]
         )
-
-        expected: list[PDBFile] = []
-        for idx, combination in enumerate(models_to_dock, start=1):
+        for combination in combinations:
             if len(combination) != 2:
                 self.finish_with_error(
                     "disvis requires exactly 2 input molecules per combination, "
                     f"got {len(combination)}: {[c.file_name for c in combination]}"
                 )
-            receptor, ligand = combination
-            receptor_file = Path(receptor.path, receptor.file_name)
-            ligand_file = Path(ligand.path, ligand.file_name)
-            fixed = read_heavy_atoms(receptor_file)
-            scanning = read_heavy_atoms(ligand_file)
-            restraints = parse_restraints(
-                ambig_fname,
-                fixed,
-                scanning,
-                log.info,
-                self.params["min_maxdis"],
-            )
 
+        # One search per combination, pooled before the selection
+        parts = []
+        for idx, (receptor, ligand) in enumerate(combinations, start=1):
+            fixed, scanning = self._heavy_atoms(receptor), self._heavy_atoms(ligand)
+            restraints = parse_restraints(
+                ambig_fname, fixed, scanning, log.info, self.params["min_maxdis"]
+            )
             t0 = time.monotonic()
-            complexes, rotmat, threshold, nfound = search(
+            complexes, rotmat = search(
                 fixed,
                 scanning,
                 restraints,
@@ -108,47 +129,57 @@ class HaddockModule(BaseHaddockModule):
                 gpu=self.params["gpu"],
             )
             log.info(
-                f"disvis run {idx}: {receptor.file_name} + {ligand.file_name}"
-                f" {nfound} complexes consistent with at least {threshold}"
-                f" of {len(restraints)} restraints, {len(complexes.rotation)} kept"
+                f"disvis search {idx}: {receptor.file_name} + {ligand.file_name}:"
+                f" at most {complexes.most()} of {len(restraints)} restraints,"
+                f" {len(complexes.rotation)} complexes collected"
                 f" elapsed={time.monotonic() - t0:.1f}s"
             )
+            parts.append(complexes)
 
-            selected = list(range(len(complexes.rotation)))
-            if self.params["cluster"]:
-                selected, cutoff = cluster_centers(
-                    complexes,
-                    rotmat,
-                    scanning,
-                    self.params["cluster_target"],
-                    self.params["min_population"],
-                )
-                log.info(
-                    f"disvis run {idx}: {len(selected)} clusters of at least"
-                    f" {self.params['min_population']} complexes within"
-                    f" {cutoff:.2f} A RMSD"
-                )
+        # Without clustering, the `sampling` complexes consistent with the
+        #  most restraints
+        max_complexes = self.params["max_complexes"]
+        if not self.params["cluster"]:
+            max_complexes = min(max_complexes, self.params["sampling"])
+        complexes, part, threshold, nfound = pool(
+            parts, len(rotmat), self.params["percentage"], max_complexes
+        )
+        log.info(
+            f"disvis: {nfound} complexes of {len(parts)} searches consistent with"
+            f" at least {threshold} restraints, {len(complexes.rotation)} kept"
+        )
 
-            for k, i in enumerate(selected[: self.params["sampling"]], start=1):
-                file_name = f"disvis_{idx}_{k}.pdb"
-                write_model(
-                    receptor_file,
-                    ligand_file,
-                    scanning.center,
-                    rotmat[complexes.rotation[i]],
-                    complexes.translation[i],
+        selected = list(range(len(complexes.rotation)))
+        if self.params["cluster"]:
+            selected, cutoff = self._cluster(complexes, part, rotmat, combinations)
+            log.info(
+                f"disvis: {len(selected)} clusters of at least"
+                f" {self.params['min_population']} complexes within"
+                f" {cutoff:.2f} A RMSD"
+            )
+
+        expected: list[PDBFile] = []
+        for k, i in enumerate(selected[: self.params["sampling"]], start=1):
+            receptor, ligand = combinations[part[i]]
+            file_name = f"disvis_{k}.pdb"
+            write_model(
+                Path(receptor.path, receptor.file_name),
+                Path(ligand.path, ligand.file_name),
+                self._heavy_atoms(ligand).center,
+                rotmat[complexes.rotation[i]],
+                complexes.translation[i],
+                file_name,
+            )
+            expected.append(
+                PDBFile(
                     file_name,
+                    topology=[receptor.topology, ligand.topology],
+                    path=self.path,
+                    # Lower is better: the most consistent restraints
+                    #  first, then the largest clusters (stable sorts).
+                    score=-int(complexes.consistent[i]),
                 )
-                expected.append(
-                    PDBFile(
-                        file_name,
-                        topology=[receptor.topology, ligand.topology],
-                        path=self.path,
-                        # Lower is better: the most consistent restraints
-                        #  first, then the largest clusters (stable sorts).
-                        score=-int(complexes.consistent[i]),
-                    )
-                )
+            )
 
         if not expected:
             self.finish_with_error(
@@ -157,3 +188,56 @@ class HaddockModule(BaseHaddockModule):
             )
         self.output_models = expected
         self.export_io_models()
+
+    def _heavy_atoms(self, model: PDBFile) -> Any:
+        """Return the heavy atoms of an input model, read once."""
+        fname = Path(model.path, model.file_name)
+        if fname not in self._read:
+            self._read[fname] = read_heavy_atoms(fname)
+        return self._read[fname]
+
+    def _cluster(
+        self,
+        complexes: Any,
+        part: np.ndarray,
+        rotmat: np.ndarray,
+        combinations: list,
+    ) -> tuple[list[int], float]:
+        """Cluster the pooled complexes on the RMSD of the ligand.
+
+        The poses of the receptor models after the first are superposed on
+        it, and the ligand models can differ (an ensemble), with the same
+        RMSD atoms (CA and P, else heavy atoms).
+        """
+        from disvis.complexes import rmsd_atoms
+
+        receptors, receptor = np.unique(
+            [str(Path(r.path, r.file_name)) for r, _ in combinations],
+            return_inverse=True,
+        )
+        ligands, ligand = np.unique(
+            [str(Path(m.path, m.file_name)) for _, m in combinations],
+            return_inverse=True,
+        )
+        receptor_coor = [rmsd_atoms(self._read[Path(r)]) for r in receptors]
+        ligand_coor = [rmsd_atoms(self._read[Path(m)]) for m in ligands]
+        if any(
+            len({c.shape for c in coor}) > 1 for coor in (receptor_coor, ligand_coor)
+        ):
+            self.finish_with_error(
+                "disvis clusters the complexes of ensembles on their CA and P"
+                " (else heavy) atoms, which differ between the models"
+            )
+        frames = [superposition(c, receptor_coor[0]) for c in receptor_coor]
+        rotation = np.asarray([frames[r][0] for r in receptor[part]])
+        shift = np.asarray([frames[r][1] for r in receptor[part]])
+        return cluster_centers(
+            np.einsum("nij,nj->ni", rotation, complexes.translation) + shift,
+            rotation @ rotmat[complexes.rotation],
+            np.stack(
+                [c - self._read[Path(m)].center for c, m in zip(ligand_coor, ligands)]
+            ),
+            ligand[part],
+            self.params["cluster_target"],
+            self.params["min_population"],
+        )

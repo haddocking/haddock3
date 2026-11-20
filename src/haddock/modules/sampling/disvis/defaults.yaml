@@ -110,10 +110,14 @@ max_complexes:
   min: 1
   max: 10000000
   title: Maximum number of complexes
-  short: Maximum number of complexes kept from the search.
-  long: Maximum number of complexes kept from the search, a sample of all
-    the complexes found that is the same from run to run (DisVis option
-    --max-complexes). The complexes are then clustered or passed on.
+  short: Maximum number of complexes kept from the searches.
+  long: Maximum number of complexes kept from the searches (DisVis option
+    --max-complexes), those consistent with the most restraints first, and a
+    sample that is the same from run to run of those consistent with the last
+    number of restraints kept. With ensembles, the complexes of all searches
+    are pooled first, so this is the maximum over all searches. The complexes
+    are then clustered (in a time that grows with the square of their number)
+    or passed on.
   group: "sampling"
   explevel: expert
 sampling:
@@ -122,14 +126,13 @@ sampling:
   min: 1
   max: 500000
   title: Number of models to pass on
-  short: Maximum number of models passed on to the next module, per combination of molecules.
-  long: Maximum number of models passed on to the next module, per combination
-    of input molecules. With clustering, the cluster centers, largest
-    cluster first; else the complexes kept from the search. With ensembles
-    of input models, a search is run for each combination of models (see
-    crossdock), so the number of models passed on is up to the number of
-    combinations times this value, e.g. 50 models for 1 receptor, a 10-model
-    ligand ensemble and sampling = 5.
+  short: Maximum number of models passed on to the next module.
+  long: Maximum number of models passed on to the next module, in total. With
+    clustering, the cluster centers, largest cluster first; else the
+    complexes consistent with the most restraints (see max_complexes). With ensembles of input models, a
+    search is run for each combination of models (see crossdock) and their
+    complexes are pooled before they are clustered, so this is the total over
+    all combinations, as for rigidbody.
   group: "sampling"
   explevel: easy
 crossdock:
@@ -138,8 +141,9 @@ crossdock:
   title: Cross docking of starting ensembles
   short: If true, all combinations of input models are docked; if false, models are paired by index.
   long: Controls how starting model ensembles are combined. A separate DisVis
-    search is run for each combination, so the search time and the number of
-    models passed on grow with the number of combinations. When true (default), disvis docks
+    search is run for each combination, so the search time grows with the
+    number of combinations; their complexes are pooled before they are
+    clustered. When true (default), disvis docks
     all combinations of receptor x ligand models (same as rigidbody crossdock=true).
     When false, the first receptor model is paired with the first ligand model, etc.;
     this requires both ensembles to have the same number of models.
@@ -165,7 +169,9 @@ cluster:
   short: Pass on the centers of the clusters of the complexes, instead of all complexes.
   long: Cluster the complexes on the RMSD of the ligand (CA and P atoms, else
     heavy atoms), as disvis-complexes --cluster, and pass on the cluster
-    centers, largest cluster first.
+    centers, largest cluster first. With ensembles, the complexes of all
+    combinations are clustered together, after superposing the receptor
+    models on the first one, and the ligand models can differ (same atoms).
   group: "clustering"
   explevel: easy
 cluster_target:

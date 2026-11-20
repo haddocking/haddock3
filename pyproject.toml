@@ -78,7 +78,7 @@ notebooks = ["py3Dmol>=2.5.2", "marimo>=0.17.6", "jupyter"]
 deeprank-gnn-esm = ["deeprank-gnn-esm==2.0.2"]
 
 # disvis requires Python >= 3.11
-disvis = ["disvis>=3.2.0; python_version >= '3.11'"]
+disvis = ["disvis>=3.3.0; python_version >= '3.11'"]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"

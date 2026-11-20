@@ -1,5 +1,6 @@
 """Wrapper around the `disvis` package."""
 
+from inspect import signature
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -9,15 +10,17 @@ from pdbtools.pdb_reatom import run as renumber_atoms
 
 from haddock import log
 from haddock.core.typing import Any, FilePath
+from haddock.libs.libalign import kabsch
 
 
 def disvis_is_available() -> bool:
-    """Check whether a `disvis` with complexes collection is importable."""
+    """Check whether a `disvis` with poses of several models is importable."""
     try:
-        from disvis.complexes import Poses  # noqa: F401
+        from disvis.complexes import Poses
     except ImportError:
         return False
-    return True
+    # disvis >= 3.3.0, with poses of several ligand models
+    return "model" in signature(Poses).parameters
 
 
 def read_heavy_atoms(pdb_file: FilePath) -> Any:
@@ -45,15 +48,14 @@ def search(
     max_complexes: int = 50000,
     ncores: int = 1,
     gpu: bool = False,
-) -> tuple[Any, np.ndarray, int, int]:
-    """Run the DisVis search and select the complexes.
+) -> tuple[Any, np.ndarray]:
+    """Run the DisVis search.
 
     The search is run as by the `disvis` command line, on `ncores`
-    processes or on the GPU. Returns the complexes consistent with at least
-    `percentage` percent of the most restraints found (at most
-    `max_complexes`, see `disvis.disvis.Complexes.select`), the rotation
-    matrices, the threshold of consistent restraints and the number of
-    complexes found above it.
+    processes or on the GPU. Returns the complexes collected, those
+    consistent with at least `percentage` percent of the most restraints
+    found (at most `max_complexes`, see `disvis.disvis.Complexes`), and the
+    rotation matrices.
     """
     import disvis.main
     from disvis.rotations import proportional_orientations, quat_to_rotmat
@@ -100,30 +102,72 @@ def search(
     else:
         results = disvis.main.run_disvis(None, receptor, ligand, *search_args)
 
-    selected, threshold, nfound = results.complexes.select(percentage, max_complexes)
-    return selected, rotmat, threshold, nfound
+    return results.complexes, rotmat
+
+
+def pool(
+    parts: list, nrot: int, percentage: float, max_complexes: int
+) -> tuple[Any, np.ndarray, int, int]:
+    """Pool the complexes of several searches and select them.
+
+    The complexes kept are those consistent with at least `percentage`
+    percent of the most restraints found in all searches (see
+    `disvis.disvis.Complexes.select`): each search collected all those
+    above its own, lower or equal, threshold. At most `max_complexes` are
+    kept, those consistent with the most restraints first, and a sample of
+    the same from run to run (the smallest sampling keys) of those
+    consistent with the last number of restraints kept. Returns them, with
+    `rotation` the index in the `nrot` rotations, the search of each
+    complex, the threshold and the number of complexes found above it.
+    """
+    from disvis.disvis import Complexes
+
+    pooled = Complexes.concatenate(parts, [k * nrot for k in range(len(parts))])
+    selected, threshold, nfound = pooled.select(percentage)
+    keep = np.lexsort((selected.key, -selected.consistent))[:max_complexes]
+    keep.sort()
+    kept = Complexes(
+        selected.rotation[keep],
+        selected.translation[keep],
+        selected.consistent[keep],
+        selected.key[keep],
+        selected.counts,
+    )
+    part, kept.rotation = np.divmod(kept.rotation, nrot)
+    return kept, part, threshold, nfound
+
+
+def superposition(
+    coor: np.ndarray, reference: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return the rotation S and translation s best superposing coor on reference.
+
+    The superposed coordinates are `coor @ S.T + s`.
+    """
+    center, reference_center = coor.mean(axis=0), reference.mean(axis=0)
+    rotation = kabsch(coor - center, reference - reference_center).T
+    return rotation, reference_center - rotation @ center
 
 
 def cluster_centers(
-    complexes: Any,
-    rotmat: np.ndarray,
-    ligand: Any,
+    translations: np.ndarray,
+    rotations: np.ndarray,
+    coor: np.ndarray,
+    model: np.ndarray,
     cluster_target: float = 6.0,
     min_population: int = 2,
 ) -> tuple[list[int], float]:
     """Cluster the complexes on the RMSD of the ligand.
 
-    Returns the indices of the cluster centers, largest cluster first, and
-    the RMSD cutoff, tuned for clusters of at most `cluster_target` A, as
-    `disvis-complexes --cluster`.
+    `coor` gives the RMSD atoms of each ligand model, relative to its
+    center, and `model` the ligand model of each complex (see
+    `disvis.complexes.Poses`). Returns the indices of the cluster centers,
+    largest cluster first, and the RMSD cutoff, tuned for clusters of at
+    most `cluster_target` A, as `disvis-complexes --cluster`.
     """
-    from disvis.complexes import Poses, cluster, rmsd_atoms, tune_cutoff
+    from disvis.complexes import Poses, cluster, tune_cutoff
 
-    poses = Poses(
-        complexes.translation,
-        rotmat[complexes.rotation],
-        rmsd_atoms(ligand) - ligand.center,
-    )
+    poses = Poses(translations, rotations, coor, model)
     cutoff = tune_cutoff(poses, cluster_target, min_population)
     clusters = cluster(poses, cutoff, min_population)
     return [int(members[0]) for members in clusters], cutoff

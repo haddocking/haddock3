@@ -7,9 +7,11 @@ import pytest
 
 from haddock.clis.cli import main as cli_main
 from haddock.libs.libplots import read_capri_table
+from haddock.modules.sampling.disvis.disvis import disvis_is_available
 
 
-pytest.importorskip("disvis.complexes", reason="disvis>=3.2.0 dependency not found")
+if not disvis_is_available():
+    pytest.skip("disvis>=3.3.0 dependency not found", allow_module_level=True)
 
 EXAMPLE_DIR = (
     Path(__file__).resolve().parents[1] / "examples" / "docking-protein-protein"

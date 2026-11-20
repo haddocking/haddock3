@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-11-17: Replaced the NGL viewer of the analysis report by the Mol* viewer (styles, side chains, surfaces), with sortable plain HTML
+  tables - Issue #1779
 - 2026-11-19: Added mybinder option to launch the notebooks
 - 2026-11-15: Updated the `deeprank` module to deeprank-gnn-esm 2.0.2 with all interfaces scored, models are ranked by the mean (default), minimum or one chain pair predicted fnat  - Issue #1671
 - 2026-11-15: Ensure that only CNS-related jobs are sent to the grid - Issue #1765

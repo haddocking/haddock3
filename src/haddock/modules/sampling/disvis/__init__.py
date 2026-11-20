@@ -3,6 +3,12 @@
 Generates the complexes of two molecules by a full 6D search of rotations
 and translations with DisVis, keeping those consistent with most of the
 ambiguous restraints, optionally reduced to the centers of their clusters.
+
+When the input molecules are ensembles, a separate search is run for each
+combination of their models (all combinations with `crossdock = true`, else
+models paired by index), and up to `sampling` models are passed on for each
+combination: e.g. 1 receptor and a 10-model ligand ensemble give 10 searches
+and up to 10 x `sampling` models.
 """
 
 import time

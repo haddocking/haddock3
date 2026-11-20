@@ -1,0 +1,47 @@
+# ====================================================================
+# Protein-protein docking example with NMR-derived ambiguous interaction restraints
+#
+# NOTE: Sampling is performed with disvis instead of rigidbody
+#  (requires `pip install 'haddock3[disvis]'`, Python >= 3.11)
+#
+run_dir = "run1-CDR-NMR-CSP-disvis-test"
+ncores = 10
+molecules = ["data/4G6K_fv.pdb", "data/4I1B-matched.pdb"]
+# ====================================================================
+# Generate CNS-compatible topology and parameters for all input molecules.
+[topoaa]
+#--------------------------------------------------------------------#
+# Full 6D search of the complexes consistent with most restraints,
+#  passing on the centers of their clusters, largest first.
+[disvis]
+ambig_fname = "data/ambig-CDR-NMR-CSP.tbl"
+sampling = 25
+#--------------------------------------------------------------------#
+# Evaluate the disvis models against the reference structure.
+["caprieval.1"]
+reference_fname = "data/4G6M-matched.pdb"
+#--------------------------------------------------------------------#
+# Select the top-scoring models for downstream refinement.
+[seletop]
+select = 5
+#--------------------------------------------------------------------#
+# Refine docking models with flexible backbone and side chains.
+[flexref]
+tolerance = 20
+ambig_fname = "data/ambig-CDR-NMR-CSP.tbl"
+unambig_fname = "data/unambig.tbl"
+#--------------------------------------------------------------------#
+# Evaluate models after flexible refinement.
+["caprieval.2"]
+reference_fname = "data/4G6M-matched.pdb"
+#--------------------------------------------------------------------#
+# Final energy minimization to remove clashes and optimize geometry.
+[emref]
+tolerance = 20
+ambig_fname = "data/ambig-CDR-NMR-CSP.tbl"
+unambig_fname = "data/unambig.tbl"
+#--------------------------------------------------------------------#
+# Evaluate models after energy minimization.
+["caprieval.3"]
+reference_fname = "data/4G6M-matched.pdb"
+# ====================================================================

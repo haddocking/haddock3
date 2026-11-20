@@ -46,6 +46,7 @@ all categories and modules. Below is a summary of the available modules:
     * `rigidbody`: *Rigid body energy minimisation with CNS (`it0` in haddock2.x).*
     * `lightdock`: *Third-party Glow-worm Swarm Optimisation (GSO) docking software.*
     * `gdock`: *Third-party genetic algorithm-based docking software.*
+    * `disvis`: *Third-party full 6D search of the complexes consistent with distance restraints (DisVis).*
 * **Model refinement modules**
     * `flexref`: *Semi-flexible refinement using a simulated annealing protocol through molecular dynamics simulations in torsion angle space (`it1` in haddock2.x).*
     * `emref`: *Refinement by energy minimisation (`itw` EM only in haddock2.4).*

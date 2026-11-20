@@ -1,0 +1,188 @@
+#
+# Group distance restraints
+#
+ambig_fname:
+  default: ""
+  type: file
+  title: Ambiguous distance restraints filename
+  short: Filename of the ambiguous distance restraints file (required).
+  long: Filename of the ambiguous distance restraints file, in the HADDOCK
+    format, read as it is by DisVis. segid selections are matched against the
+    chain identifiers of the molecules. DisVis keeps the complexes consistent
+    with most of these restraints.
+  group: "distance restraints"
+  explevel: easy
+min_maxdis:
+  default: 3.9
+  type: float
+  min: 0
+  max: 100
+  precision: 1
+  title: Minimum upper distance of the restraints
+  short: Upper distances of the restraints below this value (A) are raised to it.
+  long: Upper distances of the restraints below this value (A) are raised to
+    it. DisVis satisfies a restraint with the shortest atom pair of its
+    selections, while HADDOCK uses the r^-6 sum of all pairs, which is
+    shorter, so the short upper distances of HADDOCK restraints are too strict
+    for DisVis (DisVis option --min-maxdis).
+  group: "distance restraints"
+  explevel: expert
+percentage:
+  default: 75
+  type: float
+  min: 1
+  max: 100
+  precision: 1
+  title: Percentage of the most restraints found
+  short: Keep the complexes consistent with at least this percentage of the most restraints found.
+  long: Keep the complexes consistent with at least this percentage of the
+    highest number of consistent restraints found in the search, rounded up
+    (DisVis option -wc).
+  group: "distance restraints"
+  explevel: easy
+#
+# Group sampling
+#
+angle:
+  default: 9.72
+  type: float
+  min: 1
+  max: 60
+  precision: 2
+  title: Rotational sampling interval
+  short: Rotational sampling interval (degrees) of the 6D search.
+  long: Rotational sampling interval (degrees) of the 6D search (DisVis option
+    -a). Finer sampling increases the search time strongly (about the third
+    power of the inverse of the interval).
+  group: "sampling"
+  explevel: easy
+voxelspacing:
+  default: 2.0
+  type: float
+  min: 0.5
+  max: 10
+  precision: 1
+  title: Voxel spacing
+  short: Voxel spacing (A) of the translational search.
+  long: Voxel spacing (A) of the grid of the translational search (DisVis
+    option -vs).
+  group: "sampling"
+  explevel: easy
+interaction_radius:
+  default: 3.0
+  type: float
+  min: 0
+  max: 20
+  precision: 1
+  title: Interaction radius
+  short: Radius (A) of the interaction space around each atom.
+  long: Radius (A) of the interaction space around each atom (DisVis option
+    -ir).
+  group: "sampling"
+  explevel: expert
+max_clash:
+  default: 200
+  type: float
+  min: 0
+  max: 10000
+  precision: 1
+  title: Maximum clash volume
+  short: Maximum volume (A^3) of clashes allowed for a complex.
+  long: Maximum volume (A^3) of clashes allowed for a complex (DisVis option
+    -cv). The search is done without hydrogens.
+  group: "sampling"
+  explevel: expert
+min_interaction:
+  default: 300
+  type: float
+  min: 0
+  max: 10000
+  precision: 1
+  title: Minimum interaction volume
+  short: Minimum volume (A^3) of interaction required for a complex.
+  long: Minimum volume (A^3) of interaction required for a complex (DisVis
+    option -iv).
+  group: "sampling"
+  explevel: expert
+max_complexes:
+  default: 50000
+  type: integer
+  min: 1
+  max: 10000000
+  title: Maximum number of complexes
+  short: Maximum number of complexes kept from the search.
+  long: Maximum number of complexes kept from the search, a sample of all
+    the complexes found that is the same from run to run (DisVis option
+    --max-complexes). The complexes are then clustered or passed on.
+  group: "sampling"
+  explevel: expert
+sampling:
+  default: 1000
+  type: integer
+  min: 1
+  max: 500000
+  title: Number of models to pass on
+  short: Maximum number of models passed on to the next module, per combination of molecules.
+  long: Maximum number of models passed on to the next module, per combination
+    of input molecules. With clustering, the cluster centers, largest
+    cluster first; else the complexes kept from the search.
+  group: "sampling"
+  explevel: easy
+crossdock:
+  default: true
+  type: boolean
+  title: Cross docking of starting ensembles
+  short: If true, all combinations of input models are docked; if false, models are paired by index.
+  long: Controls how starting model ensembles are combined. When true (default), disvis docks
+    all combinations of receptor x ligand models (same as rigidbody crossdock=true).
+    When false, the first receptor model is paired with the first ligand model, etc.;
+    this requires both ensembles to have the same number of models.
+  group: "sampling"
+  explevel: expert
+gpu:
+  default: false
+  type: boolean
+  title: Search on the GPU
+  short: Run the DisVis search on an OpenCL GPU.
+  long: Run the DisVis search on an OpenCL GPU (DisVis option -g); this
+    requires the gpu extra of disvis (pyopencl, pyvkfft). When false, the
+    search runs on ncores processes.
+  group: "sampling"
+  explevel: expert
+#
+# Group clustering
+#
+cluster:
+  default: true
+  type: boolean
+  title: Cluster the complexes
+  short: Pass on the centers of the clusters of the complexes, instead of all complexes.
+  long: Cluster the complexes on the RMSD of the ligand (CA and P atoms, else
+    heavy atoms), as disvis-complexes --cluster, and pass on the cluster
+    centers, largest cluster first.
+  group: "clustering"
+  explevel: easy
+cluster_target:
+  default: 6.0
+  type: float
+  min: 0.5
+  max: 50
+  precision: 1
+  title: Target cluster width
+  short: Largest RMSD (A) between the complexes of a cluster.
+  long: The RMSD cutoff of the clustering is tuned so that the largest RMSD
+    between the complexes of a cluster is at most this value (A) (option
+    --cluster-target of disvis-complexes).
+  group: "clustering"
+  explevel: expert
+min_population:
+  default: 2
+  type: integer
+  min: 1
+  max: 1000
+  title: Minimum cluster size
+  short: Minimum number of complexes in a cluster.
+  long: Minimum number of complexes in a cluster; complexes in no cluster are
+    not passed on (option --min-population of disvis-complexes).
+  group: "clustering"
+  explevel: expert

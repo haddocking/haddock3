@@ -1,9 +1,9 @@
 """Wrapper around the `disvis` package."""
 
+import logging
 from inspect import signature
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
 
 import numpy as np
 from pdbtools.pdb_reatom import run as renumber_atoms
@@ -11,6 +11,20 @@ from pdbtools.pdb_reatom import run as renumber_atoms
 from haddock import log
 from haddock.core.typing import Any, FilePath
 from haddock.libs.libalign import kabsch
+
+
+class _HaddockLog(logging.Handler):
+    """Pass the records of the disvis logger on to the haddock3 log."""
+
+    def emit(self, record: logging.LogRecord) -> None:
+        log.handle(record)
+
+
+# The messages of disvis (on its `disvis` logger) go to the haddock3 log only
+_disvis_log = logging.getLogger("disvis")
+_disvis_log.addHandler(_HaddockLog())
+_disvis_log.setLevel(logging.INFO)
+_disvis_log.propagate = False
 
 
 def disvis_is_available() -> bool:
@@ -94,11 +108,7 @@ def search(
             raise RuntimeError("No OpenCL device was found for disvis")
         results = disvis.main.run_disvis(queue, receptor, ligand, *search_args)
     elif ncores > 1:
-        # The messages of the multiprocessing search go to the haddock3 log:
-        #  `disvis.main.write` prints them and logs them on the root logger,
-        #  which configures it and duplicates the haddock3 terminal output.
-        with patch.object(disvis.main, "write", log.info):
-            results = disvis.main.mp_cpu_disvis(receptor, ligand, *search_args)
+        results = disvis.main.mp_cpu_disvis(receptor, ligand, *search_args)
     else:
         results = disvis.main.run_disvis(None, receptor, ligand, *search_args)
 

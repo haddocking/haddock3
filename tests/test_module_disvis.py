@@ -8,6 +8,7 @@ import numpy as np
 
 import pytest
 
+from haddock import log
 from haddock.libs.libontology import PDBFile, TopologyFile
 from haddock.modules.sampling.disvis import DEFAULT_CONFIG
 from haddock.modules.sampling.disvis import HaddockModule as DisvisModule
@@ -91,8 +92,8 @@ def test_disvis_two_molecules(disvis):
 
 
 @has_disvis
-def test_disvis_log(disvis, caplog):
-    """The messages of a multiprocessing search go to the haddock3 log only.
+def test_disvis_log(disvis):
+    """The messages of a multiprocessing search go to the haddock3 log, once.
 
     Logging them on the root logger configured it, which duplicated the
     haddock3 output in the terminal.
@@ -102,13 +103,18 @@ def test_disvis_log(disvis, caplog):
     disvis.previous_io = MockPreviousIO(
         (_topoaa_model("e2aP_1F3G_haddock"), _topoaa_model("hpr_ensemble_1_haddock"))
     )
-    disvis._run()
+    records = []
+    handler = logging.Handler()
+    handler.emit = records.append
+    log.addHandler(handler)
+    try:
+        disvis._run()
+    finally:
+        log.removeHandler(handler)
 
     assert logging.root.handlers == root_handlers
-    assert any(
-        r.name == "haddock" and r.message.startswith("Number of processors used")
-        for r in caplog.records
-    )
+    messages = [r.getMessage() for r in records]
+    assert sum(m.startswith("Number of processors used") for m in messages) == 1
 
 
 def test_superposition():

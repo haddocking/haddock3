@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-20: Fix model paths in self-contained reports of cleaned runs - Issue #1785
 - 2026-11-17: Replaced the NGL viewer of the analysis report by the Mol* viewer (styles, side chains, surfaces), with sortable plain HTML
   tables - Issue #1779
 - 2026-11-19: Added mybinder option to launch the notebooks

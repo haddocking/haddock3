@@ -1,5 +1,6 @@
 """Test the disvis module."""
 
+import logging
 from pathlib import Path
 
 import pytest
@@ -74,3 +75,24 @@ def test_disvis_two_molecules(disvis):
     disvis.previous_io = MockPreviousIO([receptor])
     with pytest.raises(RuntimeError, match="exactly 2 input molecules"):
         disvis._run()
+
+
+@has_disvis
+def test_disvis_log(disvis, caplog):
+    """The messages of a multiprocessing search go to the haddock3 log only.
+
+    Logging them on the root logger configured it, which duplicated the
+    haddock3 output in the terminal.
+    """
+    root_handlers = list(logging.root.handlers)
+    disvis.params.update(angle=30, ncores=2)
+    disvis.previous_io = MockPreviousIO(
+        [_topoaa_model("e2aP_1F3G_haddock"), _topoaa_model("hpr_ensemble_1_haddock")]
+    )
+    disvis._run()
+
+    assert logging.root.handlers == root_handlers
+    assert any(
+        r.name == "haddock" and r.message.startswith("Number of processors used")
+        for r in caplog.records
+    )

@@ -2,10 +2,12 @@
 
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 from pdbtools.pdb_reatom import run as renumber_atoms
 
+from haddock import log
 from haddock.core.typing import Any, FilePath
 
 
@@ -53,7 +55,7 @@ def search(
     matrices, the threshold of consistent restraints and the number of
     complexes found above it.
     """
-    from disvis.main import mp_cpu_disvis, run_disvis
+    import disvis.main
     from disvis.rotations import proportional_orientations, quat_to_rotmat
 
     quaternions, weights, _ = proportional_orientations(angle)
@@ -88,11 +90,15 @@ def search(
         queue = get_queue() or get_queue("all")
         if queue is None:
             raise RuntimeError("No OpenCL device was found for disvis")
-        results = run_disvis(queue, receptor, ligand, *search_args)
+        results = disvis.main.run_disvis(queue, receptor, ligand, *search_args)
     elif ncores > 1:
-        results = mp_cpu_disvis(receptor, ligand, *search_args)
+        # The messages of the multiprocessing search go to the haddock3 log:
+        #  `disvis.main.write` prints them and logs them on the root logger,
+        #  which configures it and duplicates the haddock3 terminal output.
+        with patch.object(disvis.main, "write", log.info):
+            results = disvis.main.mp_cpu_disvis(receptor, ligand, *search_args)
     else:
-        results = run_disvis(None, receptor, ligand, *search_args)
+        results = disvis.main.run_disvis(None, receptor, ligand, *search_args)
 
     selected, threshold, nfound = results.complexes.select(percentage, max_complexes)
     return selected, rotmat, threshold, nfound

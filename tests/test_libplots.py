@@ -475,6 +475,22 @@ def test_clt_table_handler_model_paths_relative_to_report_cleaned():
             assert model_path.endswith(".pdb.gz")
 
 
+def test_clt_table_handler_model_paths_self_contained_cleaned():
+    """Self-contained report of a cleaned run (issue #1785)."""
+    clt_file = Path(golden_data, "capri_clt_example.tsv")
+    ss_file = Path(golden_data, "capri_ss_example.tsv")
+    # as built by cli_analyse.get_top_ranked_mapping for a cleaned run
+    model = Path("../1_rigidbody/rigidbody_373.pdb.gz")
+    mapping = {model: Path("summary/cluster_1_model_1.pdb")}
+
+    df = clt_table_handler(
+        clt_file, ss_file, is_cleaned=True, top_ranked_mapping=mapping
+    )
+
+    assert df["best1"].iloc[0] == "summary/cluster_1_model_1.pdb"
+    assert df["best2"].iloc[0] == "../../1_rigidbody/rigidbody_339.pdb.gz"
+
+
 def test_clustered_table_html():
     """Cluster table cells show mean ± std and models get a View button."""
     df = clt_table_handler(

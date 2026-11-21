@@ -11,7 +11,7 @@ from haddock.modules.sampling.disvis.disvis import disvis_is_available
 
 
 if not disvis_is_available():
-    pytest.skip("disvis>=3.3.0 dependency not found", allow_module_level=True)
+    pytest.skip("disvis>=3.4.0 dependency not found", allow_module_level=True)
 
 EXAMPLE_DIR = (
     Path(__file__).resolve().parents[1] / "examples" / "docking-protein-protein"

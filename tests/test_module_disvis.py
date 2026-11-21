@@ -63,7 +63,8 @@ def test_disvis_models(disvis, tmp_path):
     """The models are the receptor and the placed ligand, with hydrogens.
 
     With an ensemble (two ligand models), `sampling` models are passed on in
-    total, from the pooled complexes of both searches.
+    total, from the pooled complexes of both searches, and each search
+    leaves the result files of DisVis in its folder.
     """
     receptor = _topoaa_model("e2aP_1F3G_haddock")
     ligand = _topoaa_model("hpr_ensemble_1_haddock")
@@ -76,6 +77,9 @@ def test_disvis_models(disvis, tmp_path):
     disvis._run()
 
     assert len(disvis.output_models) == 3
+    for idx in (1, 2):
+        for fname in ("accessible_complexes.out", "violations.out", "args.json"):
+            assert Path(f"disvis_search_{idx}", fname).exists()
     natoms = sum(_count_atoms(Path(m.path, m.file_name)) for m in (receptor, ligand))
     for model in disvis.output_models:
         assert _count_atoms(Path(model.file_name)) == natoms

@@ -33,6 +33,7 @@ more near-native models at the top than the disvis score did (4 instead of
 This needs more benchmarking.
 """
 
+import os
 import time
 from pathlib import Path
 
@@ -80,7 +81,7 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if the module is ready to use."""
         if not disvis_is_available():
             raise Exception(
-                "You are trying to use the `disvis` module but disvis>=3.3.0"
+                "You are trying to use the `disvis` module but disvis>=3.4.0"
                 " is not available, install it with"
                 " `pip install 'haddock3[disvis]'` (Python >= 3.11)"
             )
@@ -112,12 +113,15 @@ class HaddockModule(BaseHaddockModule):
             restraints = parse_restraints(
                 ambig_fname, fixed, scanning, log.info, self.params["min_maxdis"]
             )
+            # The result files of DisVis, one folder per search
+            directory = Path(f"disvis_search_{idx}")
+            directory.mkdir(exist_ok=True)
             t0 = time.monotonic()
             complexes, rotmat = search(
                 fixed,
                 scanning,
                 restraints,
-                directory=".",
+                directory=directory,
                 angle=self.params["angle"],
                 voxelspacing=self.params["voxelspacing"],
                 interaction_radius=self.params["interaction_radius"],
@@ -127,6 +131,14 @@ class HaddockModule(BaseHaddockModule):
                 max_complexes=self.params["max_complexes"],
                 ncores=self.params["ncores"],
                 gpu=self.params["gpu"],
+                inputs={
+                    "receptor": os.path.relpath(
+                        Path(receptor.path, receptor.file_name)
+                    ),
+                    "ligand": os.path.relpath(Path(ligand.path, ligand.file_name)),
+                    "restraints": str(ambig_fname),
+                    "min_maxdis": self.params["min_maxdis"],
+                },
             )
             log.info(
                 f"disvis search {idx}: {receptor.file_name} + {ligand.file_name}:"

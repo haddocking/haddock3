@@ -1,7 +1,6 @@
 """Wrapper around the `disvis` package."""
 
 import logging
-from inspect import signature
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -9,7 +8,7 @@ import numpy as np
 from pdbtools.pdb_reatom import run as renumber_atoms
 
 from haddock import log
-from haddock.core.typing import Any, FilePath
+from haddock.core.typing import Any, FilePath, Optional
 from haddock.libs.libalign import kabsch
 
 
@@ -28,13 +27,13 @@ _disvis_log.propagate = False
 
 
 def disvis_is_available() -> bool:
-    """Check whether a `disvis` with poses of several models is importable."""
+    """Check whether a `disvis` with `write_results` is importable."""
     try:
-        from disvis.complexes import Poses
+        import disvis.main
     except ImportError:
         return False
-    # disvis >= 3.3.0, with poses of several ligand models
-    return "model" in signature(Poses).parameters
+    # disvis >= 3.4.0, also with poses of several ligand models (3.3.0)
+    return hasattr(disvis.main, "write_results")
 
 
 def read_heavy_atoms(pdb_file: FilePath) -> Any:
@@ -62,16 +61,21 @@ def search(
     max_complexes: int = 50000,
     ncores: int = 1,
     gpu: bool = False,
+    inputs: Optional[dict] = None,
 ) -> tuple[Any, np.ndarray]:
-    """Run the DisVis search.
+    """Run the DisVis search and write its result files to `directory`.
 
     The search is run as by the `disvis` command line, on `ncores`
-    processes or on the GPU. Returns the complexes collected, those
-    consistent with at least `percentage` percent of the most restraints
-    found (at most `max_complexes`, see `disvis.disvis.Complexes`), and the
-    rotation matrices.
+    processes or on the GPU, and the files are those of the command
+    (accessible_interaction_space.mrc, accessible_complexes.out,
+    violations.out and z-score.out) but complexes.out, and args.json with
+    the options and `inputs` (e.g. the input files). Returns the complexes
+    collected, those consistent with at least `percentage` percent of the
+    most restraints found (at most `max_complexes`, see
+    `disvis.disvis.Complexes`), and the rotation matrices.
     """
     import disvis.main
+    from disvis.helpers import dump_args
     from disvis.rotations import proportional_orientations, quat_to_rotmat
 
     quaternions, weights, _ = proportional_orientations(angle)
@@ -112,6 +116,20 @@ def search(
     else:
         results = disvis.main.run_disvis(None, receptor, ligand, *search_args)
 
+    # complexes.out is not written: the complexes are pooled and clustered
+    disvis.main.write_results(
+        results,
+        rotmat,
+        ligand,
+        len(restraints),
+        None,
+        None,
+        SimpleNamespace(**{**vars(args), "write_complexes": None, "delimiter": None}),
+    )
+    args.angle = angle
+    dump_args(
+        SimpleNamespace(**vars(args), **(inputs or {})), Path(directory, "args.json")
+    )
     return results.complexes, rotmat
 
 

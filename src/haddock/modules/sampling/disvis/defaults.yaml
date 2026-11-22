@@ -101,7 +101,9 @@ min_interaction:
   title: Minimum interaction volume
   short: Minimum volume (A^3) of interaction required for a complex.
   long: Minimum volume (A^3) of interaction required for a complex (DisVis
-    option -iv).
+    option -iv). A small molecule (e.g. a ligand of a few tens of atoms) may
+    not reach the default of 300, and then no complex is found; lower it
+    (e.g. 100). For peptides and glycans, lowering it made no difference.
   group: "sampling"
   explevel: expert
 max_complexes:

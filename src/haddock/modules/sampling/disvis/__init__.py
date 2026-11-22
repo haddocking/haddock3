@@ -37,6 +37,10 @@ On one test case (E2A-HPR, with a 10-model HPR ensemble) this ranked a few
 more near-native models at the top than the disvis score did (4 instead of
 2 of the top 10), while `emscoring`, without the restraints, ranked fewer.
 This needs more benchmarking.
+
+For a small molecule, such as a ligand of a few tens of atoms, lower
+`min_interaction` (e.g. to 100): the default minimum volume of interaction
+(300 A^3) may not be reached, and then no complex is found.
 """
 
 import os

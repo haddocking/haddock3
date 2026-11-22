@@ -177,28 +177,46 @@ def superposition(
     return rotation, reference_center - rotation @ center
 
 
-def cluster_centers(
+def cluster_complexes(
     translations: np.ndarray,
     rotations: np.ndarray,
     coor: np.ndarray,
     model: np.ndarray,
     cluster_target: float = 6.0,
     min_population: int = 2,
-) -> tuple[list[int], float]:
+) -> tuple[list[np.ndarray], float]:
     """Cluster the complexes on the RMSD of the ligand.
 
     `coor` gives the RMSD atoms of each ligand model, relative to its
     center, and `model` the ligand model of each complex (see
-    `disvis.complexes.Poses`). Returns the indices of the cluster centers,
-    largest cluster first, and the RMSD cutoff, tuned for clusters of at
+    `disvis.complexes.Poses`). Returns the clusters (indices of their
+    complexes, center first), largest first, and the RMSD cutoff, tuned for clusters of at
     most `cluster_target` A, as `disvis-complexes --cluster`.
     """
     from disvis.complexes import Poses, cluster, tune_cutoff
 
     poses = Poses(translations, rotations, coor, model)
     cutoff = tune_cutoff(poses, cluster_target, min_population)
-    clusters = cluster(poses, cutoff, min_population)
-    return [int(members[0]) for members in clusters], cutoff
+    return cluster(poses, cutoff, min_population), cutoff
+
+
+def fill_from_clusters(
+    clusters: list[np.ndarray], consistent: np.ndarray, key: np.ndarray, total: int
+) -> list[int]:
+    """Return the cluster centers, then other members, at most `total`.
+
+    The other members follow in rounds over the clusters, in their order
+    (largest first): the second member of each cluster, then the third, and
+    so on; within a cluster, those consistent with the most restraints
+    first (and the smallest sampling keys).
+    """
+    members = [m[1:][np.lexsort((key[m[1:]], -consistent[m[1:]]))] for m in clusters]
+    selected = [int(m[0]) for m in clusters]
+    for k in range(max(map(len, members), default=0)):
+        if len(selected) >= total:
+            break
+        selected += [int(m[k]) for m in members if len(m) > k]
+    return selected[:total]
 
 
 def write_model(

@@ -12,7 +12,11 @@ from haddock import log
 from haddock.libs.libontology import PDBFile, TopologyFile
 from haddock.modules.sampling.disvis import DEFAULT_CONFIG
 from haddock.modules.sampling.disvis import HaddockModule as DisvisModule
-from haddock.modules.sampling.disvis.disvis import pool, superposition
+from haddock.modules.sampling.disvis.disvis import (
+    fill_from_clusters,
+    pool,
+    superposition,
+)
 
 from . import golden_data, has_disvis
 
@@ -162,3 +166,16 @@ def test_pool_most_consistent_first():
     assert kept.consistent.tolist() == [4, 3]
     assert search.tolist() == [0, 1]
     assert kept.rotation.tolist() == [0, 0]
+
+
+def test_fill_from_clusters():
+    """The centers come first, then other members in rounds over the clusters.
+
+    Within a cluster, the members consistent with the most restraints first.
+    """
+    clusters = [np.array([0, 1, 2, 3]), np.array([4, 5]), np.array([6, 7])]
+    consistent = np.array([5, 3, 4, 4, 5, 4, 5, 4])
+    key = np.arange(8)
+    assert fill_from_clusters(clusters, consistent, key, 6) == [0, 4, 6, 2, 5, 7]
+    assert fill_from_clusters(clusters, consistent, key, 2) == [0, 4]
+    assert len(fill_from_clusters(clusters, consistent, key, 20)) == 8

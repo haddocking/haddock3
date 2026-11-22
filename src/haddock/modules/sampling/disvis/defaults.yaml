@@ -198,3 +198,15 @@ min_population:
     not passed on (option --min-population of disvis-complexes).
   group: "clustering"
   explevel: expert
+fill_clusters:
+  default: false
+  type: boolean
+  title: Complete with other cluster members
+  short: With fewer clusters than sampling, also pass on other members of the clusters.
+  long: With cluster, when there are fewer clusters than sampling, the cluster
+    centers are followed by other members of the clusters, up to sampling, in
+    rounds over the clusters (largest first) - the second member of each
+    cluster, then the third, and so on - those consistent with the most
+    restraints first within a cluster.
+  group: "clustering"
+  explevel: expert

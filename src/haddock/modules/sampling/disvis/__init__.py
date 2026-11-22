@@ -12,6 +12,12 @@ together, so that up to `sampling` models are passed on in total.
 
 The models are written largest cluster first, and their score is minus the
 number of restraints their complex (the cluster center) is consistent with.
+When there are fewer clusters than `sampling`, `fill_clusters = true` adds
+other members of the clusters after the centers, up to `sampling`: the
+second member of each cluster, then the third, and so on. On the HADDOCK3
+examples with fewer clusters than `sampling`, this improved the top-ranked
+final cluster in four of five cases (but protein-peptide); it needs more
+benchmarking.
 A `seletop` step directly after `disvis` therefore selects the models
 consistent with the most restraints, and among those (often many with the
 same number) the largest clusters first, since its sort keeps the order of
@@ -45,8 +51,9 @@ from haddock.core.typing import Any, FilePath
 from haddock.libs.libontology import PDBFile
 from haddock.modules import BaseHaddockModule
 from haddock.modules.sampling.disvis.disvis import (
-    cluster_centers,
+    cluster_complexes,
     disvis_is_available,
+    fill_from_clusters,
     read_heavy_atoms,
     pool,
     search,
@@ -163,12 +170,24 @@ class HaddockModule(BaseHaddockModule):
 
         selected = list(range(len(complexes.rotation)))
         if self.params["cluster"]:
-            selected, cutoff = self._cluster(complexes, part, rotmat, combinations)
+            clusters, cutoff = self._cluster(complexes, part, rotmat, combinations)
             log.info(
-                f"disvis: {len(selected)} clusters of at least"
+                f"disvis: {len(clusters)} clusters of at least"
                 f" {self.params['min_population']} complexes within"
                 f" {cutoff:.2f} A RMSD"
             )
+            selected = [int(members[0]) for members in clusters]
+            if self.params["fill_clusters"]:
+                selected = fill_from_clusters(
+                    clusters,
+                    complexes.consistent,
+                    complexes.key,
+                    self.params["sampling"],
+                )
+                log.info(
+                    f"disvis: {len(selected) - len(clusters)} other cluster"
+                    " members added"
+                )
 
         expected: list[PDBFile] = []
         for k, i in enumerate(selected[: self.params["sampling"]], start=1):
@@ -214,7 +233,7 @@ class HaddockModule(BaseHaddockModule):
         part: np.ndarray,
         rotmat: np.ndarray,
         combinations: list,
-    ) -> tuple[list[int], float]:
+    ) -> tuple[list[np.ndarray], float]:
         """Cluster the pooled complexes on the RMSD of the ligand.
 
         The poses of the receptor models after the first are superposed on
@@ -243,7 +262,7 @@ class HaddockModule(BaseHaddockModule):
         frames = [superposition(c, receptor_coor[0]) for c in receptor_coor]
         rotation = np.asarray([frames[r][0] for r in receptor[part]])
         shift = np.asarray([frames[r][1] for r in receptor[part]])
-        return cluster_centers(
+        return cluster_complexes(
             np.einsum("nij,nj->ni", rotation, complexes.translation) + shift,
             rotation @ rotmat[complexes.rotation],
             np.stack(

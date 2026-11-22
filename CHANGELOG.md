@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-22: Added the `disvis` sampling module (optional install): a full 6D DisVis search for complexes consistent with the ambiguous restraints - Issue #1783
 - 2026-11-17: Replaced the NGL viewer of the analysis report by the Mol* viewer (styles, side chains, surfaces), with sortable plain HTML
   tables - Issue #1779
 - 2026-11-19: Added mybinder option to launch the notebooks

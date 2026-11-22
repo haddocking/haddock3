@@ -219,7 +219,8 @@ class HaddockModule(BaseHaddockModule):
         if not expected:
             self.finish_with_error(
                 "disvis found no complexes (or clusters) to pass on: try a"
-                " finer search, a lower `percentage` or `min_population`"
+                " finer search, a lower `percentage` or `min_population`, or"
+                " for a small molecule a lower `min_interaction`"
             )
         self.output_models = expected
         self.export_io_models()

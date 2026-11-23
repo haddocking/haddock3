@@ -181,7 +181,7 @@ class HaddockModule(BaseHaddockModule):
                 f" {cutoff:.2f} A RMSD"
             )
             selected = [int(members[0]) for members in clusters]
-            if self.params["fill_clusters"]:
+            if self.params["fill_clusters"] and len(clusters) < self.params["sampling"]:
                 selected = fill_from_clusters(
                     clusters,
                     complexes.consistent,

@@ -92,7 +92,7 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if the module is ready to use."""
         if not disvis_is_available():
             raise Exception(
-                "You are trying to use the `disvis` module but disvis>=3.4.0"
+                "You are trying to use the `disvis` module but disvis>=3.4.2"
                 " is not available, install it with"
                 " `pip install 'haddock3[disvis]'` (Python >= 3.11)"
             )

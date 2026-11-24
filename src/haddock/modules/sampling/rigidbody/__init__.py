@@ -82,7 +82,7 @@ class HaddockModule(BaseCNSModule):
             # Create a model for the expected output
             model = prepare_expected_pdb(combination, idx, ".", self.name)
             # Set additional attributes
-            model.restr_fname=str(ambig_fname)
+            model.restr_fname = str(ambig_fname)
             model.seed = seed
 
             self.output_models.append(model)
@@ -193,7 +193,7 @@ class HaddockModule(BaseCNSModule):
                 f"No restraints found for [{self.name}] module. "
                 "For targeted docking, supply CNS-valid restraints file(s) "
                 "using 'ambig_fname' and/or 'unambig_fname' and/or "
-                "'hbond_fname' parameter(s). "
+                "'hbond_fname' and/or 'logn_fname' parameter(s). "
                 "For ab-initio docking, set 'cmrest' or 'ranair' "
                 "parameters to true."
             )

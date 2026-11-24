@@ -187,7 +187,7 @@ hbond_cool3:
   group: 'distance restraints'
   explevel: expert
 logn_hot:
-  default: 40
+  default: 10
   type: integer
   min: 0
   max: 1000
@@ -197,7 +197,7 @@ logn_hot:
   group: 'distance restraints'
   explevel: expert
 logn_cool1:
-  default: 40
+  default: 10
   type: integer
   min: 0
   max: 1000
@@ -207,7 +207,7 @@ logn_cool1:
   group: 'distance restraints'
   explevel: expert
 logn_cool2:
-  default: 200
+  default: 50
   type: integer
   min: 0
   max: 1000
@@ -217,7 +217,7 @@ logn_cool2:
   group: 'distance restraints'
   explevel: expert
 logn_cool3:
-  default: 200
+  default: 50
   type: integer
   min: 0
   max: 1000

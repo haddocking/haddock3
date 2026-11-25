@@ -539,6 +539,7 @@ noe
     scale hbon $Data.hbond_cool3
     scale symm 0.0
     scale cont 0.0
+    scale ions 0.0
 end
 energy end
 evaluate ($eair = $noe)

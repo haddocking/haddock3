@@ -10,7 +10,11 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-noe class dist end
+noe
+    class     ions
+    potential ions biharmonic
+    scale     ions 50.0
+end
 
 ! first deal with monoatomic ions
 evaluate ($pcount = 0)

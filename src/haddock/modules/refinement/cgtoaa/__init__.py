@@ -27,7 +27,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseCNSModule):
-    """HADDOCK3 module energy minimization refinement."""
+    """HADDOCK3 module for CG to AA conversion."""
 
     name = RECIPE_PATH.name
 
@@ -45,11 +45,15 @@ class HaddockModule(BaseCNSModule):
 
     def _run(self) -> None:
         """Execute module."""
+        # Pool of jobs to be executed by the CNS engine
+        jobs: list[CNSJob] = []
+
         # Get the models generated in previous step
         try:
             models_to_refine = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
+
         self.output_models = []
         sampling_factor = self.params["sampling_factor"]
         if sampling_factor == 0:
@@ -67,8 +71,6 @@ class HaddockModule(BaseCNSModule):
                 " decrease the sampling_factor."
             )
 
-        # Pool of jobs to be executed by the CNS engine
-        jobs: list[CNSJob] = []
         idx = 1
         for model in models_to_refine:
             if isinstance(model, PDBFile):

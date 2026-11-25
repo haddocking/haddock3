@@ -2,7 +2,7 @@
 
 ![haddock3-logo](https://raw.githubusercontent.com/haddocking/haddock3/refs/heads/main/docs/figs/HADDOCK3-logo.png)
 
-This directory contains Jupyter notebooks that can be directly launched on Google Colab.
+This directory contains Jupyter notebooks that can be directly launched on Google Colab or on [Binder](https://mybinder.org).
 
 To run it locally on your system see the instructions below (does require a working python3 (3.10 to 3.13) installation).
 
@@ -10,11 +10,11 @@ To run it locally on your system see the instructions below (does require a work
 
 ## Jupyter notebooks
 
-| Notebooks                           |      Description                     |    Colab    |
-|-------------------------------------|--------------------------------------|--------------|
-| HADDOCK3-antibody-antigen.ipynb     | antibogy-antigen tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-antibody-antigen/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-antibody-antigen.ipynb) |
-| HADDOCK3-protein-DNA.ipynb          | protein-DNA tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-protein-DNA-basic/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-protein-dna.ipynb) |
-| HADDOCK3-protein-glycan.ipynb          | protein-glycan tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-protein-glycan/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-protein-glycan.ipynb) |
+| Notebooks                           |      Description                     |    Colab     |    Binder    |
+|-------------------------------------|--------------------------------------|--------------|--------------|
+| HADDOCK3-antibody-antigen.ipynb     | antibogy-antigen tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-antibody-antigen/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-antibody-antigen.ipynb) | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/haddocking/haddock3/HEAD?labpath=notebooks%2FHADDOCK3-antibody-antigen.ipynb)|
+| HADDOCK3-protein-DNA.ipynb          | protein-DNA tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-protein-DNA-basic/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-protein-dna.ipynb) | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/haddocking/haddock3/HEAD?labpath=notebooks%2FHADDOCK3-protein-dna.ipynb) |
+| HADDOCK3-protein-glycan.ipynb          | protein-glycan tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-protein-glycan/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-protein-glycan.ipynb) | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/haddocking/haddock3/HEAD?labpath=notebooks%2FHADDOCK3-protein-glycan.ipynb) |
 
 
 ---
@@ -41,6 +41,19 @@ wget https://raw.githubusercontent.com/haddocking/haddock3/refs/heads/main/noteb
 jupyter notebook
 ```
 go to <http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb> - click `Run All` 
+
+---
+
+## Running on Binder
+
+The Binder links open the notebook in JupyterLab on [mybinder.org](https://mybinder.org), a free service that requires no registration.
+The first launch can take several minutes while Binder builds the environment from the repository.
+The first cell of each notebook installs haddock3 and its dependencies, as on Colab.
+
+Note that:
+- Binder sessions have limited resources (about 1-2 GB of memory and few CPU cores), so the docking runs take much longer than on Colab or a local machine.
+- A session is stopped after about 10 minutes of inactivity and everything in it is lost; download your results before closing the tab.
+- The last cell, which saves results to Google Drive, only works on Colab. On Binder, download the files from the JupyterLab file browser instead.
 
 ---
 

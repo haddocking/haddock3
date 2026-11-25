@@ -1,5 +1,6 @@
 """Ligand topology utilities."""
 
+import math
 import re
 import subprocess
 import tempfile
@@ -8,7 +9,18 @@ from string import ascii_uppercase, digits
 
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.defaults import prodrg_exec, prodrg_param
-from haddock.libs.libpdb import format_atom_name, slc_element, slc_name, slc_resname
+from haddock.libs.libpdb import (
+    format_atom_name,
+    slc_chainid,
+    slc_element,
+    slc_icode,
+    slc_name,
+    slc_resname,
+    slc_resseq,
+    slc_x,
+    slc_y,
+    slc_z,
+)
 from haddock import log
 import shutil
 
@@ -115,6 +127,277 @@ def _demetalise_atom(line: str, metals: set[str]) -> str:
     return fixed + "\n"
 
 
+SUPPORTED_DOC_URL = (
+    "https://www.bonvinlab.org/haddock3-user-manual/supported_particles.html"
+)
+ION_DOC_URL = f"{SUPPORTED_DOC_URL}#supported-ions"
+
+
+def _charged_ions() -> dict[str, list[tuple[str, str]]]:
+    """Map each ion element to its charged residues in ``ion.top``.
+
+    Only single-atom residues whose name carries a charge (e.g. ``ZN2``) are
+    kept, which leaves out the neutral atoms (e.g. ``ZN``) and multi-atom
+    ions (e.g. ``SO4``).
+
+    Returns
+    -------
+    dict[str, list[tuple[str, str]]]
+        Element symbol mapped to the (residue name, atom name) pairs, e.g.
+        ``{"CL": [("CL1", "CL-1")], "FE": [("FE2", "FE+2"), ("FE3", "FE+3")]}``.
+    """
+    from haddock import toppar_path
+
+    ions: dict[str, list[tuple[str, str]]] = {}
+    resname = None
+    atoms: list[str] = []
+    for line in Path(toppar_path, "ion.top").read_text().splitlines():
+        words = line.split()
+        if not words:
+            continue
+        keyword = words[0].upper()
+        if keyword.startswith("RESI") and len(words) > 1:
+            resname, atoms = words[1].upper(), []
+        elif keyword == "ATOM" and resname and len(words) > 1:
+            atoms.append(words[1].upper())
+        elif keyword.startswith("END") and resname:
+            match = re.fullmatch(r"([A-Z]+)(\d)", resname)
+            if len(atoms) == 1 and match:
+                ions.setdefault(match.group(1), []).append((resname, atoms[0]))
+            resname = None
+    return ions
+
+
+def ion_naming_hint(pdb_file: FilePath, resnames: list[str]) -> str:
+    """Explain the ion naming for unknown residues that look like ions.
+
+    A residue looks like an ion when it consists of a single atom, or when its
+    name is an ion element followed by a charge that is not defined (e.g.
+    ``CU3``, or ``LI`` without a charge).
+
+    Parameters
+    ----------
+    pdb_file : FilePath
+        PDB file containing the residues.
+    resnames : list[str]
+        Names of the unknown residues.
+
+    Returns
+    -------
+    str
+        The explanation, or an empty string if no residue looks like an ion.
+    """
+    charged = _charged_ions()
+    # atom elements of the first copy of each residue
+    elements: dict[str, list[str]] = {}
+    first_copy: dict[str, str] = {}
+    with open(pdb_file) as fh:
+        for line in fh:
+            if not line.startswith(("ATOM  ", "HETATM")):
+                continue
+            resname = line[slc_resname].strip()
+            if resname in resnames and (
+                first_copy.setdefault(resname, line[21:27]) == line[21:27]
+            ):
+                element = line[slc_element].strip().upper()
+                elements.setdefault(resname, []).append(element)
+
+    hints = []
+    for resname in resnames:
+        atoms = elements.get(resname, [])
+        candidates = [resname.rstrip("0123456789+-").upper()]
+        if len(atoms) == 1:
+            candidates.append(atoms[0])
+        known = next((charged[c] for c in candidates if c in charged), None)
+        if known:
+            names = " or ".join(
+                f"residue {res} with atom {atom}" for res, atom in known
+            )
+            hints.append(f"- {resname}: if this is an ion, use {names}")
+        elif len(atoms) == 1:
+            hints.append(f"- {resname}: single atom, not a supported ion")
+    if not hints:
+        return ""
+    return (
+        "Ions need the absolute charge in the residue name and the exact charge, "
+        "positive or negative, in the atom name (e.g. residue ZN2 with atom ZN+2, "
+        "residue CL1 with atom CL-1):\n" + "\n".join(hints) + f"\nSee {ION_DOC_URL}"
+    )
+
+
+# Atoms bonding consecutive residues of a polymer chain: (previous, next)
+_CHAIN_LINKS = (("C", "N"), ("O3'", "P"))
+
+
+def find_chain_residues(
+    pdb_file: FilePath,
+    resnames: list[str],
+    cutoff: float = 2.0,
+) -> list[str]:
+    """Find the residues covalently linked to their neighbours in a chain.
+
+    Such residues (e.g. a modified amino acid within a protein) cannot be
+    parameterised by prodrg, which treats every residue as a free molecule
+    and does not create the bonds to the rest of the chain.
+
+    A residue is linked when its N (or P) is within ``cutoff`` of the C (or
+    O3') of the previous residue in the same chain, or its C (or O3') within
+    ``cutoff`` of the N (or P) of the next one.
+
+    Parameters
+    ----------
+    pdb_file : FilePath
+        PDB file containing the residues.
+    resnames : list[str]
+        Names of the residues to check.
+    cutoff : float
+        Maximum bond length, in Angstrom.
+
+    Returns
+    -------
+    list[str]
+        The linked residues, as ``"<resname> (chain <chain>, residue <resid>)"``.
+    """
+    residues = _read_residues(pdb_file)
+
+    def bonded(previous: dict, following: dict) -> bool:
+        return any(
+            atom1 in previous
+            and atom2 in following
+            and math.dist(previous[atom1], following[atom2]) < cutoff
+            for atom1, atom2 in _CHAIN_LINKS
+        )
+
+    def neighbour(index: int, chain: str) -> dict:
+        """Atoms of the residue at ``index`` if it is in ``chain``."""
+        if 0 <= index < len(keys) and keys[index][0] == chain:
+            return residues[keys[index]][1]
+        return {}
+
+    keys = list(residues)
+    linked = []
+    for i, key in enumerate(keys):
+        resname, atoms = residues[key]
+        if resname not in resnames:
+            continue
+        if bonded(neighbour(i - 1, key[0]), atoms) or bonded(
+            atoms, neighbour(i + 1, key[0])
+        ):
+            linked.append(f"{resname} ({_residue_label(key)})")
+    return linked
+
+
+# Ring atoms of the sugars and their anomeric carbon
+_SUGAR_RINGS = (
+    ({"C1", "C2", "C3", "C4", "C5", "O5"}, "C1"),  # aldopyranoses
+    ({"C1", "C2", "C3", "C4", "O4"}, "C1"),  # aldofuranoses
+    ({"C2", "C3", "C4", "C5", "C6", "O6"}, "C2"),  # ketopyranoses, e.g. SIA
+    ({"C2", "C3", "C4", "C5", "O5"}, "C2"),  # ketofuranoses
+)
+
+
+def find_linked_sugars(
+    pdb_file: FilePath,
+    resnames: list[str],
+    cutoff: float = 2.0,
+) -> list[str]:
+    """Find the sugars linked to another residue by a glycosidic bond.
+
+    Like residues within a chain, such sugars (e.g. an unsupported glycan
+    unit bound to a protein) cannot be parameterised by prodrg, which does
+    not create the glycosidic bonds.
+
+    A residue is a sugar when it has the ring atoms of a pyranose or a
+    furanose (see ``_SUGAR_RINGS``). It is linked when its anomeric carbon
+    (C1, or C2 for ketoses such as sialic acids) is within ``cutoff`` of an O,
+    N or S atom of another residue (e.g. ASN ND2, or O4 of another sugar), or
+    when one of its O atoms is within ``cutoff`` of the anomeric carbon of
+    another sugar.
+
+    Parameters
+    ----------
+    pdb_file : FilePath
+        PDB file containing the residues.
+    resnames : list[str]
+        Names of the residues to check.
+    cutoff : float
+        Maximum bond length, in Angstrom.
+
+    Returns
+    -------
+    list[str]
+        The linked sugars and their partners, as
+        ``"<resname> (chain <chain>, residue <resid>) linked to <partner>"``.
+    """
+    residues = _read_residues(pdb_file)
+    # possible anomeric carbons of each sugar; a wrong candidate (e.g. C2 of
+    # an aldose) is harmless, as only bonds to other residues are considered
+    anomeric = {
+        key: list(dict.fromkeys(c for ring, c in _SUGAR_RINGS if ring <= set(atoms)))
+        for key, (_, atoms) in residues.items()
+    }
+    anomeric = {key: carbons for key, carbons in anomeric.items() if carbons}
+    linked = []
+    for key, carbons in anomeric.items():
+        resname, atoms = residues[key]
+        if resname not in resnames:
+            continue
+        partners = []
+        for other, (other_resname, other_atoms) in residues.items():
+            if other == key:
+                continue
+            label = f"{other_resname} {other[1].strip()}"
+            # glycosidic bond from the anomeric carbon of this sugar...
+            partners.extend(
+                f"{label} {name}"
+                for carbon in carbons
+                for name, coords in other_atoms.items()
+                if name[0] in "ONS" and math.dist(atoms[carbon], coords) < cutoff
+            )
+            # ...or to the anomeric carbon of another sugar
+            partners.extend(
+                f"{label} {carbon}"
+                for carbon in anomeric.get(other, [])
+                for name, coords in atoms.items()
+                if name[0] == "O" and math.dist(other_atoms[carbon], coords) < cutoff
+            )
+        if partners:
+            linked.append(
+                f"{resname} ({_residue_label(key)}) linked to {', '.join(partners)}"
+            )
+    return sorted(linked)
+
+
+def _read_residues(
+    pdb_file: FilePath,
+) -> dict[tuple[str, str], tuple[str, dict[str, tuple[float, float, float]]]]:
+    """Read the atom coordinates of each residue, in the order of the file.
+
+    Returns
+    -------
+    dict
+        ``(chain, resid)`` mapped to ``(resname, {atom name: coordinates})``.
+    """
+    residues: dict = {}
+    with open(pdb_file) as fh:
+        for line in fh:
+            if not line.startswith(("ATOM  ", "HETATM")):
+                continue
+            key = (line[slc_chainid], line[slc_resseq] + line[slc_icode])
+            atoms = residues.setdefault(key, (line[slc_resname].strip(), {}))[1]
+            atoms[line[slc_name].strip()] = (
+                float(line[slc_x]),
+                float(line[slc_y]),
+                float(line[slc_z]),
+            )
+    return residues
+
+
+def _residue_label(key: tuple[str, str]) -> str:
+    """Format a ``(chain, resid)`` key as ``"chain A, residue 12"``."""
+    return f"chain {key[0].strip() or '-'}, residue {key[1].strip()}"
+
+
 def extract_ligand(
     pdb_file: FilePath,
     resnames: list[str],
@@ -202,6 +485,16 @@ def _run_prodrg_single(
         If prodrg exits with a non-zero return code or the expected output
         files are not created.
     """
+    natoms = sum(
+        line.startswith(("ATOM  ", "HETATM"))
+        for line in pdb_file.read_text().splitlines()
+    )
+    if natoms < 3:
+        # prodrg rejects them, e.g. ions
+        raise RuntimeError(
+            f"prodrg cannot handle molecules of less than three atoms (found {natoms})"
+        )
+
     with tempfile.TemporaryDirectory() as tmpdir:
         # NOTE: PRODRG has a max of 79 chars as input, make sure to pass relative
         #  paths so we need to copy everything to this temporary dir
@@ -218,16 +511,20 @@ def _run_prodrg_single(
         if cnssep:
             prodrg_args.append(f"CNSSEP={cnssep}")
 
-        result = subprocess.run(
-            prodrg_args,
-            cwd=tmpdir,
-            capture_output=True,
-            text=True,
-        )
+        try:
+            result = subprocess.run(
+                prodrg_args,
+                cwd=tmpdir,
+                capture_output=True,
+                text=True,
+            )
+        except OSError as err:
+            raise RuntimeError(f"could not execute {prodrg_exec}: {err}") from err
 
+        messages = _prodrg_messages(f"{result.stdout}\n{result.stderr}")
         if result.returncode != 0:
             raise RuntimeError(
-                f"prodrg failed with return code {result.returncode}:\n{result.stderr}"
+                f"prodrg failed with return code {result.returncode}:\n{messages}"
             )
 
         tmp_top = Path(tmpdir) / "DRGCNS.TOP"
@@ -236,21 +533,49 @@ def _run_prodrg_single(
         # TODO: Check if the atom names have been changed!
         # tmp_pdb = Path(tmpdir) / "<???>.pdb"
 
+        # prodrg exits with 0 even when it fails, without writing its output
         if not tmp_top.exists() or not tmp_par.exists():
-            ls = list(Path(tmpdir).iterdir())
-            prodrg_err = Path(tmpdir) / "DRGDRG.ERR"
-            prodrg_log = Path(tmpdir) / "DRGDRG.LOG"
-            log.error(f"DRGDRG.log: {prodrg_log.read_text()}")
-            log.error(f"DRGDRG.err: {prodrg_err.read_text()}")
-            log.debug(f"ls: {ls}")
-            raise RuntimeError(
-                f"prodrg finished but expected output files are missing in {tmpdir} "
-            )
+            log.debug(f"prodrg output:\n{result.stdout}\n{result.stderr}")
+            raise RuntimeError(f"prodrg did not generate any output:\n{messages}")
 
         top_content = _sanitize_atom_names(tmp_top.read_text())
         par_content = _sanitize_atom_names(_remove_nbonds(tmp_par.read_text()))
 
     return top_content, par_content
+
+
+def _prodrg_messages(output: str, nlines: int = 5) -> str:
+    """Return the part of the prodrg output that explains a failure.
+
+    prodrg prints its errors on stdout, prefixed with ``ERRDRG>``, after a
+    long banner. The line just before the first error, which usually names
+    the offending atom, is kept as well. Without any error line, the last
+    ``nlines`` lines are returned.
+
+    Parameters
+    ----------
+    output : str
+        Standard output (and error) of prodrg.
+    nlines : int
+        Number of lines returned when no ``ERRDRG>`` line is found.
+
+    Returns
+    -------
+    str
+        The relevant prodrg output lines.
+    """
+    lines = [
+        line.strip()
+        for line in output.splitlines()
+        if line.strip() not in ("", "PRODRG>")
+    ]
+    first_error = next(
+        (i for i, line in enumerate(lines) if line.startswith("ERRDRG>")),
+        None,
+    )
+    if first_error is None:
+        return "\n".join(lines[-nlines:])
+    return "\n".join(lines[max(first_error - 1, 0) :])
 
 
 def _used_cofactor_separators() -> set[str]:
@@ -360,7 +685,12 @@ def run_prodrg(
                 ligand_pdb = extract_ligand(
                     pdb_file, [resname], Path(tmpdir, f"{resname}.pdb")
                 )
-                top_content, par_content = _run_prodrg_single(ligand_pdb, cnssep=cnssep)
+                try:
+                    top_content, par_content = _run_prodrg_single(
+                        ligand_pdb, cnssep=cnssep
+                    )
+                except RuntimeError as err:
+                    raise RuntimeError(f"residue {resname}: {err}") from err
             top_parts.append(top_content)
             par_parts.append(par_content)
         top_path.write_text("\n".join(top_parts))

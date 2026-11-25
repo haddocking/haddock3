@@ -1,20 +1,50 @@
 # Changelog
 
-- 2026-10-09: Added log normal distance restraining function - Issue #1713
+- 2026-11-25: Added log-normal distance restraints as a new restraint class (`logn_fname`) in `rigidbody`, `flexref`,
+  `emref` and `mdref`, with the same default force constants as the ambiguous restraints - Issue #1713
+- 2026-11-20: Fix model paths in self-contained reports of cleaned runs - Issue #1785
+- 2026-11-17: Replaced the NGL viewer of the analysis report by the Mol* viewer (styles, side chains, surfaces), with sortable plain HTML
+  tables - Issue #1779
+- 2026-11-19: Added mybinder option to launch the notebooks
+- 2026-11-15: Updated the `deeprank` module to deeprank-gnn-esm 2.0.2 with all interfaces scored, models are ranked by the mean (default), minimum or one chain pair predicted fnat  - Issue #1671
+- 2026-11-15: Ensure that only CNS-related jobs are sent to the grid - Issue #1765
+- 2026-11-15: More efficient grid job polling - Issue #1766
+- 2026-11-15: Proper cleaning of grid /tmp directories - Issue #1771
+- 2026-11-15: Added retrial when dirac communication fails - Issue #1769
+- 2026-11-14: Modified the packaging of jobs for grid submission - Issue #1768
+- 2026-10-28: Added check to detect insertion codes and return an error message - Issue #1746
+- 2026-10-28: Turned true by default the generation of ligand topo/param files - Issue #1743
+- 2026-10-27: Fixed traceback when running caprieval with multimodel reference pdb - Issue #1737
+- 2026-10-26: Improved the consistency of CNS scripts across modules - Issue #1729
+- 2026-10-25: Removed the duplicate `B1S`, `B1SL` and `A1SL` PRESidue definitions from `carbohydrate.top` that CNS reported as `RTFRDR-ERR` on every topology read - Issue #1717
+- 2026-10-25: Made the `timestep` parameter of `mdref` and `mdscoring` effective; the CNS scripts hardcoded `timest=0.002` - Issue #1680
+- 2026-10-23: Specify usage of charset utf-8 when generating a plotly figure - Issue #1734
+- 2026-10-17: Added python script to automate regressions tests using the examples - Issue #1731
+- 2026-10-14: Corrected the restraints definition in contactairs - Issue #1727
+- 2026-10-13: Lowered the CG nucleic acid chain break cutoff from 10 to 6 Å to detect single missing nucleotide - Issue #1722
+- 2026-10-13: Fixed nucleobase selection for DNA default caprieval - Issue #1658
+- 2026-10-13: Made CG DNA/RNA base ring angles consistent with the ring bonds (deviating from original Martini values) - PR #1721
+- 2026-10-12: Corrected adenine CG parameters - issue #1720
+- 2026-10-13: Caps the number of core used for the cleaning - Issue #1708
+- 2026-10-11: Updated h-bond detection for DNA/RNA in both AA and CG modes and added Hoogsteen pairs detections - Issue #1659
+- 2026-09-23: Adapted the memory estimate of the contactmap module - Issue #1699
+- 2026-10-11: Removed the dead backwards `A23a`/`A26a` sialylation detection loops from `bondglycans.cns` - Issue #1711
+- 2026-10-11: Updated glycans linkage scripts - Issue #1714
+- 2026-10-11: Fixed the martinise library (libaa2cg) to make it deterministic - Issue #1657
 - 2026-10-03: Corrected mislabelled A2G glycan and fixed some parameters - Issue #1709
 - 2026-10-02: Corrected ssdihed: range for automatic alpha/beta dihedrals and the definition in yaml - Issue #1668 
 - 2026-09-23: Fixed various issues in notebooks - Issue #1697
 - 2026-09-21: Corrected seperate.cns - Issue #1392
-- 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
 - 2026-09-18: Added `dnascan` module for mutagenesis scanning of DNA base pairs - Issue #1634
+- 2026-09-17: Implemented worflow validation again general parameters - Issue #1693
 - 2026-09-09: Adding missing execution modes to default.yaml - Issue #1690
-- 2026-08-01: Fixed autotoppar/PRODRG topology generation when the unknown ligand is embedded in a larger system - Issue #1645
 - 2026-09-02: Fixed identical seed per sampling_factor replica in flexref, mdref and emref - Issue #1685
-- 2026-08-05: Harmonised running mode of test config files - Issue #1655
 - 2026-08-10: Added missing improper for HYP - Issue #1662
 - 2026-08-05: Removed identical duplicate `ANGLe` statements from `protein-allhdg5-4.param` and `protein-CG-Martini-2-2.param` - Issue #1589
+- 2026-08-05: Harmonised running mode of test config files - Issue #1655
 - 2026-08-04: Added workflow module ordering validation - related to Issue #1530
 - 2026-08-02: Fixed logging/warning leaks - Issue #1647
+- 2026-08-01: Fixed autotoppar/PRODRG topology generation when the unknown ligand is embedded in a larger system - Issue #1645
 - 2026-07-31: Fixed D-amino acid detection - Issue #1636
 - 2026-07-31: Fixed topocg issue removing ligands - Issue #1638
 - 2026-07-27: Added `rnascan` module for mutagenesis scanning of RNA bases (mutating interface nucleotides to A, C, G, U) - Issue #1631

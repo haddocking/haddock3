@@ -299,7 +299,7 @@ for $bath in (100 200 300) loop heat
     do (vz=maxwell($bath)) (all)
 
     dynamics cartesian
-        nstep=$refine.heatsteps timest=0.002{ps}
+        nstep=$refine.heatsteps timest=$refine.timestep{ps}
         temperature=$bath  tcoupling = true
         nprint=50
     end
@@ -326,7 +326,7 @@ do (harm = 20) (resn DAN and name OO)
 
 ! MD refinement
 dynamics cartesian
-   nstep=$refine.steps timest=0.002{ps}
+   nstep=$refine.steps timest=$refine.timestep{ps}
    temperature=$bath  tcoupling = true
    nprint=50
 end
@@ -353,7 +353,7 @@ do (harm = 20) (resn DAN and name OO)
 for $bath in (300 200 100) loop cool
 
     dynamics cartesian
-       nstep=$refine.coolsteps timest=0.002{ps}
+       nstep=$refine.coolsteps timest=$refine.timestep{ps}
        temperature=$bath  tcoupling = true
        nprint=50
     end
@@ -372,16 +372,19 @@ end if
 
 {* ======================= calculate free molecules internal energy *}
 
-igroup
-    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
-                (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
-end
-
 do (refx=x) (all)
 do (refy=y) (all)
 do (refz=z) (all)
 
 fix sele=(resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DMS) end
+
+flag excl * include bond angle dihe impr vdw end
+
+evaluate ($elec = 0.0)
+evaluate ($eintfree = 0.0)
+if ($Data.flags.elec eq true) then
+    flag include elec end
+end if
 
 inline @MODULE:calc_free-ene.cns
 
@@ -452,7 +455,7 @@ evaluate ($violations_test_noe=0)
 energy end
 evaluate ($etot = $ener - $noe)
 evaluate ($noe = $eair)
-evaluate ($etot = $etot + $noe)
+evaluate ($etot = $vdw + $elec + $noe)
 
 inline @MODULE:print_coorheader.cns
 

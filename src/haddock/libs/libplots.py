@@ -1,7 +1,7 @@
 """Plotting functionalities."""
 
-import json
 import shutil
+from html import escape
 
 import numpy as np
 import pandas as pd
@@ -25,7 +25,7 @@ from haddock.core.typing import (
     Optional,
     Union,
 )
-from haddock.libs.assets import haddock_ui_path
+from haddock.libs.assets import MOLSTAR_VERSION, haddock_ui_path
 
 
 SCATTER_PAIRS = [
@@ -138,7 +138,7 @@ def create_html(
     """
     # Check if plotly javascript must be flushed in this file
     if not plotly_js_import:
-        plotly_js_import = f'<script src="{plotly_cdn_url()}"></script>'
+        plotly_js_import = f'<script charset="utf-8" src="{plotly_cdn_url()}"></script>'
 
     # Write HTML content
     html_content = f"""
@@ -921,54 +921,20 @@ def clt_table_handler(
     structs_df = structs_df.round(2)
 
     # if the run will be cleaned, the structures are going to be gzipped
-    if not top_ranked_mapping:
-        if is_cleaned:
-            # substitute the values in the df by adding .gz at the end
-            structs_df["model"] = structs_df["model"].replace(
-                to_replace=r"(\.pdb)$",
-                value=r".pdb.gz",
-                regex=True,
-            )
-        # ss_file is in NN_caprieval/ while report is in
-        # analysis/NN_caprieval_analysis/
-        # need to correct model paths by prepending ../
-        structs_df["model"] = "../" + structs_df["model"]
-    else:
-        # ss_file is in NN_caprieval/ while report is in
-        # analysis/NN_caprieval_analysis/
-        # need to correct model paths by prepending ../
-        def correct_relative_paths(
-            path: str,
-            top_ranked_mapping: Optional[dict[Path, Path]],
-        ) -> str:
-            """Prepend model paths in capri_ss files get their relative paths.
-
-            Parameters
-            ----------
-            path : str
-                Original path to a model file.
-            top_ranked_mapping : Optional[dict[Path, Path]]
-                Optional filepath mapping of top ranked models.
-
-            Returns
-            -------
-            new_path : str
-                New path to the file
-            """
-            try:
-                # If top ranked is provided, use that information
-                new_path = top_ranked_mapping[path]
-            except (
-                KeyError,
-                TypeError,
-            ):
-                # Otherwise just prepend by `../`
-                new_path = f"../{path}"
-            return new_path
-
-        structs_df["model"] = structs_df["model"].apply(
-            lambda x: correct_relative_paths(x, top_ranked_mapping)
+    if is_cleaned:
+        # substitute the values in the df by adding .gz at the end
+        structs_df["model"] = structs_df["model"].replace(
+            to_replace=r"(\.pdb)$",
+            value=r".pdb.gz",
+            regex=True,
         )
+    # Top ranked models copied next to the report (self-contained) are
+    # linked to their copy. Other paths are relative to NN_caprieval/ while
+    # the report is in analysis/NN_caprieval_analysis/: prepend ../
+    mapping = top_ranked_mapping or {}
+    structs_df["model"] = structs_df["model"].apply(
+        lambda path: str(mapping.get(Path(path), f"../{path}"))
+    )
 
     is_unclustered = clusters_df["cluster_rank"].unique().tolist() == ["-"]
     # If unclustered, we only want to show the top 10 structures in a table.
@@ -993,14 +959,9 @@ def clt_table_handler(
     return df_merged
 
 
-def _css_styles_for_report(offline: bool) -> str:
+def _css_styles_for_report() -> str:
     """
     Generate custom CSS styles for an analysis report.
-
-    Parameters
-    ----------
-    offline : bool
-        If True, the HTML will be generated for offline use.
 
     Returns
     -------
@@ -1038,25 +999,77 @@ def _css_styles_for_report(offline: bool) -> str:
     tr:nth-child(even) {
         background-color: #f2f2f2
     }
-    .js-plotly-plot .plotly .modebar svg {
-	    display: inline;
+    th.sortable {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    th.sortable::after {
+        content: " \\21C5";
+        color: #aaa;
+    }
+    th[data-dir="asc"]::after {
+        content: " \\25B2";
+        color: inherit;
+    }
+    th[data-dir="desc"]::after {
+        content: " \\25BC";
+        color: inherit;
+    }
+    button.view {
+        border: none;
+        background: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+    }
+    a:hover, button.view:hover {
+        text-decoration: underline;
+    }
+    #viewer-dialog {
+        width: 75vw;
+        height: 75vh;
+        padding: 0;
+    }
+    #viewer-dialog[open] {
+        display: flex;
+        flex-direction: column;
+    }
+    #viewer-dialog header {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5em;
+    }
+    #viewer {
+        flex: 1;
+        position: relative;
     }
     """
-    css_link = (
-        "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/index.css"
-    )
+    return f"<style>{custom_css}</style>"
+
+
+def _molstar_url(offline: bool) -> str:
+    """
+    Return the URL of the folder of the Mol* viewer files for the report.
+
+    Parameters
+    ----------
+    offline : bool
+        If True, the folder in the run directory where `report_generator`
+        copies the files shipped with haddock3, otherwise the CDN.
+
+    Returns
+    -------
+    url : str
+        The URL of the folder, relative to the report.
+    """
     if offline:
-        # copy the css file to the report directory
-        src = haddock_ui_path / "index.css"
-        shutil.copyfile(str(src), "../data/ui/index.css")
-        css_link = "../../data/ui/index.css"
-    table_css = f' <link href="{css_link}" rel="stylesheet" />'
-    return f"{table_css}<style>{custom_css}</style>"
+        return "../../data/ui"
+    return f"https://cdn.jsdelivr.net/npm/molstar@{MOLSTAR_VERSION}/build/viewer"
 
 
 def _generate_html_report(
     step: str,
-    figures: list[Union[Figure, pd.DataFrame]],
+    figures: list[Union[Figure, pd.DataFrame, str]],
     report_path: FilePath,
     offline: bool = False,
 ) -> str:
@@ -1069,8 +1082,8 @@ def _generate_html_report(
         The step number.
     figures : list
         A list of figures to include in the HTML body.
-        Each figure can be either a string representing a table or a
-        plotly.graph_objects.Figure object.
+        Each figure can be a table (pandas DataFrame), a
+        plotly.graph_objects.Figure object or HTML text.
     offline : bool
         If True, the HTML will be generated for offline use.
 
@@ -1080,13 +1093,13 @@ def _generate_html_report(
         The generated HTML report as a string.
     """
     html_report = "<!DOCTYPE html><html lang='en'>"
-    html_report += _generate_html_head(step, offline)
+    html_report += _generate_html_head(step)
     html_report += _generate_html_body(figures, report_path, offline=offline)
     html_report += "</html>"
     return html_report
 
 
-def _generate_html_head(step, offline):
+def _generate_html_head(step):
     """
     Generate the HTML head section for an analysis report.
 
@@ -1094,8 +1107,6 @@ def _generate_html_head(step, offline):
     ----------
     step : str
         The step number.
-    offline : bool
-        If True, the HTML will be generated for offline use.
 
     Returns
     -------
@@ -1105,78 +1116,126 @@ def _generate_html_head(step, offline):
     head = "<head>"
     head += f"<title>Analysis report of step {step}</title>"
     head += f"<p class='title'>Analysis report of step {step}</p>"
-    head += _css_styles_for_report(offline)
+    head += _css_styles_for_report()
     head += "</head>"
     return head
 
 
-def _generate_unclustered_table_html(
-    table_id: str,
+def _table_cell(value: Any, kind: str = "") -> str:
+    """
+    Return the HTML cell of a report table.
+
+    Parameters
+    ----------
+    value : Any
+        The value of the cell, a dict with `mean` and `std` for the
+        statistics of a cluster.
+    kind : str
+        `structure` for the path of a model, which gets a download link
+        and a button to open it in the viewer.
+
+    Returns
+    -------
+    cell : str
+        The `<td>` element, with the value to sort on in `data-value`.
+    """
+    if isinstance(value, dict):
+        mean, std = value["mean"], value["std"]
+        text = mean if std == 0 else f"{mean} &plusmn; {std}"
+        return f'<td data-value="{mean}">{text}</td>'
+    if pd.isna(value):
+        return "<td>NA</td>"
+    if kind == "structure":
+        if not value:
+            return "<td></td>"
+        url = escape(value)
+        name = escape(Path(value).name)
+        return (
+            f'<td><a href="{url}" download="{name}">&#8595;&nbsp;Download</a>'
+            f'<br><button type="button" class="view" data-url="{url}">'
+            "&#x1F441;&nbsp;View</button></td>"
+        )
+    text = escape(str(value))
+    return f'<td data-value="{text}">{text}</td>'
+
+
+def _table_html(
+    headers: list[tuple[str, str, str]],
     df: pd.DataFrame,
-    bundle_url: str,
+    one_row_per_record: bool,
 ) -> str:
-    data = df.to_json(orient="records")
+    """
+    Return the HTML table of a report.
+
+    Parameters
+    ----------
+    headers : list of (key, label, kind)
+        The columns of `df` to show, with their label and kind (see
+        `_table_cell`). The columns of models cannot be sorted on.
+    df : pandas DataFrame
+        The data of the table, sorted on the first column of `headers`.
+    one_row_per_record : bool
+        If True, each record of `df` is a row, otherwise a column, with
+        the labels as row headers.
+
+    Returns
+    -------
+    table : str
+        The `<table>` element.
+    """
+    records = df.to_dict(orient="records")
+
+    def header(key: str, label: str, kind: str, scope: str) -> str:
+        sortable = ""
+        if kind != "structure":
+            sortable = ' class="sortable" title="Click to sort, again to reverse"'
+        # The data come sorted on the first header (the rank).
+        if key == headers[0][0]:
+            sortable += ' data-dir="asc"'
+        return f'<th scope="{scope}"{sortable}>{escape(label)}</th>'
+
+    if one_row_per_record:
+        hint = "Click on a column header to sort the table"
+        head = "".join(header(*h, "col") for h in headers)
+        thead = f"<thead><tr>{head}</tr></thead>"
+        rows = [
+            "".join(_table_cell(record[key], kind) for key, _, kind in headers)
+            for record in records
+        ]
+    else:
+        hint = "Click on a row header to sort the table"
+        thead = ""
+        rows = [
+            header(key, label, kind, "row")
+            + "".join(_table_cell(record[key], kind) for record in records)
+            for key, label, kind in headers
+        ]
+    body = "".join(f"<tr>{row}</tr>" for row in rows)
+    return f"<p><i>{hint}</i></p><table>{thead}<tbody>{body}</tbody></table>"
+
+
+def _generate_unclustered_table_html(df: pd.DataFrame) -> str:
+    """Return the HTML table of the best structures of an unclustered run."""
     headers = (
-        [
-            {"key": "caprieval_rank", "label": "Structure Rank", "sorted": "asc"},
-            {
-                "key": "model",
-                "label": "Structure",
-                "sortable": False,
-                "type": "structure",
-            },
-        ]
-        + [
-            {"key": k, "label": v, "type": "stats"}
-            for k, v in AXIS_NAMES.items()
-            if k in df.columns
-        ]
-        + [
-            {"key": "id", "label": "Structure ID"},
-        ]
+        [("caprieval_rank", "Structure Rank", ""), ("model", "Structure", "structure")]
+        + [(k, v, "") for k, v in AXIS_NAMES.items() if k in df.columns]
+        + [("id", "Structure ID", "")]
     )
-    return f"""
-            <div id="{table_id}"></div>
-            <script id="data{table_id}" type="application/json">
-            {{
-                "structures": {data},
-                "headers": {json.dumps(headers)}
-            }}
-            </script>
-            <script type="module">
-            import {{ renderStructureTable }} from "{bundle_url}";
-
-            const props = JSON.parse(document.getElementById("data{table_id}").text)
-
-            renderStructureTable(document.getElementById('{table_id}'), props.headers, props.structures)
-            </script>"""  # noqa : E501
+    return _table_html(headers, df, one_row_per_record=True)
 
 
-def _generate_clustered_table_html(
-    table_id: str,
-    df: pd.DataFrame,
-    bundle_url: str,
-) -> str:
-    data = df.to_json(orient="records")
+def _generate_clustered_table_html(df: pd.DataFrame) -> str:
+    """Return the HTML table of the clusters, with their best structures."""
     nr_best_columns = df.filter(like="best").shape[1]
     headers = (
         [
-            {"key": "cluster_rank", "label": "Cluster Rank", "sorted": "asc"},
-            {"key": "cluster_id", "label": "Cluster ID"},
-            {"key": "n", "label": "Cluster size"},
+            ("cluster_rank", "Cluster Rank", ""),
+            ("cluster_id", "Cluster ID", ""),
+            ("n", "Cluster size", ""),
         ]
+        + [(k, v, "") for k, v in AXIS_NAMES.items() if k in df.columns]
         + [
-            {"key": k, "label": v, "type": "stats"}
-            for k, v in AXIS_NAMES.items()
-            if k in df.columns
-        ]
-        + [
-            {
-                "key": f"best{i}",
-                "label": f"Nr {i} best structure",
-                "sortable": False,
-                "type": "structure",
-            }
+            (f"best{i}", f"Nr {i} best structure", "structure")
             for i in range(1, nr_best_columns + 1)
         ]
     )
@@ -1187,26 +1246,11 @@ def _generate_clustered_table_html(
             'The "Other" cluster is not a real cluster it contains'
             "all structures that are not in the top 10 clusters."
         )
-
-    return f"""
-            <div id="{table_id}"></div>
-            <div>{caption}</div>
-            <script id="data{table_id}" type="application/json">
-            {{
-                "clusters": {data},
-                "headers": {json.dumps(headers)}
-            }}
-            </script>
-            <script type="module">
-            import {{ renderClusterTable }} from "{bundle_url}";
-            const props = JSON.parse(document.getElementById("data{table_id}").text)
-
-            renderClusterTable(document.getElementById('{table_id}'), props.headers, props.clusters);
-            </script>"""  # noqa : E501
+    return f"{_table_html(headers, df, one_row_per_record=False)}<div>{caption}</div>"
 
 
 def _generate_html_body(
-    figures: list[Union[Figure, pd.DataFrame]],
+    figures: list[Union[Figure, pd.DataFrame, str]],
     report_path: FilePath,
     offline: bool = False,
 ) -> str:
@@ -1217,8 +1261,8 @@ def _generate_html_body(
     ----------
     figures : list
         A list of figures to include in the HTML body.
-        Each figure can be either a string representing a table or a
-        plotly.graph_objects.Figure object.
+        Each figure can be a table (pandas DataFrame), a
+        plotly.graph_objects.Figure object or HTML text.
     offline : bool
         If True, the HTML will be generated for offline use.
 
@@ -1228,28 +1272,15 @@ def _generate_html_body(
         The generated HTML body as a string.
     """
     body = "<body>"
-    table_index: int = 1
     fig_index: int = 1
     for figure in figures:
-        if isinstance(figure, pd.DataFrame):  # tables
-            table_index += 1
-            table_id = f"table{table_index}"
-
-            is_unclustered = "cluster_rank" not in figure
-            bundle_url = "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/report.bundle.js"
-            if offline:
-                # copy the bundle to the run_dir folder
-                src = haddock_ui_path / "report.bundle.js"
-                shutil.copyfile(str(src), "../data/ui/report.bundle.js")
-                bundle_url = "../../data/ui/report.bundle.js"
-            if is_unclustered:
-                inner_html = _generate_unclustered_table_html(
-                    table_id, figure, bundle_url
-                )
+        if isinstance(figure, str):  # text
+            inner_html = figure
+        elif isinstance(figure, pd.DataFrame):  # tables
+            if "cluster_rank" not in figure:
+                inner_html = _generate_unclustered_table_html(figure)
             else:
-                inner_html = _generate_clustered_table_html(
-                    table_id, figure, bundle_url
-                )
+                inner_html = _generate_clustered_table_html(figure)
         else:  # plots
             inner_json = figure.to_json()
             inner_html = create_html(
@@ -1262,6 +1293,16 @@ def _generate_html_body(
             fig_index += 1  # type: ignore
         body += "<br>"  # add a break between tables and plots
         body += inner_html
+    body += f"""
+<dialog id="viewer-dialog" data-molstar="{_molstar_url(offline)}">
+  <header>
+    <a id="viewer-file"></a><span id="viewer-error"></span>
+    <button type="button" onclick="this.closest('dialog').close()">X</button>
+  </header>
+  <div id="viewer"></div>
+</dialog>
+<script>{(haddock_ui_path / "report.js").read_text(encoding="utf-8")}</script>
+"""
     body += "</body>"
     return body
 
@@ -1293,7 +1334,10 @@ def report_generator(
     offline: bool
         If True, the HTML will be generated for offline use.
     """
-    figures = [tables]
+    figures = [
+        tables,
+        "<p><i>Click on the clusters on the right side to hide/show clusters</i></p>",
+    ]
     # Combine scatters
     figures.append(
         report_plots_handler(
@@ -1307,6 +1351,8 @@ def report_generator(
 
     if offline:
         Path("../data/ui").mkdir(parents=True, exist_ok=True)
+        for fname in ("molstar.js", "molstar.css"):
+            shutil.copyfile(str(haddock_ui_path / fname), f"../data/ui/{fname}")
     # Write everything to a html file
     report_path = Path(directory, "report.html")
     html_report = _generate_html_report(step, figures, report_path, offline)
@@ -1742,10 +1788,10 @@ def offline_js_manager(fpath: FilePath, offline: bool) -> str:
             # Write the plotly java script content
             plotly_js_fpath.write_text(get_plotlyjs())
         # Build HTML string
-        plotly_js_import = f'<script src="{plotly_js_fpath}"></script>'
+        plotly_js_import = f'<script charset="utf-8" src="{plotly_js_fpath}"></script>'
     else:
         # Use CDN url to obtain the script
-        plotly_js_import = f'<script src="{plotly_cdn_url()}"></script>'
+        plotly_js_import = f'<script charset="utf-8" src="{plotly_cdn_url()}"></script>'
     return plotly_js_import
 
 

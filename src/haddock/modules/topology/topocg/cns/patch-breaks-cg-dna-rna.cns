@@ -1,5 +1,5 @@
-! dna-cg-break.cns
-!    Detect protein chain breaks
+! patch-breaks-cg-dna-rna.cns
+!    Detect coarse-grained (Martini) DNA/RNA chain breaks
 !
 ! ***********************************************************************
 ! * Copyright 2003-2024 Alexandre Bonvin, Utrecht University.           *
@@ -22,7 +22,7 @@ for $id1 in id ( name BB3 ) loop cgdnabreak
 
     show sum(1) (id $id1)
     if ( $result = 0 ) then
-        display unknown coordinates for segid $segid1 resn $resn1 resid $resid1 name BB
+        display unknown coordinates for segid $segid1 resn $resn1 resid $resid1 name BB3
         display this coordinate must be known for automatic cg dna chain break detection
         abort
     end if
@@ -40,7 +40,7 @@ for $id1 in id ( name BB3 ) loop cgdnabreak
   
        show sum(1) (id $id2)
        if ( $result = 0 ) then
-          display unknown coordinates for segid $segid2 resn $resn2 resid $resid2 name BB
+          display unknown coordinates for segid $segid2 resn $resn2 resid $resid2 name BB1
           display this coordinate must be known for automatic cg dna chain break detection
           abort
        end if

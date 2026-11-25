@@ -78,5 +78,3 @@ igroup
   interaction  (resn SHA) (not resn SHA) weight * 0 end
 
 end
-
-inline @MODULE:charge-beads-interactions.cns

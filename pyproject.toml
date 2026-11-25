@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "2026.8.0"
+version = "2026.11.0"
 description = "HADDOCK3"
 readme = "README.md"
 authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
@@ -56,9 +56,9 @@ dev = [
   "coverage==7.16.2",
   "pytest==9.1.1",
   "pytest-cov==7.1.0",
-  "hypothesis==6.168.2",
+  "hypothesis==6.168.5",
   "pytest-mock==3.16.0",
-  "fastapi==0.141.1",
+  "fastapi==0.162.0",
   "httpx==0.28.1",
   "kaleido==1.4.0",
   "pytest-random-order==1.2.0",
@@ -75,7 +75,7 @@ mpi = ["mpi4py>=4.0.2"]
 
 notebooks = ["py3Dmol>=2.5.2", "marimo>=0.17.6", "jupyter"]
 
-deeprank-gnn-esm = ["deeprank-gnn-esm==1.1.0"]
+deeprank-gnn-esm = ["deeprank-gnn-esm==2.0.2"]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"

@@ -30,6 +30,7 @@ See examples in `examples/thirdparty/openmm` folder.
 For more details about this module, please `refer to the haddock3 user manual
 <https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#openmm-module>`_
 """
+
 import os
 import shutil
 
@@ -68,23 +69,23 @@ class HaddockModule(BaseHaddockModule):
             "md_raw_output",
             "openmm_output",
             "simulation_stats",
-            )
+        )
 
         directory_dict: dict[str, str] = {}
         for dir in directory_list:
             self.log(f"Creating directory {dir}")
             os.mkdir(dir)
             directory_dict[dir] = dir
-        
+
         return directory_dict
-    
+
     def remove_directories(self) -> None:
         """Remove unnecessary directories full of heavy files."""
         directory_list = (
             "pdbfixer",
             "md_raw_output",
             "solvation_boxes",
-            )
+        )
         for dir in directory_list:
             self.log(f"Removing temporary directory {dir}")
             shutil.rmtree(dir)
@@ -104,29 +105,26 @@ class HaddockModule(BaseHaddockModule):
         try:
             import openmm
         except ModuleNotFoundError:
-            raise ThirdPartyIntallationError(
-                "OpenMM is not installed."
-                )
+            raise ThirdPartyIntallationError("OpenMM is not installed.")
         try:
             import pdbfixer
         except ModuleNotFoundError:
-            raise ThirdPartyIntallationError(
-                "OpenMM pdbfixer is not installed."
-                )
+            raise ThirdPartyIntallationError("OpenMM pdbfixer is not installed.")
         return None
-    
+
     @staticmethod
     def set_max_cpu(nbcpu: int) -> None:
         from openmm import Platform
-        cpu_platform = Platform.getPlatformByName('CPU')
-        cpu_platform.setPropertyDefaultValue('Threads', str(nbcpu))
+
+        cpu_platform = Platform.getPlatformByName("CPU")
+        cpu_platform.setPropertyDefaultValue("Threads", str(nbcpu))
 
     def _run(self) -> None:
         """Execute module."""
         # Retrieve previous models
         previous_models = self.previous_io.retrieve_models(
             individualize=True,
-            )
+        )
 
         # create directories
         directory_dict = self.create_directories()
@@ -144,12 +142,13 @@ class HaddockModule(BaseHaddockModule):
                 Path("."),
                 directory_dict,
                 self.params,
-                )
+            )
             # Hold it
             openmm_jobs.append(openmm_job_i)
 
-        # running jobs
-        scheduling_engine = get_engine(self.params["mode"], self.params)
+        # running jobs, locally in grid mode as only CNS jobs can go to the grid
+        mode = "local" if self.params["mode"] == "grid" else self.params["mode"]
+        scheduling_engine = get_engine(mode, self.params)
         scheduler = scheduling_engine(openmm_jobs)
         scheduler.run()
 
@@ -159,9 +158,8 @@ class HaddockModule(BaseHaddockModule):
         # Check if at least one output file has been generated
         if len(output_pdbs) == 0:
             self.finish_with_error(
-                "No output models generated. "
-                "Check Openmm Execution and logfile."
-                )
+                "No output models generated. Check Openmm Execution and logfile."
+            )
 
         # deleting unnecessary directories
         self.log("Removing unnecessary directories...")
@@ -173,12 +171,9 @@ class HaddockModule(BaseHaddockModule):
             "If you want to continue the haddock3 workflow after "
             "the OpenMM module, the next module should be `[topoaa]`, "
             "to rebuild the CNS molecular topologies."
-            )
-        
+        )
+
         # Setting the output variable
-        self.output_models = [
-            PDBFile(openmmout)
-            for openmmout in sorted(output_pdbs)
-            ]
+        self.output_models = [PDBFile(openmmout) for openmmout in sorted(output_pdbs)]
         # Generating standardized haddock3 outputs
         self.export_io_models()

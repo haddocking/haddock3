@@ -8,8 +8,7 @@ import pandas as pd
 import pytest
 
 from haddock.libs.libontology import PDBFile, TopologyFile
-from haddock.modules.scoring.mdscoring import \
-    DEFAULT_CONFIG as DEFAULT_MDSCORING_CONFIG
+from haddock.modules.scoring.mdscoring import DEFAULT_CONFIG as DEFAULT_MDSCORING_CONFIG
 from haddock.modules.scoring.mdscoring import HaddockModule as mdscoringModule
 
 from integration_tests import GOLDEN_DATA
@@ -142,9 +141,13 @@ def test_mdscoring_3chains(mdscoring_module):
 
     # check the interface scoring
     expected_BH_interface_csv = Path(mdscoring_module.path, "mdscoring_B_H.tsv")
-    assert expected_BH_interface_csv.exists(), f"{expected_BH_interface_csv} does not exist"
+    assert expected_BH_interface_csv.exists(), (
+        f"{expected_BH_interface_csv} does not exist"
+    )
     expected_BL_interface_csv = Path(mdscoring_module.path, "mdscoring_B_L.tsv")
-    assert expected_BL_interface_csv.exists(), f"{expected_BL_interface_csv} does not exist"
+    assert expected_BL_interface_csv.exists(), (
+        f"{expected_BL_interface_csv} does not exist"
+    )
 
     # Set chain combination parameter
     mdscoring_module.params["interface_combinations"] = ["B,H", "B,L"]
@@ -161,3 +164,53 @@ def test_mdscoring_3chains(mdscoring_module):
     # Ensure the score are different
     assert df_all["score"].tolist() != df_combi["score"].tolist()
 
+
+def _read_coordinates(pdb_path):
+    """Return the x, y, z columns of every ATOM/HETATM record of a PDB file."""
+    with open(pdb_path) as fin:
+        return [
+            (line[30:38], line[38:46], line[46:54])
+            for line in fin
+            if line.startswith(("ATOM", "HETATM"))
+        ]
+
+
+class SeededMockPreviousIO(MockPreviousIO):
+    """MockPreviousIO with a fixed model seed, so that repeated runs are comparable.
+
+    Without a seed, each run draws a new one from the module-level random
+    generator in `haddock.libs.libcns`, and two runs in the same process
+    would differ even with identical parameters.
+    """
+
+    def retrieve_models(self, individualize: bool = False):
+        models = super().retrieve_models(individualize=individualize)
+        for model in models:
+            model.seed = 42
+        return models
+
+
+def _run_mdscoring_with_timestep(path, timestep):
+    """Run a short mdscoring on the test complex with the given timestep."""
+    path.mkdir()
+    mdscoring_module = mdscoringModule(
+        order=0, path=path, initial_params=DEFAULT_MDSCORING_CONFIG
+    )
+    mdscoring_module.previous_io = SeededMockPreviousIO(path=path)
+    mdscoring_module.params["timestep"] = timestep
+    # Short run; only the integration time step differs between calls
+    mdscoring_module.params["nemsteps"] = 20
+    mdscoring_module.params["waterheatsteps"] = 20
+    mdscoring_module.params["watersteps"] = 50
+    mdscoring_module.params["watercoolsteps"] = 20
+    mdscoring_module.run()
+    return _read_coordinates(Path(path, "mdscoring_1.pdb"))
+
+
+def test_mdscoring_timestep_is_used(tmp_path):
+    """Changing `timestep` must change the trajectory (issue #1680)."""
+    default = _run_mdscoring_with_timestep(Path(tmp_path, "default"), 0.002)
+    shorter = _run_mdscoring_with_timestep(Path(tmp_path, "shorter"), 0.0005)
+
+    assert len(default) == len(shorter)
+    assert default != shorter

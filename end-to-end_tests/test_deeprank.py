@@ -39,4 +39,7 @@ def test_deeprank_scoring(monkeypatch):
         assert Path(run_dir, "1_deeprank", "deeprank.tsv").exists(), (
             "1_deeprank/deeprank.tsv not created"
         )
+        assert Path(run_dir, "1_deeprank", "GNN_esm_prediction.csv").exists(), (
+            "1_deeprank/GNN_esm_prediction.csv not created"
+        )
         assert Path(run_dir, "2_caprieval").exists(), "2_caprieval not created"

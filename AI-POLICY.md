@@ -12,7 +12,7 @@ We care about the quality of what ends up in the codebase, not how you got there
 
 ## What isn't fine
 
-Don't trust AI output for anything that requires scientific judgment: scoring functions, energy terms, restraint logic, docking algorithms, CNS/topology parameter handling. 
+Don't trust AI output for anything that requires scientific judgment without manual careful inspection: scoring functions, energy terms, restraint logic, docking algorithms, CNS/topology parameter handling. 
 
 If AI substantially shaped any of that kind of work, disclose this in the PR and explain how you verified it.
 
@@ -24,7 +24,9 @@ If AI substantially shaped any of that kind of work, disclose this in the PR and
 
 A reviewer might ask questions about your code, if you can't answer it because the AI wrote that part and you do not understand why, the PR might be closed.
 
-PR reviews, descriptions and responses should be written by yourself.
+PR reviews, descriptions and responses can be written by AI but should be carefully reviewed by yourself if this is the case.
+Also keep the PR description short and to the point, don't let AI write a long essay. It should follow the PR template.
+And any PR should be associated with an issue and refer to it.
 
 ## Disclosure
 

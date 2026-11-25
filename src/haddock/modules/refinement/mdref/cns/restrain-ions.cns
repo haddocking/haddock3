@@ -86,7 +86,7 @@ for $id1 in id ( (resn SO4 or resn PO4 or resn WO4) and name O* ) loop mions
                       resn MSE or resn NEP or resn NME or resn PHE or resn PNS or resn PRO or resn PTR or
                       resn QSR or resn SEP or resn SER or resn SEC or resn THR or resn TOP or resn TRP or
                       resn TYP or resn TYR or resn TYS or resn VAL or resn A   or resn C   or resn G   or
-                      resn T   or resn DA  or resn DC  or resn DG  or resn DT  or resn DJ )) loop search
+                      resn T   or resn U   or resn DA  or resn DC  or resn DG  or resn DT  or resn DJ )) loop search
 
          pick bond (id $id1) (id $id2) geometry
          evaluate ($upper = $result)

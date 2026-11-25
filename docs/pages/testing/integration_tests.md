@@ -1,141 +1,93 @@
-# Running integration tests manually
+# Running the example regression tests
 
 *This documentation is for developers.*
 
-The integration tests ensure HADDOCK3 workflows work correctly by performing
-short docking or analysis on testing systems. With these tests, we evaluate if
-the final scoring values in the developing branch are equal to those obtained in
-the `main` branch.
+The example regression tests check that HADDOCK3 workflows still run correctly
+and give the same results as the `main` branch. They run all short test
+examples (`examples/*/*-test.cfg`) on your branch and on `main`, and compare:
 
-You can run the integration tests locally using our helper scripts and
-following the guidelines here.
+- whether each run completed without errors;
+- the outputs written by each step (number of models, output files);
+- the CAPRI statistics of every `caprieval` step: number of acceptable, medium
+  and high quality models, rank of the first acceptable model, and rank and
+  quality of the best model.
 
-For a pull request to be accepted, it must pass these integration tests. So we
-kindly ask you to run them before submitting a pull request. We are currently
-working on incorporating these tests into our automatic CI pipelines.
+The full set takes about 3 hours per branch on a local machine, depending on
+the hardware. It is therefore not part of the CI. Please run it before
+submitting a pull request that changes the core workflow, the CNS scripts or the
+force field. If you do not have the compute power to run these tests, ask us and
+we will run them for you.
 
-Running the integration tests for a single branch takes about 1 hour using 8 CPU
-cores in a AMD EPYC 7451 24-Core Processor. In case you do not have the computer
-power to run these tests, ask us and we will run them for you.
+## 1. Build the reference from `main`
 
-**How to correctly set up and run the integration tests?**
-
-The easiest way is to have two installations of haddock3:
-one fixed at the `main` branch and another with your developments.
-
-## 1. Install HADDOCK3 main branch separately
-
-First, you should install HADDOCK3 main branch in a separate folder and
-python environment:
-
-```bash
-git clone --recursive https://github.com/haddocking/haddock3 haddock3main
-cd haddock3main
-```
-
-Rename the conda env name in requirements.yml file
-
-```
-sed -i 's/haddock3/haddock3main/g' requirements.yml
-```
-
-Proceed to install the HADDOCK3 main following the installation
-instructions in the repository.
-
-This repository and environment will be the ones you will use to run the
-test examples from the `main` branch.
-
-Once installed, you don't need to install this "main" repository again for
-future occasions. You can keep using it to test all your developments.
-
-## 3. Running the tests in the `main`
-
-Before running the integration tests, ensure the reference repository `main`
-branch is up-to-date.
-
-```bash
-cd haddock3main
-git checkout main
-git pull
-```
-
-Remember to activate the corresponding python environment.
-
-```bash
-conda activate haddock3main
-```
-
-Or, if you used `venv`:
-
-```bash
-source venv/bin/activate
-```
-
-Navigate to the `examples/` folder and execute the tests:
+From the `examples/` folder of your development repository, with the haddock3
+python environment activated:
 
 ```bash
 cd examples/
-python run_tests.py -b
+python run_examples_regression.py init
 ```
 
-This script will run all the test cases in the `examples/` folder (`*-test.cfg`
-files) and stop if any of the tests break. For help, see `python run_tests.py
--h`.
+This creates (or updates) a git worktree of `origin/main` next to your
+repository (`../haddock3-main-ref`, see `--ref-worktree`), runs the examples
+there and saves the results to `examples/regression/reference.json`. Your own
+checkout is not touched. The reference only needs to be rebuilt when `main`
+changes.
 
-## 4. Running the tests on your branch
-
-Navigate to your development repository and activate the haddock3 environment -
-you are likely on a different terminal window.
-
-Run the tests the same way as before by navigating to the `examples/` folder and
-executing the tests:
+## 2. Run the examples on your branch and compare
 
 ```bash
-cd examples/
-python run_tests.py -b
+python run_examples_regression.py run
 ```
 
-## 5. Comparing both runs
+This runs the same examples with your code, saves the results to
+`examples/regression/current.json` and writes the comparison to
+`examples/regression/report.md`. The report lists:
 
-Once tests in the `main` and your development branch complete, that is, all
-`*-test.cfg` files were executed, you can compare their CAPRI scores.
+1. tests that fail on your branch but not on `main` (with the reason and the
+   end of the log), and steps whose outputs differ;
+2. changes in the CAPRI statistics;
+3. the rank of the first acceptable model and the rank and quality of the best
+   model for every caprieval step, with a better/worse verdict;
+4. significant runtime changes;
+5. tests failing on both branches (e.g. missing third-party packages);
+6. unchanged and skipped tests.
 
-Inside the `examples/` folder of your development branch, run:
+The runs use fixed random seeds, so unchanged code gives identical results. If
+there are differences, explain them in the pull request description unless
+something went wrong.
+
+## Useful options
+
+- `--list` shows which examples will run, which are skipped and why, and which
+  existing run directories will be deleted.
+- `--only PATTERN` (repeatable) runs a subset, e.g.
+  `--only docking-protein-DNA --only scoring/`. The results are merged with
+  those already saved, so you can rerun a single example and compare again.
+  Each result records the commit it was run on. If the saved results come from
+  another commit (e.g. `main` has moved since `init`), the script stops: rerun
+  without `--only`, use `--ref-branch <commit>` (for `init`) or check out the
+  stored commit (for `run`), or pass `--allow-mixed`. Tests from other commits
+  are then listed in the report header.
+- `compare` rewrites the report from the saved results without running
+  anything, e.g. with other tolerances (`--tol-dockq`, `--tol-irmsd`,
+  `--tol-runtime`).
+- `-b` stops at the first failing example; `--timeout` limits the time per
+  example.
+
+Examples using MPI or batch submission, and follow-up configurations that need
+an existing run (`--extend-run`, `--restart`), are skipped.
+
+**Warning:** existing run directories of the examples are deleted before each
+run.
+
+## Inspecting a single run
+
+The `examples/extract-capri-stats-*.sh` scripts print the CAPRI statistics of
+all caprieval steps of a run directory, see `examples/README.md`:
 
 ```bash
-python compare-runs.py -r <path-to-haddock-main-examples-folder>
-```
-
-This command will tell you if there are any differences in the CAPRI tables:
-missing rows or columns and different values. Numeric scores are evaluated with
-0.001 tolerance.
-
-If there are differences, likely something went wrong unless you are developing
-code that explicitly affects the CAPRI scores. If that is the case, explain it
-in the pull request description.
-
-## Additional considerations
-
-### Tests breaking with `run_tests.py`
-
-Tests break during the `run_test.py` step if the new code breaks the core
-HADDOCK3 workflow. You should work towards correcting those errors first. Once
-the workflows execute completely, you can then compare the CAPRI tables.
-
-### Running on a cluster
-
-Following the instructions here, the test cases will run locally on your
-computer. But if you have access to a job scheduling system in a cluster, you
-can prepare a `job` script and launch the job as you would to for any other
-related process.
-
-### Running individual test cases
-
-If you want to compare a particular test case only, for example, two different
-runs for the `docking-protein-protein/docking-protein-protein-test.cfg`, run:
-
-```bash
-python compare_runs.py -r1 <PATH-TO-RUN1> -r2 <PATH-TO-RUN2>
+./extract-capri-stats-dockq.sh docking-protein-protein/run1-test
 ```
 
 *Thanks, and enjoy developing and using HADDOCK3 :-)*

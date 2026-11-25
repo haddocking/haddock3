@@ -44,9 +44,9 @@ define(
 {* the default of 8A for CG peptide bonds should be reasonable for most cases. If the input
    structure has bad geometry it may be necessary to increase this distance *}
 {===>} pcgbreak_cutoff=8.0;
-{* the default of 10A for CG nucleic acid linkages should be reasonable for most cases. If the input
-   structure has bad geometry it may be necessary to increase this distance *}
-{===>} dnacgbreak_cutoff=10.0;
+{* CG nucleic acids: BB3(i)-BB1(i+1) is ~3.5A for a linked pair and ~7-10A across a single
+   missing nucleotide, so the cutoff must stay well below 7A to detect such breaks *}
+{===>} dnacgbreak_cutoff=6.0;
 
 {======================= automatic disulphide bonds ========================}
 

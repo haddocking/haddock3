@@ -1608,7 +1608,7 @@ residue CIR
   IMPRoper H51 H52 C4 N6  !stereo C5
 
   IMPRoper C5  N6  C7   O7  
-  IMPRoper H5  N6  C7   O7  
+  IMPRoper H6  N6  C7   O7  
   IMPRoper N6  C7  N8   H81
   IMPRoper O7  C7  N8   H82 
 

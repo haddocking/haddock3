@@ -13,7 +13,7 @@
 noe
     class     ions
     potential ions biharmonic
-    scale     ions 50.0
+    scale     ions 1.0
 end
 
 ! first deal with monoatomic ions

@@ -33,6 +33,7 @@ link ppg1 head - NEP tail + GLY end
 link ppg1 head - ILE tail + GLY end
 link ppg1 head - LYS tail + GLY end
 link ppg1 head - ALY tail + GLY end
+link ppg1 head - SLL tail + GLY end
 link ppg1 head - HLY tail + GLY end
 link ppg1 head - MLY tail + GLY end
 link ppg1 head - MLZ tail + GLY end
@@ -81,6 +82,7 @@ link ppg2 head - GLY tail + NEP end
 link ppg2 head - GLY tail + ILE end
 link ppg2 head - GLY tail + LYS end
 link ppg2 head - GLY tail + ALY end
+link ppg2 head - GLY tail + SLL end
 link ppg2 head - GLY tail + HLY end
 link ppg2 head - GLY tail + MLY end
 link ppg2 head - GLY tail + MLZ end
@@ -133,6 +135,7 @@ link pepp head - NEP tail + PRO end
 link pepp head - ILE tail + PRO end
 link pepp head - LYS tail + PRO end
 link pepp head - ALY tail + PRO end
+link pepp head - SLL tail + PRO end
 link pepp head - HLY tail + PRO end
 link pepp head - MLY tail + PRO end
 link pepp head - MLZ tail + PRO end
@@ -181,6 +184,7 @@ link pepp head - NEP tail + HYP end
 link pepp head - ILE tail + HYP end
 link pepp head - LYS tail + HYP end
 link pepp head - ALY tail + HYP end
+link pepp head - SLL tail + HYP end
 link pepp head - HLY tail + HYP end
 link pepp head - MLY tail + HYP end
 link pepp head - MLZ tail + HYP end
@@ -231,6 +235,7 @@ link pepp head - NEP tail + HY3 end
 link pepp head - ILE tail + HY3 end
 link pepp head - LYS tail + HY3 end
 link pepp head - ALY tail + HY3 end
+link pepp head - SLL tail + HY3 end
 link pepp head - HLY tail + HY3 end
 link pepp head - MLY tail + HY3 end
 link pepp head - MLZ tail + HY3 end
@@ -279,6 +284,7 @@ link pept head - ACE tail + NEP end
 link pept head - ACE tail + ILE end
 link pept head - ACE tail + LYS end
 link pept head - ACE tail + ALY end
+link pept head - ACE tail + SLL end
 link pept head - ACE tail + HLY end
 link pept head - ACE tail + MLY end
 link pept head - ACE tail + MLZ end
@@ -329,6 +335,7 @@ link pept head - ALA tail + NEP end
 link pept head - ALA tail + ILE end
 link pept head - ALA tail + LYS end
 link pept head - ALA tail + ALY end
+link pept head - ALA tail + SLL end
 link pept head - ALA tail + HLY end
 link pept head - ALA tail + MLY end
 link pept head - ALA tail + MLZ end
@@ -379,6 +386,7 @@ link pept head - CYS tail + NEP end
 link pept head - CYS tail + ILE end
 link pept head - CYS tail + LYS end
 link pept head - CYS tail + ALY end
+link pept head - CYS tail + SLL end
 link pept head - CYS tail + HLY end
 link pept head - CYS tail + MLY end
 link pept head - CYS tail + MLZ end
@@ -429,6 +437,7 @@ link pept head - CFE tail + NEP end
 link pept head - CFE tail + ILE end
 link pept head - CFE tail + LYS end
 link pept head - CFE tail + ALY end
+link pept head - CFE tail + SLL end
 link pept head - CFE tail + HLY end
 link pept head - CFE tail + MLY end
 link pept head - CFE tail + MLZ end
@@ -479,6 +488,7 @@ link pept head - CYM tail + NEP end
 link pept head - CYM tail + ILE end
 link pept head - CYM tail + LYS end
 link pept head - CYM tail + ALY end
+link pept head - CYM tail + SLL end
 link pept head - CYM tail + HLY end
 link pept head - CYM tail + MLY end
 link pept head - CYM tail + MLZ end
@@ -529,6 +539,7 @@ link pept head - CYF tail + NEP end
 link pept head - CYF tail + ILE end
 link pept head - CYF tail + LYS end
 link pept head - CYF tail + ALY end
+link pept head - CYF tail + SLL end
 link pept head - CYF tail + HLY end
 link pept head - CYF tail + MLY end
 link pept head - CYF tail + MLZ end
@@ -579,6 +590,7 @@ link pept head - CYC tail + NEP end
 link pept head - CYC tail + ILE end
 link pept head - CYC tail + LYS end
 link pept head - CYC tail + ALY end
+link pept head - CYC tail + SLL end
 link pept head - CYC tail + HLY end
 link pept head - CYC tail + MLY end
 link pept head - CYC tail + MLZ end
@@ -629,6 +641,7 @@ link pept head - CSP tail + NEP end
 link pept head - CSP tail + ILE end
 link pept head - CSP tail + LYS end
 link pept head - CSP tail + ALY end
+link pept head - CSP tail + SLL end
 link pept head - CSP tail + HLY end
 link pept head - CSP tail + MLY end
 link pept head - CSP tail + MLZ end
@@ -679,6 +692,7 @@ link pept head - ASP tail + NEP end
 link pept head - ASP tail + ILE end
 link pept head - ASP tail + LYS end
 link pept head - ASP tail + ALY end
+link pept head - ASP tail + SLL end
 link pept head - ASP tail + HLY end
 link pept head - ASP tail + MLY end
 link pept head - ASP tail + MLZ end
@@ -729,6 +743,7 @@ link pept head - ASH tail + NEP end
 link pept head - ASH tail + ILE end
 link pept head - ASH tail + LYS end
 link pept head - ASH tail + ALY end
+link pept head - ASH tail + SLL end
 link pept head - ASH tail + HLY end
 link pept head - ASH tail + MLY end
 link pept head - ASH tail + MLZ end
@@ -779,6 +794,7 @@ link pept head - GLU tail + NEP end
 link pept head - GLU tail + ILE end
 link pept head - GLU tail + LYS end
 link pept head - GLU tail + ALY end
+link pept head - GLU tail + SLL end
 link pept head - GLU tail + HLY end
 link pept head - GLU tail + MLY end
 link pept head - GLU tail + MLZ end
@@ -829,6 +845,7 @@ link pept head - GLH tail + NEP end
 link pept head - GLH tail + ILE end
 link pept head - GLH tail + LYS end
 link pept head - GLH tail + ALY end
+link pept head - GLH tail + SLL end
 link pept head - GLH tail + HLY end
 link pept head - GLH tail + MLY end
 link pept head - GLH tail + MLZ end
@@ -879,6 +896,7 @@ link pept head - PHE tail + NEP end
 link pept head - PHE tail + ILE end
 link pept head - PHE tail + LYS end
 link pept head - PHE tail + ALY end
+link pept head - PHE tail + SLL end
 link pept head - PHE tail + HLY end
 link pept head - PHE tail + MLY end
 link pept head - PHE tail + MLZ end
@@ -929,6 +947,7 @@ link pept head - HIS tail + NEP end
 link pept head - HIS tail + ILE end
 link pept head - HIS tail + LYS end
 link pept head - HIS tail + ALY end
+link pept head - HIS tail + SLL end
 link pept head - HIS tail + HLY end
 link pept head - HIS tail + MLY end
 link pept head - HIS tail + MLZ end
@@ -979,6 +998,7 @@ link pept head - NEP tail + NEP end
 link pept head - NEP tail + ILE end
 link pept head - NEP tail + LYS end
 link pept head - NEP tail + ALY end
+link pept head - NEP tail + SLL end
 link pept head - NEP tail + HLY end
 link pept head - NEP tail + MLY end
 link pept head - NEP tail + MLZ end
@@ -1029,6 +1049,7 @@ link pept head - ILE tail + NEP end
 link pept head - ILE tail + ILE end
 link pept head - ILE tail + LYS end
 link pept head - ILE tail + ALY end
+link pept head - ILE tail + SLL end
 link pept head - ILE tail + HLY end
 link pept head - ILE tail + MLY end
 link pept head - ILE tail + MLZ end
@@ -1079,6 +1100,7 @@ link pept head - LYS tail + NEP end
 link pept head - LYS tail + ILE end
 link pept head - LYS tail + LYS end
 link pept head - LYS tail + ALY end
+link pept head - LYS tail + SLL end
 link pept head - LYS tail + HLY end
 link pept head - LYS tail + MLY end
 link pept head - LYS tail + MLZ end
@@ -1129,6 +1151,7 @@ link pept head - ALY tail + NEP end
 link pept head - ALY tail + ILE end
 link pept head - ALY tail + LYS end
 link pept head - ALY tail + ALY end
+link pept head - ALY tail + SLL end
 link pept head - ALY tail + HLY end
 link pept head - ALY tail + MLY end
 link pept head - ALY tail + MLZ end
@@ -1161,6 +1184,57 @@ link pctn head - ALY tail + CTN end
 link pept head - ALY tail + NME end
 link ppc1 head - ALY tail + CIR end
  
+{ peptide linkages for SLL }
+link pept head - SLL tail + ALA end
+link pept head - SLL tail + CYS end
+link pept head - SLL tail + CFE end
+link pept head - SLL tail + CYM end
+link pept head - SLL tail + CYF end
+link pept head - SLL tail + CYC end
+link pept head - SLL tail + CSP end
+link pept head - SLL tail + ASP end
+link pept head - SLL tail + ASH end
+link pept head - SLL tail + GLU end
+link pept head - SLL tail + GLH end
+link pept head - SLL tail + PHE end
+link pept head - SLL tail + HIS end
+link pept head - SLL tail + NEP end
+link pept head - SLL tail + ILE end
+link pept head - SLL tail + LYS end
+link pept head - SLL tail + ALY end
+link pept head - SLL tail + SLL end
+link pept head - SLL tail + HLY end
+link pept head - SLL tail + MLY end
+link pept head - SLL tail + MLZ end
+link pept head - SLL tail + M3L end
+link pept head - SLL tail + LEU end
+link pept head - SLL tail + MET end
+link pept head - SLL tail + MSE end
+link pept head - SLL tail + ASN end
+link pept head - SLL tail + PRO end
+link pept head - SLL tail + GLN end
+link pept head - SLL tail + ARG end
+link pept head - SLL tail + SER end
+link pept head - SLL tail + SEC end
+link pept head - SLL tail + SEP end
+link pept head - SLL tail + THR end
+link pept head - SLL tail + THP end
+link pept head - SLL tail + TOP end
+link pept head - SLL tail + VAL end
+link pept head - SLL tail + TRP end
+link pept head - SLL tail + TYR end
+link pept head - SLL tail + TYP end
+link pept head - SLL tail + PTR end
+link pept head - SLL tail + TYS end
+link pept head - SLL tail + HYP end
+link pept head - SLL tail + HY3 end
+link pept head - SLL tail + DDZ end
+link pept head - SLL tail + PNS end
+link pept head - SLL tail + QSR end
+link pctn head - SLL tail + CTN end
+link pept head - SLL tail + NME end
+link ppc1 head - SLL tail + CIR end
+ 
 { peptide linkages for HLY }
 link pept head - HLY tail + ALA end
 link pept head - HLY tail + CYS end
@@ -1179,6 +1253,7 @@ link pept head - HLY tail + NEP end
 link pept head - HLY tail + ILE end
 link pept head - HLY tail + LYS end
 link pept head - HLY tail + ALY end
+link pept head - HLY tail + SLL end
 link pept head - HLY tail + HLY end
 link pept head - HLY tail + MLY end
 link pept head - HLY tail + MLZ end
@@ -1229,6 +1304,7 @@ link pept head - MLY tail + NEP end
 link pept head - MLY tail + ILE end
 link pept head - MLY tail + LYS end
 link pept head - MLY tail + ALY end
+link pept head - MLY tail + SLL end
 link pept head - MLY tail + HLY end
 link pept head - MLY tail + MLY end
 link pept head - MLY tail + MLZ end
@@ -1279,6 +1355,7 @@ link pept head - MLZ tail + NEP end
 link pept head - MLZ tail + ILE end
 link pept head - MLZ tail + LYS end
 link pept head - MLZ tail + ALY end
+link pept head - MLZ tail + SLL end
 link pept head - MLZ tail + HLY end
 link pept head - MLZ tail + MLY end
 link pept head - MLZ tail + MLZ end
@@ -1329,6 +1406,7 @@ link pept head - M3L tail + NEP end
 link pept head - M3L tail + ILE end
 link pept head - M3L tail + LYS end
 link pept head - M3L tail + ALY end
+link pept head - M3L tail + SLL end
 link pept head - M3L tail + HLY end
 link pept head - M3L tail + MLY end
 link pept head - M3L tail + MLZ end
@@ -1379,6 +1457,7 @@ link pept head - LEU tail + NEP end
 link pept head - LEU tail + ILE end
 link pept head - LEU tail + LYS end
 link pept head - LEU tail + ALY end
+link pept head - LEU tail + SLL end
 link pept head - LEU tail + HLY end
 link pept head - LEU tail + MLY end
 link pept head - LEU tail + MLZ end
@@ -1429,6 +1508,7 @@ link pept head - MET tail + NEP end
 link pept head - MET tail + ILE end
 link pept head - MET tail + LYS end
 link pept head - MET tail + ALY end
+link pept head - MET tail + SLL end
 link pept head - MET tail + HLY end
 link pept head - MET tail + MLY end
 link pept head - MET tail + MLZ end
@@ -1478,6 +1558,7 @@ link pept head - MSE tail + NEP end
 link pept head - MSE tail + ILE end
 link pept head - MSE tail + LYS end
 link pept head - MSE tail + ALY end
+link pept head - MSE tail + SLL end
 link pept head - MSE tail + HLY end
 link pept head - MSE tail + MLY end
 link pept head - MSE tail + MLZ end
@@ -1528,6 +1609,7 @@ link pept head - ASN tail + NEP end
 link pept head - ASN tail + ILE end
 link pept head - ASN tail + LYS end
 link pept head - ASN tail + ALY end
+link pept head - ASN tail + SLL end
 link pept head - ASN tail + HLY end
 link pept head - ASN tail + MLY end
 link pept head - ASN tail + MLZ end
@@ -1578,6 +1660,7 @@ link pept head - PCA tail + NEP end
 link pept head - PCA tail + ILE end
 link pept head - PCA tail + LYS end
 link pept head - PCA tail + ALY end
+link pept head - PCA tail + SLL end
 link pept head - PCA tail + HLY end
 link pept head - PCA tail + MLY end
 link pept head - PCA tail + MLZ end
@@ -1628,6 +1711,7 @@ link pept head - PRO tail + NEP end
 link pept head - PRO tail + ILE end
 link pept head - PRO tail + LYS end
 link pept head - PRO tail + ALY end
+link pept head - PRO tail + SLL end
 link pept head - PRO tail + HLY end
 link pept head - PRO tail + MLY end
 link pept head - PRO tail + MLZ end
@@ -1678,6 +1762,7 @@ link pept head - GLN tail + NEP end
 link pept head - GLN tail + ILE end
 link pept head - GLN tail + LYS end
 link pept head - GLN tail + ALY end
+link pept head - GLN tail + SLL end
 link pept head - GLN tail + HLY end
 link pept head - GLN tail + MLY end
 link pept head - GLN tail + MLZ end
@@ -1728,6 +1813,7 @@ link pept head - ARG tail + NEP end
 link pept head - ARG tail + ILE end
 link pept head - ARG tail + LYS end
 link pept head - ARG tail + ALY end
+link pept head - ARG tail + SLL end
 link pept head - ARG tail + HLY end
 link pept head - ARG tail + MLY end
 link pept head - ARG tail + MLZ end
@@ -1778,6 +1864,7 @@ link pept head - SER tail + NEP end
 link pept head - SER tail + ILE end
 link pept head - SER tail + LYS end
 link pept head - SER tail + ALY end
+link pept head - SER tail + SLL end
 link pept head - SER tail + HLY end
 link pept head - SER tail + MLY end
 link pept head - SER tail + MLZ end
@@ -1827,6 +1914,7 @@ link pept head - SEC tail + NEP end
 link pept head - SEC tail + ILE end
 link pept head - SEC tail + LYS end
 link pept head - SEC tail + ALY end
+link pept head - SEC tail + SLL end
 link pept head - SEC tail + HLY end
 link pept head - SEC tail + MLY end
 link pept head - SEC tail + MLZ end
@@ -1877,6 +1965,7 @@ link pept head - SEP tail + NEP end
 link pept head - SEP tail + ILE end
 link pept head - SEP tail + LYS end
 link pept head - SEP tail + ALY end
+link pept head - SEP tail + SLL end
 link pept head - SEP tail + HLY end
 link pept head - SEP tail + MLY end
 link pept head - SEP tail + MLZ end
@@ -1927,6 +2016,7 @@ link pept head - THR tail + NEP end
 link pept head - THR tail + ILE end
 link pept head - THR tail + LYS end
 link pept head - THR tail + ALY end
+link pept head - THR tail + SLL end
 link pept head - THR tail + HLY end
 link pept head - THR tail + MLY end
 link pept head - THR tail + MLZ end
@@ -1977,6 +2067,7 @@ link pept head - THP tail + NEP end
 link pept head - THP tail + ILE end
 link pept head - THP tail + LYS end
 link pept head - THP tail + ALY end
+link pept head - THP tail + SLL end
 link pept head - THP tail + HLY end
 link pept head - THP tail + MLY end
 link pept head - THP tail + MLZ end
@@ -2027,6 +2118,7 @@ link pept head - TOP tail + NEP end
 link pept head - TOP tail + ILE end
 link pept head - TOP tail + LYS end
 link pept head - TOP tail + ALY end
+link pept head - TOP tail + SLL end
 link pept head - TOP tail + HLY end
 link pept head - TOP tail + MLY end
 link pept head - TOP tail + MLZ end
@@ -2077,6 +2169,7 @@ link pept head - VAL tail + NEP end
 link pept head - VAL tail + ILE end
 link pept head - VAL tail + LYS end
 link pept head - VAL tail + ALY end
+link pept head - VAL tail + SLL end
 link pept head - VAL tail + HLY end
 link pept head - VAL tail + MLY end
 link pept head - VAL tail + MLZ end
@@ -2127,6 +2220,7 @@ link pept head - TRP tail + NEP end
 link pept head - TRP tail + ILE end
 link pept head - TRP tail + LYS end
 link pept head - TRP tail + ALY end
+link pept head - TRP tail + SLL end
 link pept head - TRP tail + HLY end
 link pept head - TRP tail + MLY end
 link pept head - TRP tail + MLZ end
@@ -2177,6 +2271,7 @@ link pept head - TYR tail + NEP end
 link pept head - TYR tail + ILE end
 link pept head - TYR tail + LYS end
 link pept head - TYR tail + ALY end
+link pept head - TYR tail + SLL end
 link pept head - TYR tail + HLY end
 link pept head - TYR tail + MLY end
 link pept head - TYR tail + MLZ end
@@ -2227,6 +2322,7 @@ link pept head - TYP tail + NEP end
 link pept head - TYP tail + ILE end
 link pept head - TYP tail + LYS end
 link pept head - TYP tail + ALY end
+link pept head - TYP tail + SLL end
 link pept head - TYP tail + HLY end
 link pept head - TYP tail + MLY end
 link pept head - TYP tail + MLZ end
@@ -2277,6 +2373,7 @@ link pept head - PTR tail + NEP end
 link pept head - PTR tail + ILE end
 link pept head - PTR tail + LYS end
 link pept head - PTR tail + ALY end
+link pept head - PTR tail + SLL end
 link pept head - PTR tail + HLY end
 link pept head - PTR tail + MLY end
 link pept head - PTR tail + MLZ end
@@ -2327,6 +2424,7 @@ link pept head - TYS tail + NEP end
 link pept head - TYS tail + ILE end
 link pept head - TYS tail + LYS end
 link pept head - TYS tail + ALY end
+link pept head - TYS tail + SLL end
 link pept head - TYS tail + HLY end
 link pept head - TYS tail + MLY end
 link pept head - TYS tail + MLZ end
@@ -2377,6 +2475,7 @@ link pept head - HYP tail + NEP end
 link pept head - HYP tail + ILE end
 link pept head - HYP tail + LYS end
 link pept head - HYP tail + ALY end
+link pept head - HYP tail + SLL end
 link pept head - HYP tail + HLY end
 link pept head - HYP tail + MLY end
 link pept head - HYP tail + MLZ end
@@ -2425,6 +2524,7 @@ link pept head - HY3 tail + NEP end
 link pept head - HY3 tail + ILE end
 link pept head - HY3 tail + LYS end
 link pept head - HY3 tail + ALY end
+link pept head - HY3 tail + SLL end
 link pept head - HY3 tail + HLY end
 link pept head - HY3 tail + MLY end
 link pept head - HY3 tail + MLZ end
@@ -2473,6 +2573,7 @@ link pept head - DDZ tail + NEP end
 link pept head - DDZ tail + ILE end
 link pept head - DDZ tail + LYS end
 link pept head - DDZ tail + ALY end
+link pept head - DDZ tail + SLL end
 link pept head - DDZ tail + HLY end
 link pept head - DDZ tail + MLY end
 link pept head - DDZ tail + MLZ end
@@ -2522,6 +2623,7 @@ link pept head - PNS tail + NEP end
 link pept head - PNS tail + ILE end
 link pept head - PNS tail + LYS end
 link pept head - PNS tail + ALY end
+link pept head - PNS tail + SLL end
 link pept head - PNS tail + HLY end
 link pept head - PNS tail + MLY end
 link pept head - PNS tail + MLZ end
@@ -2572,6 +2674,7 @@ link pept head - QSR tail + NEP end
 link pept head - QSR tail + ILE end
 link pept head - QSR tail + LYS end
 link pept head - QSR tail + ALY end
+link pept head - QSR tail + SLL end
 link pept head - QSR tail + HLY end
 link pept head - QSR tail + MLY end
 link pept head - QSR tail + MLZ end
@@ -2622,6 +2725,7 @@ link ppc2 head - CIR tail + NEP end
 link ppc2 head - CIR tail + ILE end
 link ppc2 head - CIR tail + LYS end
 link ppc2 head - CIR tail + ALY end
+link ppc2 head - CIR tail + SLL end
 link ppc2 head - CIR tail + HLY end
 link ppc2 head - CIR tail + MLY end
 link ppc2 head - CIR tail + MLZ end

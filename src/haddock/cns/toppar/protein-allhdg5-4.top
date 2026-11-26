@@ -1269,6 +1269,84 @@ end
 
 !----------------------------------------------------------------------
 
+residue SLL ! N6-succinyl-lysine (deprotonated carboxylate), PDB atom names
+  group
+    ATOM N   TYPE=NH1    CHARge=-0.570 end
+    ATOM HN  TYPE=H      CHARge= 0.370 end
+    ATOM CA  TYPE=CH1E   CHARge= 0.200 end
+    ATOM HA  TYPE=HA     CHARge= 0.000 end
+    ATOM CB  TYPE=CH2E   CHARge= 0.000 end
+    ATOM HB1 TYPE=HA     CHARge= 0.000 end
+    ATOM HB2 TYPE=HA     CHARge= 0.000 end
+    ATOM CG  TYPE=CH2E   CHARge= 0.000 end
+    ATOM HG1 TYPE=HA     CHARge= 0.000 end
+    ATOM HG2 TYPE=HA     CHARge= 0.000 end
+    ATOM CD  TYPE=CH2E   CHARge= 0.000 end
+    ATOM HD1 TYPE=HA     CHARge= 0.000 end
+    ATOM HD2 TYPE=HA     CHARge= 0.000 end
+    ATOM CE  TYPE=CH2E   CHARge= 0.200 end
+    ATOM HE1 TYPE=HA     CHARge= 0.000 end
+    ATOM HE2 TYPE=HA     CHARge= 0.000 end
+    ATOM NZ  TYPE=NH1    CHARge=-0.570 end
+    ATOM HZ1 TYPE=H      CHARge= 0.370 end
+    ATOM CX  TYPE=C      CHARge= 0.500 end
+    ATOM OX  TYPE=O      CHARge=-0.500 end
+    ATOM CK  TYPE=CH2E   CHARge= 0.000 end
+    ATOM HK1 TYPE=HA     CHARge= 0.000 end
+    ATOM HK2 TYPE=HA     CHARge= 0.000 end
+    ATOM CL  TYPE=CH2E   CHARge=-0.100 end
+    ATOM HL1 TYPE=HA     CHARge= 0.000 end
+    ATOM HL2 TYPE=HA     CHARge= 0.000 end
+    ATOM CP  TYPE=C      CHARge= 0.700 end
+    ATOM OP1 TYPE=OC     CHARge=-0.800 end
+    ATOM OP2 TYPE=OC     CHARge=-0.800 end
+    ATOM C   TYPE=C      CHARge= 0.500 end
+    ATOM O   TYPE=O      CHARge=-0.500 end
+
+  BOND N  HN
+  BOND N  CA     BOND CA HA
+  BOND CA CB     BOND CB HB1     BOND CB HB2
+  BOND CB CG     BOND CG HG1     BOND CG HG2
+  BOND CG CD     BOND CD HD1     BOND CD HD2
+  BOND CD CE     BOND CE HE1     BOND CE HE2
+  BOND CE NZ     BOND NZ HZ1     BOND NZ CX     BOND CX OX   BOND CX CK
+  BOND CK HK1    BOND CK HK2     BOND CK CL
+  BOND CL HL1    BOND CL HL2     BOND CL CP
+  BOND CP OP1    BOND CP OP2
+  BOND CA C
+  BOND C  O
+
+  IMPRoper HA N C CB      !chirality CA
+  IMPRoper HB1 HB2 CA CG  !stereo CB
+  IMPRoper HG1 HG2 CB CD  !stereo CG
+  IMPRoper HD1 HD2 CG CE  !stereo CD
+  IMPRoper HE1 HE2 CD NZ  !stereo CE
+  IMPRoper HK1 HK2 CX CL  !stereo CK
+  IMPRoper HL1 HL2 CK CP  !stereo CL
+  IMPRoper CX  CK  NZ OX  !planar CX
+  IMPRoper NZ  CX  CK HZ1 !planar NZ
+  IMPRoper CE  NZ  CX CK  !side-chain peptide plane
+  IMPRoper CP  CL  OP1 OP2 !planar CP
+
+  DIHEdral CG  CB  CA  N
+  DIHEdral CD  CG  CB  CA
+  DIHEdral CE  CD  CG  CB
+  DIHEdral NZ  CE  CD  CG
+  DIHEdral HZ1 NZ  CE  CD ! UCL stagger NH3 group 12-MAR-00
+  DIHEdral CL  CK  CX  NZ
+  DIHEdral CP  CL  CK  CX
+  DIHEdral OP1 CP  CL  CK
+
+  DONO HN   N
+  DONO HZ1  NZ
+  ACCE O    C
+  ACCE OX   CX
+  ACCE OP1  CP
+  ACCE OP2  CP
+end
+
+!----------------------------------------------------------------------
+
 residue MLZ ! monomethyl lysine, added 30-04-2009 A. Bonvin
   group
     ATOM N    TYPE=NH1   CHARge=-0.570 end

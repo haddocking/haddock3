@@ -9,11 +9,12 @@ import pytest
 from haddock.clis.restraints.active_passive_to_ambig import (
     actpass_to_ambig,
     parse_actpass_file,
-    )
+)
 from haddock.clis.restraints.calc_accessibility import (
     REL_ASA,
     calc_accessibility,
-    )
+    get_accessibility,
+)
 from haddock.clis.restraints.passive_from_active import passive_from_active
 from haddock.clis.restraints.restrain_bodies import restrain_bodies
 from haddock.clis.restraints.validate_tbl import validate_tbl
@@ -26,7 +27,7 @@ from haddock.clis.restraints.z_surface_restraints import (
     load_selections,
     shape_bead,
     step_coords,
-    )
+)
 from haddock.libs.libpdb import (
     slc_chainid,
     slc_name,
@@ -37,7 +38,7 @@ from haddock.libs.libpdb import (
     slc_x,
     slc_y,
     slc_z,
-    )
+)
 from haddock.libs.librestraints import extract_restraint_entries
 
 from . import golden_data
@@ -137,6 +138,7 @@ def test_passive_from_active(example_pdb_file, capsys):
     captured = capsys.readouterr()
     assert captured.out == "2 3\n"
 
+
 @pytest.mark.skip
 def test_restrain_bodies(protdna_input_list, capsys):  # noqa : F811
     """Test restrain_bodies function."""
@@ -154,6 +156,7 @@ def test_restrain_bodies_empty(example_pdb_file, capsys):
     restrain_bodies(example_pdb_file)
     captured = capsys.readouterr()
     assert captured.out == ""
+
 
 @pytest.mark.skip
 def test_restrain_bodies_exclude(protdna_input_list, capsys):  # noqa : F811
@@ -192,6 +195,15 @@ def test_calc_accessibility(protdna_input_list, caplog):  # noqa : F811
     assert caplog.messages[-1].endswith(
         "Chain B - 2,3,4,5,6,7,8,9,10,11,28,29,30,31,32,33,34,35,36,37,38"
     )  # noqa : E501
+
+
+def test_calc_accessibility_succinyl_lysine(tmp_path):
+    """Test calc_accessibility on a peptide with N6-succinyl-lysine (SLL)."""
+    pdb = Path(golden_data, "3RIY_SLL_peptide.pdb").read_text()
+    pdb_f = Path(tmp_path, "pep.pdb")
+    pdb_f.write_text(pdb.replace("HETATM", "ATOM  "))
+    access = get_accessibility(str(pdb_f))
+    assert access["C"][9]["side_chain_rel"] > 0
 
 
 def test_step_coords():
@@ -380,30 +392,37 @@ def test_restrain_ligand(example_liganded_pdbfile):
 
     # Reducing the distance deviation
     ligand_restraints_small_devi = restrain_ligand(
-        example_liganded_pdbfile, "G39",
+        example_liganded_pdbfile,
+        "G39",
         deviation=0.5,
-        )
+    )
     assert ligand_restraints_small_devi is not None
     assert ligand_restraints_small_devi != ""
     assert ligand_restraints_default != ligand_restraints_small_devi
 
     # Reducing the radius
     ligand_restraints_small_radius = restrain_ligand(
-        example_liganded_pdbfile, "G39",
+        example_liganded_pdbfile,
+        "G39",
         radius=2.0,
-        )
+    )
     assert ligand_restraints_small_radius is not None
     assert ligand_restraints_small_radius != ""
     assert ligand_restraints_default != ligand_restraints_small_radius
-    assert ligand_restraints_small_radius.count("assi") <= ligand_restraints_default.count("assi")
+    assert ligand_restraints_small_radius.count(
+        "assi"
+    ) <= ligand_restraints_default.count("assi")
 
     # Reducing the number of restaints
     ligand_restraints_low_nb_restraints = restrain_ligand(
-        example_liganded_pdbfile, "G39",
+        example_liganded_pdbfile,
+        "G39",
         max_restraints=2,
-        )
+    )
     assert ligand_restraints_low_nb_restraints is not None
     assert ligand_restraints_low_nb_restraints != ""
     assert ligand_restraints_default != ligand_restraints_low_nb_restraints
-    assert ligand_restraints_low_nb_restraints.count("assi") <= ligand_restraints_default.count("assi")
+    assert ligand_restraints_low_nb_restraints.count(
+        "assi"
+    ) <= ligand_restraints_default.count("assi")
     assert ligand_restraints_low_nb_restraints.count("assi") == 2

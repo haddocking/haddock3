@@ -11,6 +11,7 @@ from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CON
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
 
 from . import CNS_EXEC, EXAMPLE_DIR, GOLDEN_DATA, has_grid
+from tests import golden_data as testgolden_data
 
 
 def improper_angle(coords, a1, a2, a3, a4) -> float:
@@ -1029,3 +1030,20 @@ def test_topoaa_with_ensemble_ligand_files(topoaa_module):
 
     for f in expected_files:
         assert Path(topoaa_module.path, f).exists()
+
+
+def test_topoaa_succinyl_lysine(topoaa_module):
+    """Test the topoaa module on a peptide with N6-succinyl-lysine (SLL)."""
+    topoaa_module.params["molecules"] = [
+        Path(testgolden_data, "3RIY_SLL_peptide.pdb"),
+    ]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+
+    topoaa_module.run()
+
+    expected_pdb = Path(topoaa_module.path, "3RIY_SLL_peptide_haddock.pdb")
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+    sll_atoms = [
+        line[12:16].strip() for line in open(expected_pdb) if line[17:20] == "SLL"
+    ]
+    assert {"CX", "OX", "CK", "CL", "CP", "OP1", "OP2"} <= set(sll_atoms)

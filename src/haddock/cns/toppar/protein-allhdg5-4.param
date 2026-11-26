@@ -1151,6 +1151,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
 ! CR3-CR3 sidechain dihedrals
 
  DIHEdral  C    CH2E CH2E CH1E   2.00     3  0.0000
+ DIHEdral  C    CH2E CH2E C      2.00     3  0.0000 ! for SLL
  DIHEdral  CH1E CH1E CH2E CH3E   2.00     3  0.0000
  DIHEdral  CH1E CH2E CH2E CH2E   2.00     3  0.0000
  DIHEdral  CH1E CH2E CH2E SM     2.00     3  0.0000

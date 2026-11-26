@@ -48,6 +48,7 @@ RES_CODES = dict(
         ("TYR", "Y"),
         ("MET", "M"),
         ("ALY", "K"),
+        ("SLL", "K"),
         ("ASH", "D"),
         ("CFE", "C"),
         ("CSP", "C"),

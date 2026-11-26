@@ -108,6 +108,7 @@ RES_3L1L = dict(
         ("DT", "T"),
         # 9/8/2023: adding non-standard amino-acids (src/haddock/cns/toppar/protein-allhdg5-4.top) # noqa: E501
         ("ALY", "K"),
+        ("SLL", "K"),
         ("ASH", "D"),
         ("CFE", "C"),
         ("CSP", "C"),

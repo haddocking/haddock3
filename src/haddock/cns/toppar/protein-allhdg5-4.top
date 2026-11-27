@@ -1608,7 +1608,7 @@ residue CIR
   IMPRoper H51 H52 C4 N6  !stereo C5
 
   IMPRoper C5  N6  C7   O7  
-  IMPRoper H5  N6  C7   O7  
+  IMPRoper H6  N6  C7   O7  
   IMPRoper N6  C7  N8   H81
   IMPRoper O7  C7  N8   H82 
 
@@ -3328,6 +3328,131 @@ PRESidue PPG2 { for ... GLY(-) - (+) * LINK }
   add DIHEdral  -C +N +CA +C  mult 6
   add DIHEdral  -C +N +CA +CB mult 6
 end
+
+!----------------------------------------------------------------------
+! Peptide links for citrulline (CIR), which has C3 instead of CB (issue #1793)
+
+presidue PPC1     ! for ...*(-) - (+)CIR link, same as PEPT with +C3 for +CB
+  add BOND -C +N
+
+  add ANGLe -CA -C +N
+  add ANGLe -O  -C +N
+  add ANGLe -C  +N +CA
+  add ANGLe -C  +N +HN
+
+  add IMPRoper  -C -CA +N -O                 ! planar -C
+  add IMPRoper  +N -C +CA +HN                ! planar +N
+  add IMPRoper -CA -C  +N  +CA               ! ANGLe across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add DIHEdral  -C +N +CA +C  mult 6
+  add DIHEdral  -C +N +CA +C3 mult 6
+  add DIHEdral  -CB -CA -C +N mult 6
+  add DIHEdral  -CB -CA -C -O mult 6         ! corrected from +O 16-Sept-02
+end
+
+presidue PPC2     ! for CIR(-) - (+)* link, same as PEPT with -C3 for -CB
+  add BOND -C +N
+
+  add ANGLe -CA -C +N
+  add ANGLe -O  -C +N
+  add ANGLe -C  +N +CA
+  add ANGLe -C  +N +HN
+
+  add IMPRoper  -C -CA +N -O                 ! planar -C
+  add IMPRoper  +N -C +CA +HN                ! planar +N
+  add IMPRoper -CA -C  +N  +CA               ! ANGLe across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add DIHEdral  -C +N +CA +C  mult 6
+  add DIHEdral  -C +N +CA +CB mult 6
+  add DIHEdral  -C3 -CA -C +N mult 6
+  add DIHEdral  -C3 -CA -C -O mult 6         ! corrected from +O 16-Sept-02
+end
+
+presidue PPCC     ! for CIR(-) - (+)CIR link, same as PEPT with C3 for CB
+  add BOND -C +N
+
+  add ANGLe -CA -C +N
+  add ANGLe -O  -C +N
+  add ANGLe -C  +N +CA
+  add ANGLe -C  +N +HN
+
+  add IMPRoper  -C -CA +N -O                 ! planar -C
+  add IMPRoper  +N -C +CA +HN                ! planar +N
+  add IMPRoper -CA -C  +N  +CA               ! ANGLe across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add DIHEdral  -C +N +CA +C  mult 6
+  add DIHEdral  -C +N +CA +C3 mult 6
+  add DIHEdral  -C3 -CA -C +N mult 6
+  add DIHEdral  -C3 -CA -C -O mult 6         ! corrected from +O 16-Sept-02
+end
+
+presidue PPCG     ! for CIR(-) - (+)GLY link, same as PPG1 with -C3 for -CB
+
+  add BOND -C +N
+
+  add ANGLe -CA -C +N
+  add ANGLe -O  -C +N
+  add ANGLe -C  +N +CA
+  add ANGLe -C  +N +HN
+
+  add IMPRoper  -C -CA +N -O                 ! planar -C
+  add IMPRoper  +N -C +CA +HN                ! planar +N
+  add IMPRoper -CA -C  +N  +CA               ! ANGLe across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add DIHEdral  -C +N +CA +C  mult 6
+  add DIHEdral  -C3 -CA -C +N mult 6
+  add DIHEdral  -C3 -CA -C -O mult 6          ! corrected from +O 16-Sept-02
+
+end
+
+presidue PPGC     ! for GLY(-) - (+)CIR link, same as PPG2 with +C3 for +CB
+  add BOND -C +N
+
+  add ANGLe -CA -C +N
+  add ANGLe -O  -C +N
+  add ANGLe -C  +N +CA
+  add ANGLe -C  +N +HN
+
+  add IMPRoper  -C -CA +N -O                  ! planar -C
+  add IMPRoper  +N -C +CA +HN                 ! planar +N
+  add IMPRoper -CA -C  +N  +CA                ! ANGLe across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add DIHEdral  -C +N +CA +C  mult 6
+  add DIHEdral  -C +N +CA +C3 mult 6
+end
+
+presidue PPCP     ! for CIR(-) - (+)PRO link, same as PEPP with -C3 for -CB
+  add BOND -C +N
+
+  add ANGLe -CA -C +N
+  add ANGLe -O  -C +N
+  add ANGLe -C  +N +CA
+  add ANGLe -C  +N +CD
+
+!  ADD DIHEdral  -C +N +CA +C  ! taken out since related to phi MN 18-MAR-02
+!  ADD DIHEdral  -N -CA -C +N  ! taken out since equivalent below MN 18-MAR-02
+!  ADD DIHEdral  -CA -C +N +CA ! taken out since IMPRoper below MN 18-MAR-02
+
+  add IMPRoper  -C  -CA +N  -O               ! planar -C
+  add IMPRoper  +N  -C +CA +CD               ! planar +N
+  add IMPRoper -CA  -C  +N  +CA              ! ANGLe across peptide plane
+
+! psi related topology N.B. phi is fixed by ring BONDing 05-JUL-01
+
+  add DIHEdral  -C3 -CA -C +N mult 6
+  add DIHEdral  -C3 -CA -C -O mult 6         ! corrected from +O 16-Sept-02
+end
+
 
 !----------------------------------------------------------------------
 

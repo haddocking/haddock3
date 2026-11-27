@@ -921,54 +921,20 @@ def clt_table_handler(
     structs_df = structs_df.round(2)
 
     # if the run will be cleaned, the structures are going to be gzipped
-    if not top_ranked_mapping:
-        if is_cleaned:
-            # substitute the values in the df by adding .gz at the end
-            structs_df["model"] = structs_df["model"].replace(
-                to_replace=r"(\.pdb)$",
-                value=r".pdb.gz",
-                regex=True,
-            )
-        # ss_file is in NN_caprieval/ while report is in
-        # analysis/NN_caprieval_analysis/
-        # need to correct model paths by prepending ../
-        structs_df["model"] = "../" + structs_df["model"]
-    else:
-        # ss_file is in NN_caprieval/ while report is in
-        # analysis/NN_caprieval_analysis/
-        # need to correct model paths by prepending ../
-        def correct_relative_paths(
-            path: str,
-            top_ranked_mapping: Optional[dict[Path, Path]],
-        ) -> str:
-            """Prepend model paths in capri_ss files get their relative paths.
-
-            Parameters
-            ----------
-            path : str
-                Original path to a model file.
-            top_ranked_mapping : Optional[dict[Path, Path]]
-                Optional filepath mapping of top ranked models.
-
-            Returns
-            -------
-            new_path : str
-                New path to the file
-            """
-            try:
-                # If top ranked is provided, use that information
-                new_path = top_ranked_mapping[path]
-            except (
-                KeyError,
-                TypeError,
-            ):
-                # Otherwise just prepend by `../`
-                new_path = f"../{path}"
-            return new_path
-
-        structs_df["model"] = structs_df["model"].apply(
-            lambda x: correct_relative_paths(x, top_ranked_mapping)
+    if is_cleaned:
+        # substitute the values in the df by adding .gz at the end
+        structs_df["model"] = structs_df["model"].replace(
+            to_replace=r"(\.pdb)$",
+            value=r".pdb.gz",
+            regex=True,
         )
+    # Top ranked models copied next to the report (self-contained) are
+    # linked to their copy. Other paths are relative to NN_caprieval/ while
+    # the report is in analysis/NN_caprieval_analysis/: prepend ../
+    mapping = top_ranked_mapping or {}
+    structs_df["model"] = structs_df["model"].apply(
+        lambda path: str(mapping.get(Path(path), f"../{path}"))
+    )
 
     is_unclustered = clusters_df["cluster_rank"].unique().tolist() == ["-"]
     # If unclustered, we only want to show the top 10 structures in a table.

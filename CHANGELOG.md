@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-11-25: Put the automatic ion restraints in their own `ions` NOE class (biharmonic, scale 1) instead of a duplicate `dist` class, and left their energy out of the final AIR energy - Issue #1789
 - 2026-11-26: Added dedicated peptide links for citrulline (CIR), which has C3 instead of CB, and the missing GLY-CIR peptide link - Issue #1793
 - 2026-11-26: Fixed an undefined atom (H5 instead of H6) in an improper of the citrulline (CIR) topology - Issue #1792
 - 2026-11-20: Fix model paths in self-contained reports of cleaned runs - Issue #1785

@@ -434,6 +434,9 @@ else
     @MODULE:scale_intra_only.cns
 end if
 
+noe
+    scale ions 0.0
+end
 energy end
 evaluate ($eair= $noe)
 evaluate ($esym = 0.0)

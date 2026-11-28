@@ -55,9 +55,11 @@ def _count_atoms(pdb_file: Path) -> int:
 
 @pytest.fixture(name="disvis")
 def fixture_disvis(monkeypatch, tmp_path):
-    """Return a disvis module with a coarse search, in a temporary folder."""
-    monkeypatch.chdir(tmp_path)
-    module = DisvisModule(order=1, path=Path("."), initial_params=DEFAULT_CONFIG)
+    """Return a disvis module with a coarse search, in its step folder."""
+    step = Path(tmp_path, "1_disvis")
+    step.mkdir()
+    monkeypatch.chdir(step)
+    module = DisvisModule(order=1, path=Path(step.name), initial_params=DEFAULT_CONFIG)
     module.params.update(ambig_fname=str(AMBIG), angle=20, sampling=3, ncores=1)
     return module
 
@@ -87,6 +89,8 @@ def test_disvis_models(disvis, tmp_path):
     natoms = sum(_count_atoms(Path(m.path, m.file_name)) for m in (receptor, ligand))
     for model in disvis.output_models:
         assert _count_atoms(Path(model.file_name)) == natoms
+        # The next modules find the models in `path`
+        assert Path(model.path, model.file_name).exists()
         assert model.topology == [receptor.topology, ligand.topology]
 
 

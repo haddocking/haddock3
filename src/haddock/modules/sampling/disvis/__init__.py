@@ -209,7 +209,7 @@ class HaddockModule(BaseHaddockModule):
                 PDBFile(
                     file_name,
                     topology=[receptor.topology, ligand.topology],
-                    path=self.path,
+                    path=".",
                     # Lower is better: the most consistent restraints
                     #  first, then the largest clusters (stable sorts).
                     score=-int(complexes.consistent[i]),

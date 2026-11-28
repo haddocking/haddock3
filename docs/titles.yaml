@@ -16,6 +16,7 @@ modules:
   rigidbody: "Rigid body docking sampling module"
   lightdock: "LightDock sampling module"
   gdock: "Gdock sampling module"
+  disvis: "DisVis sampling module"
   flexref: "Flexible refinement module"
   mdref: "Water refinement module"
   emref: "Energy Minimization refinement module"

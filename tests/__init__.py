@@ -7,6 +7,7 @@ from pathlib import Path
 
 from haddock.libs.libgrid import ping_dirac
 from haddock.modules import modules_category
+from haddock.modules.sampling.disvis.disvis import disvis_is_available
 
 tests_path = Path(__file__).resolve().parents[0]
 data_folder = Path(tests_path, "data")
@@ -52,6 +53,10 @@ except ImportError:
     GDOCK_ENABLED = False
 
 has_gdock = pytest.mark.skipif(not GDOCK_ENABLED, reason="gdock dependency not found")
+
+has_disvis = pytest.mark.skipif(
+    not disvis_is_available(), reason="disvis>=3.4.2 dependency not found"
+)
 
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
 

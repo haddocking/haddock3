@@ -2,6 +2,7 @@
 
 - 2026-11-26: Added dedicated peptide links for citrulline (CIR), which has C3 instead of CB, and the missing GLY-CIR peptide link - Issue #1793
 - 2026-11-26: Fixed an undefined atom (H5 instead of H6) in an improper of the citrulline (CIR) topology - Issue #1792
+- 2026-11-22: Added the `disvis` sampling module (optional install): a full 6D DisVis search for complexes consistent with the ambiguous restraints - Issue #1783
 - 2026-11-20: Fix model paths in self-contained reports of cleaned runs - Issue #1785
 - 2026-11-17: Replaced the NGL viewer of the analysis report by the Mol* viewer (styles, side chains, surfaces), with sortable plain HTML
   tables - Issue #1779

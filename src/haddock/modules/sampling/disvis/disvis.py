@@ -28,6 +28,12 @@ _disvis_log.propagate = False
 
 def disvis_is_available() -> bool:
     """Check whether a `disvis` with `write_results` is importable."""
+    # On macOS, the OpenMP runtime of torch (deeprank) crashes when the one
+    #  of pyfftw (disvis) is loaded first, so load torch first if installed
+    try:
+        import torch  # noqa: F401
+    except ImportError:
+        pass
     try:
         import disvis.main
     except ImportError:
